@@ -1,0 +1,249 @@
+<template>
+  <div id="lastSure">
+    <div id="title" v-title data-title="确认拆段信息" ></div>
+    <ul id="editSiteBox">
+      <li v-for="(item,index) in list">
+        <div class="firstBox">
+          <p>{{item.address}}</p>
+          <h1 v-for="pro in item.productBox">{{pro.trantype}}/{{pro.product}}/{{pro.number}}件/{{pro.weight}}吨/{{pro.volume}}立方米</h1>
+          <h1>提货：{{item.pickTime}}</h1>
+          <h1>到货：{{item.arrivalTime}}</h1>
+        </div>
+        <div class="clearBoth"></div>
+      </li>
+    </ul>
+    <button  @click="pushChoose()">确认</button>
+    <div id="successBox" v-if="success">
+        <div id="success">
+           <img src="../../images/success.png">
+           <p>拆段成功</p>
+        </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import {androidIos} from "../../js/app";
+  import {bomb} from "../../js/zujian";
+  import bridge from '../../js/bridge';
+  export default {
+    name: "lastSure",
+    data(){
+      return{
+        listBox:{
+          list:[]
+        },
+        list:[],
+        productMessage:{
+          pickTime:"",
+          arrivalTime:"",
+          startAddress:"",
+          startAddresspk:"",
+          endAddress:"",
+          endAddresspk:"",
+          productBox:[]
+        },
+        success:false
+      }
+    },
+    mounted:function(){
+       var _this = this;
+       var lastSure = sessionStorage.getItem("lastSure");
+       var Sitechoosesite = sessionStorage.getItem("Sitechoosesite");
+       if(Sitechoosesite!=undefined){
+         Sitechoosesite  = JSON.parse(Sitechoosesite);
+         _this.productMessage.pickTime = Sitechoosesite.startTime;
+         _this.productMessage.arrivalTime = Sitechoosesite.endTime;
+         _this.productMessage.startAddress = Sitechoosesite.startAddress;
+         _this.productMessage.endAddress = Sitechoosesite.endAddress;
+         _this.productMessage.startAddresspk = Sitechoosesite.startAddresspk;
+         _this.productMessage.endAddresspk = Sitechoosesite.endAddresspk;
+         var list = [];
+         for(var i = 0 ; i<Sitechoosesite.product.length;i++){
+           var json = {
+             trantype:Sitechoosesite.product[i].tranType,
+             product:Sitechoosesite.product[i].goods,
+             number:Sitechoosesite.product[i].number,
+             weight:Sitechoosesite.product[i].weight,
+             volume:Sitechoosesite.product[i].volume,
+           }
+           list.push(json);
+         }
+         _this.productMessage.productBox = list;
+       }
+       if(lastSure!=undefined){
+          _this.listBox.list = JSON.parse(lastSure);
+          for(var i=0;i<(_this.listBox.list.length+1);i++){
+            var list =[];
+            for(var x = 0; x<_this.productMessage.productBox.length;x++){
+              var listjson={
+                trantype:_this.productMessage.productBox[x].trantype,
+                product:_this.productMessage.productBox[x].product,
+                number:_this.productMessage.productBox[x].number,
+                weight:_this.productMessage.productBox[x].weight,
+                volume:_this.productMessage.productBox[x].volume,
+              }
+              list.push(listjson);
+            }
+             var json = {
+               address:"",
+               startAddressPk:"",
+               endAddresspk:"",
+               productBox:list,
+               pickTime:"",
+               arrivalTime:"",
+             };
+             if(i == 0){
+                json.address = _this.productMessage.startAddress + '-' +_this.listBox.list[i].name;
+                json.startAddressPk = _this.productMessage.startAddresspk;
+                json.endAddressPk = _this.listBox.list[i].pkAddress;
+                json.pickTime = _this.productMessage.pickTime;
+                json.arrivalTime = _this.listBox.list[i].startTime;
+             }else if(i > 0 && i < (_this.listBox.list.length) ){
+               json.address = _this.listBox.list[i-1].name + '-' + _this.listBox.list[i].name;
+               json.startAddressPk = _this.listBox.list[i-1].pkAddress;
+               json.endAddressPk = _this.listBox.list[i].pkAddress;
+               json.pickTime = _this.listBox.list[i-1].endTime;
+               json.arrivalTime = _this.listBox.list[i].startTime;
+             }else{
+               json.address = _this.listBox.list[i-1].name + '-' + _this.productMessage.endAddress;
+               json.startAddressPk = _this.listBox.list[i-1].pkAddress;
+               json.endAddressPk = _this.productMessage.endAddresspk;
+               json.pickTime = _this.listBox.list[i-1].endTime;
+               json.arrivalTime = _this.productMessage.arrivalTime;
+             }
+             _this.list.push(json);
+          }
+       }
+    },
+    methods:{
+      pushChoose:function () {
+           var _this =this;
+           var list = [];
+           for(var i = 0 ; i < _this.list.length;i++) {
+             var json = {
+               delivery: _this.list[i].startAddressPk,
+               arrival: _this.list[i].endAddressPk,
+               deliDate: _this.list[i].pickTime,
+               arriDate: _this.list[i].arrivalTime
+             }
+             list.push(json);
+           }
+            $.ajax({
+              type: "POST",
+              url: androidIos.ajaxHttp() + "/order/demolitionSegment",
+              data: JSON.stringify({pk: sessionStorage.getItem("dispatchPK"), userCode: sessionStorage.getItem("token"), source:sessionStorage.getItem("source"),pkCar:JSON.stringify({demolitionSegmentList:list})}),
+              contentType: "application/json;charset=utf-8",
+              dataType: "json",
+              timeout: 10000,
+              success: function (demolitionSegment) {
+                   if(demolitionSegment.success == "1" || demolitionSegment.success == ""){
+                     _this.success = true;
+                     setTimeout(function () {
+                       _this.success = false;
+                       sessionStorage.removeItem("lastSure");
+                       sessionStorage.removeItem("siteSure");
+                       bridge.invoke('gobackfrom');
+                     },500)
+                   }else{
+                     androidIos.second(demolitionSegment.message);
+                   }
+              },
+              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                if(status=='timeout'){//超时,status还有success,error等值的情况
+                  androidIos.second("网络请求超时");
+                }else if(status=='error'){
+                  androidIos.errorwife();
+                }
+              }
+            })
+
+      }
+    }
+  }
+</script>
+
+<style scoped>
+  #successBox{
+    position: fixed;
+    top:0;
+    left:0;
+    right:0;
+    bottom: 0;
+    width:auto;
+    height: auto;
+    background: rgba(255,255,255,0);
+  }
+  #success{
+    width:22%;
+    position: absolute;
+    top:40%;
+    left:39%;
+    background: rgba(0,0,0,0.5);
+    border-radius: 0.3rem;
+  }
+  #success img{
+    width:35%;
+    display: block;
+    margin:0.3rem auto;
+  }
+  #success p{
+    text-align: center;
+    margin-bottom: 0.3rem;
+    color:white;
+    font-size: 0.35rem;
+  }
+  #lastSure ul{
+    width:100%;
+    margin-top: 0.2rem;
+    position: fixed;
+    top:1.21875rem;
+    bottom: 1.2rem;
+    height: auto;
+    overflow: scroll;
+  }
+  #lastSure li{
+    width: 100%;
+    background: white;
+    margin-bottom: 0.2rem;
+  }
+  #lastSure li .second{
+    float: right;
+    width:2rem;
+    margin: 0.8rem 1rem 0 0;
+    text-align: right;
+    font-size: 0.35rem;
+  }
+  #lastSure .firstBox{
+    width:90%;
+    padding: 0.3rem 5%;
+    float: left;
+  }
+  #lastSure .firstBox p,#lastSure .secondBox p{
+    font-size: 0.375rem;
+    color:#333;
+    line-height: 0.8rem;
+  }
+  #lastSure .firstBox h1{
+    font-size: 0.3125rem;
+    color:#666;
+    line-height: 0.6rem;
+  }
+  #lastSure .mescroll{
+    position: fixed;
+    top:1.21875rem;
+    bottom: 1.2rem;
+    height: auto;
+  }
+  #lastSure button{
+    position: fixed;
+    bottom:0;
+    width:100%;
+    line-height: 1.2rem;
+    background: #3399FF;
+    color:white;
+    display: block;
+    font-size: 0.38rem;
+    letter-spacing: 0.0625rem;
+  }
+</style>
