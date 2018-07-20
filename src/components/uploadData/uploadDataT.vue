@@ -20,6 +20,16 @@
           </div>
         </div>
       </div>
+      <div class="labelBox" v-else>
+        <p>承运商</p>
+        <div style="border-top: 1px solid #dcdcdc;border-bottom: 1px solid #dcdcdc;">
+          <div class="label" style="border:none;">
+            <span style="float: left;">邀请码</span>
+            <div v-if="nvitationodeICRevise == 2"  id="nvitationodeIC">{{water.nvitationodeIC}}</div>
+            <input v-else type="text" placeholder="请输入邀请码"  v-model="water.nvitationodeIC" maxlength="6">
+          </div>
+        </div>
+      </div>
       <div class="labelBox" style="border-bottom: 0.03125rem solid #dcdcdc"  v-if="!(( type == 1 && letterType == 1 )|| type==2) && (creator == 0 && companyType != 2 )">
         <h1><h5>证件信息</h5>
           <div class="clearBoth"></div>
@@ -100,7 +110,9 @@ export default {
       letterType: "",
       companyType: 1,
       creator: 1,
+      nvitationodeICRevise:1,
       water: {
+        nvitationodeIC:"",
         company: "",
         bank: "",
         bankNumber: "",
@@ -124,6 +136,8 @@ export default {
   methods: {
     go: function() {
       var _this = this;
+      //revise 1修改 2不修改
+      _this.nvitationodeICRevise = _this.$route.query.revise == undefined ? 1 : _this.$route.query.revise ;
       if (_this.$route.query.type != undefined) {
         _this.type = _this.$route.query.type;
       }else{
@@ -164,6 +178,7 @@ export default {
                 water.name = getCarrAndCompanyInfo.driverName;
                 water.Drivepic = getCarrAndCompanyInfo.driverLic;
                 water.IDpic = getCarrAndCompanyInfo.idCardPos;
+                water.nvitationodeIC = getCarrAndCompanyInfo.inviteCode;
               }
             }else{
               androidIos.second(getCarrAndCompanyInfo.message);
@@ -379,6 +394,10 @@ export default {
             }
           }
         }else if(_this.type == 2){
+          if(water.nvitationodeIC.length < 4){
+            bomb.first("请输入完整的邀请码！");
+            return false;
+          }
           if (water.name == "") {
             bomb.first("请输入姓名！");
             return false;
@@ -398,6 +417,10 @@ export default {
           !/^[\u4e00-\u9fa5]+$/.test(water.bank)
         ) {
           bomb.first("请输入正确的开户行");
+          return false;
+        }
+        if(water.nvitationodeIC != "" && water.nvitationodeIC != null && !/^[\a-z\A-Z\0-9]+$/.test(water.nvitationodeIC)){
+          bomb.first("请输入正确的邀请码");
           return false;
         }
         if (water.bankNumber != "" && water.bankNumber != null) {
@@ -431,6 +454,7 @@ export default {
           userCode:sessionStorage.getItem("token")
         };
         var data = {
+          inviteCode:(_this.water.nvitationodeIC).toUpperCase(),
           driverName:water.name,
           driverLic:$("#box3 .h5u_options_hiddenP").text(),
           idCardPos:$("#box2 .h5u_options_hiddenP").text(),
@@ -510,7 +534,7 @@ a {
 .labelBox {
   width: 100%;
 }
-#companyNameBox {
+#companyNameBox ,#nvitationodeIC{
   line-height: 1rem;
   float: right;
   text-align: right;
