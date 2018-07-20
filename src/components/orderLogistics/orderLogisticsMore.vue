@@ -124,17 +124,21 @@
               <button style="width:94%;margin:0 3%;display: block;" @click="payOrder()">支付</button>
               <div class="clearBoth"></div>
             </div>
-            <div class="go" v-else-if="type == '0' || type == '10'  || type == '20'">
+            <div class="go" v-else-if="(type == '0' || type == '10'  || type == '20') && orderSource == 1">
               <button style="background: transparent;color:#3492ff;" @click="closedOrder()">取消订单</button>
               <button @click="changeOrder()">修改订单</button>
               <div class="clearBoth"></div>
             </div>
-            <div class="go" v-else-if="type=='1000'">
-              <button style="background: transparent;color:#3492ff;" @click="scoreYes()">评价</button>
+            <div class="go" v-else-if="(type == '60' || type == '70') && orderSource == 3">
+              <button style="width:94%;margin:0 3%;display: block;" @click="scoreYes(3)">签收</button>
+              <div class="clearBoth"></div>
+            </div>
+            <div class="go" v-else-if="type=='1000' && orderSource == 1">
+              <button style="background: transparent;color:#3492ff;" @click="scoreYes(1)">评价</button>
               <button @click="orderAgain()">再下一单</button>
               <div class="clearBoth"></div>
             </div>
-            <div class="go" v-else-if="type=='1001'">
+            <div class="go" v-else-if="type=='1001' && orderSource == 1">
               <button style="width:94%;margin:0 3%;display: block;" @click="orderAgain()">再下一单</button>
               <div class="clearBoth"></div>
             </div>
@@ -190,6 +194,7 @@
     name: "robbingMore",
     data(){
       return{
+        orderSource:1,
         carloading:true,
         type:"",
         pick:true,
@@ -206,16 +211,7 @@
         },{
           name:"联系不上司机"
         }],
-        scoreList:[{
-          name:"货物",
-          score:"0"
-        },{
-          name:"司机",
-          score:"0"
-        },{
-          name:"承运商",
-          score:"0"
-        }],
+        scoreList:"",
         scorereason:"",
         cancelreason:"",
       }
@@ -223,6 +219,7 @@
     mounted:function () {
       var self = this;
       thisThat = this;
+      self.orderSource = self.$route.query.type;
       self.mescroll = new MeScroll("mescroll", { //请至少在vue的mounted生命周期初始化mescroll,以确保您配置的id能够被找到
         up: {
           callback: self.upCallback, //上拉回调
@@ -352,25 +349,44 @@
         _this.cancelReasonBox = false;
         $("#cancelReasonBox .errorUl li").removeClass("errorPriceBoxLi");
       },
-      scoreYes:function(){
+      scoreYes:function(type){
         var _this = this;
-        for(var i =0 ;i<_this.scoreList.length;i++){
-          $("#star_grade00"+i).html("");
-          $("#star_grade00"+i).markingSystem({
-            num: 5,
-            havePoint: false,
-            haveGrade: false,
-            backgroundImageInitial: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAOVBMVEUAAAD9dyr9VDr8SD/9ZjP9YDb9cS78TT39bDH9aTH9XDf9dSv9YzT9XDf9bi/9cC79aTL9cy78QkJ+hTheAAAAEnRSTlMAH/T+wNxw+5yv5zzP5odurld/oABPAAAA1klEQVQ4y62RS5LDIAxE0Q/J2Elm+v6HnUwIKRsKVtEGmu56KqH07Qr3WPkkgNAioDCDLgG/+wqh4JQKdAHIKeU5YoP/H4xtEnC8Rszwgf0IvTGawQDfNB6t0yGo1f4oO2rJUYkQNr3nMzPf1ViA/ArYbCpGri1t5nO72MSnz9Vo4Tcx+oNcP5SzLgNyu+5Qh30ciLMMHF2Acf1JcBcQXDWkmwpeTzN6r57SiCQVQJRay36ITZ6uCuRnHEMR4U+bKsYjoB1BANur2A2QjkCl2S1SKH2p/gDnoAlDysm60AAAAABJRU5ErkJggg==',
-            backgroundImageOver: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAUCAMAAAC+oj0CAAAAYFBMVEUAAAD8QkL9UVH9eHj9VFT/wsL/zc3/19f/2dn/4eH/7+///f39R0f9TU39Tk79ZWX9YmL9a2v+lJT+oaH+paX+sLD+urr/1NT/3d3/5+f//v7+goL+g4P8QkL+u7v9bGzZkjZpAAAAHXRSTlMA7d+q105ANDEoFQPs5ePGxbuIeXNlWjgsHgOioFw9/yIAAACSSURBVBjTbdDZDoQgDEDRsggC7rvOVP//LycQU3TgvjQ5adKkEJsmyLQytmZYIIpUNUNkOrecWS+ZZ1YSuF3Ng5AYkmKY1e4ArMQkacHWKdcWQDf/2uhwjb+V33c3/tIN7gx/qAGqjdxGdVXkyhEbfGSIiycXxKN/R69U7x8zEn8Qu7BUdIhf4uU6Dwgd57X4+QMzcxYilqvWAwAAAABJRU5ErkJggg==',
-            unit: '星',
-            grade:0,
-            height: 0.6* $("html").css("font-size").replace("px", ""),
-            width: 0.6* $("html").css("font-size").replace("px", ""),
-          });
-          $("#star_grade00"+i+" .set_image_top").css("z-index",10);
+        if(type == 1){
+          _this.scoreList = [{
+            name:"货物",
+            score:"0"
+          },{
+            name:"司机",
+            score:"0"
+          },{
+            name:"承运商",
+            score:"0"
+          }]
+        }else if(type == 3){
+          _this.scoreList = [{
+            name:"货物",
+            score:"0"
+          }]
         }
-        _this.scoreBox = true;
-        _this.scorereason = "";
+        _this.$nextTick(function () {
+          for(var i =0 ;i<_this.scoreList.length;i++){
+            $("#star_grade00"+i).html("");
+            $("#star_grade00"+i).markingSystem({
+              num: 5,
+              havePoint: false,
+              haveGrade: false,
+              backgroundImageInitial: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAOVBMVEUAAAD9dyr9VDr8SD/9ZjP9YDb9cS78TT39bDH9aTH9XDf9dSv9YzT9XDf9bi/9cC79aTL9cy78QkJ+hTheAAAAEnRSTlMAH/T+wNxw+5yv5zzP5odurld/oABPAAAA1klEQVQ4y62RS5LDIAxE0Q/J2Elm+v6HnUwIKRsKVtEGmu56KqH07Qr3WPkkgNAioDCDLgG/+wqh4JQKdAHIKeU5YoP/H4xtEnC8Rszwgf0IvTGawQDfNB6t0yGo1f4oO2rJUYkQNr3nMzPf1ViA/ArYbCpGri1t5nO72MSnz9Vo4Tcx+oNcP5SzLgNyu+5Qh30ciLMMHF2Acf1JcBcQXDWkmwpeTzN6r57SiCQVQJRay36ITZ6uCuRnHEMR4U+bKsYjoB1BANur2A2QjkCl2S1SKH2p/gDnoAlDysm60AAAAABJRU5ErkJggg==',
+              backgroundImageOver: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAUCAMAAAC+oj0CAAAAYFBMVEUAAAD8QkL9UVH9eHj9VFT/wsL/zc3/19f/2dn/4eH/7+///f39R0f9TU39Tk79ZWX9YmL9a2v+lJT+oaH+paX+sLD+urr/1NT/3d3/5+f//v7+goL+g4P8QkL+u7v9bGzZkjZpAAAAHXRSTlMA7d+q105ANDEoFQPs5ePGxbuIeXNlWjgsHgOioFw9/yIAAACSSURBVBjTbdDZDoQgDEDRsggC7rvOVP//LycQU3TgvjQ5adKkEJsmyLQytmZYIIpUNUNkOrecWS+ZZ1YSuF3Ng5AYkmKY1e4ArMQkacHWKdcWQDf/2uhwjb+V33c3/tIN7gx/qAGqjdxGdVXkyhEbfGSIiycXxKN/R69U7x8zEn8Qu7BUdIhf4uU6Dwgd57X4+QMzcxYilqvWAwAAAABJRU5ErkJggg==',
+              unit: '星',
+              grade:0,
+              height: 0.6* $("html").css("font-size").replace("px", ""),
+              width: 0.6* $("html").css("font-size").replace("px", ""),
+            });
+            $("#star_grade00"+i+" .set_image_top").css("z-index",10);
+          }
+          _this.scoreBox = true;
+          _this.scorereason = "";
+        })
       },
       scoreClosed:function(){
         var _this = this;
@@ -439,6 +455,7 @@
       },
       scoreChange:function(){
         var _this = this;
+        var orderTypeList = _this.$route.query.type;
         if(bomb.hasClass("gogogo","gogogo")){
           var list = [];
           var zongNumber = 0;
@@ -450,42 +467,80 @@
             zongNumber = zongNumber + json.score*1
             list.push(json)
           }
-          var cjJson = {
+          var remark = "";
+          for(var i = 0 ;i < list.length ; i++){
+            remark += list[i].name + "(" + list[i].score + "分" + ")" + " ";
+          }
+          var cjJson = orderTypeList == 1 ?{
             scoreList:JSON.stringify(list),
             average:(zongNumber/_this.scoreList.length).toFixed(1),
             scorereason:_this.scorereason,
             pk:_this.$route.query.pk,
             userCode:sessionStorage.getItem("token"),
             source:sessionStorage.getItem("source")
+          }:{
+            pk:_this.$route.query.pk,
+            userCode:sessionStorage.getItem("token"),
+            source:sessionStorage.getItem("source"),
+            remark:remark + " " + _this.scorereason,
           }
           bomb.removeClass("gogogo","gogogo");
-          $.ajax({
-            type: "POST",
-            url: androidIos.ajaxHttp()+"/order/clientAppraisal",
-            data:JSON.stringify(cjJson),
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            timeout: 10000,
-            success: function (clientAppraisal) {
-              bomb.addClass("gogogo","gogogo");
-              if(clientAppraisal.success == "1"){
-                _this.scoreBox = false;
-                _this.mescroll.resetUpScroll();
-              }else{
-                androidIos.second(clientAppraisal.message);
-                _this.mescroll.resetUpScroll();
+          if(orderTypeList == 1){
+            $.ajax({
+              type: "POST",
+              url: androidIos.ajaxHttp()+"/order/clientAppraisal",
+              data:JSON.stringify(cjJson),
+              contentType: "application/json;charset=utf-8",
+              dataType: "json",
+              timeout: 10000,
+              success: function (clientAppraisal) {
+                bomb.addClass("gogogo","gogogo");
+                if(clientAppraisal.success == "1"){
+                  _this.scoreBox = false;
+                  _this.mescroll.resetUpScroll();
+                }else{
+                  androidIos.second(clientAppraisal.message);
+                  _this.mescroll.resetUpScroll();
+                }
+              },
+              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                _this.cancelReasonBox = false;
+                bomb.addClass("gogogo","gogogo");
+                if(status=='timeout'){//超时,status还有success,error等值的情况
+                  androidIos.second("网络请求超时");
+                }else if(status=='error'){
+                  androidIos.errorwife();
+                }
               }
-            },
-            complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-              _this.cancelReasonBox = false;
-              bomb.addClass("gogogo","gogogo");
-              if(status=='timeout'){//超时,status还有success,error等值的情况
-                androidIos.second("网络请求超时");
-              }else if(status=='error'){
-                androidIos.errorwife();
+            })
+          }else{
+            $.ajax({
+              type: "POST",
+              url: androidIos.ajaxHttp()+"/order/signInv",
+              data:cjJson,
+              dataType: "json",
+              timeout: 10000,
+              success: function (signInv) {
+                bomb.addClass("gogogo","gogogo");
+                if(signInv.success == "1"){
+                  _this.scoreBox = false;
+                  _this.mescroll.resetUpScroll();
+                }else{
+                  androidIos.second(signInv.message);
+                }
+              },
+              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                _this.cancelReasonBox = false;
+                bomb.addClass("gogogo","gogogo");
+                if(status=='timeout'){//超时,status还有success,error等值的情况
+                  androidIos.second("网络请求超时");
+                }else if(status=='error'){
+                  androidIos.errorwife();
+                }
               }
-            }
-          })
+            })
+          }
+
         }else{
           bomb.first("请不要频繁点击");
         }
@@ -554,7 +609,6 @@
           thisThat.carloading = false;
           if(invoiceDetail.success == "" || invoiceDetail.success == "1"){
             var list=[];
-
             for(var i =0;i<invoiceDetail.invPackDao.length;i++){
               var listJson = {
                 goods:invoiceDetail.invPackDao[i].goodsName+"-"+invoiceDetail.invPackDao[i].goodsTypeName,
@@ -573,8 +627,10 @@
               tracking.push(trackingJson);
             }
             // 新建=0 已确认=10 司机发车=20 部分提货=30 已提货=40 部分到货=50 已到货=60 部分签收=70 已签收=80 已回单=90 关闭=100
+            // thisThat.$route.query.type 1发货方2付款3收货方
+            invoiceDetail.trackingStatusValue = 60
             var trackingStatusValue = "";
-            if(thisThat.$route.query.type == "1"){
+            if(thisThat.$route.query.type == "1" || thisThat.$route.query.type == "3"){
               if(invoiceDetail.trackingStatusValue == "80" && invoiceDetail.ifAppraise == "N"){
                 trackingStatusValue = 1000;
               }else if(invoiceDetail.trackingStatusValue == "80" && invoiceDetail.ifAppraise == "Y"){

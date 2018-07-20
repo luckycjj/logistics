@@ -36,15 +36,15 @@
     mounted:function () {
       var _this = this;
       _this.title = document.title;
-     /* bridge.invoke('stoploading');
+      bridge.invoke('stoploading');
       bridge.invoke('token','',function(response) {
         response = JSON.parse(response);
         sessionStorage.setItem("token",response.userCode);
         sessionStorage.setItem("source",response.source);
-      });*/
+      });
       //13512157125 18098690941
-     sessionStorage.setItem("token","18098690941");
-     sessionStorage.setItem("source",2);
+     /*sessionStorage.setItem("token","13512157125");
+     sessionStorage.setItem("source",1);*/
     },
     updated: function () {
       var _this = this;
