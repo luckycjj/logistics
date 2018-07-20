@@ -80,7 +80,7 @@
             if(type == 1){
               androidIos.first( "确定" + message + "吗？");
             }else if(type == 2){
-              androidIos.third();
+              androidIos.third("拒绝理由");
               var refuse = new LArea();
               refuse.init({
                 'trigger': '#Z01',

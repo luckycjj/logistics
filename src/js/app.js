@@ -38,7 +38,7 @@ var androidIos = {
     //陈满
     /*var http = 'http://10.10.10.222:8085';*/
     //李雷
-   /* var http = 'http://10.10.10.220:8085';*/
+    /*var http = 'http://10.10.10.220:8085';*/
     //服务器
     var http = 'http://222.73.159.76:8085';
     return http;
@@ -121,14 +121,14 @@ var androidIos = {
       $(".tanBox-bigBox").remove();
     });
   },
-  third:function () {
+  third:function (message) {
     $(".tanBox-bigBox").remove();
     $("body").append("<div class='tanBox-bigBox'>" +
       "<div class='tanBox-box'>" +
       "<p>温馨提示</p>"+
       "<div class='tanBox-class'>" +
-      "<div style='width:30%;height:1rem;font-size: 0.4rem;color:#333;line-height: 1rem;text-align: right;float: left;margin-left: 10%;'>拒绝理由：</div>"+
-      "<div id='Z01' style='width:55%;height:1rem;font-size: 0.4rem;color:#999;line-height: 1rem;padding-left: 5%;float: left;'>请选择拒绝理由</div>"+
+      "<div style='width:30%;height:1rem;font-size: 0.4rem;color:#333;line-height: 1rem;text-align: right;float: left;margin-left: 10%;'>"+message+"：</div>"+
+      "<div id='Z01' style='width:55%;height:1rem;font-size: 0.4rem;color:#999;line-height: 1rem;padding-left: 5%;float: left;'>请选择"+message+"</div>"+
       "<div class='clearBoth'></div>"+
       "</div>"+
       "<div class='tanBox-button'><button class='tanBox-close'>取消</button><div class='tanBox-shuxian'></div><button id='tanBox-yes' class='tanBox-yes tanBox-yesGo'>确定</button></div>"+

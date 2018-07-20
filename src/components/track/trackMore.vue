@@ -5,7 +5,7 @@
       <img src="../../images/carloading.gif" style="width:4rem;position: absolute;top:50%;left:50%;margin-left: -2rem;margin-top: -4rem">
       <p style="font-size: 0.4rem;top:50%;text-align: center;line-height: 1rem;color:#e8551b;width:100%;position: absolute">正在加载中...</p>
     </div>
-    <div id="mescroll" class="mescroll" :class="type==0 || peopleType == 2?'meBottom':''">
+    <div id="mescroll" class="mescroll" :class="type==0 || (peopleType == 2 && type !=1 )?'meBottom':''">
       <ul id="dataList" class="data-list">
         <li v-for="item in pdlist">
           <div class="top">
@@ -41,10 +41,10 @@
               </li>
             </ul>
           </div>
-          <div id="full_feature" class="swipslider" v-if="type >1 && type < 8 && carList.length > 0">
+          <div id="full_feature" class="swipslider" v-if="type >0 && type < 8 && carList.length > 0" :style="{minHeight:type ==1?'2.5rem':'6rem'}">
             <ul class="sw-slides">
               <li class="sw-slide" v-for="(car,index) in carList">
-                <div style="width:100%;background: white;height:3rem;box-shadow: 0 0.1rem 10px #d8d8d8;overflow:hidden;position: relative;margin:0.4rem auto 0 auto;border-top-left-radius: 0.2rem;border-top-right-radius: 0.2rem;">
+                <div style="width:100%;background: white;height:3rem;box-shadow: 0 0.1rem 10px #d8d8d8;overflow:hidden;position: relative;margin:0.4rem auto 0 auto;border-top-left-radius: 0.2rem;border-top-right-radius: 0.2rem;" v-if="type > 1">
                   <div   v-if="(car.ordertype == '20' || car.ordertype == '31' || car.ordertype == '32' || car.ordertype == '33' || car.ordertype == '41' ) && car.peopleJ != '' && car.peopleW != ''" @click="mapGo(car)">
                     <div :id="'container'+index" class="containerImport"></div>
                     <div :id="'panel'+index" class="panelImport"></div>
@@ -146,8 +146,8 @@
         </li>
       </ul>
     </div>
-    <div id="sure" v-if="peopleType==1">
-      <div class="go gogogo" id="gogogo">
+    <div id="sure">
+      <div class="go gogogo" id="gogogo" v-if="peopleType==1">
         <button v-if="type==1" @click="chufa()">出发</button>
         <button v-else-if="type==2" @click="daoda(31)">提货到达</button>
         <button v-else-if="type==3" @click="daoda(32)">开始装货</button>
@@ -157,6 +157,9 @@
         <button v-else-if="type==7" @click="daoda(43)">卸货完毕</button>
         <button v-else-if="type==8 && endtype == '0'" @click="qianshou(endtype)">交接</button>
         <button v-else-if="type==8 && endtype == '1'" @click="qianshou(endtype)">签收</button>
+      </div>
+      <div class="go"  v-else>
+        <button v-if="type==1" @click="genghuan()">更换司机</button>
       </div>
     </div>
     <div id="errorAbnormalBox" v-if="errorAbnormalBox">
@@ -257,7 +260,8 @@
         errorPrice:"",
         mescroll:"",
         endtype:0,
-        carList:[]
+        carList:[],
+        carpeoList:[],
       }
     },
     watch:{
@@ -272,6 +276,8 @@
     mounted:function () {
       var self = this;
       thisThat = self;
+      sessionStorage.removeItem("changeCarpeople");
+      sessionStorage.removeItem("changeCarFupeople");
       self.peopleType = self.$route.query.pt == undefined ? 0 :self.$route.query.pt;
       self.mescroll = new MeScroll("mescroll", { //请至少在vue的mounted生命周期初始化mescroll,以确保您配置的id能够被找到
         up: {
@@ -307,6 +313,7 @@
           sessionStorage.setItem("dataStart",self.pdlist[0].pickMessage.address);
           sessionStorage.setItem("dataEnd",self.pdlist[0].endMessage.address);
           sessionStorage.setItem("orderPk",self.$route.query.pk);
+          sessionStorage.setItem("dispatchPK",self.$route.query.pk);
           self.$nextTick(function () {
             if((self.type == 1 || self.type == 2 || self.type == 3) && self.peopleType == 2 ){
               $("#cancel").show();
@@ -737,6 +744,11 @@
         androidIos.addPageList();
         _this.$router.push({ path: '/track/qrcode',query:{ty:type}});
       },
+      genghuan:function () {
+        var _this = this;
+        androidIos.addPageList();
+        _this.$router.push({ path: '/car',query:{pkCar:_this.pdlist[0].pkCar,carType:0}});
+      },
       chufa:function(){
         var _this = this;
         if(bomb.hasClass("gogogo","gogogo")){
@@ -936,7 +948,8 @@
               },
               tranNumber:"123321334343",
               number:loadSegmentDetail.entrustNo,
-              time:loadSegmentDetail.createTime
+              time:loadSegmentDetail.createTime,
+              pkCar:loadSegmentDetail.pkCar
             }]
             thisThat.carList = [];
             for(var i = 0; i < loadSegmentDetail.driverDto.length ; i++ ){

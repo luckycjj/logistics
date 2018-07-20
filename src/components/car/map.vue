@@ -16,7 +16,7 @@
         startW : "",
         peopleJ:120.40,
         peopleW:30.26,
-        setTime:"",
+        setTimeSS:"",
         json:{
           userCode:sessionStorage.getItem("token"),
           source:sessionStorage.getItem("source"),
@@ -115,7 +115,7 @@
               _this.navShow = true;
               $("#carBox .amap-zoomcontrol").show();
             }
-            _this.setTime = setInterval(function () {
+            _this.setTimeSS = setInterval(function () {
               $.ajax({
                 type: "POST",
                 url: androidIos.ajaxHttp()+"/order/getLocation",
@@ -171,7 +171,7 @@
     },
     destroyed:function () {
       var _this = this;
-      clearInterval(_this.setTime);
+      clearInterval( _this.setTimeSS );
     }
   }
 </script>
