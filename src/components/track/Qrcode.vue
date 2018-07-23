@@ -20,8 +20,18 @@
        methods:{
          useqrcode:function(){
            //生成的二维码内容，可以添加变量
+           var json;
+           if(this.$route.query.ty == 0){
+              json = {
+                 pk:this.QueryDetail,
+                 type:this.$route.query.ty
+              }
+              json = JSON.stringify(json);
+           }else{
+             json = this.QueryDetail;
+           }
            var canvas = document.getElementById('canvas');
-           QRCode.toCanvas(canvas, this.QueryDetail, function (error) {
+           QRCode.toCanvas(canvas, json, function (error) {
            })
          }
        }

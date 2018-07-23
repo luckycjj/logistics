@@ -166,6 +166,7 @@
           $(".tanBox-yes").unbind('click').click(function(){
             $(".tanBox-bigBox").remove();
             bomb.removeClass("gogogo","gogogo");
+            androidIos.loading("正在派车");
             $.ajax({
               type: "POST",
               url: androidIos.ajaxHttp()+"/order/arrangeVehicle",
@@ -181,6 +182,7 @@
               dataType: "json",
               timeout: 10000,
               success: function (arrangeVehicle) {
+                $("#common-blackBox").remove();
                 bomb.addClass("gogogo","gogogo");
                 if(arrangeVehicle.success == "1"){
                   _this.success = true;
@@ -193,6 +195,7 @@
                 }
               },
               complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                $("#common-blackBox").remove();
                 bomb.addClass("gogogo","gogogo");
                 if(status=='timeout'){//超时,status还有success,error等值的情况
                   androidIos.second("网络请求超时");

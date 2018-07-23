@@ -754,7 +754,6 @@
               var weight =0;
               var volumn = 0;
               var weightList = [];
-              var trantypenumber = _this.both.trantypenumber;
               for(var x = 0;x<_this.both.productList.length;x++){
                 if( _this.both.productList[x].wight != ""){
                   weightList.push( _this.both.productList[x].wight);
@@ -766,7 +765,7 @@
                 var json = {
                   startCity:_this.both.startAddress.city.split("-")[1].replace("市",""),
                   endCity:_this.both.endAddress.city.split("-")[1].replace("市",""),
-                  transType:trantypenumber == "a7b6332ad917469b955012aa66380d41" && weight-volumn >= 0? 1:trantypenumber == "a7b6332ad917469b955012aa66380d41" && weight-volumn < 0 ? 2 : 3,
+                  transType: _this.both.tranType,
                   weight:weight,
                   volume:volumn,
                   userCode:sessionStorage.getItem("token"),
