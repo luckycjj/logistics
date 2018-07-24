@@ -114,7 +114,7 @@
           <label><div class="circleBox" @click="readChoose()"><div class="circletrue" v-if="both.read"></div></div><span style="font-size: 0.35rem;color:#999999;">已阅读</span><span @click="needKnow()"  style="font-size: 0.35rem;color:#999999;">《发货须知》</span><span @click="calculatorGo()" style="font-size: 0.35rem; color:#999;float: right;"> 计算器</span><div class="clearBoth"></div></label>
         </div>
       </div>
-      <button id="submit" @click="submitGo()">提交</button>
+      <button id="submit" class="gogogo" @click="submitGo()">提交</button>
       <div id="newOrderMessageBox" v-if="newOrderMessageBox">
           <div id="newOrderMessage">
             <p>请确认订单信息</p>
@@ -140,7 +140,7 @@
             <div class="message_button">
               <button @click="messageButtonNo()">取消</button>
               <div class='message_shuxian'></div>
-              <button class="message_buttonYes gogogo" id="gogogo"  @click="messageButtonYes()">确定</button>
+              <button class="message_buttonYes"  @click="messageButtonYes()">确定</button>
               <div class="clearBoth"></div>
             </div>
           </div>
@@ -355,8 +355,8 @@
                   timeAfterF:invoiceDetail.arriDate.split(" ")[1],
                   timeAfterS:invoiceDetail.arriDate.split(" ")[0],
                   productList:list,
-                  tranType:invoiceDetail.transType,
-                  trantypenumber:invoiceDetail.transType == "零担运输"?"a7b6332ad917469b955012aa66380d41":invoiceDetail.transType == "整批整车"?"a7b6332ad917469b955012aa66380d41":invoiceDetail.transType == "大型、特型笨重运输"?"849eed4070fd47a7b48169350e533b6c":invoiceDetail.transType == "集装箱运输"?"d0e47a9e517b4f328550e46b697efb6a":invoiceDetail.transType == "快件包车"?"4b0ba77ac2824a58b12350c7e776f62d":invoiceDetail.transType == "危险品运输"?"80eb059492ab466abf53c26346b2c720":invoiceDetail.transType == "搬家货物运输"?"7a69ab01e72442e4abf18bdd55cfdc6d":invoiceDetail.transType == "冷链货物运输"?"d5c7b3e82ced484884561ecdb9522b7b":"",
+                  tranType:"",
+                  trantypenumber:"",
                   appoint:invoiceDetail.carrierDto.carrierName,
                   pk_carrier:invoiceDetail.carrierDto.pkCarrier,
                   driver_name:"",
@@ -1016,7 +1016,7 @@
         },
         messageButtonYes:function(){
           var _this = this;
-          if(bomb.hasClass("gogogo","gogogo")){
+          if(bomb.hasClass("submit","gogogo")){
             var self = _this.both;
             var list = [];
             for( var i = 0 ; i < self.productList.length ; i++ ){
@@ -1062,7 +1062,7 @@
               pk:_this.pk
             };
             androidIos.loading("正在提交");
-
+            bomb.removeClass("submit","gogogo");
             $.ajax({
               type: "POST",
               url: androidIos.ajaxHttp()+"/order/createOrder",
@@ -1072,7 +1072,7 @@
               timeout: 10000,
               success: function (createOrder) {
                 $("#common-blackBox").remove();
-                bomb.addClass("gogogo","gogogo");
+                bomb.addClass("submit","gogogo");
                 if(createOrder.success=="1"){
                   _this.newOrderMessageBox = false;
                   _this.newOrderGoMessage = true;
@@ -1086,7 +1086,7 @@
               },
               complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
                 $("#common-blackBox").remove();
-                bomb.addClass("gogogo","gogogo");
+                bomb.addClass("submit","gogogo");
                 if(status=='timeout'){//超时,status还有success,error等值的情况
                   androidIos.second("网络请求超时");
                 }else if(status=='error'){
