@@ -56,7 +56,7 @@
                 <h2 v-for="numberList in number.product">{{numberList.tranType}}/{{numberList.product}}/{{numberList.proNumber}}件/{{numberList.weight}}吨/{{numberList.volume}}立方米</h2>
                 <h3>提货 {{number.startTime}}</h3>
                 <h3>到货 {{number.endTime}}</h3>
-                <h5>{{number.type}}</h5>
+                <h5>{{number.type | orderTypeName}}</h5>
               </li>
             </ul>
           </div>

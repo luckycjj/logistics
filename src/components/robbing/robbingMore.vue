@@ -485,8 +485,8 @@
                 grade:loadSegmentDetail.appraiseScore==""?0:loadSegmentDetail.appraiseScore
               },
               goodsmessage:{
-                startAddress:loadSegmentDetail.delivery!=null?(loadSegmentDetail.delivery.province+loadSegmentDetail.delivery.city+loadSegmentDetail.delivery.area):"",
-                endAddress:loadSegmentDetail.arrival!=null?(loadSegmentDetail.arrival.province+loadSegmentDetail.arrival.city+loadSegmentDetail.arrival.area):"",
+                startAddress:loadSegmentDetail.delivery!=null?(loadSegmentDetail.delivery.province/*+loadSegmentDetail.delivery.city*/+loadSegmentDetail.delivery.area):"",
+                endAddress:loadSegmentDetail.arrival!=null?(loadSegmentDetail.arrival.province/*+loadSegmentDetail.arrival.city*/+loadSegmentDetail.arrival.area):"",
                 distance:"0",
                 tranType:loadSegmentDetail.transType,
                 productList:list,
@@ -498,14 +498,14 @@
                 name:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.contact:"",
                 tel:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.mobile:"",
                 company:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.addrName:"",
-                address:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.province+loadSegmentDetail.delivery.city+loadSegmentDetail.delivery.area+loadSegmentDetail.delivery.detailAddr:"",
+                address:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.province/*+loadSegmentDetail.delivery.city*/+loadSegmentDetail.delivery.area+loadSegmentDetail.delivery.detailAddr:"",
                 addresspk:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.pkAddress:"",
               },
               endMessage:{
                 name:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.contact:"",
                 tel:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.mobile:"",
                 company:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.addrName:"",
-                address:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.province+loadSegmentDetail.arrival.city+loadSegmentDetail.arrival.area+loadSegmentDetail.arrival.detailAddr:"",
+                address:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.province/*+loadSegmentDetail.arrival.city*/+loadSegmentDetail.arrival.area+loadSegmentDetail.arrival.detailAddr:"",
                 addresspk:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.pkAddress:"",
               },
               insurance:{

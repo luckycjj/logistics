@@ -90,8 +90,8 @@
         <div class="lablebox imgno">
           <span class="required">付款方</span>
           <div id="pay">
-             <label><div class="circleBox" @click="payChoose(0)"><div class="circletrue" v-if="both.pay == 0"></div></div>发货方<div class="clearBoth"></div></label>
-             <label><div class="circleBox" @click="payChoose(1)"><div class="circletrue" v-if="both.pay == 1"></div></div>收货方<div class="clearBoth"></div></label>
+             <label><!--<div class="circleBox" @click="payChoose(0)"><div class="circletrue" v-if="both.pay == 0"></div></div>-->发货方<div class="clearBoth"></div></label>
+             <!--<label><div class="circleBox" @click="payChoose(1)"><div class="circletrue" v-if="both.pay == 1"></div></div>收货方<div class="clearBoth"></div></label>-->
             <div class="clearBoth"></div>
           </div>
           <div class="clearBoth"></div>
@@ -744,7 +744,7 @@
           },
         payChoose:function(e){
           var _this = this;
-          _this.both.pay = e;
+         /* _this.both.pay = e;*/
         },
         ajaxPost: function() {
           var _this = this;

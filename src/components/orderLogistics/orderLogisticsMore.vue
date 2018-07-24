@@ -628,7 +628,6 @@
             }
             // 新建=0 已确认=10 司机发车=20 部分提货=30 已提货=40 部分到货=50 已到货=60 部分签收=70 已签收=80 已回单=90 关闭=100
             // thisThat.$route.query.type 1发货方2付款3收货方
-            invoiceDetail.trackingStatusValue = 60
             var trackingStatusValue = "";
             if(thisThat.$route.query.type == "1" || thisThat.$route.query.type == "3"){
               if(invoiceDetail.trackingStatusValue == "80" && invoiceDetail.ifAppraise == "N"){
@@ -651,8 +650,8 @@
                 grade:invoiceDetail.appraiseScore==""?0:invoiceDetail.appraiseScore
               },
               goodsmessage:{
-                startAddress:invoiceDetail.delivery!=null?(invoiceDetail.delivery.province+invoiceDetail.delivery.city+invoiceDetail.delivery.area):"",
-                endAddress:invoiceDetail.arrival!=null?(invoiceDetail.arrival.province+invoiceDetail.arrival.city+invoiceDetail.arrival.area):"",
+                startAddress:invoiceDetail.delivery!=null?(invoiceDetail.delivery.province/*+invoiceDetail.delivery.city*/+invoiceDetail.delivery.area):"",
+                endAddress:invoiceDetail.arrival!=null?(invoiceDetail.arrival.province/*+invoiceDetail.arrival.city*/+invoiceDetail.arrival.area):"",
                 distance:"0",
                 tranType:invoiceDetail.transType,
                 productList:list,
@@ -664,13 +663,13 @@
                 name:invoiceDetail.delivery!=null?invoiceDetail.delivery.contact:"",
                 tel:invoiceDetail.delivery!=null?invoiceDetail.delivery.mobile:"",
                 company:invoiceDetail.delivery!=null?invoiceDetail.delivery.addrName:"",
-                address:invoiceDetail.delivery!=null?invoiceDetail.delivery.province+invoiceDetail.delivery.city+invoiceDetail.delivery.area+invoiceDetail.delivery.detailAddr:"",
+                address:invoiceDetail.delivery!=null?invoiceDetail.delivery.province/*+invoiceDetail.delivery.city*/+invoiceDetail.delivery.area+invoiceDetail.delivery.detailAddr:"",
               },
               endMessage:{
                 name:invoiceDetail.arrival!=null?invoiceDetail.arrival.contact:"",
                 tel:invoiceDetail.arrival!=null?invoiceDetail.arrival.mobile:"",
                 company:invoiceDetail.arrival!=null?invoiceDetail.arrival.addrName:"",
-                address:invoiceDetail.arrival!=null?invoiceDetail.arrival.province+invoiceDetail.arrival.city+invoiceDetail.arrival.area+invoiceDetail.arrival.detailAddr:"",
+                address:invoiceDetail.arrival!=null?invoiceDetail.arrival.province/*+invoiceDetail.arrival.city*/+invoiceDetail.arrival.area+invoiceDetail.arrival.detailAddr:"",
               },
               insurance:{
                 name:"保险名称1",

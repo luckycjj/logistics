@@ -46,8 +46,8 @@
           timeout: 10000,
           success: function (getLocation) {
             if(getLocation.success == "1"){
-              _this.peopleJ = getLocation.driverPosition == undefined ? "121.56303" : getLocation.driverPosition.split(",")[0];
-              _this.peopleW = getLocation.driverPosition == undefined ? "31.20641" : getLocation.driverPosition.split(",")[1];
+              _this.peopleJ = getLocation.errorCode == "" ? "12" : getLocation.errorCode.split(",")[0];
+              _this.peopleW = getLocation.errorCode == "" ? "3" : getLocation.errorCode.split(",")[1];
             }else{
               androidIos.second(getLocation.message);
             }
@@ -126,8 +126,8 @@
                 timeout: 10000,
                 success: function (getLocation) {
                   if(getLocation.success == "1"){
-                    _this.peopleJ = getLocation.driverPosition == undefined ? "121.56303" : getLocation.driverPosition.split(",")[0];
-                    _this.peopleW = getLocation.driverPosition == undefined ? "31.20641" : getLocation.driverPosition.split(",")[1];
+                    _this.peopleJ = getLocation.errorCode == "" ? "12" : getLocation.errorCode.split(",")[0];
+                    _this.peopleW = getLocation.errorCode == "" ? "3" : getLocation.errorCode.split(",")[1];
                   }else{
                     androidIos.second(getLocation.message);
                   }

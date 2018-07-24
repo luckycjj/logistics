@@ -80,6 +80,49 @@ Vue.filter('companyTypeName', function(value) {
   }
   return valueTypeName
 });
+
+Vue.filter('orderTypeName', function(value) {
+  value = value*1;
+  var valueTypeName  ="";
+  switch (value)
+  {
+    case 0:
+      valueTypeName = "待确认";
+      break;
+    case 10:
+      valueTypeName = "已确认";
+      break;
+    case 20:
+      valueTypeName = "司机出发";
+      break;
+    case 31:
+      valueTypeName = "提货到达";
+      break;
+    case 32:
+      valueTypeName = "开始装货";
+      break;
+    case 33:
+      valueTypeName = "装货完毕";
+      break;
+    case 41:
+      valueTypeName = "运输到达";
+      break;
+    case 42:
+      valueTypeName = "开始卸货";
+      break;
+    case 43:
+      valueTypeName = "卸货完毕";
+      break;
+    case 50:
+      valueTypeName = "已签收";
+      break;
+    case 60:
+      valueTypeName = "退单";
+      break;
+  }
+  return valueTypeName
+});
+
 export default new Router({
   routes: [
     {
