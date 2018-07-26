@@ -47,19 +47,19 @@
           </div>
           <div class="lablebox imgno">
             <span>货物件数</span>
-            <input type="tel" placeholder="请输入货物件数" v-model="item.number"/>
+            <input type="tel" placeholder="请输入货物件数" v-model="item.number" maxlength="50"/>
             <div class="clearBoth"></div>
           </div>
           <div class="lablebox imgno">
             <span class="required">货物重量</span>
             <div class="unit" :id="'Z00'+index">{{item.unitWight}}</div>
-            <input type="text" placeholder="请输入货物重量" v-model="item.wight" @keyup="weightKeyup()"/>
+            <input type="text" placeholder="请输入货物重量" maxlength="50" v-model="item.wight" @keyup="weightKeyup()"/>
             <div class="clearBoth"></div>
           </div>
           <div class="lablebox borderno imgno">
             <span>货物体积</span>
             <div class="unit" :id="'Z01'+index">{{item.unitWeight}}</div>
-            <input type="text" placeholder="请输入货物体积" v-model="item.weight" @keyup="volumeKeyup()"/>
+            <input type="text" placeholder="请输入货物体积" maxlength="50" v-model="item.weight" @keyup="volumeKeyup()"/>
             <div class="clearBoth"></div>
           </div>
         </div>
@@ -105,7 +105,7 @@
       <div v-if="pk==''" id="price" class="label">
         <div class="lablebox borderno imgno">
           <span class="required">预估价格</span>
-          <input type="text" placeholder="请输入价格" v-model="price" @keyup="asdfgh()"/>
+          <input type="text" placeholder="请输入价格" maxlength="50" v-model="price" @keyup="asdfgh()"/>
           <div class="clearBoth"></div>
         </div>
       </div>

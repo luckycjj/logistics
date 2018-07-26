@@ -173,7 +173,7 @@
                 {{item.displayName}}
              </li>
              <div class="clearBoth"></div>
-             <input type="text" placeholder="其他异常" v-model="errorabnormal">
+             <input type="text" placeholder="其他异常" maxlength="100" v-model="errorabnormal">
            </ul>
            <!--<div id="errorAbnormalChange">
              <span>是否需要更换运力</span>
@@ -194,8 +194,8 @@
             {{item.displayName}}
           </li>
           <div class="clearBoth"></div>
-          <input type="text" placeholder="其他费用" style="margin-bottom: 0;" v-model="errorPricetype"/>
-          <input type="text" placeholder="金额" v-model="errorPrice"/>
+          <input type="text" placeholder="其他费用" maxlength="100" style="margin-bottom: 0;" v-model="errorPricetype"/>
+          <input type="text" placeholder="金额" maxlength="100" v-model="errorPrice"/>
         </ul>
         <button @click="errorPriceChange()" id="gogogo4" class="gogogo">提交</button>
       </div>
@@ -211,7 +211,7 @@
             {{item.name}}
           </li>
           <div class="clearBoth"></div>
-          <input type="text" placeholder="其他原因" v-model="cancelreason">
+          <input type="text" placeholder="其他原因" maxlength="100" v-model="cancelreason">
         </ul>
         <button @click="cancelReasonChange()" id="gogogo3" class="gogogo">提交</button>
       </div>

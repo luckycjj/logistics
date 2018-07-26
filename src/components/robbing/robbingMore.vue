@@ -113,7 +113,7 @@
             {{item.name}}
           </li>
           <div class="clearBoth"></div>
-          <input type="text" placeholder="其他原因" v-model="cancelreason">
+          <input type="text" placeholder="其他原因" v-model="cancelreason" maxlength="50">
         </ul>
         <button @click="cancelReasonChange()" class="gogogo" id="gogogo1">提交</button>
       </div>

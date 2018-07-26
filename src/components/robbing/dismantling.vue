@@ -12,19 +12,19 @@
           <div style="border-bottom: 1px solid #dbdbdb;" class="liDiv">
             <h1>货物件数</h1>
             <h2>件</h2>
-            <input type="tel" v-model="items.number" placeholder="请输入拆量件数"/>
+            <input type="tel" maxlength="100" v-model="items.number" placeholder="请输入拆量件数"/>
             <div class="clearBoth"></div>
           </div>
           <div style="border-bottom: 1px solid #dbdbdb;" class="liDiv">
             <h1>货物重量</h1>
             <h2>吨</h2>
-            <input type="tel" v-model="items.weight" placeholder="请输入拆量吨位"/>
+            <input type="number" maxlength="100" v-model="items.weight" placeholder="请输入拆量吨位"/>
             <div class="clearBoth"></div>
           </div>
           <div class="liDiv">
             <h1>货物体积</h1>
             <h2>立方米</h2>
-            <input type="tel" v-model="items.volume" placeholder="请输入拆量体积"/>
+            <input type="number" v-model="items.volume" placeholder="请输入拆量体积"/>
             <div class="clearBoth"></div>
           </div>
         </div>

@@ -291,7 +291,11 @@ export default {
             }
           }
         }
-        $(document).unbind("click").on("click",".upbox img",function (even) {
+        $(document).on('click','.label input',function () {
+          var $Val = $.trim($(this).val())
+          $(this).val('').focus().val($Val)
+        })
+        $(document).on("click",".upbox img",function (even) {
             if (even.target.className != "closed") {
               var img = $(this).attr("src");
               $("#imgBigbox").remove();
