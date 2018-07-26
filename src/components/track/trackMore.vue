@@ -317,7 +317,16 @@
           self.$nextTick(function () {
             if((self.type == 1 || self.type == 2 || self.type == 3) && self.peopleType == 2 ){
               $("#cancel").show();
+              $("#erweimaLook").hide();
+            }else if(self.peopleType == 1){
+              $("#cancel").hide();
+              $("#erweimaLook").show();
+              document.getElementById("erweimaLook").onclick = function () {
+                androidIos.addPageList();
+                self.$router.push({ path: '/track/qrcode',query:{ty:3}});
+              }
             }else{
+              $("#erweimaLook").hide();
               $("#cancel").hide();
             }
             if(self.type >0 && self.type < 8 ){

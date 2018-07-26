@@ -9,6 +9,7 @@
         <h3  id="site" style="display: none" class="asd"  v-if="doNow==2"><span id="Sitechoosesite">拆段</span> | <span id="Sitedismantling">拆量</span></h3>
         <h3  id="search" class="asd"  v-if="doNow==3" ><h5 id="searchSpan"></h5></h3>
         <h3  id="cancel" class="asd"  v-if="doNow==4" style="display: none;">取消订单</h3>
+        <img id="erweimaLook"  src="./images/erweima.png" v-if="doNow==4" style="display: none">
       </div>
       <div id="table"></div>
     </div>
@@ -42,8 +43,8 @@
         sessionStorage.setItem("token",response.userCode);
         sessionStorage.setItem("source",response.source);
       });
-      //13512157125 18098690941
-    /* sessionStorage.setItem("token","18098690941");
+      //15555555555 18098690941
+     /*sessionStorage.setItem("token","15555555555");
      sessionStorage.setItem("source",2);*/
     },
     updated: function () {
@@ -342,5 +343,11 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-position: 0 0;
+  }
+  #erweimaLook{
+    position: absolute;
+    right:0.3rem;
+    width:0.7rem;
+    top:0.25rem;
   }
 </style>

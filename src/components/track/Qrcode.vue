@@ -11,11 +11,13 @@
         name: "qrcode",
     data(){
       return{
-        QueryDetail:sessionStorage.getItem("orderPk")
+        QueryDetail:sessionStorage.getItem("orderPk"),
+        ty:0,
       }
     },
     mounted:function () {
-       this.useqrcode();
+          this.ty = this.$route.query.ty;
+          this.useqrcode();
     },
        methods:{
          useqrcode:function(){

@@ -123,8 +123,7 @@
                $.ajax({
                  type: "POST",
                  url: androidIos.ajaxHttp()+"/addAddress",
-                 data:JSON.stringify(json),
-                 contentType: "application/json;charset=utf-8",
+                 data:json,
                  dataType: "json",
                  timeout: 10000,
                  success: function (addAddress) {
@@ -226,7 +225,7 @@
   }
   .name,.address,.company{
     width:94%;
-    padding: 0 3%;
+    padding: 0.0625rem 3%;
     border-bottom:1px solid #dadada;
   }
   .name input{

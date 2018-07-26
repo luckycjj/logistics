@@ -7,7 +7,7 @@
         <div style="border-top: 1px solid #dcdcdc;border-bottom: 1px solid #dcdcdc;">
           <div class="label" style="border:none;">
             <span style="float: left;">公司名称</span>
-            <div v-if="water.company!=''" id="companyNameBox" >{{water.company}}</div>
+            <div v-if="water.company!=''" id="companyNameBigBox">{{water.company}}</div>
             <input v-else type="text" placeholder="请输入公司名称"  v-model="water.company" maxlength="20">
           </div>
           <div class="label" v-if="creator == 0 && companyType != 2 "  style="border-bottom: none; border-top: 0.03125rem solid #dcdcdc;">
@@ -20,7 +20,7 @@
           </div>
         </div>
       </div>
-      <div class="labelBox" v-else>
+      <div class="labelBox" v-if="type==2">
         <p>承运商</p>
         <div style="border-top: 1px solid #dcdcdc;border-bottom: 1px solid #dcdcdc;">
           <div class="label" style="border:none;">
@@ -53,6 +53,10 @@
         <div class="label">
           <span style="float: left;"><span style="font-size: 0.375rem;color:#ff803c;">*</span>您的姓名</span>
           <input type="text" placeholder="输入姓名" maxlength="10"   v-model="water.name">
+        </div>
+        <div class="label">
+          <span style="float: left;"><span style="font-size: 0.375rem;color:#ff803c;">*</span>身份证号码</span>
+          <input type="text" placeholder="输入身份证号码" maxlength="18"   v-model="water.peopleNumber">
         </div>
         <div class="label" style="height: auto;border:none">
           <h1><h5 style="margin-left: 0;">身份证</h5></h1>
@@ -121,7 +125,8 @@ export default {
         Licensepic: "",
         Roadpic: "",
         Travelpic: "",
-        Drivepic: ""
+        Drivepic: "",
+        peopleNumber:""
       },
       tanBox: false,
       tanBoxmessage: "",
@@ -363,6 +368,10 @@ export default {
               bomb.first("请输入姓名！");
               return false;
             }
+            if(water.peopleNumber == ""){
+              bomb.first("请输入身份证号码！");
+              return false;
+            }
             if (water.IDpic == "") {
               bomb.first("请上传身份证正面照！");
               return false;
@@ -388,6 +397,10 @@ export default {
               bomb.first("请输入姓名！");
               return false;
             }
+            if(water.peopleNumber == ""){
+              bomb.first("请输入身份证号码！");
+              return false;
+            }
             if (water.IDpic == "") {
               bomb.first("请上传身份证正面照！");
               return false;
@@ -400,6 +413,10 @@ export default {
           }
           if (water.name == "") {
             bomb.first("请输入姓名！");
+            return false;
+          }
+          if(water.peopleNumber == ""){
+            bomb.first("请输入身份证号码！");
             return false;
           }
           if (water.IDpic == "") {
@@ -421,6 +438,10 @@ export default {
         }
         if(water.nvitationodeIC != "" && water.nvitationodeIC != null && !/^[\a-z\A-Z\0-9]+$/.test(water.nvitationodeIC)){
           bomb.first("请输入正确的邀请码");
+          return false;
+        }
+        if(water.peopleNumber != "" && water.peopleNumber != null && !androidIos.idCardCheck(water.peopleNumber )){
+          bomb.first("身份证号码格式不对");
           return false;
         }
         if (water.bankNumber != "" && water.bankNumber != null) {
@@ -534,7 +555,18 @@ a {
 .labelBox {
   width: 100%;
 }
-#companyNameBox ,#nvitationodeIC{
+#companyNameBigBox{
+  line-height: 1rem;
+  float: right;
+  text-align: right;
+  width: 7.7rem;
+  font-size: 0.375rem;
+  color: #333;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+#nvitationodeIC{
   line-height: 1rem;
   float: right;
   text-align: right;
@@ -581,7 +613,7 @@ a {
   font-size: 0.375rem;
   float: right;
   text-align: right;
-  width: 7.3rem;
+  width: 7rem;
 }
 .imgBox {
   width: 4rem;
