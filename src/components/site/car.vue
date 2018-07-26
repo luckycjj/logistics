@@ -231,13 +231,17 @@
                 if(_this.listType == '0'){
                   var display = $("#car .clearImg").css("display");
                   if(display == "block"){
-                    $("#car .clearImg").css("display","none");
-                    $("#car .reaseImg").css("display","none");
-                    $(this).find("h5").text("编辑");
+                    if($("#dataList li").length > 0){
+                      $("#car .clearImg").css("display","none");
+                      $("#car .reaseImg").css("display","none");
+                      $(this).find("h5").text("编辑");
+                    }
                   }else{
-                    $("#car .clearImg").css("display","block");
-                    $("#car .reaseImg").css("display","block");
-                    $(this).find("h5").text("取消");
+                    if($("#dataList li").length > 0){
+                      $("#car .clearImg").css("display","block");
+                      $("#car .reaseImg").css("display","block");
+                      $(this).find("h5").text("取消");
+                    }
                   }
                 }else{
                   bomb.first("社会车辆无法编辑");
@@ -333,7 +337,10 @@
                         }
                         listData.push(json);
                       }
-                      setListData(listData,_this.pageNum*_this.pageSize,1,'');
+                      if(listData.length > 0){
+                        setListData(listData,_this.pageNum*_this.pageSize,1,'');
+                      }
+
                     }else{
                       androidIos.second(getCarList.message);
                       setListData([],_this.pageNum*_this.pageSize,1,'');

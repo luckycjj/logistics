@@ -111,11 +111,15 @@
           _this.pdlist = [];
           _this.mescroll.resetUpScroll();
         }else if(text == "管理"){
-          document.getElementById("sousuo").innerText = "取消";
-          _this.manage = true;
+          if(_this.pdlist.length > 0){
+            document.getElementById("sousuo").innerText = "取消";
+            _this.manage = true;
+          }
         }else if(text == "取消"){
-          document.getElementById("sousuo").innerText = "管理";
-          _this.manage = false;
+          if(_this.pdlist.length > 0){
+            document.getElementById("sousuo").innerText = "管理";
+            _this.manage = false;
+          }
         }
       },
       upCallback: function(page) {
@@ -194,7 +198,7 @@
             success: function (deleteAddres) {
               if(deleteAddres.success=="1"){
                 _this.pdlist.splice(index,1);
-                _this.$cjj("删除成功！");
+                _this.$cjj("删除成功");
               }else{
                 androidIos.second(getAddres.message)
               }
@@ -224,7 +228,9 @@
             async:false,
             success: function (getAddres) {
               if(getAddres.success=="1"){
-                _this.pdlist.push(getAddres.list[0])
+                if(getAddres.list.length > 0){
+                  _this.pdlist.push(getAddres.list[0])
+                }
               }else{
                 androidIos.second(getAddres.message)
               }

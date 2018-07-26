@@ -102,9 +102,13 @@
           self.$nextTick(function () {
             $("#manage span").unbind("click").click(function () {
               if(!self.manage){
-                $(this).text("取消");
+                if(self.pdlist.length > 0){
+                  $(this).text("取消");
+                }
               }else{
-                $(this).text("管理");
+                if(self.pdlist.length > 0){
+                  $(this).text("管理");
+                }
               }
                 self.manage  = !self.manage;
             })

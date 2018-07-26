@@ -225,7 +225,9 @@
                       }
                     }
                   }
-                  _this.pdlist.push(json)
+                  if(json.length>0) {
+                    _this.pdlist.push(json)
+                  }
                 }
               }else{
                 androidIos.second(getAddres.message)
