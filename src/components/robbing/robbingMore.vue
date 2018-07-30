@@ -53,9 +53,9 @@
             </div>
           </div>
           <div class="insurance">
-            <p>保险</p>
+            <!--<p>保险</p>
             <h1>{{item.insurance.name}}<span>¥ {{item.insurance.price}}/次</span></h1>
-            <div class="clearBoth"></div>
+            <div class="clearBoth"></div>-->
             <p>付款方</p>
             <h1>{{item.pickPay.people}}</h1>
             <div class="clearBoth"></div>

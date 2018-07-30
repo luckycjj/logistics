@@ -129,6 +129,7 @@
              }
              list.push(json);
            }
+           androidIos.loading("正在拆段");
             $.ajax({
               type: "POST",
               url: androidIos.ajaxHttp() + "/order/demolitionSegment",
@@ -137,19 +138,21 @@
               dataType: "json",
               timeout: 10000,
               success: function (demolitionSegment) {
-                   if(demolitionSegment.success == "1" || demolitionSegment.success == ""){
-                     _this.success = true;
-                     setTimeout(function () {
-                       _this.success = false;
-                       sessionStorage.removeItem("lastSure");
-                       sessionStorage.removeItem("siteSure");
-                       bridge.invoke('gobackfrom');
-                     },500)
-                   }else{
-                     androidIos.second(demolitionSegment.message);
-                   }
+                $("#common-blackBox").remove();
+                 if(demolitionSegment.success == "1" || demolitionSegment.success == ""){
+                   _this.success = true;
+                   setTimeout(function () {
+                     _this.success = false;
+                     sessionStorage.removeItem("lastSure");
+                     sessionStorage.removeItem("siteSure");
+                     bridge.invoke('gobackfrom');
+                   },500)
+                 }else{
+                   androidIos.second(demolitionSegment.message);
+                 }
               },
               complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                $("#common-blackBox").remove();
                 if(status=='timeout'){//超时,status还有success,error等值的情况
                   androidIos.second("网络请求超时");
                 }else if(status=='error'){

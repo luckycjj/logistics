@@ -85,14 +85,14 @@
 
       // Add last slide before first and first before last to seamless and engless transition
       var clone1 = slider.find('.sw-slide:last-child').clone();
-      if(clone1.find(".containerImport").attr("id").indexOf("111") == -1 ){
+      if(clone1.find(".star_grade").attr("id").indexOf("111") == -1 ){
         clone1.find(".containerImport").attr("id",clone1.find(".containerImport").attr("id")+"000");
         clone1.find(".panelImport").attr("id",clone1.find(".panelImport").attr("id")+"000");
         clone1.find(".star_grade").attr("id",clone1.find(".star_grade").attr("id")+"000");
         clone1.prependTo(slider);
       }
       var clone2 = slider.find('.sw-slide:nth-child(2)').clone();
-      if(clone1.find(".containerImport").attr("id").indexOf("111") == -1){
+      if(clone1.find(".star_grade").attr("id").indexOf("111") == -1){
         clone2.find(".containerImport").attr("id",clone2.find(".containerImport").attr("id")+"111");
         clone2.find(".panelImport").attr("id",clone2.find(".panelImport").attr("id")+"111");
         clone2.find(".star_grade").attr("id",clone2.find(".star_grade").attr("id")+"111");

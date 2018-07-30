@@ -106,9 +106,9 @@
             </div>
           </div>
           <div class="insurance">
-            <p>保险</p>
+            <!--<p>保险</p>
             <h1>{{item.insurance.name}}<span>¥ {{item.insurance.price}}/次</span></h1>
-            <div class="clearBoth"></div>
+            <div class="clearBoth"></div>-->
             <p>付款方</p>
             <h1>{{item.pickPay.people}}</h1>
             <div class="clearBoth"></div>
@@ -158,9 +158,9 @@
         <button v-else-if="type==8 && endtype == '0'" @click="qianshou(endtype)">交接</button>
         <button v-else-if="type==8 && endtype == '1'" @click="qianshou(endtype)">签收</button>
       </div>
-      <div class="go"  v-else>
+      <!--<div class="go"  v-else>
         <button v-if="type==1" @click="genghuan()">更换车辆</button>
-      </div>
+      </div>-->
     </div>
     <div id="errorAbnormalBox" v-if="errorAbnormalBox">
          <div id="errorAbnormal">
@@ -194,8 +194,8 @@
             {{item.displayName}}
           </li>
           <div class="clearBoth"></div>
-          <input type="text" placeholder="其他费用" maxlength="100" style="margin-bottom: 0;" v-model="errorPricetype"/>
-          <input type="text" placeholder="金额" maxlength="100" v-model="errorPrice"/>
+          <input type="text" placeholder="其他费用" maxlength="40" style="margin-bottom: 0;" v-model="errorPricetype"/>
+          <input type="text" placeholder="金额" maxlength="40" v-model="errorPrice"/>
         </ul>
         <button @click="errorPriceChange()" id="gogogo4" class="gogogo">提交</button>
       </div>
@@ -211,7 +211,7 @@
             {{item.name}}
           </li>
           <div class="clearBoth"></div>
-          <input type="text" placeholder="其他原因" maxlength="100" v-model="cancelreason">
+          <input type="text" placeholder="其他原因" maxlength="40" v-model="cancelreason">
         </ul>
         <button @click="cancelReasonChange()" id="gogogo3" class="gogogo">提交</button>
       </div>
@@ -315,17 +315,17 @@
           sessionStorage.setItem("orderPk",self.$route.query.pk);
           sessionStorage.setItem("dispatchPK",self.$route.query.pk);
           self.$nextTick(function () {
-            if((self.type == 1 || self.type == 2 || self.type == 3) && self.peopleType == 2 ){
+            if ((self.type == 1 || self.type == 2 || self.type == 3) && self.peopleType == 2) {
               $("#cancel").show();
               $("#erweimaLook").hide();
-            }else if(self.peopleType == 1){
+            } else if (self.peopleType == 1) {
               $("#cancel").hide();
               $("#erweimaLook").show();
               document.getElementById("erweimaLook").onclick = function () {
                 androidIos.addPageList();
-                self.$router.push({ path: '/track/qrcode',query:{ty:3}});
+                self.$router.push({path: '/track/qrcode', query: {ty: 3}});
               }
-            }else{
+            } else {
               $("#erweimaLook").hide();
               $("#cancel").hide();
             }
@@ -445,7 +445,7 @@
                 }
               }
             }
-          })
+          });
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
           self.mescroll.endErr();
