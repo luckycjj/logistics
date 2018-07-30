@@ -174,7 +174,7 @@
             {{item.name}}
           </li>
           <div class="clearBoth"></div>
-          <input type="text" maxlength="100" placeholder="其他原因" v-model="cancelreason">
+          <input type="text" maxlength="30" placeholder="其他原因" v-model="cancelreason">
         </ul>
         <button @click="cancelReasonChange()" id="gogogo" class="gogogo">提交</button>
       </div>
@@ -672,7 +672,7 @@
                 address:invoiceDetail.arrival!=null?invoiceDetail.arrival.province/*+invoiceDetail.arrival.city*/+invoiceDetail.arrival.area+invoiceDetail.arrival.detailAddr:"",
               },
               insurance:{
-                name:"保险名称1",
+                name:"",
                 price:"200"
               },
               pickPay:{

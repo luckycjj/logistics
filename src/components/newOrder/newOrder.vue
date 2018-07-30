@@ -47,19 +47,19 @@
           </div>
           <div class="lablebox imgno">
             <span>货物件数</span>
-            <input type="tel" placeholder="请输入货物件数" v-model="item.number" maxlength="50"/>
+            <input type="tel" placeholder="请输入货物件数" v-model="item.number" maxlength="10"/>
             <div class="clearBoth"></div>
           </div>
           <div class="lablebox imgno">
             <span class="required">货物重量</span>
             <div class="unit" :id="'Z00'+index">{{item.unitWight}}</div>
-            <input type="text" placeholder="请输入货物重量" maxlength="50" v-model="item.wight" @keyup="weightKeyup()"/>
+            <input type="text" placeholder="请输入货物重量" maxlength="10" v-model="item.wight" @keyup="weightKeyup()"/>
             <div class="clearBoth"></div>
           </div>
           <div class="lablebox borderno imgno">
             <span>货物体积</span>
             <div class="unit" :id="'Z01'+index">{{item.unitWeight}}</div>
-            <input type="text" placeholder="请输入货物体积" maxlength="50" v-model="item.weight" @keyup="volumeKeyup()"/>
+            <input type="text" placeholder="请输入货物体积" maxlength="10" v-model="item.weight" @keyup="volumeKeyup()"/>
             <div class="clearBoth"></div>
           </div>
         </div>
@@ -75,16 +75,16 @@
           <p v-html="both.tranType==''?'请选择运输类别':both.tranType" :class="both.tranType==''?'':'blackColor'" @click="tranType()"></p>
           <div class="clearBoth"></div>
         </div>
-        <div class="lablebox">
+        <div class="lablebox borderno">
           <span>承运商／司机</span>
           <p v-html="both.appoint==''?'请选择指定承运商或司机':both.appoint" :class="both.appoint==''?'':'blackColor'" @click="appoint()"></p>
           <div class="clearBoth"></div>
         </div>
-        <div class="lablebox borderno">
+        <!--<div class="lablebox borderno">
           <span>保险</span>
           <p v-html="both.insurance==''?'请选择保险':both.insurance" :class="both.insurance==''?'':'blackColor'" @click="insurance()"></p>
           <div class="clearBoth"></div>
-        </div>
+        </div>-->
       </div>
       <div  v-if="pk==''" id="payment" class="label">
         <div class="lablebox imgno">
@@ -105,7 +105,7 @@
       <div v-if="pk==''" id="price" class="label">
         <div class="lablebox borderno imgno">
           <span class="required">预估价格</span>
-          <input type="text" placeholder="请输入价格" maxlength="50" v-model="price" @keyup="asdfgh()"/>
+          <input type="text" placeholder="请输入价格" maxlength="20" v-model="price" @keyup="asdfgh()"/>
           <div class="clearBoth"></div>
         </div>
       </div>
@@ -126,7 +126,7 @@
             </div>
             <div class="message_product" v-for="(item,index) in both.productList">
               <h6>货物</h6><h5>{{item.goodsType}}</h5><div class="clearBoth"></div>
-              <h6>规格</h6><h5>{{item.number}}件/{{item.wight}}{{item.unitWight}}/{{item.weight}}立方米</h5>
+              <h6>规格</h6><h5>{{item.number * 1}}件/{{item.wight * 1}}{{item.unitWight}}/{{item.weight * 1}}{{item.unitWeight}}</h5>
               <div class="clearBoth"></div>
             </div>
             <div class="message_insurance">
@@ -227,6 +227,8 @@
               for(var i = 0;i<self.productList.length;i++){
                 if(self.productList[i].number!=""){
                   self.productList[i].number=(self.productList[i].number.toString().match(/\d+(\.\d{0,0})?/)||[''])[0]*1;
+                }else{
+                  self.productList[i].number = 1;
                 }
                 if(self.productList[i].wight!=""){
                   if(self.productList[i].wightTen<1){
@@ -672,6 +674,9 @@
                 },{
                   "code":"0.001",
                   "region":"公斤"
+                },{
+                  "code":"0.0005",
+                  "region":"斤"
                 }]
               });
               unitWight.value = [0];
@@ -695,6 +700,9 @@
                 'data':[{
                   "code":"1",
                   "region":"立方米"
+                },{
+                  "code":"0.001",
+                  "region":"升"
                 }]
               });
               unitWeight.value = [0];
@@ -951,6 +959,9 @@
                  },{
                    "code":"0.001",
                    "region":"公斤"
+                 },{
+                   "code":"0.0005",
+                   "region":"斤"
                  }]
                });
                unitWight.value = [0];
@@ -974,6 +985,9 @@
                  'data':[{
                    "code":"1",
                    "region":"立方米"
+                 },{
+                   "code":"0.001",
+                   "region":"升"
                  }]
                });
                unitWeight.value = [0];
@@ -1006,7 +1020,15 @@
                 }
               }
               if(_this.pk == ""){
-                _this.newOrderMessageBox = true;
+                if(_this.both.startAddress.pk == _this.both.endAddress.pk){
+                   androidIos.first("收卸地点一致，确定要下单吗?");
+                  $(".tanBox-yes").unbind('click').click(function(){
+                    $(".tanBox-bigBox").remove();
+                    _this.newOrderMessageBox = true;
+                  });
+                }else{
+                  _this.newOrderMessageBox = true;
+                }
               }else{
                _this.messageButtonYes();
               }
@@ -1344,7 +1366,7 @@
   .unit{
     float: right;
     color:#333;
-    width: 13%;
+    width: 15%;
     padding:0 3% 0 1% ;
     margin-left: 0.1rem;
     text-align: center;

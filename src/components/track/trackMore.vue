@@ -942,7 +942,7 @@
                 addresspk:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.pkAddress:"",
               },
               insurance:{
-                name:"保险名称1",
+                name:"",
                 price:"200"
               },
               pickPay:{

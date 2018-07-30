@@ -258,7 +258,7 @@
                  plateName:that.find(".carnumber").text().substring(0,1),
                  weight:that.find(".weight span").text(),
                  driver:that.find(".secondBox p span").text(),
-                 driverPk:that.find(".secondBox").attr("data-driverPk"),
+                 driverPk:that.find(".secondBox").attr("data-driverPk") == undefined ? "" : that.find(".secondBox").attr("data-driverPk"),
                  carpk:that.find(".top").attr("data-pkCar")
                }
                sessionStorage.setItem("carchange",JSON.stringify(json));

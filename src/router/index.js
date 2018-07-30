@@ -13,7 +13,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import  newOrderF from '@/components/newOrder/newOrder'
 import  newOrderS from '@/components/newOrder/chooseStart'
-import  newOrderT from '@/components/newOrder/chooseEnd'
 import  newOrderFo from '@/components/newOrder/histroyAddress'
 import  newOrderFi from '@/components/newOrder/tranType'
 import  newOrderSi from '@/components/newOrder/goodsType'
@@ -148,7 +147,6 @@ export default new Router({
       children: [
         {path: '/', component: newOrderF},
         {path: 'chooseStart', component: newOrderS},
-        {path: 'chooseEnd', component: newOrderT},
         {path: 'histroyAddress', component: newOrderFo},
         {path: 'tranType', component: newOrderFi},
         {path: 'goodsType', component: newOrderSi},

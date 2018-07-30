@@ -108,6 +108,7 @@
         var carchange = sessionStorage.getItem("carchange");
         if(carchange != undefined){
           carchange = JSON.parse(carchange);
+          carchange.driver = carchange.driver == "" ? "请选择司机" : carchange.driver;
           _this.message = carchange;
           sessionStorage.removeItem("carchange");
         }
@@ -282,7 +283,7 @@
               carType:_this.message.carCode,
               loadWeight:_this.message.weight,
               pkDriver:_this.message.driverPk,
-
+              pkCar:_this.message.carpk
             }
             bomb.removeClass("ok","okgo");
             var jax = _this.message.carpk == "" ? '/driver/addCar':'/driver/modifyCar';

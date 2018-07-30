@@ -12,13 +12,13 @@
         <div class="clearBoth"></div>
       </div>
       <div class="company inputUp">
-        <input type="text" maxlength="20" placeholder="收货方公司名" v-model="start.company"/>
+        <input type="text" maxlength="40" placeholder="收货方公司名" v-model="start.company"/>
       </div>
       <div class="company inputUp">
         <p id="X00" :class="start.province!=''?'blackColor':''" v-html="start.province==''?'选择省市区':start.province+'-'+start.city+'-'+start.area"></p>
       </div>
       <div class="address inputUp" style="border:none;">
-        <input type="text" maxlength="20" placeholder="详细地址"  v-model="start.address"/>
+        <input type="text" maxlength="40" placeholder="详细地址"  v-model="start.address"/>
       </div>
     </div>
     <button :class="start.name!=''&&start.phone!=''&&start.company!=''&&start.address!=''&&start.province!=''?'colorful':''" @click="save()" id="save">保存</button>
