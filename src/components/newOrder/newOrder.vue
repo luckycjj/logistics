@@ -457,7 +457,7 @@
               listGood.push(_this.both.productList[i].goodsType)
             }
           }
-          if(goodsType.tranpk != "" ){
+         /* if(goodsType.tranpk != "" ){
             _this.both.trantypenumber = goodsType.tranpk;
             if(goodsType.tranpk == "a7b6332ad917469b955012aa66380d41"){
               _this.both.tranType = "零担运输";
@@ -479,7 +479,7 @@
           }else if(listGood.length == 1){
             _this.both.trantypenumber = "";
             _this.both.tranType = "";
-          }
+          }*/
           sessionStorage.removeItem("goodsType");
         }
         if(tranType!=undefined){

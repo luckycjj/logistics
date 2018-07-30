@@ -1,6 +1,6 @@
 var Toast = {};
 Toast.install = function (Vue,options) {
-    Vue.prototype.$cjj = (tips,img) => {
+    Vue.prototype.$cjj = (tips) => {
       let opt = {
         duration:'300'         // 持续时间
       }
