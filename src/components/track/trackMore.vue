@@ -159,7 +159,7 @@
         <button v-else-if="type==8 && endtype == '1'" @click="qianshou(endtype)">签收</button>
       </div>
       <div class="go"  v-else>
-        <button v-if="type==1" @click="genghuan()">更换司机</button>
+        <button v-if="type==1" @click="genghuan()">更换车辆</button>
       </div>
     </div>
     <div id="errorAbnormalBox" v-if="errorAbnormalBox">
@@ -756,7 +756,7 @@
       genghuan:function () {
         var _this = this;
         androidIos.addPageList();
-        _this.$router.push({ path: '/car',query:{pkCar:_this.pdlist[0].pkCar,carType:0}});
+        _this.$router.push({ path: '/site/car'});
       },
       chufa:function(){
         var _this = this;
@@ -1065,16 +1065,13 @@
   .goodsmessage h1,.goodsmessage h2,.goodsmessage h3,.goodsmessage h4{
     width: 42%;
     padding-left: 8%;
-    line-height: 1rem;
     font-size: 0.36rem;
+    min-height: 0.7rem;
     float: left;
+    margin-top: 0.2rem;
     background-repeat: no-repeat;
     background-size: 0.5rem 0.5rem;
-    background-position: 0 50%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    height: 1rem;
+    background-position: 0 0.05rem;
   }
   .goodsmessage h1{
     background-image: url("../../images/trantype.png");

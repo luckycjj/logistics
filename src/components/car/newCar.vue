@@ -15,7 +15,7 @@
     <div class="box" style="margin-top: 0px;">
       <span>载&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量</span>
       <p style="width:auto">吨</p>
-      <input type="number" maxlength="100" v-model="message.weight" placeholder="请输入载量" />
+      <input type="number" maxlength="10" v-model="message.weight" placeholder="请输入载量" />
       <div class="clearBoth"></div>
     </div>
     <div class="box" style="margin-top: 0px;">

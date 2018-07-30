@@ -634,16 +634,13 @@
   .goodsmessage h1,.goodsmessage h2,.goodsmessage h3,.goodsmessage h4{
     width: 42%;
     padding-left: 8%;
-    line-height: 1rem;
+    min-height: 0.7rem;
     font-size: 0.36rem;
     float: left;
+    margin-top: 0.2rem;
     background-repeat: no-repeat;
     background-size: 0.5rem 0.5rem;
-    background-position: 0 50%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    height: 1rem;
+    background-position: 0 0.05rem;
   }
   .goodsmessage h1{
     background-image: url("../../images/trantype.png");
