@@ -104,6 +104,15 @@
       save:function () {
         var _this = this;
         if(bomb.hasClass("save","colorful")){
+          if(_this.start.phone.length < 11){
+            bomb.first("手机号码不足11位");
+            return false;
+          }
+          var reg = /^1[3|4|5|7|8][0-9]{9}$/;
+          if(!reg.test(_this.start.phone)){
+            bomb.first("手机号码格式不对");
+            return false;
+          }
           var json ={
             pkAddress:_this.start.addresspk == ""?undefined:_this.start.addresspk,
             addrName:_this.start.company,
@@ -132,8 +141,7 @@
           $.ajax({
             type: "POST",
             url: androidIos.ajaxHttp()+jiekou,
-            data:_this.start.addresspk == "" ? JSON.stringify(json2) : JSON.stringify(json),
-            contentType: "application/json;charset=utf-8",
+            data:_this.start.addresspk == "" ? json2 : json,
             dataType: "json",
             timeout: 10000,
             success: function (addAddress) {
@@ -189,7 +197,7 @@
   }
   .name,.address,.company{
     width:94%;
-    padding: 0 3%;
+    padding: 0.0625rem 3%;
     border-bottom:1px solid #dadada;
   }
   .name input{

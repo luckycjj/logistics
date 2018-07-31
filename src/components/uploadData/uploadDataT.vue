@@ -54,7 +54,7 @@
           <span style="float: left;"><span style="font-size: 0.375rem;color:#ff803c;">*</span>您的姓名</span>
           <input type="text" placeholder="输入姓名" maxlength="10"   v-model="water.name">
         </div>
-        <div class="label">
+        <div class="label" v-if="type == 2">
           <span style="float: left;"><span style="font-size: 0.375rem;color:#ff803c;">*</span>身份证号码</span>
           <input type="text" placeholder="输入身份证号码" maxlength="18"   v-model="water.peopleNumber">
         </div>
@@ -184,7 +184,7 @@ export default {
                 water.Drivepic = getCarrAndCompanyInfo.driverLic;
                 water.IDpic = getCarrAndCompanyInfo.idCardPos;
                 water.nvitationodeIC = getCarrAndCompanyInfo.inviteCode;
-                water.peopleNumber = getCarrAndCompanyInfo.idCardNum;
+                water.peopleNumber = getCarrAndCompanyInfo.idCardNum == null ? "" :getCarrAndCompanyInfo.idCardNum ;
               }
             }else{
               androidIos.second(getCarrAndCompanyInfo.message);
@@ -412,6 +412,7 @@ export default {
             }
           }
         }else if(_this.type == 2){
+          debugger
           if(water.nvitationodeIC.length < 4){
             bomb.first("请输入完整的邀请码！");
             return false;

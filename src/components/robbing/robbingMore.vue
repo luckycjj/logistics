@@ -468,16 +468,19 @@
           if (loadSegmentDetail.success == "" || loadSegmentDetail.success == "1") {
             thisThat.type = thisThat.$route.query.type;
             var list=[];
+            var weh = 0;
             for(var i =0;i<loadSegmentDetail.invPackDao.length;i++){
               var listJson = {
                 goodsCode:loadSegmentDetail.invPackDao[i].goodsCode+"-"+loadSegmentDetail.invPackDao[i].goodsType,
                 goods:loadSegmentDetail.invPackDao[i].goodsName+"-"+loadSegmentDetail.invPackDao[i].goodsTypeName,
                 number:loadSegmentDetail.invPackDao[i].num,
-                weight:loadSegmentDetail.invPackDao[i].weight*1,
+                weight:loadSegmentDetail.invPackDao[i].weigthUnit==3?loadSegmentDetail.invPackDao[i].weight*1000:loadSegmentDetail.invPackDao[i].weight*1,
                 volume:loadSegmentDetail.invPackDao[i].volume*1,
               }
+              weh += listJson.weight*1 + weh ;
               list.push(listJson);
             }
+            sessionStorage.setItem("weh",weh/1000);
             var pdlist = [{
               orderType:loadSegmentDetail.trackingStatus==null?"已确认":loadSegmentDetail.trackingStatus,
               evaluate:{

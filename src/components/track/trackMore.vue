@@ -158,9 +158,9 @@
         <button v-else-if="type==8 && endtype == '0'" @click="qianshou(endtype)">交接</button>
         <button v-else-if="type==8 && endtype == '1'" @click="qianshou(endtype)">签收</button>
       </div>
-      <!--<div class="go"  v-else>
+      <div class="go"  v-else>
         <button v-if="type==1" @click="genghuan()">更换车辆</button>
-      </div>-->
+      </div>
     </div>
     <div id="errorAbnormalBox" v-if="errorAbnormalBox">
          <div id="errorAbnormal">
@@ -893,6 +893,7 @@
           if (loadSegmentDetail.success == "" || loadSegmentDetail.success == "1") {
             thisThat.type = thisThat.$route.query.type;
             var list=[];
+            var weh = 0;
             for(var i =0;i<loadSegmentDetail.invPackDao.length;i++){
               var listJson = {
                 goodsCode:loadSegmentDetail.invPackDao[i].goodsCode+"-"+loadSegmentDetail.invPackDao[i].goodsType,
@@ -901,8 +902,10 @@
                 weight:loadSegmentDetail.invPackDao[i].weigthUnit==3?loadSegmentDetail.invPackDao[i].weight*1000:loadSegmentDetail.invPackDao[i].weight*1,
                 volume:loadSegmentDetail.invPackDao[i].volume*1,
               }
+              weh += listJson.weight*1 + weh ;
               list.push(listJson);
             }
+            sessionStorage.setItem("weh",weh/1000);
             var tracking=[];
             for(var i =0 ;i<loadSegmentDetail.tracking.length;i++){
               var trackingJson = {

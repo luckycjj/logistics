@@ -168,11 +168,16 @@
             liDom.innerHTML=str;
             listDom.appendChild(liDom);
             $("#car #dataList li .top").unbind('click').click(function () {
+              var that = $(this);
               if($("#search").find("h5").text() != "取消"){
                 var carNumber = $(this).find(".carnumber").text();
                 var pkcar = $(this).attr("data-pkCar");
                 var cartype = $(this).attr("data-carType");
                 androidIos.addPageList();
+                if(sessionStorage.getItem("weh") != undefined && sessionStorage.getItem("weh")*1 > that.find(".weight span").text()*1){
+                   bomb.first( that.find(".carnumber").text() + "载重量不足,请选择其他车辆");
+                   return false;
+                }
                 _this.$router.push({ path: '/car',query:{title: carNumber,pkCar:pkcar,carType:cartype}});
               }
             })
