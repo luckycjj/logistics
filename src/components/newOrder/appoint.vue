@@ -4,7 +4,7 @@
     <div id="carTitleBox"   @click="event($event)">
       <div class="carTitleBox">
         <div class="carTitleback" @click="goback()"></div>
-        <input placeholder="请输入电话号码" type="tel" id="carNumber" v-model="message" maxlength="11" @focus="aaa()">
+        <input placeholder="请输入承运商(司机)姓名" type="tel" id="carNumber" v-model="message" maxlength="11" @focus="aaa()">
         <p @click="sousuo()">搜索</p>
       </div>
     </div>
@@ -387,8 +387,8 @@
     color:#333;
   }
   #appoint .nav .active{
-    border-bottom: 1px solid #3399FF;
-    color: #3399FF;
+    border-bottom: 22px solid #3399FF!important;
+    color: #3399FF!important;
   }
   #appoint #mescroll{
     margin-top:3px;

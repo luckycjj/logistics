@@ -1,6 +1,6 @@
 <template>
   <div id="chooseStart">
-    <div id="title" v-title data-title="新建地址簿"></div>
+    <div id="title" v-title data-title="地址簿"></div>
     <!--<div class="chooseNormal" @click="gohistroy()">
        选择常用路线
     </div>-->
@@ -108,6 +108,15 @@
            var _this = this;
            if(bomb.hasClass("save","colorful")){
              var pk = _this.$route.query.pk;
+             if(_this.start.phone.length < 11){
+                bomb.first("手机号码不足11位");
+                return false;
+             }
+             var reg = /^1[3|4|5|7|8][0-9]{9}$/;
+             if(!reg.test(_this.start.phone)){
+               bomb.first("手机号码格式不对");
+               return false;
+             }
              if(pk == undefined){
                var json ={
                  addr_name:_this.start.company,
