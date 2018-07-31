@@ -67,7 +67,7 @@
               <h5>{{item.goodsmessage.startTime}} - {{item.goodsmessage.endTime}}</h5>
             </div>
             <div class="peoplemessage">
-              <p><span :class="pick?'colorFull':''" @click="pickMessage('true')">提货方</span><span :class="!pick?'colorFull':''" @click="pickMessage('false')">收货方</span></p>
+              <p><span :class="pick?'colorFull':''" @click="pickMessage('true')">发货方</span><span :class="!pick?'colorFull':''" @click="pickMessage('false')">收货方</span></p>
               <div style="background: white;box-shadow: 0 0.1rem 10px #d8d8d8;position: relative;margin:0.1rem auto 0 auto;border-radius: 0.2rem;">
                 <div class="messageBox" v-if="pick">
                   <h1 style="font-size: 0.38rem; color:#333;font-weight: bold;float: left;margin-left: 4%;margin-top: 0.52rem;">{{item.pickMessage.name}}</h1>

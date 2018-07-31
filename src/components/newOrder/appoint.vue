@@ -4,7 +4,7 @@
     <div id="carTitleBox"   @click="event($event)">
       <div class="carTitleBox">
         <div class="carTitleback" @click="goback()"></div>
-        <input placeholder="请输入信息" id="carNumber" v-model="message" maxlength="8" @focus="aaa()">
+        <input placeholder="请输入电话号码" type="tel" id="carNumber" v-model="message" maxlength="11" @focus="aaa()">
         <p @click="sousuo()">搜索</p>
       </div>
     </div>
