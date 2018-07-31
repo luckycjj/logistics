@@ -184,6 +184,7 @@ export default {
                 water.Drivepic = getCarrAndCompanyInfo.driverLic;
                 water.IDpic = getCarrAndCompanyInfo.idCardPos;
                 water.nvitationodeIC = getCarrAndCompanyInfo.inviteCode;
+                water.peopleNumber = getCarrAndCompanyInfo.idCardNum;
               }
             }else{
               androidIos.second(getCarrAndCompanyInfo.message);
@@ -481,6 +482,7 @@ export default {
         var data = {
           inviteCode:(_this.water.nvitationodeIC).toUpperCase(),
           driverName:water.name,
+          idCardNum:water.peopleNumber,
           driverLic:$("#box3 .h5u_options_hiddenP").text(),
           idCardPos:$("#box2 .h5u_options_hiddenP").text(),
           source :sessionStorage.getItem("source"),
