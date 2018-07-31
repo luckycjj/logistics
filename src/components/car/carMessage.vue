@@ -230,7 +230,7 @@
             success: function (addCar) {
               bomb.addClass("gogogo1","gogogo");
               if(addCar.success=="1"){
-                _this.$cjj("保存成功！");
+                _this.$cjj("保存成功");
                 setTimeout(function () {
                   androidIos.gobackFrom(_this);
                 },500)

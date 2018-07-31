@@ -145,6 +145,34 @@ export default {
       _this.nvitationodeICRevise = _this.$route.query.revise == undefined ? 1 : _this.$route.query.revise ;
       if (_this.$route.query.type != undefined) {
         _this.type = _this.$route.query.type;
+        if(_this.$route.query.type == "2"){
+          $.ajax({
+            type: "POST",
+            url: androidIos.ajaxHttp() + "/driver/getInviteCode",
+            data: JSON.stringify({
+              userCode:sessionStorage.getItem("token"),
+              source:sessionStorage.getItem("source")
+            }),
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            timeout:10000,
+            success: function(getInviteCode){
+              if(getInviteCode.success == "1"){
+                var water = _this.water;
+                water.nvitationodeIC = getInviteCode.inviteCode;
+              }else{
+                androidIos.second(getInviteCode.message);
+              }
+            },
+            complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+              if(status=='timeout'){//超时,status还有success,error等值的情况
+                androidIos.second("当前状况下网络状态差，请检查网络！")
+              }else if(status=="error"){
+                androidIos.errorwife();
+              }
+            }
+          });
+        }
       }else{
         var json = {
            userCode:sessionStorage.getItem("token"),
@@ -373,10 +401,6 @@ export default {
               bomb.first("请输入姓名！");
               return false;
             }
-            if(water.peopleNumber == ""){
-              bomb.first("请输入身份证号码！");
-              return false;
-            }
             if (water.IDpic == "") {
               bomb.first("请上传身份证正面照！");
               return false;
@@ -402,17 +426,12 @@ export default {
               bomb.first("请输入姓名！");
               return false;
             }
-            if(water.peopleNumber == ""){
-              bomb.first("请输入身份证号码！");
-              return false;
-            }
             if (water.IDpic == "") {
               bomb.first("请上传身份证正面照！");
               return false;
             }
           }
         }else if(_this.type == 2){
-          debugger
           if(water.nvitationodeIC.length < 4){
             bomb.first("请输入完整的邀请码！");
             return false;
@@ -620,7 +639,7 @@ a {
   font-size: 0.375rem;
   float: right;
   text-align: right;
-  width: 7rem;
+  width: 6.5rem;
 }
 .imgBox {
   width: 4rem;
