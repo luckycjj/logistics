@@ -8,7 +8,7 @@
       <div id="peopleAddress">
           <div class="right">
             <div class="message  pickmessage">
-              <p>提货方信息</p>
+              <p>发货方信息</p>
               <h1 v-html="both.startAddress.people==''?'提货人姓名、联系电话、提货城市、详细地址':both.startAddress.people + ' ' + both.startAddress.tel + ' ' + both.startAddress.city + ' ' + both.startAddress.address" :class="both.startAddress.people==''?'':'blackColor'" @click="goStartAddress()"></h1>
             </div>
             <div class="borderBottom"></div>
@@ -33,14 +33,14 @@
           <div class="clearBoth"></div>
         </div>
       </div>
-      <div  v-for="(item,index) in both.productList" :id="'goods'+index">
+      <div  v-for="(item,index) in both.productList" :id="'goods'+index" class="goodsLabel">
         <div class="labelTitle" v-if="both.productList.length>1">
           <p v-html="item.goodsType==''?'货物：暂无':'货物：'+item.goodsType">货物{{index+1}}</p>
           <h6 @click="removeList(index)" v-if="pk==''">删除</h6>
           <div class="clearBoth"></div>
         </div>
         <div class="label" :class="both.productList.length>1?'labelTop':''">
-          <div class="lablebox">
+          <div class="lablebox goodsTypeLabel">
             <span class="required">货物类别</span>
             <p v-html="item.goodsType==''?'请选择货物类型':item.goodsType" :class="item.goodsType==''?'':'blackColor'" @click="goodsType(index)" :datatype="item.goodstypenumber"></p>
             <div class="clearBoth"></div>
@@ -50,13 +50,13 @@
             <input type="tel" placeholder="请输入货物件数" v-model="item.number" maxlength="10"/>
             <div class="clearBoth"></div>
           </div>
-          <div class="lablebox imgno">
+          <div class="lablebox">
             <span class="required">货物重量</span>
             <div class="unit" :id="'Z00'+index">{{item.unitWight}}</div>
             <input type="text" placeholder="请输入货物重量" maxlength="10" v-model="item.wight" @keyup="weightKeyup()"/>
             <div class="clearBoth"></div>
           </div>
-          <div class="lablebox borderno imgno">
+          <div class="lablebox borderno">
             <span>货物体积</span>
             <div class="unit" :id="'Z01'+index">{{item.unitWeight}}</div>
             <input type="text" placeholder="请输入货物体积" maxlength="10" v-model="item.weight" @keyup="volumeKeyup()"/>
@@ -96,7 +96,7 @@
           </div>
           <div class="clearBoth"></div>
         </div>
-        <div class="lablebox borderno imgno">
+        <div class="lablebox borderno">
           <span class="required">结算方式</span>
           <div  id="Z02">{{both.payment}}</div>
           <div class="clearBoth"></div>
@@ -227,8 +227,6 @@
               for(var i = 0;i<self.productList.length;i++){
                 if(self.productList[i].number!=""){
                   self.productList[i].number=(self.productList[i].number.toString().match(/\d+(\.\d{0,0})?/)||[''])[0]*1;
-                }else{
-                  self.productList[i].number = 1;
                 }
                 if(self.productList[i].wight!=""){
                   if(self.productList[i].wightTen<1){
@@ -257,7 +255,7 @@
                       }
                     }
                   }
-                  _this.suremend()
+                  _this.suremend();
                 }else{
                   bomb.removeClass("submit","submit");
                 }
@@ -312,7 +310,7 @@
             $.ajax({
               type: "POST",
               url: androidIos.ajaxHttp()+"/order/invoiceDetail",
-              data:JSON.stringify({pk:pk,source:sessionStorage.getItem("source")}),
+              data:JSON.stringify({pk:pk,source:sessionStorage.getItem("source"),userCode:sessionStorage.getItem("token")}),
               contentType: "application/json;charset=utf-8",
               dataType: "json",
               async:false,
@@ -370,6 +368,12 @@
                   initialWeight:_this.both.initialWeight
                 }
                 _this.both = pdlist;
+                _this.$nextTick(function () {
+                  $(".pickmessage h1,.arrmessage h1,#time .lablebox").addClass("imgno");
+                  for(var i = 0 ; i<$(".goodsTypeLabel").length;i++){
+                     $(".goodsTypeLabel").eq(i).addClass("imgno");
+                  }
+                })
               },
               complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
                 if(status=='timeout'){//超时,status还有success,error等值的情况
@@ -457,29 +461,6 @@
               listGood.push(_this.both.productList[i].goodsType)
             }
           }
-         /* if(goodsType.tranpk != "" ){
-            _this.both.trantypenumber = goodsType.tranpk;
-            if(goodsType.tranpk == "a7b6332ad917469b955012aa66380d41"){
-              _this.both.tranType = "零担运输";
-            }else if(goodsType.tranpk == "1fdb6b8cacd143c1927f6bf1add65ddc"){
-              _this.both.tranType = "整批整车";
-            }else if(goodsType.tranpk == "849eed4070fd47a7b48169350e533b6c"){
-              _this.both.tranType = "大型、特型笨重运输";
-            }else if(goodsType.tranpk == "d0e47a9e517b4f328550e46b697efb6a"){
-              _this.both.tranType = "集装箱运输";
-            }else if(goodsType.tranpk == "4b0ba77ac2824a58b12350c7e776f62d"){
-              _this.both.tranType = "快件包车";
-            }else if(goodsType.tranpk == "80eb059492ab466abf53c26346b2c720"){
-              _this.both.tranType = "危险品运输";
-            }else if(goodsType.tranpk == "7a69ab01e72442e4abf18bdd55cfdc6d"){
-              _this.both.tranType = "搬家货物运输";
-            }else if(goodsType.tranpk == "d5c7b3e82ced484884561ecdb9522b7b"){
-              _this.both.tranType = "冷链货物运输";
-            }
-          }else if(listGood.length == 1){
-            _this.both.trantypenumber = "";
-            _this.both.tranType = "";
-          }*/
           sessionStorage.removeItem("goodsType");
         }
         if(tranType!=undefined){
@@ -608,7 +589,7 @@
                   }else{
                     if(inst.settings["0"]==1){
                       if(dateF - (new Date(new Date().getFullYear()+"/"+(new Date().getMonth()+1)+"/"+new Date().getDate()+" "+"00:00:00")).getTime()<=0){
-                        bomb.first("请选择正确时间");
+                        bomb.first("提货时间不能早于当前时间");
                         $("#USER_AGES").val("");
                         $("#USER_AGE").val("");
                         _this.both.timeBeforeF = $("#USER_AGE").val();
@@ -618,14 +599,14 @@
                     }
                     if(inst.settings["0"]==2){
                       if(dateF - new Date(new Date().getFullYear()+"/"+(new Date().getMonth()+1)+"/"+new Date().getDate()+" "+new Date().getHours()+":"+new Date().getMinutes()).getTime()<=0){
-                        bomb.first("请选择正确时间");
+                        bomb.first("提货时间不能早于当前时间");
                         $("#USER_AGE").val("");
                         _this.both.timeBeforeF = $("#USER_AGE").val();
                         return false;
                       }
                     }
                     if(inst.settings["0"]==3||inst.settings["0"]==4){
-                      bomb.first("请选择正确时间");
+                      bomb.first("到货时间不能早于提货时间");
                       $("#USER_AGEFo").val("");
                       $("#USER_AGET").val("");
                       _this.both.timeAfterF = $("#USER_AGET").val();
@@ -1009,11 +990,12 @@
             var _this = this;
             if(bomb.hasClass("submit","submit")){
               var self = _this.both;
+              var w = 0;
+              for(var i = 0;i<self.productList.length;i++) {
+                self.productList[i].number = self.productList[i].number * 1 < 1 ? 1 : Math.ceil(self.productList[i].number);
+                w = w*1 + self.productList[i].wight*self.productList[i].wightTen;
+              }
               if(_this.pk!=""){
-                var w = 0;
-                for(var i = 0;i<self.productList.length;i++) {
-                  w = w*1 + self.productList[i].wight*self.productList[i].wightTen;
-                }
                 if(w - self.initialWeight >= 10 ||self.initialWeight - w >= 10){
                   androidIos.second("吨位修改不得超过10吨");
                   return false;
@@ -1033,7 +1015,39 @@
                _this.messageButtonYes();
               }
             }else{
-              androidIos.firstblack("请填写完整信息");
+              var self = _this.both;
+              if(_this.pk == ""){
+                if(self.startAddress.people == ""){
+                  bomb.first("请选择发货方信息");
+                  return false;
+                }
+                if(self.endAddress.people == "" ){
+                  bomb.first("请选择到货方信息");
+                  return false;
+                }
+                if(self.timeBeforeF == "" || self.timeBeforeS == "" || self.timeAfterF == "" || self.timeAfterS == ""){
+                  bomb.first("请选择提货到货时间");
+                  return false;
+                }
+                for(var i = 0;i<self.productList.length;i++) {
+                  if (self.productList[i].goodsType == ""){
+                    bomb.first("请选择第" + (i+1) + "个货物");
+                    return false;
+                  }
+                  if(self.productList[i].wight*1 == "0"){
+                    bomb.first("请填写第" + (i+1) + "个货物的重量");
+                    return false;
+                  }
+                }
+                if(self.tranType == "" ){
+                  bomb.first("请选择运输类别");
+                  return false;
+                }
+                if(!self.read){
+                  bomb.first("请勾选发货须知");
+                  return false;
+                }
+              }
             }
         },
         messageButtonYes:function(){
