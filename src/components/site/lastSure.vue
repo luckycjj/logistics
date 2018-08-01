@@ -206,9 +206,12 @@
     overflow: scroll;
   }
   #lastSure li{
-    width: 100%;
+    width: 93%;
+    margin: 0 auto 0.2rem auto;
     background: white;
-    margin-bottom: 0.2rem;
+    border-radius: 0.2rem;
+    box-shadow: 0rem 0.1rem 0.4rem #c3c3c3;
+    overflow: hidden;
   }
   #lastSure li .second{
     float: right;

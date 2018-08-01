@@ -655,7 +655,7 @@
                 distance:"0",
                 tranType:invoiceDetail.transType,
                 productList:list,
-                money:16000,
+                money:invoiceDetail.price*1,
                 startTime:invoiceDetail.deliDate,
                 endTime:invoiceDetail.arriDate
               },

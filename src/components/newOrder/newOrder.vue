@@ -654,10 +654,7 @@
                   "region":"吨"
                 },{
                   "code":"0.001",
-                  "region":"公斤"
-                },{
-                  "code":"0.0005",
-                  "region":"斤"
+                  "region":"千克"
                 }]
               });
               unitWight.value = [0];
@@ -939,10 +936,7 @@
                    "region":"吨"
                  },{
                    "code":"0.001",
-                   "region":"公斤"
-                 },{
-                   "code":"0.0005",
-                   "region":"斤"
+                   "region":"千克"
                  }]
                });
                unitWight.value = [0];

@@ -8,8 +8,8 @@
           <p>{{item.name}}</p>
           <h1>{{item.people}}&nbsp;{{item.phone}}</h1>
           <h1>{{item.address}}</h1>
-          <h1>到达时间：{{item.startTime}}</h1>
-          <h1>离开时间：{{item.endTime}}</h1>
+          <h1 v-if="item.startTime != '' ">到达时间：{{item.startTime}}</h1>
+          <h1 v-if="item.endTime != '' ">离开时间：{{item.endTime}}</h1>
         </div>
         <div class="second" @click="chooseTime(index)">
             选择时间
@@ -113,18 +113,18 @@
               for(var i =0;i<_this.listBox.list.length;i++){
                  if(i == 0){
                     if(pick/_this.listBox.list[i].timeF > 1){
-                        androidIos.second("请输入正确时间！");
+                        androidIos.second("请在" + _this.listBox.list[i].name + "站点处选择正确的到达离开时间");
                         return false;
                     }
                  }else{
                     if(_this.listBox.list[i-1].timeS / _this.listBox.list[i].timeF > 1){
-                      androidIos.second("请输入正确时间！");
+                      androidIos.second("请在" + _this.listBox.list[i].name + "站点处选择正确的到达离开时间");
                       return false;
                     }
                  }
                  if(i == (_this.listBox.list.length-1)){
                    if(_this.listBox.list[i].timeS / arrival > 1){
-                     androidIos.second("请输入正确时间！");
+                     androidIos.second("请在" + _this.listBox.list[i].name + "站点处选择正确的到达离开时间");
                      return false;
                    }
                  }
@@ -132,6 +132,13 @@
              androidIos.addPageList();
              sessionStorage.setItem("lastSure",JSON.stringify(_this.listBox.list));
              _this.$router.push({ path: '/site/lastSure'});
+           }else{
+             for(var i=0;i<_this.listBox.list.length;i++) {
+               if(_this.listBox.list[i].startTime==""||_this.listBox.list[i].endTime==""){
+                 bomb.first("请选择" + _this.listBox.list[i].name + "站点的到达离开时间");
+                 break;
+               }
+             }
            }
          }
        }
@@ -157,21 +164,25 @@
     overflow: scroll;
   }
   #editSite li{
-    width: 100%;
+    width: 93%;
+    margin: 0 auto 0.2rem auto;
     background: white;
-    margin-bottom: 0.2rem;
+    border-radius: 0.2rem;
+    box-shadow: 0rem 0.1rem 0.4rem #c3c3c3;
+    overflow: hidden;
   }
   #editSite li .second{
-    float: right;
-    width:2rem;
-    margin: 0.8rem 1rem 0 0;
-    text-align: right;
+    width:100%;
+    text-align: center;
     font-size: 0.35rem;
+    background: #3399FF;
+    line-height: 1rem;
+    color:white;
+    letter-spacing: 2px;
   }
   #editSite .firstBox{
-    width:60%;
+    width:90%;
     padding: 0.3rem 5%;
-    float: left;
   }
   #editSite .firstBox p,#editSite .secondBox p{
     font-size: 0.375rem;
@@ -180,7 +191,7 @@
   }
   #editSite .firstBox h1{
     font-size: 0.3125rem;
-    color:#666;
+    color:#999;
     line-height: 0.6rem;
   }
   #editSite .mescroll{
