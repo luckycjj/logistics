@@ -257,6 +257,9 @@
           if(getDriverPage.success == "1" || getDriverPage.success == ""){
             for(var i = 0 ; i < getDriverPage.list.length ; i++){
               var list = getDriverPage.list[i];
+              if(list.pkDriver == thisThat.$route.query.driverZ ){
+                continue;
+              }
               var pkTrue = false;
               if(list.pkDriver == thisThat.$route.query.driverPk){
                  pkTrue = true;

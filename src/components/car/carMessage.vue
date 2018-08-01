@@ -157,7 +157,13 @@
       changeCarpeople:function(pk,type){
         var _this = this;
         androidIos.addPageList();
-        _this.$router.push({ path: '/car/changeCarpeople',query:{driverPk:pk,driverType:type,carPk:_this.pkCar}});
+        var zhuCarp = "";
+        if(type == 1){
+           zhuCarp = _this.pdlist[0].carMessage.carPeople.carPeoplePk;
+        }else{
+          zhuCarp = _this.pdlist[0].carMessage.carPeopleFu.carPeoplePk;
+        }
+        _this.$router.push({ path: '/car/changeCarpeople',query:{driverPk:pk,driverType:type,carPk:_this.pkCar,driverZ:zhuCarp}});
       },
       sendCar:function(){
         var _this = this;
