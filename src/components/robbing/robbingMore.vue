@@ -96,12 +96,6 @@
         <button>派车</button>
       </div>
     </div>
-    <div id="successBox" v-if="aDGoMessage">
-      <div id="success">
-        <img src="../../images/success.png">
-        <p>抢单成功</p>
-      </div>
-    </div>
     <div id="cancelReasonBox" v-if="cancelReasonBox">
       <div id="cancelReason">
         <div id="cancelReasonTitle">
@@ -140,7 +134,6 @@
         pick:true,
         ordertype:"",
         pdlist:[],
-        aDGoMessage:false,
         imgsetTime:"",
         cancelReasonBox:false,
         cancelReason:[{
@@ -284,9 +277,8 @@
                 $("#common-blackBox").remove();
                 bomb.addClass("gogogo","gogogo");
                 if(grabSingle.success =="" || grabSingle.success == "1"){
-                  _this.aDGoMessage = true;
+                  _this.$cjj("抢单成功");
                   setTimeout(function () {
-                    _this.aDGoMessage = false;
                     androidIos.gobackFrom(_this);
                   },1000)
                 }else{
@@ -337,7 +329,10 @@
                 $("#common-blackBox").remove();
                 bomb.addClass("gogogo2","gogogo");
                 if(grabSingle.success =="" || grabSingle.success == "1"){
-                  androidIos.gobackFrom(_this);
+                  _this.$cjj("接收成功");
+                  setTimeout(function () {
+                    androidIos.gobackFrom(_this);
+                  },500);
                 }else{
                   androidIos.second(grabSingle.message);
                 }
@@ -404,7 +399,10 @@
               bomb.addClass("gogogo1","gogogo");
               $("#common-blackBox").remove();
               if(refuseAppoin.success =="" || refuseAppoin.success == "1"){
-                androidIos.gobackFrom(_this);
+                _this.$cjj("拒绝成功");
+                setTimeout(function () {
+                  androidIos.gobackFrom(_this);
+                },500)
               }else{
                 androidIos.second(refuseAppoin.message);
               }

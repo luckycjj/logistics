@@ -13,12 +13,6 @@
       </li>
     </ul>
     <button  @click="pushChoose()">确认</button>
-    <div id="successBox" v-if="success">
-        <div id="success">
-           <img src="../../images/success.png">
-           <p>拆段成功</p>
-        </div>
-    </div>
   </div>
 </template>
 
@@ -140,9 +134,8 @@
               success: function (demolitionSegment) {
                 $("#common-blackBox").remove();
                  if(demolitionSegment.success == "1" || demolitionSegment.success == ""){
-                   _this.success = true;
+                   _this.$cjj("拆段成功");
                    setTimeout(function () {
-                     _this.success = false;
                      sessionStorage.removeItem("lastSure");
                      sessionStorage.removeItem("siteSure");
                      bridge.invoke('gobackfrom');
@@ -167,35 +160,6 @@
 </script>
 
 <style scoped>
-  #successBox{
-    position: fixed;
-    top:0;
-    left:0;
-    right:0;
-    bottom: 0;
-    width:auto;
-    height: auto;
-    background: rgba(255,255,255,0);
-  }
-  #success{
-    width:22%;
-    position: absolute;
-    top:40%;
-    left:39%;
-    background: rgba(0,0,0,0.5);
-    border-radius: 0.3rem;
-  }
-  #success img{
-    width:35%;
-    display: block;
-    margin:0.3rem auto;
-  }
-  #success p{
-    text-align: center;
-    margin-bottom: 0.3rem;
-    color:white;
-    font-size: 0.35rem;
-  }
   #lastSure ul{
     width:100%;
     margin-top: 0.2rem;

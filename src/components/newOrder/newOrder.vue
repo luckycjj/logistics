@@ -145,12 +145,6 @@
             </div>
           </div>
       </div>
-      <div id="successBox" v-if="newOrderGoMessage">
-        <div id="success">
-          <img src="../../images/success.png">
-          <p>提交成功</p>
-        </div>
-      </div>
     </div>
 </template>
 
@@ -213,7 +207,6 @@
             price:"",
             price123:false,
             newOrderMessageBox:false,
-            newOrderGoMessage:false,
             histroyAddressLength:false,
             suremend: new Debounce(this.ajaxPost, 1000)
           }
@@ -1105,9 +1098,8 @@
                 bomb.addClass("submit","gogogo");
                 if(createOrder.success=="1"){
                   _this.newOrderMessageBox = false;
-                  _this.newOrderGoMessage = true;
+                  _this.$cjj("提交成功");
                   setTimeout(function () {
-                    _this.newOrderGoMessage = false;
                     androidIos.gobackFrom(_this);
                   },1000)
                 }else if(createOrder.success=="-1"){
