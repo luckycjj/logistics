@@ -143,25 +143,83 @@ export default {
       var _this = this;
       //revise 1修改 2不修改
       _this.nvitationodeICRevise = _this.$route.query.revise == undefined ? 1 : _this.$route.query.revise ;
-      if (_this.$route.query.type != undefined) {
-        _this.type = _this.$route.query.type;
-        if(_this.$route.query.type == "2"){
+      bridge.invoke('token','',function(response) {
+        response = JSON.parse(response);
+        sessionStorage.setItem("token",response.userCode);
+        sessionStorage.setItem("source",response.source);
+        if (_this.$route.query.type != undefined) {
+          _this.type = _this.$route.query.type;
+          if(_this.$route.query.type == "2"){
+            $.ajax({
+              type: "POST",
+              url: androidIos.ajaxHttp() + "/driver/getInviteCode",
+              data: JSON.stringify({
+                userCode:sessionStorage.getItem("token"),
+                source:sessionStorage.getItem("source")
+              }),
+              contentType: "application/json;charset=utf-8",
+              dataType: "json",
+              timeout:10000,
+              success: function(getInviteCode){
+                if(getInviteCode.success == "1"){
+                  var water = _this.water;
+                  water.nvitationodeIC = getInviteCode.inviteCode;
+                }else{
+                  androidIos.second(getInviteCode.message);
+                }
+              },
+              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                if(status=='timeout'){//超时,status还有success,error等值的情况
+                  androidIos.second("当前状况下网络状态差，请检查网络！")
+                }else if(status=="error"){
+                  androidIos.errorwife();
+                }
+              }
+            });
+          }
+        }else{
+          var json = {
+            userCode:sessionStorage.getItem("token"),
+            source:sessionStorage.getItem("source")
+          }
+          var http = sessionStorage.getItem("source") == "2" ? "/getCarrAndCompanyInfo" :"/driver/findDriverInfo";
           $.ajax({
             type: "POST",
-            url: androidIos.ajaxHttp() + "/driver/getInviteCode",
-            data: JSON.stringify({
-              userCode:sessionStorage.getItem("token"),
-              source:sessionStorage.getItem("source")
-            }),
+            url: androidIos.ajaxHttp() + http,
+            data: JSON.stringify(json),
             contentType: "application/json;charset=utf-8",
             dataType: "json",
+            async:false,
             timeout:10000,
-            success: function(getInviteCode){
-              if(getInviteCode.success == "1"){
+            success: function(getCarrAndCompanyInfo){
+              if(getCarrAndCompanyInfo.success == "1"){
                 var water = _this.water;
-                water.nvitationodeIC = getInviteCode.inviteCode;
+                if(sessionStorage.getItem("source") == "2"){
+                  _this.type = 1 ;
+                  _this.letterType = getCarrAndCompanyInfo.type == 3 ? 1: 2;
+                  _this.companyType = getCarrAndCompanyInfo.status;
+                  _this.httpurl = getCarrAndCompanyInfo.ftpUrl;
+                  _this.creator = getCarrAndCompanyInfo.isYourSelf == "1" ? 0 : 1 ;
+                  water.bank = getCarrAndCompanyInfo.bank;
+                  water.bankNumber = getCarrAndCompanyInfo.bankAccount;
+                  water.company = getCarrAndCompanyInfo.corpName;
+                  water.name = getCarrAndCompanyInfo.userName;
+                  water.IDpic = getCarrAndCompanyInfo.idCardPos;
+                  water.Licensepic = getCarrAndCompanyInfo.businessLicense;
+                  water.Roadpic = getCarrAndCompanyInfo.roadTransLicense;
+                  water.Drivepic = getCarrAndCompanyInfo.drivingLicence;
+                  water.Travelpic = getCarrAndCompanyInfo.driverLicense;
+                }else{
+                  _this.type = 2;
+                  _this.httpurl = getCarrAndCompanyInfo.ftpUrl;
+                  water.name = getCarrAndCompanyInfo.driverName;
+                  water.Drivepic = getCarrAndCompanyInfo.driverLic;
+                  water.IDpic = getCarrAndCompanyInfo.idCardPos;
+                  water.nvitationodeIC = getCarrAndCompanyInfo.inviteCode;
+                  water.peopleNumber = getCarrAndCompanyInfo.idCardNum == null ? "" :getCarrAndCompanyInfo.idCardNum ;
+                }
               }else{
-                androidIos.second(getInviteCode.message);
+                androidIos.second(getCarrAndCompanyInfo.message);
               }
             },
             complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
@@ -173,60 +231,7 @@ export default {
             }
           });
         }
-      }else{
-        var json = {
-           userCode:sessionStorage.getItem("token"),
-           source:sessionStorage.getItem("source")
-        }
-        var http = sessionStorage.getItem("source") == "2" ? "/getCarrAndCompanyInfo" :"/driver/findDriverInfo";
-        $.ajax({
-          type: "POST",
-          url: androidIos.ajaxHttp() + http,
-          data: JSON.stringify(json),
-          contentType: "application/json;charset=utf-8",
-          dataType: "json",
-          async:false,
-          timeout:10000,
-          success: function(getCarrAndCompanyInfo){
-            if(getCarrAndCompanyInfo.success == "1"){
-              var water = _this.water;
-              if(sessionStorage.getItem("source") == "2"){
-                _this.type = 1 ;
-                _this.letterType = getCarrAndCompanyInfo.type == 3 ? 1: 2;
-                _this.companyType = getCarrAndCompanyInfo.status;
-                _this.httpurl = getCarrAndCompanyInfo.ftpUrl;
-                _this.creator = getCarrAndCompanyInfo.isYourSelf == "1" ? 0 : 1 ;
-                water.bank = getCarrAndCompanyInfo.bank;
-                water.bankNumber = getCarrAndCompanyInfo.bankAccount;
-                water.company = getCarrAndCompanyInfo.corpName;
-                water.name = getCarrAndCompanyInfo.userName;
-                water.IDpic = getCarrAndCompanyInfo.idCardPos;
-                water.Licensepic = getCarrAndCompanyInfo.businessLicense;
-                water.Roadpic = getCarrAndCompanyInfo.roadTransLicense;
-                water.Drivepic = getCarrAndCompanyInfo.drivingLicence;
-                water.Travelpic = getCarrAndCompanyInfo.driverLicense;
-              }else{
-                _this.type = 2;
-                _this.httpurl = getCarrAndCompanyInfo.ftpUrl;
-                water.name = getCarrAndCompanyInfo.driverName;
-                water.Drivepic = getCarrAndCompanyInfo.driverLic;
-                water.IDpic = getCarrAndCompanyInfo.idCardPos;
-                water.nvitationodeIC = getCarrAndCompanyInfo.inviteCode;
-                water.peopleNumber = getCarrAndCompanyInfo.idCardNum == null ? "" :getCarrAndCompanyInfo.idCardNum ;
-              }
-            }else{
-              androidIos.second(getCarrAndCompanyInfo.message);
-            }
-          },
-          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-            if(status=='timeout'){//超时,status还有success,error等值的情况
-              androidIos.second("当前状况下网络状态差，请检查网络！")
-            }else if(status=="error"){
-               androidIos.errorwife();
-            }
-          }
-        });
-      }
+      });
       if (_this.$route.query.letterType != undefined) {
         _this.letterType = _this.$route.query.letterType;
       }

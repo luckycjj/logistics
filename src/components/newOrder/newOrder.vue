@@ -378,38 +378,43 @@
             })
           }
           if(_this.pk == ""){
-            var json = {
-              page:1,
-              size:1,
-              keyword:"",
-              user:sessionStorage.getItem("token"),
-              source:sessionStorage.getItem("source")
-            }
-            var listData=[]
-            $.ajax({
-              type: "POST",
-              url: androidIos.ajaxHttp()+"/order/getHistoryOrder",
-              data:JSON.stringify(json),
-              contentType: "application/json;charset=utf-8",
-              dataType: "json",
-              timeout: 10000,
-              success: function (getHistoryOrder) {
-                if(getHistoryOrder.success="1"){
-                  if(getHistoryOrder.total-1>0){
-                    _this.histroyAddressLength = true;
-                  }
-                }else{
-                  androidIos.second(getHistoryOrder.message)
-                }
-              },
-              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                if(status=='timeout'){//超时,status还有success,error等值的情况
-                  androidIos.second("网络请求超时");
-                }else if(status=='error'){
-                  androidIos.errorwife();
-                }
+            bridge.invoke('token','',function(response) {
+              response = JSON.parse(response);
+              sessionStorage.setItem("token",response.userCode);
+              sessionStorage.setItem("source",response.source);
+              var json = {
+                page:1,
+                size:1,
+                keyword:"",
+                user:sessionStorage.getItem("token"),
+                source:sessionStorage.getItem("source")
               }
-            })
+              var listData=[]
+              $.ajax({
+                type: "POST",
+                url: androidIos.ajaxHttp()+"/order/getHistoryOrder",
+                data:JSON.stringify(json),
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                timeout: 10000,
+                success: function (getHistoryOrder) {
+                  if(getHistoryOrder.success="1"){
+                    if(getHistoryOrder.total-1>0){
+                      _this.histroyAddressLength = true;
+                    }
+                  }else{
+                    androidIos.second(getHistoryOrder.message)
+                  }
+                },
+                complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                  if(status=='timeout'){//超时,status还有success,error等值的情况
+                    androidIos.second("网络请求超时");
+                  }else if(status=='error'){
+                    androidIos.errorwife();
+                  }
+                }
+              })
+            });
           }
           if(newOrder!=undefined){
             newOrder = JSON.parse(newOrder);
