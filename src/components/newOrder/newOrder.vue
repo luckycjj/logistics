@@ -153,6 +153,7 @@
    import {bomb} from "../../js/zujian";
    import "../../js/mobiscroll_date"
    import  "../../js/mobiscroll";
+   import bridge from "../../js/bridge";
    import Debounce from '../../js/Debounce.js'
    export default {
         name: "newOrder",

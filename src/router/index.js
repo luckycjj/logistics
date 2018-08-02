@@ -19,7 +19,6 @@ import  newOrderSi from '@/components/newOrder/goodsType'
 import  newOrderSe from '@/components/newOrder/goods'
 import  newOrderEg from '@/components/newOrder/appoint'
 import  newOrderNi from '@/components/newOrder/insurance'
-import  newOrderTe from '@/components/newOrder/appointMore'
 import  newOrder11 from '@/components/newOrder/addressMessage'
 import  newOrder12 from '@/components/newOrder/needKnow'
 import  robbingF from '@/components/robbing/robbingMore'
@@ -153,7 +152,6 @@ export default new Router({
         {path: 'goods', component: newOrderSe},
         {path: 'appoint', component: newOrderEg},
         {path: 'insurance', component: newOrderNi},
-        {path: 'appointMore', component: newOrderTe},
         {path:"addressMessage",component:newOrder11},
         {path:"needKnow",component:newOrder12}
       ]
