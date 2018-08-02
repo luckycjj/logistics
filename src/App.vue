@@ -37,15 +37,15 @@
     mounted:function () {
       var _this = this;
       _this.title = document.title;
-      /*bridge.invoke('stoploading');
+      bridge.invoke('stoploading');
       bridge.invoke('token','',function(response) {
         response = JSON.parse(response);
         sessionStorage.setItem("token",response.userCode);
         sessionStorage.setItem("source",response.source);
-      });*/
+      });
       //15555555555 18098690941
-     sessionStorage.setItem("token","18098690941");
-     sessionStorage.setItem("source",3);
+     /*sessionStorage.setItem("token","18098690941");
+     sessionStorage.setItem("source",2);*/
     },
     updated: function () {
       var _this = this;

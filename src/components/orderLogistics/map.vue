@@ -12,10 +12,10 @@
     data(){
       return{
         navShow:false,
-        startJ :"",
-        startW : "",
-        endJ :"",
-        endW :"",
+        startJ :sessionStorage.setItem("dataStart") == "" ? "" :sessionStorage.setItem("dataStart").split(",")[0],
+        startW :sessionStorage.setItem("dataStart") == "" ? "" :sessionStorage.setItem("dataStart").split(",")[1],
+        endJ:sessionStorage.setItem("dataEnd") == "" ? "" :sessionStorage.setItem("dataStart").split(",")[0],
+        endW:sessionStorage.setItem("dataEnd") == "" ? "" :sessionStorage.setItem("dataStart").split(",")[1],
         peopleJ:120.40,
         peopleW:30.26,
         setTime:"",
@@ -66,28 +66,7 @@
         });
         if(ordertype!=undefined){
           if(ordertype == '20' || ordertype == '40'){
-            var dataStart = sessionStorage.getItem("dataStart");
-            var dataEnd = sessionStorage.getItem("dataEnd");
-            geocoder(dataStart,1);
-            geocoder(dataEnd,2);
-            //地理编码,返回地理编码结果
-            function geocoder(message,type){
-              var geocoder = new AMap.Geocoder({});
-              geocoder.getLocation(message, function(status, result) {
-                if (status === 'complete' && result.info === 'OK') {
-                  if(type == 1){
-                    _this.startJ = (result.geocodes[0].location.lng).toString();
-                    _this.startW = result.geocodes[0].location.lat.toString();
-                  }else if(type == 2){
-                    _this.endJ = result.geocodes[0].location.lng.toString();
-                    _this.endW = result.geocodes[0].location.lat.toString();
-                  }
-                }
-              });
-            }
-            var ttttt = setInterval(function () {
                 if(_this.startJ!=""&&_this.startW!=""&&_this.endJ!=""&&_this.endW!=""&&_this.peopleJ!=""&&_this.peopleW!=""){
-                   clearInterval(ttttt);
                   var map = new AMap.Map("container", {
                     resizeEnable: true,
                     center: [_this.startJ, _this.startW],//地图中心点
@@ -188,7 +167,6 @@
                     }
                   },30000)
                 }
-            },1000)
           }
         }
       },

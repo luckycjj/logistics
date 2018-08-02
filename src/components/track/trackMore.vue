@@ -310,8 +310,6 @@
           self.logisticsOk = false;
           self.type = curPageData[0].orderType == '10'?1:curPageData[0].orderType == '20'?2:curPageData[0].orderType == '31'?3:curPageData[0].orderType == '32'?4:curPageData[0].orderType == '33'?5:curPageData[0].orderType == '41'?6:curPageData[0].orderType == '42'?7:curPageData[0].orderType == '43'?8:0;
           self.mescroll.endSuccess(curPageData.length);
-          sessionStorage.setItem("dataStart",self.pdlist[0].pickMessage.address);
-          sessionStorage.setItem("dataEnd",self.pdlist[0].endMessage.address);
           sessionStorage.setItem("orderPk",self.$route.query.pk);
           sessionStorage.setItem("dispatchPK",self.$route.query.pk);
           self.$nextTick(function () {
@@ -369,77 +367,58 @@
                   dd = i ;
                 }
                 var ee = i;
-                var dataStart = sessionStorage.getItem("dataStart");
-                var dataEnd = sessionStorage.getItem("dataEnd");
                 var ordertype = _this.carList[dd].ordertype;
                 if(ordertype == '20' || ordertype == '31' || ordertype == '32' || ordertype == '33' || ordertype == '41' ){
-                  geocoder(dataStart,1,cc,dd,ee);
-                  //地理编码,返回地理编码结果
-                  function geocoder(message,type,cc,dd,ee){
-                    var geocoderS = new AMap.Geocoder({});
-                    geocoderS.getLocation(message, function(status, result) {
-                      if (status === 'complete' && result.info === 'OK') {
-                        if(type == 1){
-                          _this.carList[dd].startJ = (result.geocodes[0].location.lng).toString();
-                          _this.carList[dd].startW = result.geocodes[0].location.lat.toString();
-                          geocoder(dataEnd,2,cc,dd,ee);
-                        }else if(type == 2){
-                          _this.carList[dd].endJ = result.geocodes[0].location.lng.toString();
-                          _this.carList[dd].endW = result.geocodes[0].location.lat.toString();
-                          var map = new AMap.Map("container"+cc, {
-                            resizeEnable: true,
-                            center: [_this.carList[dd].startJ, _this.carList[dd].startW],//地图中心点
-                            zoom: 13 //地图显示的缩放级别
-                          });
-                          AMap.plugin(['AMap.ToolBar','AMap.Scale'],
-                            function(){
-                              map.addControl(new AMap.ToolBar());
-                              map.addControl(new AMap.Scale());
-                            });
-                          //构造路线导航类
-                          var driving = new AMap.Driving({
-                            map: map,
-                            panel: "panel"+cc
-                          });
-                          var marker;
-                          var ordertyper = _this.carList[dd].ordertype;
-                          if(ordertyper ==  "33"  || ordertyper == '41'){
-                            var lnglat = new AMap.LngLat(_this.carList[dd].endJ, _this.carList[dd].endW);
-                            _this.compareDistanc(lnglat,dd);
-                            driving.search([_this.carList[dd].startJ, _this.carList[dd].startW], [_this.carList[dd].endJ, _this.carList[dd].endW], function(status, result) {
-                              var sss = setInterval(function () {
-                                if($(".amap-lib-marker-to").length>0){
-                                  clearInterval(sss);
-                                  $("#container"+cc).find(".amap-lib-marker-to").addClass("amaplibmarkerto");
-                                  $("#container"+cc).find(".amap-lib-marker-from").addClass("amaplibmarkerfrom");
-                                }
-                              },100)
-                            });
-                            if (marker) {
-                              marker.setMap(null);
-                              marker = null;
-                            }
-                            marker = new AMap.Marker({
-                              icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACYAAAA8CAMAAAA9rjhhAAAAk1BMVEUAAABCkf9ClvxCl/xCl/xCl/1ClvxCl/1Dlf9Emv9ClvxCl/xCl/1ClvxBl/tCl/9Cl/xDlvxDlv1Dl/1Cl/xDk/9DlvxDlv1DlvxDl/tDl/tDl/xCl/1Cl/1Dlv1Bl/xGmf9CmP9Alv9Dl/3////s8/+30v6Svv6rzP6Ftv7N4P5np/1Wn/32+f/i7f/Y5v52r/3nvH34AAAAI3RSTlMABPri6rrxghkKyv6fW00yY9ysiW8T1bRUR0DRwKWTdCgmD7Pu0p0AAAGHSURBVEjHjdVXdsIwFEXRK1nujRYIaZQHmJI2/9GFgHB7luz9pY+zbBUXNASjJFJSqigZBTBZLmIqxYsluuRv1PKWs0j4khjpCzRsXerkblHzFJFB9ISSqCreVfdNyCKBlpJVqiem7Jl3n94H9fjAVaA37HJoO+pMBgB8uit2bXvSfAAOGVSZA+TUn1GO1ZBshYkenfYNx0Y2weuQ7BVqyE0V5JBMwivHl6L0ybJxOT7sSkUrc+DWsmNxc2aZC7+WFXrAMh8vQ7IXCK8/8wTwXmXnw813O3sHkPWvNAMgVN/2KoGraV82xb9NzIrTdYbn3Y/+6Gxw4/Jsd/X1SzcL3C2J0QerN02bk0WEh5Ete8aDcMzVWKA0M2czVEJlqlSImpntYpXQMDsnhGZd7AhNYmxfpvWTmaJNzHk1B5fxLAPHHxQXXfK4WcU5OP57SNAt8OqVF8DAr2c+uOrI+DFxzx1Po3VTXNis5b2Sa1hNqzfYJnSM8+dHm6HXhGiCfoHnBRggTcH8AUtJx3fNHCAxAAAAAElFTkSuQmCC",
-                              position: [_this.carList[dd].peopleJ, _this.carList[dd].peopleW]
-                            });
-                            marker.setMap(map);
-                          }else{
-                            var lnglat = new AMap.LngLat(_this.carList[dd].startJ, _this.carList[dd].startW);
-                            _this.compareDistanc(lnglat,dd);
-                            driving.search([_this.carList[dd].peopleJ, _this.carList[dd].peopleW],[_this.carList[dd].startJ, _this.carList[dd].startW], function(status, result) {
-                              var sss = setInterval(function () {
-                                if($(".amap-lib-marker-to").length>0){
-                                  clearInterval(sss);
-                                  $("#container"+cc).find(".amap-lib-marker-to").addClass("amaplibmarkertos");
-                                  $("#container"+cc).find(".amap-lib-marker-from").addClass("amaplibmarkerfroms");
-                                }
-                              },100)
-
-                            });
-                          }
+                  var map = new AMap.Map("container"+cc, {
+                    resizeEnable: true,
+                    center: [_this.carList[dd].startJ, _this.carList[dd].startW],//地图中心点
+                    zoom: 13 //地图显示的缩放级别
+                  });
+                  AMap.plugin(['AMap.ToolBar','AMap.Scale'],
+                    function(){
+                      map.addControl(new AMap.ToolBar());
+                      map.addControl(new AMap.Scale());
+                    });
+                  //构造路线导航类
+                  var driving = new AMap.Driving({
+                    map: map,
+                    panel: "panel"+cc
+                  });
+                  var marker;
+                  var ordertyper = _this.carList[dd].ordertype;
+                  if(ordertyper ==  "33"  || ordertyper == '41'){
+                    var lnglat = new AMap.LngLat(_this.carList[dd].endJ, _this.carList[dd].endW);
+                    _this.compareDistanc(lnglat,dd);
+                    driving.search([_this.carList[dd].startJ, _this.carList[dd].startW], [_this.carList[dd].endJ, _this.carList[dd].endW], function(status, result) {
+                      var sss = setInterval(function () {
+                        if($(".amap-lib-marker-to").length>0){
+                          clearInterval(sss);
+                          $("#container"+cc).find(".amap-lib-marker-to").addClass("amaplibmarkerto");
+                          $("#container"+cc).find(".amap-lib-marker-from").addClass("amaplibmarkerfrom");
                         }
-                      }
+                      },100)
+                    });
+                    if (marker) {
+                      marker.setMap(null);
+                      marker = null;
+                    }
+                    marker = new AMap.Marker({
+                      icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACYAAAA8CAMAAAA9rjhhAAAAk1BMVEUAAABCkf9ClvxCl/xCl/xCl/1ClvxCl/1Dlf9Emv9ClvxCl/xCl/1ClvxBl/tCl/9Cl/xDlvxDlv1Dl/1Cl/xDk/9DlvxDlv1DlvxDl/tDl/tDl/xCl/1Cl/1Dlv1Bl/xGmf9CmP9Alv9Dl/3////s8/+30v6Svv6rzP6Ftv7N4P5np/1Wn/32+f/i7f/Y5v52r/3nvH34AAAAI3RSTlMABPri6rrxghkKyv6fW00yY9ysiW8T1bRUR0DRwKWTdCgmD7Pu0p0AAAGHSURBVEjHjdVXdsIwFEXRK1nujRYIaZQHmJI2/9GFgHB7luz9pY+zbBUXNASjJFJSqigZBTBZLmIqxYsluuRv1PKWs0j4khjpCzRsXerkblHzFJFB9ISSqCreVfdNyCKBlpJVqiem7Jl3n94H9fjAVaA37HJoO+pMBgB8uit2bXvSfAAOGVSZA+TUn1GO1ZBshYkenfYNx0Y2weuQ7BVqyE0V5JBMwivHl6L0ybJxOT7sSkUrc+DWsmNxc2aZC7+WFXrAMh8vQ7IXCK8/8wTwXmXnw813O3sHkPWvNAMgVN/2KoGraV82xb9NzIrTdYbn3Y/+6Gxw4/Jsd/X1SzcL3C2J0QerN02bk0WEh5Ete8aDcMzVWKA0M2czVEJlqlSImpntYpXQMDsnhGZd7AhNYmxfpvWTmaJNzHk1B5fxLAPHHxQXXfK4WcU5OP57SNAt8OqVF8DAr2c+uOrI+DFxzx1Po3VTXNis5b2Sa1hNqzfYJnSM8+dHm6HXhGiCfoHnBRggTcH8AUtJx3fNHCAxAAAAAElFTkSuQmCC",
+                      position: [_this.carList[dd].peopleJ, _this.carList[dd].peopleW]
+                    });
+                    marker.setMap(map);
+                  }else{
+                    var lnglat = new AMap.LngLat(_this.carList[dd].startJ, _this.carList[dd].startW);
+                    _this.compareDistanc(lnglat,dd);
+                    driving.search([_this.carList[dd].peopleJ, _this.carList[dd].peopleW],[_this.carList[dd].startJ, _this.carList[dd].startW], function(status, result) {
+                      var sss = setInterval(function () {
+                        if($(".amap-lib-marker-to").length>0){
+                          clearInterval(sss);
+                          $("#container"+cc).find(".amap-lib-marker-to").addClass("amaplibmarkertos");
+                          $("#container"+cc).find(".amap-lib-marker-from").addClass("amaplibmarkerfroms");
+                        }
+                      },100)
+
                     });
                   }
                 }
@@ -915,6 +894,8 @@
               tracking.push(trackingJson);
             }
             thisThat.endtype = loadSegmentDetail.type == undefined ? "0" : "1";
+            sessionStorage.setItem("dataStart",loadSegmentDetail.delivery.addressLatAndLon);
+            sessionStorage.setItem("dataEnd",loadSegmentDetail.arrival.addressLatAndLon);
             var pdlist = [{
               orderType:loadSegmentDetail.trackingStatusValue,
               orderValue:loadSegmentDetail.trackingStatus == null ? "已确认" : loadSegmentDetail.trackingStatus,
@@ -970,10 +951,10 @@
                 name:loadSegmentDetail.driverDto[i].driverName,
                 year:loadSegmentDetail.driverDto[i].driverAge*1 < 1 ? "小于1" : loadSegmentDetail.driverDto[i].driverAge,
                 tel:loadSegmentDetail.driverDto[i].mobile,
-                startJ :"",
-                startW : "",
-                endJ :"",
-                endW :"",
+                startJ :loadSegmentDetail.delivery.addressLatAndLon == "" ? "" :loadSegmentDetail.delivery.addressLatAndLon.split(",")[0],
+                startW : loadSegmentDetail.delivery.addressLatAndLon == "" ? "" :loadSegmentDetail.delivery.addressLatAndLon.split(",")[1],
+                endJ:loadSegmentDetail.arrival.addressLatAndLon == "" ? "" :loadSegmentDetail.arrival.addressLatAndLon.split(",")[0],
+                endW:loadSegmentDetail.arrival.addressLatAndLon == "" ? "" :loadSegmentDetail.arrival.addressLatAndLon.split(",")[1],
                 pkDriver:loadSegmentDetail.driverDto[i].pkDriver,
                 peopleJ:loadSegmentDetail.driverDto[i].driverPosition.split(",")[0],
                 peopleW:loadSegmentDetail.driverDto[i].driverPosition.split(",")[1],

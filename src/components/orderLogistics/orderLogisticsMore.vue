@@ -266,8 +266,6 @@
           self.type = curPageData[0].orderType;
           self.mescroll.endSuccess(curPageData.length);
           sessionStorage.setItem("orderType",self.pdlist[0].orderType);
-          sessionStorage.setItem("dataStart",self.pdlist[0].pickMessage.address);
-          sessionStorage.setItem("dataEnd",self.pdlist[0].endMessage.address);
           sessionStorage.setItem("orderPk",self.$route.query.pk);
           self.$nextTick(function () {
             if(curPageData[0].orderType>3){
@@ -642,6 +640,8 @@
                 trackingStatusValue = 10000;
               }
             }
+            sessionStorage.setItem("dataStart",invoiceDetail.delivery.addressLatAndLon);
+            sessionStorage.setItem("dataEnd",invoiceDetail.arrival.addressLatAndLon);
             var pdlist = [{
               orderType:trackingStatusValue,
               orderTypeName:invoiceDetail.trackingStatus,

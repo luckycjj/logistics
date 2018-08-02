@@ -235,8 +235,6 @@
           self.pick = true;
           self.mescroll.endSuccess(curPageData.length);
           self.orderType = self.pdlist[0].orderType;
-          sessionStorage.setItem("dataStart",self.pdlist[0].pickMessage.address);
-          sessionStorage.setItem("dataEnd",self.pdlist[0].endMessage.address);
           self.$nextTick(function () {
             if (self.type != 3) {
               $("#site").hide();
@@ -479,6 +477,8 @@
               list.push(listJson);
             }
             sessionStorage.setItem("weh",weh/1000);
+            sessionStorage.setItem("dataStart",loadSegmentDetail.delivery.addressLatAndLon);
+            sessionStorage.setItem("dataEnd",loadSegmentDetail.arrival.addressLatAndLon);
             var pdlist = [{
               orderType:loadSegmentDetail.trackingStatus==null?"已确认":loadSegmentDetail.trackingStatus,
               evaluate:{

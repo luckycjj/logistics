@@ -12,8 +12,10 @@
     data(){
       return{
         navShow:false,
-        startJ :"",
-        startW : "",
+        startJ :sessionStorage.setItem("dataStart") == "" ? "" :sessionStorage.setItem("dataStart").split(",")[0],
+        startW :sessionStorage.setItem("dataStart") == "" ? "" :sessionStorage.setItem("dataStart").split(",")[1],
+        endJ:sessionStorage.setItem("dataEnd") == "" ? "" :sessionStorage.setItem("dataStart").split(",")[0],
+        endW:sessionStorage.setItem("dataEnd") == "" ? "" :sessionStorage.setItem("dataStart").split(",")[1],
         peopleJ:120.40,
         peopleW:30.26,
         setTimeSS:"",
@@ -61,99 +63,77 @@
             }
           }
         });
-        var dataStart = sessionStorage.getItem("dataStart");
-        var dataEnd = sessionStorage.getItem("dataEnd");
-        geocoder(dataStart,1);
-        geocoder(dataEnd,2);
-        //地理编码,返回地理编码结果
-        function geocoder(message,type){
-          var geocoder = new AMap.Geocoder({});
-          geocoder.getLocation(message, function(status, result) {
-            if (status === 'complete' && result.info === 'OK') {
-              if(type == 1){
-                _this.startJ = (result.geocodes[0].location.lng).toString();
-                _this.startW = result.geocodes[0].location.lat.toString();
-              }else if(type == 2){
-                _this.endJ = result.geocodes[0].location.lng.toString();
-                _this.endW = result.geocodes[0].location.lat.toString();
-              }
-            }
+        if(_this.startJ!=""&&_this.startW!=""&&_this.peopleJ!=""&&_this.peopleW!=""){
+          var map = new AMap.Map("container", {
+            resizeEnable: true,
+            center: [_this.startJ, _this.startW],//地图中心点
+            zoom: 13 //地图显示的缩放级别
           });
-        }
-        var ttttt = setInterval(function () {
-          if(_this.startJ!=""&&_this.startW!=""&&_this.peopleJ!=""&&_this.peopleW!=""){
-            clearInterval(ttttt);
-            var map = new AMap.Map("container", {
-              resizeEnable: true,
-              center: [_this.startJ, _this.startW],//地图中心点
-              zoom: 13 //地图显示的缩放级别
+          AMap.plugin(['AMap.ToolBar','AMap.Scale'],
+            function(){
+              map.addControl(new AMap.ToolBar());
+              map.addControl(new AMap.Scale());
             });
-            AMap.plugin(['AMap.ToolBar','AMap.Scale'],
-              function(){
-                map.addControl(new AMap.ToolBar());
-                map.addControl(new AMap.Scale());
-              });
-            //构造路线导航类
-            var driving = new AMap.Driving({
-              map: map,
-              panel: "panel"
-            });
-            var marker;
-            driving.search([_this.peopleJ, _this.peopleW],[_this.startJ, _this.startW], function(status, result) {
-              $("#carMessageBox .km").text("相距"+$(".planTitle p").text().split("公里")[0].split("(")[1] +"km");
-              var sss = setInterval(function () {
-                if($(".amap-lib-marker-to").length>0){
-                  clearInterval(sss);
-                  $(".amap-lib-marker-to").addClass("amaplibmarkertos");
-                  $(".amap-lib-marker-from").addClass("amaplibmarkerfroms");
-                }
-              },100)
+          //构造路线导航类
+          var driving = new AMap.Driving({
+            map: map,
+            panel: "panel"
+          });
+          var marker;
+          driving.search([_this.peopleJ, _this.peopleW],[_this.startJ, _this.startW], function(status, result) {
+            $("#carMessageBox .km").text("相距"+$(".planTitle p").text().split("公里")[0].split("(")[1] +"km");
+            var sss = setInterval(function () {
+              if($(".amap-lib-marker-to").length>0){
+                clearInterval(sss);
+                $(".amap-lib-marker-to").addClass("amaplibmarkertos");
+                $(".amap-lib-marker-from").addClass("amaplibmarkerfroms");
+              }
+            },100)
 
-            });
-            var http = window.location.href;
-            if(http.indexOf("/car/map")!=-1){
-              _this.navShow = true;
-              $("#carBox .amap-zoomcontrol").show();
-            }
-            _this.setTimeSS = setInterval(function () {
-              $.ajax({
-                type: "POST",
-                url: androidIos.ajaxHttp()+"/order/getLocation",
-                data:JSON.stringify(_this.json),
-                dataType: "json",
-                contentType: "application/json;charset=utf-8",
-                async:false,
-                timeout: 10000,
-                success: function (getLocation) {
-                  if(getLocation.success == "1"){
-                    _this.peopleJ = getLocation.errorCode == "" ? "12" : getLocation.errorCode.split(",")[0];
-                    _this.peopleW = getLocation.errorCode == "" ? "3" : getLocation.errorCode.split(",")[1];
-                  }else{
-                    androidIos.second(getLocation.message);
-                  }
-                },
-                complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                  _this.cancelReasonBox = false;
-                  if(status=='timeout'){//超时,status还有success,error等值的情况
-                    androidIos.second("网络请求超时");
-                  }else if(status=='error'){
-                    androidIos.errorwife();
-                  }
-                }
-              });
-                driving.search([_this.peopleJ,_this.peopleW],[_this.startJ, _this.startW], function(status, result) {
-                  $("#carMessageBox .km").text("相距"+$(".planTitle p").text().split("公里")[0].split("(")[1] +"km");
-                  var sss = setInterval(function () {
-                    if($(".amap-lib-marker-to").length>0){
-                      clearInterval(sss);
-                      $(".amap-lib-marker-to").addClass("amaplibmarkertos");
-                      $(".amap-lib-marker-from").addClass("amaplibmarkerfroms");
-                    }
-                  },100)
-                });
-            },20000)
+          });
+          var http = window.location.href;
+          if(http.indexOf("/car/map")!=-1){
+            _this.navShow = true;
+            $("#carBox .amap-zoomcontrol").show();
           }
-        },1000)
+          _this.setTimeSS = setInterval(function () {
+            $.ajax({
+              type: "POST",
+              url: androidIos.ajaxHttp()+"/order/getLocation",
+              data:JSON.stringify(_this.json),
+              dataType: "json",
+              contentType: "application/json;charset=utf-8",
+              async:false,
+              timeout: 10000,
+              success: function (getLocation) {
+                if(getLocation.success == "1"){
+                  _this.peopleJ = getLocation.errorCode == "" ? "12" : getLocation.errorCode.split(",")[0];
+                  _this.peopleW = getLocation.errorCode == "" ? "3" : getLocation.errorCode.split(",")[1];
+                }else{
+                  androidIos.second(getLocation.message);
+                }
+              },
+              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                _this.cancelReasonBox = false;
+                if(status=='timeout'){//超时,status还有success,error等值的情况
+                  androidIos.second("网络请求超时");
+                }else if(status=='error'){
+                  androidIos.errorwife();
+                }
+              }
+            });
+              driving.search([_this.peopleJ,_this.peopleW],[_this.startJ, _this.startW], function(status, result) {
+                $("#carMessageBox .km").text("相距"+$(".planTitle p").text().split("公里")[0].split("(")[1] +"km");
+                var sss = setInterval(function () {
+                  if($(".amap-lib-marker-to").length>0){
+                    clearInterval(sss);
+                    $(".amap-lib-marker-to").addClass("amaplibmarkertos");
+                    $(".amap-lib-marker-from").addClass("amaplibmarkerfroms");
+                  }
+                },100)
+              });
+          },20000)
+        }
       },
       lnglat:function(lnglat){
         var _this = this;
