@@ -12,10 +12,10 @@
     data(){
       return{
         navShow:false,
-        startJ :sessionStorage.setItem("dataStart") == "" ? "" :sessionStorage.setItem("dataStart").split(",")[0],
-        startW :sessionStorage.setItem("dataStart") == "" ? "" :sessionStorage.setItem("dataStart").split(",")[1],
-        endJ:sessionStorage.setItem("dataEnd") == "" ? "" :sessionStorage.setItem("dataStart").split(",")[0],
-        endW:sessionStorage.setItem("dataEnd") == "" ? "" :sessionStorage.setItem("dataStart").split(",")[1],
+        startJ :sessionStorage.getItem("dataStart") == "" ? "" :sessionStorage.getItem("dataStart").split(",")[0],
+        startW :sessionStorage.getItem("dataStart") == "" ? "" :sessionStorage.getItem("dataStart").split(",")[1],
+        endJ:sessionStorage.getItem("dataEnd") == "" ? "" :sessionStorage.getItem("dataStart").split(",")[0],
+        endW:sessionStorage.getItem("dataEnd") == "" ? "" :sessionStorage.getItem("dataStart").split(",")[1],
         peopleJ:120.40,
         peopleW:30.26,
         setTime:"",

@@ -12,10 +12,10 @@
     data(){
       return{
         navShow:false,
-        startJ :sessionStorage.setItem("dataStart") == "" ? "" :sessionStorage.setItem("dataStart").split(",")[0],
-        startW :sessionStorage.setItem("dataStart") == "" ? "" :sessionStorage.setItem("dataStart").split(",")[1],
-        endJ:sessionStorage.setItem("dataEnd") == "" ? "" :sessionStorage.setItem("dataStart").split(",")[0],
-        endW:sessionStorage.setItem("dataEnd") == "" ? "" :sessionStorage.setItem("dataStart").split(",")[1],
+        startJ :sessionStorage.getItem("dataStart") == "" ? "" :sessionStorage.getItem("dataStart").split(",")[0],
+        startW :sessionStorage.getItem("dataStart") == "" ? "" :sessionStorage.getItem("dataStart").split(",")[1],
+        endJ:sessionStorage.getItem("dataEnd") == "" ? "" :sessionStorage.getItem("dataStart").split(",")[0],
+        endW:sessionStorage.getItem("dataEnd") == "" ? "" :sessionStorage.getItem("dataStart").split(",")[1],
         peopleJ:120.40,
         peopleW:30.26,
         setTimeSS:"",
@@ -28,6 +28,7 @@
     },
     mounted: function () {
       var _this = this;
+      console.log(_this.json)
       var http = window.location.href;
       if(http.indexOf("/car/map")!=-1){
         _this.navShow = true;
@@ -38,6 +39,7 @@
     methods: {
       init: function () {
         var _this = this;
+        console.log(JSON.stringify(_this.json))
         $.ajax({
           type: "POST",
           url: androidIos.ajaxHttp()+"/order/getLocation",

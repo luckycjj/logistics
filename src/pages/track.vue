@@ -90,25 +90,25 @@
       background-image:none;
     }
   }
-  .amap-lib-marker-from {
+  #track .amap-lib-marker-from {
     background-image:none;
   }
-  .amap-lib-marker-to{
+  #track .amap-lib-marker-to{
     background-image: none;
   }
-  .amaplibmarkerto{
+  #track .amaplibmarkerto{
     background-image: url("../images/end.png")!important;
     background-size:cover!important;
   }
-  .amaplibmarkerfrom{
+  #track .amaplibmarkerfrom{
     background-image: url("../images/start.png")!important;
     background-size:cover!important;
   }
-  .amaplibmarkertos{
+  #track .amaplibmarkertos{
     background-image: url("../images/end1.png")!important;
     background-size:cover!important;
   }
-  .amaplibmarkerfroms{
+  #track .amaplibmarkerfroms{
     background-image: url("../images/start1.png")!important;
     background-size:cover!important;
   }

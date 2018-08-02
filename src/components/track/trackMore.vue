@@ -389,15 +389,7 @@
                   if(ordertyper ==  "33"  || ordertyper == '41'){
                     var lnglat = new AMap.LngLat(_this.carList[dd].endJ, _this.carList[dd].endW);
                     _this.compareDistanc(lnglat,dd);
-                    driving.search([_this.carList[dd].startJ, _this.carList[dd].startW], [_this.carList[dd].endJ, _this.carList[dd].endW], function(status, result) {
-                      var sss = setInterval(function () {
-                        if($(".amap-lib-marker-to").length>0){
-                          clearInterval(sss);
-                          $("#container"+cc).find(".amap-lib-marker-to").addClass("amaplibmarkerto");
-                          $("#container"+cc).find(".amap-lib-marker-from").addClass("amaplibmarkerfrom");
-                        }
-                      },100)
-                    });
+                    driving.search([_this.carList[dd].startJ, _this.carList[dd].startW], [_this.carList[dd].endJ, _this.carList[dd].endW], function(status, result) {});
                     if (marker) {
                       marker.setMap(null);
                       marker = null;
@@ -410,19 +402,37 @@
                   }else{
                     var lnglat = new AMap.LngLat(_this.carList[dd].startJ, _this.carList[dd].startW);
                     _this.compareDistanc(lnglat,dd);
-                    driving.search([_this.carList[dd].peopleJ, _this.carList[dd].peopleW],[_this.carList[dd].startJ, _this.carList[dd].startW], function(status, result) {
-                      var sss = setInterval(function () {
-                        if($(".amap-lib-marker-to").length>0){
-                          clearInterval(sss);
-                          $("#container"+cc).find(".amap-lib-marker-to").addClass("amaplibmarkertos");
-                          $("#container"+cc).find(".amap-lib-marker-from").addClass("amaplibmarkerfroms");
-                        }
-                      },100)
-
-                    });
+                    driving.search([_this.carList[dd].peopleJ, _this.carList[dd].peopleW],[_this.carList[dd].startJ, _this.carList[dd].startW], function(status, result) {});
                   }
                 }
               }
+              var sss = setInterval(function () {
+                if(self.carList.length == 1 || (self.carList.length>1&&$(".amap-lib-marker-to").length - 2  == self.carList.length) ){
+                  clearInterval(sss);
+                 for(var i = 0 ;i < $(".amap-lib-marker-to").length ;i++){
+                   var dd = 0;
+                   if( self.carList.length > 1 ){
+                     if(i == 0){
+                       dd = self.carList.length - 1;
+                     }else if(i == ($(".sw-slides li").length -1)){
+                       dd = 0 ;
+                     }else{
+                       dd = i -1;
+                     }
+                   }else{
+                     dd = i ;
+                   }
+                   var ordertype = _this.carList[dd].ordertype;
+                   if(ordertype == '20' || ordertype == '31' || ordertype == '32' || ordertype == '33' || ordertype == '41' ){
+                     $(".amap-lib-marker-to").eq(i).addClass("amaplibmarkertos");
+                     $(".amap-lib-marker-from").eq(i).addClass("amaplibmarkerfroms");
+                   }else{
+                     $(".amap-lib-marker-to").eq(i).addClass("amaplibmarkerto");
+                     $(".amap-lib-marker-from").eq(i).addClass("amaplibmarkerfrom");
+                   }
+                 }
+                }
+              },100)
             }
           });
         }, function() {
@@ -962,7 +972,7 @@
                 price:loadSegmentDetail.driverDto[i].score*1,
                 length:"",
               }
-              thisThat.carList.push(json);
+                thisThat.carList.push(json);
             }
             var data=pdlist;
             var listData=data;//模拟分页数据
