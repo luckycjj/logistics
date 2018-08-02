@@ -38,9 +38,9 @@ var androidIos = {
     //陈满
     /*var http = 'http://10.10.10.222:8085';*/
     //李雷
-    var http = 'http://10.10.10.217:8085';
+   /* var http = 'http://10.10.10.217:8085';*/
     //服务器
-    /*var http = 'http://222.73.159.76:8085';*/
+    var http = 'http://222.73.159.76:8085';
     return http;
   },
   addPageList: function () {
