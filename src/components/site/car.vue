@@ -5,15 +5,11 @@
       <p class="active" i="0">自营车辆</p>
       <p i="1">社会车辆</p>
     </div>
-    <!--<div id="mescroll" class="mescroll" :style="{bottom:listType==0?'1.2rem':'0'}" :class="orderPk==''?'mesrollTop':''">
-      <ul id="dataList" class="data-list">
-      </ul>
-    </div>-->
-    <div id="mescroll" class="mescroll"  :class="orderPk==''?'mesrollTop':''">
+    <div id="mescroll" class="mescroll" :style="{ bottom : listType == 0  && orderPk == '' ? '1.2rem' : '0' }" :class="orderPk==''?'mesrollTop':''">
       <ul id="dataList" class="data-list">
       </ul>
     </div>
-    <!--<button id="newCar" @click="newCar()" v-if="listType == '0'">新增车辆</button>-->
+    <button id="newCar" @click="newCar()" v-if="listType == '0' && orderPk == ''">新增车辆</button>
     <div id="filterBox" v-if="show" @click="filterBoxBlackFalse($event)">
        <div id="filter">
          <div style="position: absolute;top:0;bottom:1.2rem;width:100%;height: auto;overflow: scroll;">
@@ -146,10 +142,10 @@
           var listDom=document.getElementById("dataList");
           for (var i = 0; i < curPageData.length; i++) {
             var pd=curPageData[i];
-            var type = pd.type == 2 ? '运输中' : '空闲中';
-            type = _this.orderPk =="" ? "" :'<span class="nowtype">'+type+'</span>';
+            var type =_this.orderPk =="" ? ( pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回': '已审核'):( pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : (pd.type == 2 ? '运输中' : '空闲中'));
+            type = '<span class="nowtype">'+type+'</span>';
             var display = $("#search").find("h5").text() == "取消" ? "block":"none";
-            var img = _this.orderPk =="" && pd.carType == '0'?"<div class='clearImg' style='display: "+display+"'></div><div class='reaseImg' style='display: "+display+"'></div>":"";
+            var img = _this.orderPk =="" && pd.carType == '0' && (pd.now == '0' || pd.now == '2')?"<div class='clearImg' style='display: "+display+"'></div><div class='reaseImg' style='display: "+display+"'></div>":_this.orderPk =="" && pd.carType == '0' && pd.now == '1'  ? "<div class='clearImg' style='right:0.6rem;display: " + display + "'></div>" : "";
             var str = '<div class="top" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
                        '<span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span>'+type+'<div class="clearBoth"></div>'+
                        '<span class="weight">满载：<span style="font-size: 0.35rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span>'+
@@ -169,6 +165,7 @@
               str+='</div>';
             }
             var liDom=document.createElement("li");
+            liDom.dataset.nowtype = pd.now;
             liDom.innerHTML=str;
             listDom.appendChild(liDom);
             $("#car #dataList li .top").unbind('click').click(function () {
@@ -177,11 +174,19 @@
                 var carNumber = $(this).find(".carnumber").text();
                 var pkcar = $(this).attr("data-pkCar");
                 var cartype = $(this).attr("data-carType");
-                androidIos.addPageList();
+                if(that.parents("li").attr("data-nowtype") == '0' && _this.orderPk != ''){
+                  bomb.first( that.find(".carnumber").text() + "正在审核无法派车");
+                  return false;
+                }
+                if(that.parents("li").attr("data-nowtype") == '2' && _this.orderPk != ''){
+                  bomb.first( that.find(".carnumber").text() + "已被驳回无法派车");
+                  return false;
+                }
                 if(sessionStorage.getItem("weh") != undefined && sessionStorage.getItem("weh")*1 > that.find(".weight span").text()*1){
                    bomb.first( that.find(".carnumber").text() + "载重量不足,请选择其他车辆");
                    return false;
                 }
+                androidIos.addPageList();
                 _this.$router.push({ path: '/car',query:{title: carNumber,pkCar:pkcar,carType:cartype}});
               }
             })
@@ -342,7 +347,8 @@
                           zongweight:tt.loadWeight*1,
                           nowweight:tt.weight*1,
                           type:tt.weight*1 > 0 ? 2 :1,
-                          carType:pdType
+                          carType:pdType,
+                          now:pdType == 0  && i % 3 == 0 ? 0 :pdType == 0  && i % 3 == 2 ? 2 : 1 ,
                         }
                         listData.push(json);
                       }
@@ -419,7 +425,8 @@
                         zongweight:tt.loadWeight*1,
                         nowweight:tt.weight*1,
                         type:tt.weight*1 > 0 ? 2 :1,
-                        carType:pdType
+                        carType:pdType,
+                        now:pdType == 0  && i % 3 == 0 ? 0 :pdType == 0  && i % 3 == 2 ? 2 : 1 ,
                       }
                       listData.push(json);
                     }
@@ -545,7 +552,7 @@
     background-size:cover;
     right:1.5rem;
     top:50%;
-    margin-top: -0.3rem;
+   /* margin-top: -0.3rem;*/
     display: none;
   }
   #car .reaseImg{
@@ -558,7 +565,7 @@
     background-size:cover;
     right:0.6rem;
     top:50%;
-    margin-top: -0.3rem;
+    /*margin-top: -0.3rem;*/
     display: none;
   }
   #car #mescroll{
