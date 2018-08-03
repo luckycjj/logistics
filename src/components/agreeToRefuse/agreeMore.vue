@@ -67,7 +67,7 @@
           }),
           contentType: "application/json;charset=utf-8",
           dataType: "json",
-          timeout:10000,
+          timeout:30000,
           success: function(findDriverInfo){
             if(findDriverInfo.success == "1"){
               _this.ftpUrl = findDriverInfo.ftpUrl;

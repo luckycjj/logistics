@@ -186,7 +186,7 @@ import  {androidIos} from './app';
       data:JSON.stringify(imagesJson),
       contentType: "application/json;charset=utf-8",
       dataType: "json",
-      timeout: 10000,
+      timeout: 30000,
       success: function (json) {
         $("#common-blackBox").remove();
         if (json.success == "1") {

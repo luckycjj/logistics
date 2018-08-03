@@ -122,7 +122,7 @@
           url: androidIos.ajaxHttp()+"/settings/getCarType",
           contentType: "application/json;charset=utf-8",
           dataType: "json",
-          timeout: 10000,
+          timeout: 30000,
           success: function (getCarType) {
             var list = [];
            for(var i = 0; i<getCarType.length;i++){
@@ -177,7 +177,7 @@
           }),
           contentType: "application/json;charset=utf-8",
           dataType: "json",
-          timeout: 10000,
+          timeout: 30000,
           success: function (getCarType) {
             if(getCarType.success == "1" || getCarType.success == ""){
               var list = [{
@@ -293,7 +293,7 @@
               data: JSON.stringify(carJson),
               contentType: "application/json;charset=utf-8",
               dataType: "json",
-              timeout:10000,
+              timeout:30000,
               success: function (addCar) {
                 bomb.addClass("ok","okgo");
                 if(addCar.success=="1"){

@@ -171,7 +171,7 @@
             }),
             contentType: "application/json;charset=utf-8",
             dataType: "json",
-            timeout: 10000,
+            timeout: 30000,
             async:false,
             success: function (deleteAddres) {
               if(deleteAddres.success=="1"){
@@ -202,7 +202,7 @@
             }),
             contentType: "application/json;charset=utf-8",
             dataType: "json",
-            timeout: 10000,
+            timeout: 30000,
             async:false,
             success: function (getAddres) {
               if(getAddres.success=="1"){
@@ -263,7 +263,7 @@
         data:JSON.stringify(json),
         contentType: "application/json;charset=utf-8",
         dataType: "json",
-        timeout: 10000,
+        timeout: 30000,
         success: function (getAddres) {
           if(getAddres.success=="1"){
             for(var i =0 ;i<getAddres.list.length;i++){

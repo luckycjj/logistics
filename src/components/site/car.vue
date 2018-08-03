@@ -5,11 +5,15 @@
       <p class="active" i="0">自营车辆</p>
       <p i="1">社会车辆</p>
     </div>
-    <div id="mescroll" class="mescroll" :style="{bottom:listType==0?'1.2rem':'0'}" :class="orderPk==''?'mesrollTop':''">
+    <!--<div id="mescroll" class="mescroll" :style="{bottom:listType==0?'1.2rem':'0'}" :class="orderPk==''?'mesrollTop':''">
+      <ul id="dataList" class="data-list">
+      </ul>
+    </div>-->
+    <div id="mescroll" class="mescroll"  :class="orderPk==''?'mesrollTop':''">
       <ul id="dataList" class="data-list">
       </ul>
     </div>
-    <button id="newCar" @click="newCar()" v-if="listType == '0'">新增车辆</button>
+    <!--<button id="newCar" @click="newCar()" v-if="listType == '0'">新增车辆</button>-->
     <div id="filterBox" v-if="show" @click="filterBoxBlackFalse($event)">
        <div id="filter">
          <div style="position: absolute;top:0;bottom:1.2rem;width:100%;height: auto;overflow: scroll;">
@@ -194,7 +198,7 @@
                     url: androidIos.ajaxHttp()+"/settings/getTransType",
                     contentType: "application/json;charset=utf-8",
                     dataType: "json",
-                    timeout: 10000,
+                    timeout: 30000,
                     success: function (getTransType) {
                       for(var i = 0;i<getTransType.length;i++){
                         getTransType[i].choose = false;
@@ -216,7 +220,7 @@
                     url: androidIos.ajaxHttp()+"/settings/getCarType",
                     contentType: "application/json;charset=utf-8",
                     dataType: "json",
-                    timeout: 10000,
+                    timeout: 30000,
                     success: function (getCarType) {
                       for(var i = 0;i<getCarType.length;i++){
                         getCarType[i].choose = false;
@@ -286,7 +290,7 @@
                   }),
                   contentType: "application/json;charset=utf-8",
                   dataType: "json",
-                  timeout: 10000,
+                  timeout: 30000,
                   async:false,
                   success: function (deleteCar) {
                     if(deleteCar.success=="1"){
@@ -320,7 +324,7 @@
                   }),
                   contentType: "application/json;charset=utf-8",
                   dataType: "json",
-                  timeout: 10000,
+                  timeout: 30000,
                   async:false,
                   success: function (getCarList) {
                     if(getCarList.success=="1"){
@@ -386,7 +390,7 @@
               }),
               contentType: "application/json;charset=utf-8",
               dataType: "json",
-              timeout: 10000,
+              timeout: 30000,
               success: function (getCarList) {
                 if(getCarList.success == "1"){
                   if(_this.orderPk == "" &&pdType != '0'){

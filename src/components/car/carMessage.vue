@@ -186,7 +186,7 @@
               }),
               contentType: "application/json;charset=utf-8",
               dataType: "json",
-              timeout: 10000,
+              timeout: 30000,
               success: function (arrangeVehicle) {
                 $("#common-blackBox").remove();
                 bomb.addClass("gogogo","gogogo");
@@ -232,7 +232,7 @@
             data: JSON.stringify(carJson),
             contentType: "application/json;charset=utf-8",
             dataType: "json",
-            timeout:10000,
+            timeout:30000,
             success: function (addCar) {
               bomb.addClass("gogogo1","gogogo");
               if(addCar.success=="1"){
@@ -289,7 +289,7 @@
         }),
         contentType: "application/json;charset=utf-8",
         dataType: "json",
-        timeout: 10000,
+        timeout: 30000,
         success: function (getCarDetail) {
           if(getCarDetail.success == "1"){
             var list = [];

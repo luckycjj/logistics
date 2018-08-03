@@ -130,7 +130,7 @@
               data: JSON.stringify({pk: sessionStorage.getItem("dispatchPK"), userCode: sessionStorage.getItem("token"), source:sessionStorage.getItem("source"),pkCar:JSON.stringify({demolitionSegmentList:list})}),
               contentType: "application/json;charset=utf-8",
               dataType: "json",
-              timeout: 10000,
+              timeout: 30000,
               success: function (demolitionSegment) {
                 $("#common-blackBox").remove();
                  if(demolitionSegment.success == "1" || demolitionSegment.success == ""){

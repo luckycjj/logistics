@@ -157,7 +157,7 @@
             }),
             contentType: "application/json;charset=utf-8",
             dataType: "json",
-            timeout: 10000,
+            timeout: 30000,
             async:false,
             success: function (deleteDriver) {
               if(deleteDriver.success=="1"){
@@ -187,7 +187,7 @@
             }),
             contentType: "application/json;charset=utf-8",
             dataType: "json",
-            timeout: 10000,
+            timeout: 30000,
             async:false,
             success: function (getDriverPage) {
               if(getDriverPage.success=="1"){
@@ -251,7 +251,7 @@
         }),
         contentType: "application/json;charset=utf-8",
         dataType: "json",
-        timeout: 10000,
+        timeout: 30000,
         success: function (getDriverPage) {
           var listData = [];
           if(getDriverPage.success == "1" || getDriverPage.success == ""){

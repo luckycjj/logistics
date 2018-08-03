@@ -28,7 +28,6 @@
     },
     mounted: function () {
       var _this = this;
-      console.log(_this.json)
       var http = window.location.href;
       if(http.indexOf("/car/map")!=-1){
         _this.navShow = true;
@@ -39,7 +38,6 @@
     methods: {
       init: function () {
         var _this = this;
-        console.log(JSON.stringify(_this.json))
         $.ajax({
           type: "POST",
           url: androidIos.ajaxHttp()+"/order/getLocation",
@@ -47,7 +45,7 @@
           dataType: "json",
           contentType: "application/json;charset=utf-8",
           async:false,
-          timeout: 10000,
+          timeout: 30000,
           success: function (getLocation) {
             if(getLocation.success == "1"){
               _this.peopleJ = getLocation.errorCode == "" ? "12" : getLocation.errorCode.split(",")[0];
@@ -106,7 +104,7 @@
               dataType: "json",
               contentType: "application/json;charset=utf-8",
               async:false,
-              timeout: 10000,
+              timeout: 30000,
               success: function (getLocation) {
                 if(getLocation.success == "1"){
                   _this.peopleJ = getLocation.errorCode == "" ? "12" : getLocation.errorCode.split(",")[0];
