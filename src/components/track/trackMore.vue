@@ -313,7 +313,7 @@
           sessionStorage.setItem("orderPk",self.$route.query.pk);
           sessionStorage.setItem("dispatchPK",self.$route.query.pk);
           self.$nextTick(function () {
-            if ((self.type == 1 || self.type == 2 || self.type == 3) && self.peopleType == 2) {
+            if ((self.type == 1) && self.peopleType == 2) {
               $("#cancel").show();
               $("#erweimaLook").hide();
             } else if (self.peopleType == 1) {
