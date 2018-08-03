@@ -639,7 +639,8 @@ a {
   color: #666;
 }
 .labelBox .label input {
-  height: 1rem;
+  height: 0.375rem;
+  margin-top: 0.3125rem;
   margin-left: 0.3rem;
   font-size: 0.375rem;
   float: right;

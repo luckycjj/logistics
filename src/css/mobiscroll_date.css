@@ -476,8 +476,8 @@
     width: 100%;
    /* left: 20%;*/
     height: 1.125rem;
-    border-top: 1px solid #999;
-    border-bottom: 1px solid #999;
+    border-top: 1px solid #c5c5c5;
+    border-bottom: 1px solid #c5c5c5;
     margin-top: -0.625rem;
     display: block;
 }

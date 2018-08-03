@@ -96,8 +96,8 @@
                lang: 'zh',
                showNow: true,
                nowText: "今天",
-               startYear: currYear - 10, //开始年份
-               endYear: currYear + 10 ,//结束年份
+               startYear: currYear, //开始年份
+               endYear: currYear + 20 ,//结束年份
                onSelect: function (valueText, inst) {//选择时事件（点击确定后），valueText 为选择的时间，
                  var dateF = "";
                  if(inst.settings["0"]==1){

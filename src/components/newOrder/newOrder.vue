@@ -540,8 +540,8 @@
                 lang: 'zh',
                 showNow: true,
                 nowText: "今天",
-                startYear: currYear - 10, //开始年份
-                endYear: currYear + 10 ,//结束年份
+                startYear: currYear, //开始年份
+                endYear: currYear + 20 ,//结束年份
                 onSelect: function (valueText, inst) {//选择时事件（点击确定后），valueText 为选择的时间，
                   var dateF = "";
                   if(inst.settings["0"]==1){
@@ -1351,13 +1351,15 @@
     margin-left: -0.2rem;
   }
    .lablebox input{
-     line-height: 1.4rem;
+     line-height: 0.375rem;
+     height: 0.375rem;
      font-size: 0.375rem;
-     color:#333;
+     color: #333;
      float: right;
      text-align: right;
-     width:55%;
+     width: 55%;
      margin-right: 5%;
+     margin-top: 0.5125rem;
    }
    .lablebox p{
       float: right;
