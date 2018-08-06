@@ -49,58 +49,62 @@
     },
     mounted:function () {
       var _this = this;
-      var x = 0,y = 0,z = 0;
-      var editSite = sessionStorage.getItem("editSite");
-      if(editSite!=undefined){
-        editSite = JSON.parse(editSite);
-        _this.start.name = editSite.people;
-        _this.start.phone = editSite.phone;
-        _this.start.company = editSite.company;
-        _this.start.address = editSite.address;
-        _this.start.province = editSite.name.split("-")[0];
-        _this.start.city = editSite.name.split("-")[1];
-        _this.start.area = editSite.name.split("-")[2];
-        _this.start.addresspk = editSite.pkAddress;
-        sessionStorage.removeItem("editSite");
-        for(var i = 0; i< provinceCityArea.length;i++){
-          if(provinceCityArea[i].region == _this.start.province){
-            x = i;
-            for(var a = 0; a < provinceCityArea[i].child.length;a++){
-              if( provinceCityArea[i].child[a].region == _this.start.city){
-                y = a;
-                for(var b = 0; b < provinceCityArea[i].child[a].child.length;b++){
-                  if( provinceCityArea[i].child[a].child[b].region == _this.start.area){
-                    z = b;
+      androidIos.bridge(_this);
+    },
+    methods:{
+      go:function () {
+        var _this = this;
+        var x = 0,y = 0,z = 0;
+        var editSite = sessionStorage.getItem("editSite");
+        if(editSite!=undefined){
+          editSite = JSON.parse(editSite);
+          _this.start.name = editSite.people;
+          _this.start.phone = editSite.phone;
+          _this.start.company = editSite.company;
+          _this.start.address = editSite.address;
+          _this.start.province = editSite.name.split("-")[0];
+          _this.start.city = editSite.name.split("-")[1];
+          _this.start.area = editSite.name.split("-")[2];
+          _this.start.addresspk = editSite.pkAddress;
+          sessionStorage.removeItem("editSite");
+          for(var i = 0; i< provinceCityArea.length;i++){
+            if(provinceCityArea[i].region == _this.start.province){
+              x = i;
+              for(var a = 0; a < provinceCityArea[i].child.length;a++){
+                if( provinceCityArea[i].child[a].region == _this.start.city){
+                  y = a;
+                  for(var b = 0; b < provinceCityArea[i].child[a].child.length;b++){
+                    if( provinceCityArea[i].child[a].child[b].region == _this.start.area){
+                      z = b;
+                    }
                   }
                 }
               }
             }
           }
         }
-      }
-      var area = new LArea();
-      area.init({
-        'trigger': '#X00',
-        'valueTo': '#X00',
-        'keys': {
-          id: 'id',
-          name: 'name'
-        },
-        'type': 1,
-        'data': provinceCityArea
-      });
-      area.value = [x,y,z];
-      area.addPointer = function (name) {
-        name = JSON.parse(name);
-        _this.start.province = name.firstVal;
-        _this.start.provinceCode = name.firstCode;
-        _this.start.city = name.secondVal;
-        _this.start.cityCode = name.secondCode;
-        _this.start.area = name.thirdVal;
-        _this.start.areaCode = name.thirdCode;
-      }
-    },
-    methods:{
+        var area = new LArea();
+        area.init({
+          'trigger': '#X00',
+          'valueTo': '#X00',
+          'keys': {
+            id: 'id',
+            name: 'name'
+          },
+          'type': 1,
+          'data': provinceCityArea
+        });
+        area.value = [x,y,z];
+        area.addPointer = function (name) {
+          name = JSON.parse(name);
+          _this.start.province = name.firstVal;
+          _this.start.provinceCode = name.firstCode;
+          _this.start.city = name.secondVal;
+          _this.start.cityCode = name.secondCode;
+          _this.start.area = name.thirdVal;
+          _this.start.areaCode = name.thirdCode;
+        }
+      },
       save:function () {
         var _this = this;
         if(bomb.hasClass("save","colorful")){

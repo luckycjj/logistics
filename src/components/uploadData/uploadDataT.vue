@@ -134,19 +134,15 @@ export default {
     };
   },
   mounted: function() {
-    this.$nextTick(function() {
-      this.go();
-    });
+    var _this = this;
+    androidIos.bridge(_this);
   },
   methods: {
     go: function() {
       var _this = this;
       //revise 1修改 2不修改
       _this.nvitationodeICRevise = _this.$route.query.revise == undefined ? 1 : _this.$route.query.revise ;
-      bridge.invoke('token','',function(response) {
-        response = JSON.parse(response);
-        sessionStorage.setItem("token",response.userCode);
-        sessionStorage.setItem("source",response.source);
+
         if (_this.$route.query.type != undefined) {
           _this.type = _this.$route.query.type;
           if(_this.$route.query.type == "2"){
@@ -231,7 +227,6 @@ export default {
             }
           });
         }
-      });
       if (_this.$route.query.letterType != undefined) {
         _this.letterType = _this.$route.query.letterType;
       }

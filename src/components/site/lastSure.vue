@@ -42,30 +42,35 @@
     },
     mounted:function(){
        var _this = this;
-       var lastSure = sessionStorage.getItem("lastSure");
-       var Sitechoosesite = sessionStorage.getItem("Sitechoosesite");
-       if(Sitechoosesite!=undefined){
-         Sitechoosesite  = JSON.parse(Sitechoosesite);
-         _this.productMessage.pickTime = Sitechoosesite.startTime;
-         _this.productMessage.arrivalTime = Sitechoosesite.endTime;
-         _this.productMessage.startAddress = Sitechoosesite.startAddress;
-         _this.productMessage.endAddress = Sitechoosesite.endAddress;
-         _this.productMessage.startAddresspk = Sitechoosesite.startAddresspk;
-         _this.productMessage.endAddresspk = Sitechoosesite.endAddresspk;
-         var list = [];
-         for(var i = 0 ; i<Sitechoosesite.product.length;i++){
-           var json = {
-             trantype:Sitechoosesite.product[i].tranType,
-             product:Sitechoosesite.product[i].goods,
-             number:Sitechoosesite.product[i].number,
-             weight:Sitechoosesite.product[i].weight,
-             volume:Sitechoosesite.product[i].volume,
-           }
-           list.push(json);
-         }
-         _this.productMessage.productBox = list;
-       }
-       if(lastSure!=undefined){
+       androidIos.bridge(_this);
+    },
+    methods:{
+      go:function () {
+        var _this = this;
+        var lastSure = sessionStorage.getItem("lastSure");
+        var Sitechoosesite = sessionStorage.getItem("Sitechoosesite");
+        if(Sitechoosesite!=undefined){
+          Sitechoosesite  = JSON.parse(Sitechoosesite);
+          _this.productMessage.pickTime = Sitechoosesite.startTime;
+          _this.productMessage.arrivalTime = Sitechoosesite.endTime;
+          _this.productMessage.startAddress = Sitechoosesite.startAddress;
+          _this.productMessage.endAddress = Sitechoosesite.endAddress;
+          _this.productMessage.startAddresspk = Sitechoosesite.startAddresspk;
+          _this.productMessage.endAddresspk = Sitechoosesite.endAddresspk;
+          var list = [];
+          for(var i = 0 ; i<Sitechoosesite.product.length;i++){
+            var json = {
+              trantype:Sitechoosesite.product[i].tranType,
+              product:Sitechoosesite.product[i].goods,
+              number:Sitechoosesite.product[i].number,
+              weight:Sitechoosesite.product[i].weight,
+              volume:Sitechoosesite.product[i].volume,
+            }
+            list.push(json);
+          }
+          _this.productMessage.productBox = list;
+        }
+        if(lastSure!=undefined){
           _this.listBox.list = JSON.parse(lastSure);
           for(var i=0;i<(_this.listBox.list.length+1);i++){
             var list =[];
@@ -79,38 +84,37 @@
               }
               list.push(listjson);
             }
-             var json = {
-               address:"",
-               startAddressPk:"",
-               endAddresspk:"",
-               productBox:list,
-               pickTime:"",
-               arrivalTime:"",
-             };
-             if(i == 0){
-                json.address = _this.productMessage.startAddress + '-' +_this.listBox.list[i].name;
-                json.startAddressPk = _this.productMessage.startAddresspk;
-                json.endAddressPk = _this.listBox.list[i].pkAddress;
-                json.pickTime = _this.productMessage.pickTime;
-                json.arrivalTime = _this.listBox.list[i].startTime;
-             }else if(i > 0 && i < (_this.listBox.list.length) ){
-               json.address = _this.listBox.list[i-1].name + '-' + _this.listBox.list[i].name;
-               json.startAddressPk = _this.listBox.list[i-1].pkAddress;
-               json.endAddressPk = _this.listBox.list[i].pkAddress;
-               json.pickTime = _this.listBox.list[i-1].endTime;
-               json.arrivalTime = _this.listBox.list[i].startTime;
-             }else{
-               json.address = _this.listBox.list[i-1].name + '-' + _this.productMessage.endAddress;
-               json.startAddressPk = _this.listBox.list[i-1].pkAddress;
-               json.endAddressPk = _this.productMessage.endAddresspk;
-               json.pickTime = _this.listBox.list[i-1].endTime;
-               json.arrivalTime = _this.productMessage.arrivalTime;
-             }
-             _this.list.push(json);
+            var json = {
+              address:"",
+              startAddressPk:"",
+              endAddresspk:"",
+              productBox:list,
+              pickTime:"",
+              arrivalTime:"",
+            };
+            if(i == 0){
+              json.address = _this.productMessage.startAddress + '-' +_this.listBox.list[i].name;
+              json.startAddressPk = _this.productMessage.startAddresspk;
+              json.endAddressPk = _this.listBox.list[i].pkAddress;
+              json.pickTime = _this.productMessage.pickTime;
+              json.arrivalTime = _this.listBox.list[i].startTime;
+            }else if(i > 0 && i < (_this.listBox.list.length) ){
+              json.address = _this.listBox.list[i-1].name + '-' + _this.listBox.list[i].name;
+              json.startAddressPk = _this.listBox.list[i-1].pkAddress;
+              json.endAddressPk = _this.listBox.list[i].pkAddress;
+              json.pickTime = _this.listBox.list[i-1].endTime;
+              json.arrivalTime = _this.listBox.list[i].startTime;
+            }else{
+              json.address = _this.listBox.list[i-1].name + '-' + _this.productMessage.endAddress;
+              json.startAddressPk = _this.listBox.list[i-1].pkAddress;
+              json.endAddressPk = _this.productMessage.endAddresspk;
+              json.pickTime = _this.listBox.list[i-1].endTime;
+              json.arrivalTime = _this.productMessage.arrivalTime;
+            }
+            _this.list.push(json);
           }
-       }
-    },
-    methods:{
+        }
+      },
       pushChoose:function () {
            var _this =this;
            var list = [];

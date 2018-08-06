@@ -28,14 +28,18 @@
     },
     mounted: function () {
       var _this = this;
-      var http = window.location.href;
-      if(http.indexOf("/car/map")!=-1){
-        _this.navShow = true;
-        $("#carmap .amap-zoomcontrol").show();
-      }
-      _this.init()
+      androidIos.bridge(_this);
     },
     methods: {
+      go:function () {
+        var _this = this;
+        var http = window.location.href;
+        if(http.indexOf("/car/map")!=-1){
+          _this.navShow = true;
+          $("#carmap .amap-zoomcontrol").show();
+        }
+        _this.init();
+      },
       init: function () {
         var _this = this;
         $.ajax({

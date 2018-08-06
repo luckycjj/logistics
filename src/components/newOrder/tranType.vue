@@ -21,37 +21,41 @@
       },
       mounted:function(){
         var _this = this;
-        $.ajax({
-          type: "POST",
-          url: androidIos.ajaxHttp()+"/settings/getTransType",
-          contentType: "application/json;charset=utf-8",
-          dataType: "json",
-          timeout: 10000,
-          success: function (getTransType) {
-            for(var i = 0;i<getTransType.length;i++){
-              getTransType[i].checked = false;
-              if(getTransType[i].value == _this.$route.query.tranpk && _this.$route.query.tranpk!=""){
-                getTransType[i].checked = true;
-              }
-            }
-              _this.list = getTransType;
-          },
-          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-            if(status=='timeout'){//超时,status还有success,error等值的情况
-              androidIos.second("网络请求超时");
-            }else if(status=='error'){
-              androidIos.errorwife();
-            }
-          }
-        })
+        androidIos.bridge(_this);
       },
       methods:{
-        choose:function (item) {
-          var _this = this;
-          item = JSON.stringify(item);
-          sessionStorage.setItem("tranType",item);
-          androidIos.gobackFrom(_this);
-        }
+          go:function () {
+            var _this = this;
+            $.ajax({
+              type: "POST",
+              url: androidIos.ajaxHttp()+"/settings/getTransType",
+              contentType: "application/json;charset=utf-8",
+              dataType: "json",
+              timeout: 10000,
+              success: function (getTransType) {
+                for(var i = 0;i<getTransType.length;i++){
+                  getTransType[i].checked = false;
+                  if(getTransType[i].value == _this.$route.query.tranpk && _this.$route.query.tranpk!=""){
+                    getTransType[i].checked = true;
+                  }
+                }
+                _this.list = getTransType;
+              },
+              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                if(status=='timeout'){//超时,status还有success,error等值的情况
+                  androidIos.second("网络请求超时");
+                }else if(status=='error'){
+                  androidIos.errorwife();
+                }
+              }
+            })
+          },
+          choose:function (item) {
+            var _this = this;
+            item = JSON.stringify(item);
+            sessionStorage.setItem("tranType",item);
+            androidIos.gobackFrom(_this);
+          }
       }
     }
 </script>

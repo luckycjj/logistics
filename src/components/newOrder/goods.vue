@@ -27,56 +27,60 @@
     },
     mounted:function(){
       var _this = this;
-      var productList = JSON.parse(sessionStorage.getItem("newOrder")).productList;
-      var list =[];
-      for(var i = 0; i<productList.length;i++){
-        if(productList[i].goodstypenumber != "" && i != _this.$route.query.index){
-          list.push(productList[i].goodstypenumber.split("-")[1])
-        }
-      }
-      _this.parentcode = _this.$route.query.code;
-      _this.parentName = _this.$route.query.name;
-      var json = {
-        value:_this.parentcode,
-      }
-      $.ajax({
-        type: "POST",
-        url: androidIos.ajaxHttp()+"/getGoodsType",
-        data:json,
-        dataType: "json",
-        timeout: 10000,
-        success: function (getGoodsType) {
-          if(getGoodsType.success){
-            if(list.length == 0){
-              _this.list = getGoodsType.data;
-            }else{
-              var json =[];
-              for(var i = 0; i < getGoodsType.data.length ; i++ ){
-                 for(var x = 0 ; x <list.length ;x++){
-                   if(getGoodsType.data[i].value == list[x]){
-                      break;
-                   }
-                   if(x - list.length +1 == 0){
-                     json.push(getGoodsType.data[i])
-                   }
-                 }
-              }
-              _this.list = json;
-            }
-          }else{
-            androidIos.second(getGoodsType.msg);
-          }
-        },
-        complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-          if(status=='timeout'){//超时,status还有success,error等值的情况
-            androidIos.second("网络请求超时");
-          }else if(status=='error'){
-            androidIos.errorwife();
-          }
-        }
-      })
+      androidIos.bridge(_this);
     },
     methods:{
+      go:function () {
+        var _this = this;
+        var productList = JSON.parse(sessionStorage.getItem("newOrder")).productList;
+        var list =[];
+        for(var i = 0; i<productList.length;i++){
+          if(productList[i].goodstypenumber != "" && i != _this.$route.query.index){
+            list.push(productList[i].goodstypenumber.split("-")[1])
+          }
+        }
+        _this.parentcode = _this.$route.query.code;
+        _this.parentName = _this.$route.query.name;
+        var json = {
+          value:_this.parentcode,
+        }
+        $.ajax({
+          type: "POST",
+          url: androidIos.ajaxHttp()+"/getGoodsType",
+          data:json,
+          dataType: "json",
+          timeout: 10000,
+          success: function (getGoodsType) {
+            if(getGoodsType.success){
+              if(list.length == 0){
+                _this.list = getGoodsType.data;
+              }else{
+                var json =[];
+                for(var i = 0; i < getGoodsType.data.length ; i++ ){
+                  for(var x = 0 ; x <list.length ;x++){
+                    if(getGoodsType.data[i].value == list[x]){
+                      break;
+                    }
+                    if(x - list.length +1 == 0){
+                      json.push(getGoodsType.data[i])
+                    }
+                  }
+                }
+                _this.list = json;
+              }
+            }else{
+              androidIos.second(getGoodsType.msg);
+            }
+          },
+          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+            if(status=='timeout'){//超时,status还有success,error等值的情况
+              androidIos.second("网络请求超时");
+            }else if(status=='error'){
+              androidIos.errorwife();
+            }
+          }
+        })
+      },
       choose:function (item) {
         var _this = this;
         var json = {

@@ -34,11 +34,8 @@
       }
     },
     mounted:function () {
-      var self = this;
-      thisthat = this;
-      self.$nextTick(function () {
-         self.go();
-      })
+      var _this = this;
+      androidIos.bridge(_this);
     },
     methods:{
       aaa:function(){
@@ -65,6 +62,7 @@
       },
       go:function(){
         var _this = this;
+        thisthat = _this;
         var mescroll = new MeScroll("mescroll", { //id固定"body"
           //上拉加载的配置项
           up: {

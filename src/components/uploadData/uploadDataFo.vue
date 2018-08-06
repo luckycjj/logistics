@@ -21,16 +21,14 @@ export default {
     }
   },
   mounted: function() {
-    this.$nextTick(function () {
-      this.go();
-    })
+    var _this = this;
+    androidIos.bridge(_this);
   },
   methods:{
     go:function () {
       var _this =this;
       _this.type =_this.$route.query.type;
       _this.letterType = _this.$route.query.letterType;
-
     },
     letGo:function () {
         var _this = this;

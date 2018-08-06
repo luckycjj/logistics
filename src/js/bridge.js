@@ -11,8 +11,6 @@ const noop = () => {};
 const setupWebViewJavascriptBridge = (callback) => {
   if (window.WebViewJavascriptBridge) {
     return callback(window.WebViewJavascriptBridge);
-  }else{
-    return document.addEventListener('WebViewJavascriptBridgeReady', function() {callback(WebViewJavascriptBridge);}, false);
   }
   if (window.WVJBCallbacks) {
     return window.WVJBCallbacks.push(callback);

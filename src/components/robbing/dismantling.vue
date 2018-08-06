@@ -72,41 +72,44 @@
       },
     mounted:function(){
           var _this = this;
-          var dismantling =   sessionStorage.getItem("dismantling");
-          var Sitedismantling = sessionStorage.getItem("Sitedismantling");
-          if(Sitedismantling!=undefined){
-            Sitedismantling = JSON.parse(Sitedismantling);
-            _this.productBox.address = Sitedismantling.startAddress +"  -  "+ Sitedismantling.endAddress;
-            _this.productBox.trantype = Sitedismantling.product[0].tranType;
-            _this.productBox.pickTime = Sitedismantling.startTime;
-            _this.productBox.arrivTime = Sitedismantling.endTime;
-            var list =[];
-            for(var i = 0 ; i < Sitedismantling.product.length; i++){
+          androidIos.bridge(_this);
+     },
+      methods:{
+          go:function () {
+            var dismantling =   sessionStorage.getItem("dismantling");
+            var Sitedismantling = sessionStorage.getItem("Sitedismantling");
+            if(Sitedismantling!=undefined){
+              Sitedismantling = JSON.parse(Sitedismantling);
+              _this.productBox.address = Sitedismantling.startAddress +"  -  "+ Sitedismantling.endAddress;
+              _this.productBox.trantype = Sitedismantling.product[0].tranType;
+              _this.productBox.pickTime = Sitedismantling.startTime;
+              _this.productBox.arrivTime = Sitedismantling.endTime;
+              var list =[];
+              for(var i = 0 ; i < Sitedismantling.product.length; i++){
                 var json ={
-                    products:Sitedismantling.product[i].goods,
-                    productsCode:Sitedismantling.product[i].goodsCode,
-                    number:Sitedismantling.product[i].number,
-                    weight:Sitedismantling.product[i].weight,
-                    volume:Sitedismantling.product[i].volume,
-                    numberBoth:Sitedismantling.product[i].number,
-                    weightBoth:Sitedismantling.product[i].weight,
-                    volumeBoth:Sitedismantling.product[i].volume,
+                  products:Sitedismantling.product[i].goods,
+                  productsCode:Sitedismantling.product[i].goodsCode,
+                  number:Sitedismantling.product[i].number,
+                  weight:Sitedismantling.product[i].weight,
+                  volume:Sitedismantling.product[i].volume,
+                  numberBoth:Sitedismantling.product[i].number,
+                  weightBoth:Sitedismantling.product[i].weight,
+                  volumeBoth:Sitedismantling.product[i].volume,
                 }
                 list.push(json);
+              }
+              _this.productBox.productsList[0].list = list;
             }
-            _this.productBox.productsList[0].list = list;
-          }
-          if(dismantling!=undefined){
-            dismantling = JSON.parse(dismantling);
-            _this.productBox =dismantling;
-            sessionStorage.removeItem("dismantling");
-          }
-          $(document).on('click','.liDiv input',function () {
-            var $Val = $.trim($(this).val())
-            $(this).val('').focus().val($Val)
-          })
-    },
-      methods:{
+            if(dismantling!=undefined){
+              dismantling = JSON.parse(dismantling);
+              _this.productBox =dismantling;
+              sessionStorage.removeItem("dismantling");
+            }
+            $(document).on('click','.liDiv input',function () {
+              var $Val = $.trim($(this).val())
+              $(this).val('').focus().val($Val)
+            })
+          },
         add:function () {
            var _this = this;
            var list =[];

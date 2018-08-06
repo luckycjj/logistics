@@ -52,10 +52,8 @@
         }
       },
       mounted:function () {
-         var _this = this;
-         _this.$nextTick(function () {
-            _this.go();
-         })
+        var _this = this;
+        androidIos.bridge(_this);
       },
       methods:{
            go:function () {

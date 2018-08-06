@@ -1,9 +1,6 @@
 <template>
   <div id="chooseStart">
     <div id="title" v-title data-title="地址簿"></div>
-    <!--<div class="chooseNormal" @click="gohistroy()">
-       选择常用路线
-    </div>-->
     <div id="inputKeyup">
       <div class="name">
         <input type="text" maxlength="20" placeholder="请输入姓名" v-model="start.name"/>
@@ -52,154 +49,158 @@
       },
       mounted:function () {
           var _this = this;
-          var x = 0,y = 0,z = 0;
-          var addresspk = sessionStorage.getItem("addresspk");
-          if(addresspk!=undefined){
-            addresspk = JSON.parse(addresspk);
-            _this.start.name = addresspk.contact;
-            _this.start.phone = addresspk.mobile;
-            _this.start.company = addresspk.addrName;
-            _this.start.address = addresspk.detailAddr;
-            _this.start.province = addresspk.province;
-            _this.start.city = addresspk.city;
-            _this.start.area = addresspk.area;
-            _this.start.checked = addresspk.checked;
-            sessionStorage.removeItem("addresspk");
-            for(var i = 0; i< provinceCityArea.length;i++){
-              if(provinceCityArea[i].region == _this.start.province){
-                x = i;
-                for(var a = 0; a < provinceCityArea[i].child.length;a++){
-                  if( provinceCityArea[i].child[a].region == _this.start.city){
-                    y = a;
-                    for(var b = 0; b < provinceCityArea[i].child[a].child.length;b++){
-                      if( provinceCityArea[i].child[a].child[b].region == _this.start.area){
-                        z = b;
+          androidIos.bridge(_this);
+      },
+      methods:{
+          go:function () {
+            var _this = this;
+            var x = 0,y = 0,z = 0;
+            var addresspk = sessionStorage.getItem("addresspk");
+            if(addresspk!=undefined){
+              addresspk = JSON.parse(addresspk);
+              _this.start.name = addresspk.contact;
+              _this.start.phone = addresspk.mobile;
+              _this.start.company = addresspk.addrName;
+              _this.start.address = addresspk.detailAddr;
+              _this.start.province = addresspk.province;
+              _this.start.city = addresspk.city;
+              _this.start.area = addresspk.area;
+              _this.start.checked = addresspk.checked;
+              sessionStorage.removeItem("addresspk");
+              for(var i = 0; i< provinceCityArea.length;i++){
+                if(provinceCityArea[i].region == _this.start.province){
+                  x = i;
+                  for(var a = 0; a < provinceCityArea[i].child.length;a++){
+                    if( provinceCityArea[i].child[a].region == _this.start.city){
+                      y = a;
+                      for(var b = 0; b < provinceCityArea[i].child[a].child.length;b++){
+                        if( provinceCityArea[i].child[a].child[b].region == _this.start.area){
+                          z = b;
+                        }
                       }
                     }
                   }
                 }
               }
             }
-          }
-          var area = new LArea();
-          area.init({
-            'trigger': '#X00',
-            'valueTo': '#X00',
-            'keys': {
-              id: 'id',
-              name: 'name'
-            },
-            'type': 1,
-            'data': provinceCityArea
-          });
-          area.value = [x,y,z];
-          area.addPointer = function (name) {
-            name = JSON.parse(name);
-            _this.start.province = name.firstVal;
-            _this.start.provinceCode = name.firstCode;
-            _this.start.city = name.secondVal;
-            _this.start.cityCode = name.secondCode;
-            _this.start.area = name.thirdVal;
-            _this.start.areaCode = name.thirdCode;
-          }
-      },
-      methods:{
-        save:function () {
-           var _this = this;
-           if(bomb.hasClass("save","colorful")){
-             var pk = _this.$route.query.pk;
-             if(_this.start.phone.length < 11){
-                bomb.first("手机号码不足11位");
-                return false;
-             }
-             var reg = /^1[3|4|5|7|8][0-9]{9}$/;
-             if(!reg.test(_this.start.phone)){
-               bomb.first("手机号码格式不对");
-               return false;
-             }
-             if(pk == undefined){
-               var json ={
-                 addr_name:_this.start.company,
-                 phone:_this.start.phone,
-                 detail_addr:_this.start.address,
-                 userCode:sessionStorage.getItem("token"),
-                 pk_province:_this.start.province,
-                 pk_city:_this.start.city,
-                 pk_area:_this.start.area,
-                 contact:_this.start.name,
-                 source:sessionStorage.getItem("source")
+            var area = new LArea();
+            area.init({
+              'trigger': '#X00',
+              'valueTo': '#X00',
+              'keys': {
+                id: 'id',
+                name: 'name'
+              },
+              'type': 1,
+              'data': provinceCityArea
+            });
+            area.value = [x,y,z];
+            area.addPointer = function (name) {
+              name = JSON.parse(name);
+              _this.start.province = name.firstVal;
+              _this.start.provinceCode = name.firstCode;
+              _this.start.city = name.secondVal;
+              _this.start.cityCode = name.secondCode;
+              _this.start.area = name.thirdVal;
+              _this.start.areaCode = name.thirdCode;
+            }
+          },
+          save:function () {
+             var _this = this;
+             if(bomb.hasClass("save","colorful")){
+               var pk = _this.$route.query.pk;
+               if(_this.start.phone.length < 11){
+                  bomb.first("手机号码不足11位");
+                  return false;
                }
-               $.ajax({
-                 type: "POST",
-                 url: androidIos.ajaxHttp()+"/addAddress",
-                 data:json,
-                 dataType: "json",
-                 timeout: 10000,
-                 success: function (addAddress) {
-                   $("#common-blackBox").remove();
-                   if(addAddress.success=="1"){
-                     androidIos.gobackFrom(_this);
-                   }else{
-                     androidIos.second(addAddress.message);
-                   }
-                 },
-                 error:function () {
-
-                 },
-                 complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                   $("#common-blackBox").remove();
-                   if(status=='timeout'){//超时,status还有success,error等值的情况
-                     androidIos.second("网络请求超时");
-                   }else if(status=='error'){
-                     androidIos.errorwife();
-                   }
-                 }
-               })
-             }else{
-               var json ={
-                 pkAddress:pk,
-                 addrName:_this.start.company,
-                 mobile:_this.start.phone,
-                 detailAddr:_this.start.address,
-                 province:_this.start.province,
-                 city:_this.start.city,
-                 area:_this.start.area,
-                 contact:_this.start.name,
-                 checked:_this.start.checked,
-                 userCode:sessionStorage.getItem("token"),
-                 source:sessionStorage.getItem("source")
+               var reg = /^1[3|4|5|7|8][0-9]{9}$/;
+               if(!reg.test(_this.start.phone)){
+                 bomb.first("手机号码格式不对");
+                 return false;
                }
-               $.ajax({
-                 type: "POST",
-                 url: androidIos.ajaxHttp()+"/address/updateAddres",
-                 data:JSON.stringify(json),
-                 contentType: "application/json;charset=utf-8",
-                 dataType: "json",
-                 timeout: 10000,
-                 success: function (addAddress) {
-                   $("#common-blackBox").remove();
-                   if(addAddress.success=="1"){
-                     androidIos.gobackFrom(_this);
-                   }else{
-                     androidIos.second(addAddress.message);
-                   }
-                 },
-                 error:function () {
-
-                 },
-                 complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                   $("#common-blackBox").remove();
-                   if(status=='timeout'){//超时,status还有success,error等值的情况
-                     androidIos.second("网络请求超时");
-                   }else if(status=='error'){
-                     androidIos.errorwife();
-                   }
+               if(pk == undefined){
+                 var json ={
+                   addr_name:_this.start.company,
+                   phone:_this.start.phone,
+                   detail_addr:_this.start.address,
+                   userCode:sessionStorage.getItem("token"),
+                   pk_province:_this.start.province,
+                   pk_city:_this.start.city,
+                   pk_area:_this.start.area,
+                   contact:_this.start.name,
+                   source:sessionStorage.getItem("source")
                  }
-               })
-             }
+                 $.ajax({
+                   type: "POST",
+                   url: androidIos.ajaxHttp()+"/addAddress",
+                   data:json,
+                   dataType: "json",
+                   timeout: 10000,
+                   success: function (addAddress) {
+                     $("#common-blackBox").remove();
+                     if(addAddress.success=="1"){
+                       androidIos.gobackFrom(_this);
+                     }else{
+                       androidIos.second(addAddress.message);
+                     }
+                   },
+                   error:function () {
 
-           }
-        }
+                   },
+                   complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                     $("#common-blackBox").remove();
+                     if(status=='timeout'){//超时,status还有success,error等值的情况
+                       androidIos.second("网络请求超时");
+                     }else if(status=='error'){
+                       androidIos.errorwife();
+                     }
+                   }
+                 })
+               }else{
+                 var json ={
+                   pkAddress:pk,
+                   addrName:_this.start.company,
+                   mobile:_this.start.phone,
+                   detailAddr:_this.start.address,
+                   province:_this.start.province,
+                   city:_this.start.city,
+                   area:_this.start.area,
+                   contact:_this.start.name,
+                   checked:_this.start.checked,
+                   userCode:sessionStorage.getItem("token"),
+                   source:sessionStorage.getItem("source")
+                 }
+                 $.ajax({
+                   type: "POST",
+                   url: androidIos.ajaxHttp()+"/address/updateAddres",
+                   data:JSON.stringify(json),
+                   contentType: "application/json;charset=utf-8",
+                   dataType: "json",
+                   timeout: 10000,
+                   success: function (addAddress) {
+                     $("#common-blackBox").remove();
+                     if(addAddress.success=="1"){
+                       androidIos.gobackFrom(_this);
+                     }else{
+                       androidIos.second(addAddress.message);
+                     }
+                   },
+                   error:function () {
+
+                   },
+                   complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                     $("#common-blackBox").remove();
+                     if(status=='timeout'){//超时,status还有success,error等值的情况
+                       androidIos.second("网络请求超时");
+                     }else if(status=='error'){
+                       androidIos.errorwife();
+                     }
+                   }
+                 })
+               }
+
+             }
+          }
       }
     }
 </script>

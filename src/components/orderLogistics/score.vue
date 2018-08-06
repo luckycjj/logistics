@@ -19,7 +19,8 @@
 </template>
 
 <script>
-    export default {
+  import {androidIos} from "../../js/app";
+  export default {
       name: "score",
       data(){
           return{
@@ -40,9 +41,7 @@
       },
       mounted:function(){
         var _this = this;
-        _this.$nextTick(function () {
-           _this.go();
-        })
+        androidIos.bridge(_this);
       },
       methods:{
         go:function () {

@@ -36,132 +36,136 @@
     },
     mounted:function () {
       var _this = this;
-      var x = 0;
-      var driverAge = [{
-        "code":"0",
-        "region":"小于1年"
-      },{
-        "code":"1",
-        "region":"1年"
-      },{
-        "code":"2",
-        "region":"2年"
-      },{
-        "code":"3",
-        "region":"3年"
-      },{
-        "code":"4",
-        "region":"4年"
-      },{
-        "code":"5",
-        "region":"5年"
-      },{
-        "code":"6",
-        "region":"6年"
-      },{
-        "code":"7",
-        "region":"7年"
-      },{
-        "code":"8",
-        "region":"8年"
-      },{
-        "code":"9",
-        "region":"9年"
-      },{
-        "code":"10",
-        "region":"10年"
-      },{
-        "code":"11",
-        "region":"11年"
-      },{
-        "code":"12",
-        "region":"12年"
-      },{
-        "code":"13",
-        "region":"13年"
-      },{
-        "code":"14",
-        "region":"14年"
-      },{
-        "code":"15",
-        "region":"15年"
-      },{
-        "code":"16",
-        "region":"16年"
-      },{
-        "code":"17",
-        "region":"17年"
-      },{
-        "code":"18",
-        "region":"18年"
-      },{
-        "code":"19",
-        "region":"19年"
-      },{
-        "code":"20",
-        "region":"20年"
-      },{
-        "code":"21",
-        "region":"21年"
-      },{
-        "code":"22",
-        "region":"22年"
-      },{
-        "code":"23",
-        "region":"23年"
-      },{
-        "code":"24",
-        "region":"24年"
-      },{
-        "code":"25",
-        "region":"25年"
-      },{
-        "code":"26",
-        "region":"26年"
-      },{
-        "code":"27",
-        "region":"27年"
-      },{
-        "code":"28",
-        "region":"28年"
-      },{
-        "code":"29",
-        "region":"29年"
-      },]
-      var driver = sessionStorage.getItem("driver");
-      if(driver!=undefined){
-        driver = JSON.parse(driver);
-        _this.start.driverPk = driver.carPeoplePk;
-        _this.start.name = driver.name;
-        _this.start.phone = driver.tel;
-        _this.start.time = driver.year+"年";
-        _this.start.timeValue = driver.year=='小于1'?'0':driver.year;
-        sessionStorage.removeItem("driver");
-        for(var i = 0; i< driverAge.length;i++){
-          if(driverAge[i].code == _this.start.time){
-            x = i;
-          }
-        }
-      }
-      var area = new LArea();
-      area.init({
-        'trigger': '#Z00',
-        'valueTo': '#Z00',
-        'keys': {
-          id: 'id',
-          name: 'name'
-        },
-        'type': 1,
-        'data': driverAge
-      });
-      area.value = [x];
-      area.addPointer = function (name) {
-        name = JSON.parse(name);
-        _this.start.time = name.firstVal;
-        _this.start.timeValue = name.firstCode;
-      }
+      androidIos.bridge(_this);
     },
     methods:{
+      go:function () {
+        var _this = this;
+        var x = 0;
+        var driverAge = [{
+          "code":"0",
+          "region":"小于1年"
+        },{
+          "code":"1",
+          "region":"1年"
+        },{
+          "code":"2",
+          "region":"2年"
+        },{
+          "code":"3",
+          "region":"3年"
+        },{
+          "code":"4",
+          "region":"4年"
+        },{
+          "code":"5",
+          "region":"5年"
+        },{
+          "code":"6",
+          "region":"6年"
+        },{
+          "code":"7",
+          "region":"7年"
+        },{
+          "code":"8",
+          "region":"8年"
+        },{
+          "code":"9",
+          "region":"9年"
+        },{
+          "code":"10",
+          "region":"10年"
+        },{
+          "code":"11",
+          "region":"11年"
+        },{
+          "code":"12",
+          "region":"12年"
+        },{
+          "code":"13",
+          "region":"13年"
+        },{
+          "code":"14",
+          "region":"14年"
+        },{
+          "code":"15",
+          "region":"15年"
+        },{
+          "code":"16",
+          "region":"16年"
+        },{
+          "code":"17",
+          "region":"17年"
+        },{
+          "code":"18",
+          "region":"18年"
+        },{
+          "code":"19",
+          "region":"19年"
+        },{
+          "code":"20",
+          "region":"20年"
+        },{
+          "code":"21",
+          "region":"21年"
+        },{
+          "code":"22",
+          "region":"22年"
+        },{
+          "code":"23",
+          "region":"23年"
+        },{
+          "code":"24",
+          "region":"24年"
+        },{
+          "code":"25",
+          "region":"25年"
+        },{
+          "code":"26",
+          "region":"26年"
+        },{
+          "code":"27",
+          "region":"27年"
+        },{
+          "code":"28",
+          "region":"28年"
+        },{
+          "code":"29",
+          "region":"29年"
+        },]
+        var driver = sessionStorage.getItem("driver");
+        if(driver!=undefined){
+          driver = JSON.parse(driver);
+          _this.start.driverPk = driver.carPeoplePk;
+          _this.start.name = driver.name;
+          _this.start.phone = driver.tel;
+          _this.start.time = driver.year+"年";
+          _this.start.timeValue = driver.year=='小于1'?'0':driver.year;
+          sessionStorage.removeItem("driver");
+          for(var i = 0; i< driverAge.length;i++){
+            if(driverAge[i].code == _this.start.time){
+              x = i;
+            }
+          }
+        }
+        var area = new LArea();
+        area.init({
+          'trigger': '#Z00',
+          'valueTo': '#Z00',
+          'keys': {
+            id: 'id',
+            name: 'name'
+          },
+          'type': 1,
+          'data': driverAge
+        });
+        area.value = [x];
+        area.addPointer = function (name) {
+          name = JSON.parse(name);
+          _this.start.time = name.firstVal;
+          _this.start.timeValue = name.firstCode;
+        }
+      },
       save:function () {
         var _this = this;
         if(bomb.hasClass("save","colorful")){

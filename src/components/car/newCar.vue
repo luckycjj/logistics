@@ -93,9 +93,8 @@
       }
     },
     mounted: function() {
-      this.$nextTick(function () {
-        this.go();
-      })
+      var _this = this;
+      androidIos.bridge(_this);
     },
     methods:{
       go:function () {

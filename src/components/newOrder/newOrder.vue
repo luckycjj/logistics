@@ -275,215 +275,7 @@
      },
       mounted:function(){
           var _this = this;
-          var newTimeCjj = new Date();
-          var yearCjj = newTimeCjj.getFullYear();
-          var monthCjj = newTimeCjj.getMonth()+1;
-          var dateCjj = newTimeCjj.getDate();
-          var hourCjj = newTimeCjj.getHours();
-          var minCjj = newTimeCjj.getMinutes();
-          var secCjj = newTimeCjj.getSeconds();
-          var dateCjjS = dateCjj+1;
-          var hourCjjS = hourCjj+1;
-          var newDateCjj = new Date(yearCjj+"/"+monthCjj+"/"+dateCjj+" "+hourCjjS+":"+minCjj+":"+secCjj);
-          var newDataCjj = new Date((new Date()).getTime()+24*60*60*1000);
-          _this.both.timeBeforeS = _this.ten(newDateCjj.getFullYear())+"-"+ _this.ten((newDateCjj.getMonth()+1))+"-"+_this.ten(newDateCjj.getDate());
-          _this.both.timeBeforeF = _this.ten(newDateCjj.getHours())+":"+_this.ten(newDateCjj.getMinutes())+":"+_this.ten(newDateCjj.getSeconds());
-          _this.both.timeAfterS = _this.ten(newDataCjj.getFullYear())+"-"+ _this.ten((newDataCjj.getMonth()+1))+"-"+_this.ten(newDataCjj.getDate());
-          _this.both.timeAfterF = "08:00:00";
-          var newOrder = sessionStorage.getItem("newOrder");
-          var histroyAddress = sessionStorage.getItem("histroyAddress");
-          var startAddress = sessionStorage.getItem("startAddress");
-          var endAddress = sessionStorage.getItem("endAddress");
-          var tranType =  sessionStorage.getItem("tranType");
-          var goodsType =  sessionStorage.getItem("goodsType");
-          var appoint = sessionStorage.getItem("appoint");
-          var insurance =   sessionStorage.getItem("insurance");
-          var pk = _this.$route.query.pk;
-          _this.pk = pk ==undefined || _this.$route.query.type == undefined || _this.$route.query.type == "2"?"":pk;
-          if(pk != undefined && newOrder == undefined){
-            $.ajax({
-              type: "POST",
-              url: androidIos.ajaxHttp()+"/order/invoiceDetail",
-              data:JSON.stringify({pk:pk,source:sessionStorage.getItem("source"),userCode:sessionStorage.getItem("token")}),
-              contentType: "application/json;charset=utf-8",
-              dataType: "json",
-              async:false,
-              timeout: 10000,
-              success: function (invoiceDetail) {
-                var list=[];
-                for(var i =0;i<invoiceDetail.invPackDao.length;i++){
-                  _this.both.initialWeight = _this.both.initialWeight*1 + invoiceDetail.invPackDao[i].weight/1000*1;
-                  var listJson = {
-                    pkInvPackB:invoiceDetail.invPackDao[i].pkInvPackB,
-                    goodsType:invoiceDetail.invPackDao[i].goodsName+"-"+invoiceDetail.invPackDao[i].goodsTypeName,
-                    goodstypenumber:invoiceDetail.invPackDao[i].goodsCode+"-"+invoiceDetail.invPackDao[i].goodsType,
-                    number:invoiceDetail.invPackDao[i].num,
-                    unitWight:"吨",
-                    wight:invoiceDetail.invPackDao[i].weight/1000,
-                    wightTen:"1",
-                    unitWeight:"立方米",
-                    weight:invoiceDetail.invPackDao[i].volume*1,
-                    weightTen:"1",
-                  }
-                  list.push(listJson);
-                }
-                var pdlist = {
-                  startAddress:{
-                    people:invoiceDetail.delivery.contact,
-                    tel:invoiceDetail.delivery.mobile,
-                    city:invoiceDetail.delivery.province+"-"+invoiceDetail.delivery.city+"-"+invoiceDetail.delivery.area,
-                    address:invoiceDetail.delivery.detailAddr,
-                    company:invoiceDetail.delivery.addrName,
-                    pk:invoiceDetail.delivery.pkAddress,
-                  },
-                  endAddress:{
-                    people:invoiceDetail.arrival.contact,
-                    tel:invoiceDetail.arrival.mobile,
-                    city:invoiceDetail.arrival.province+"-"+invoiceDetail.arrival.city+"-"+invoiceDetail.arrival.area,
-                    address:invoiceDetail.arrival.detailAddr,
-                    company:invoiceDetail.arrival.addrName,
-                    pk:invoiceDetail.arrival.pkAddress,
-                  },
-                  timeBeforeF:invoiceDetail.deliDate.split(" ")[1],
-                  timeBeforeS:invoiceDetail.deliDate.split(" ")[0],
-                  timeAfterF:invoiceDetail.arriDate.split(" ")[1],
-                  timeAfterS:invoiceDetail.arriDate.split(" ")[0],
-                  productList:list,
-                  tranType:"",
-                  trantypenumber:"",
-                  appoint:invoiceDetail.carrierDto.carrierName,
-                  pk_carrier:invoiceDetail.carrierDto.pkCarrier,
-                  driver_name:"",
-                  insurance:"",
-                  payment:invoiceDetail.balatype ==null?"到付":invoiceDetail.balatype,
-                  pay:0,
-                  read:true,
-                  scrollTop:0,
-                  initialWeight:_this.both.initialWeight
-                }
-                _this.both = pdlist;
-                _this.$nextTick(function () {
-                  $(".pickmessage h1,.arrmessage h1,#time .lablebox").addClass("imgno");
-                  for(var i = 0 ; i<$(".goodsTypeLabel").length;i++){
-                     $(".goodsTypeLabel").eq(i).addClass("imgno");
-                  }
-                })
-              },
-              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                if(status=='timeout'){//超时,status还有success,error等值的情况
-                  androidIos.second("网络请求超时");
-                }else if(status=='error'){
-                  androidIos.errorwife();
-                }
-              }
-            })
-          }
-          if(_this.pk == ""){
-            bridge.invoke('token','',function(response) {
-              response = JSON.parse(response);
-              sessionStorage.setItem("token",response.userCode);
-              sessionStorage.setItem("source",response.source);
-              var json = {
-                page:1,
-                size:1,
-                keyword:"",
-                user:sessionStorage.getItem("token"),
-                source:sessionStorage.getItem("source")
-              }
-              var listData=[]
-              $.ajax({
-                type: "POST",
-                url: androidIos.ajaxHttp()+"/order/getHistoryOrder",
-                data:JSON.stringify(json),
-                contentType: "application/json;charset=utf-8",
-                dataType: "json",
-                timeout: 10000,
-                success: function (getHistoryOrder) {
-                  if(getHistoryOrder.success="1"){
-                    if(getHistoryOrder.total-1>0){
-                      _this.histroyAddressLength = true;
-                    }
-                  }else{
-                    androidIos.second(getHistoryOrder.message)
-                  }
-                },
-                complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                  if(status=='timeout'){//超时,status还有success,error等值的情况
-                    androidIos.second("网络请求超时");
-                  }else if(status=='error'){
-                    androidIos.errorwife();
-                  }
-                }
-              })
-            });
-          }
-          if(newOrder!=undefined){
-            newOrder = JSON.parse(newOrder);
-            _this.both = newOrder;
-            _this.$nextTick(function () {
-              $("#newOrderBox").animate({scrollTop: _this.both.scrollTop}, 0);
-            })
-            sessionStorage.removeItem("newOrder");
-          }
-          if(histroyAddress!=undefined){
-              histroyAddress = JSON.parse(histroyAddress);
-              _this.both = histroyAddress;
-              sessionStorage.removeItem("histroyAddress");
-          }
-          if(startAddress!=undefined){
-            startAddress = JSON.parse(startAddress);
-            _this.both.startAddress.people = startAddress.name;
-            _this.both.startAddress.tel = startAddress.phone;
-            _this.both.startAddress.city = startAddress.province + '-' + startAddress.city + '-'  + startAddress.area;
-            _this.both.startAddress.address = startAddress.address;
-            _this.both.startAddress.company = startAddress.company;
-            _this.both.startAddress.pk =  startAddress.pk;
-            sessionStorage.removeItem("startAddress");
-          }
-        if(endAddress!=undefined){
-          endAddress = JSON.parse(endAddress);
-          _this.both.endAddress.people = endAddress.name;
-          _this.both.endAddress.tel = endAddress.phone;
-          _this.both.endAddress.city = endAddress.province + '-' + endAddress.city + '-'  + endAddress.area;
-          _this.both.endAddress.address = endAddress.address;
-          _this.both.endAddress.company = endAddress.company;
-          _this.both.endAddress.pk =  endAddress.pk;
-          sessionStorage.removeItem("endAddress");
-        }
-        if(goodsType!=undefined){
-          goodsType = JSON.parse(goodsType);
-          _this.both.productList[goodsType.index].goodsType =goodsType.parentName + '-' +goodsType.name;
-          _this.both.productList[goodsType.index].goodstypenumber =goodsType.parentcode + '-' +goodsType.code;
-          var listGood = [];
-          for(var i=0;i < _this.both.productList.length ;i++){
-            if(_this.both.productList[i].goodsType != ""){
-              listGood.push(_this.both.productList[i].goodsType)
-            }
-          }
-          sessionStorage.removeItem("goodsType");
-        }
-        if(tranType!=undefined){
-          tranType = JSON.parse(tranType);
-          _this.both.tranType =tranType.displayName;
-          _this.both.trantypenumber =tranType.value;
-          _this.price = "";
-          sessionStorage.removeItem("tranType");
-        }
-        if(appoint!=undefined){
-          appoint = JSON.parse(appoint);
-          _this.both.appoint =appoint.name;
-          _this.both.pk_carrier = appoint.pk_carrier;
-          _this.both.driver_name = appoint.driver_name;
-          sessionStorage.removeItem("appoint");
-        }
-        if(insurance!=undefined){
-          insurance = JSON.parse(insurance);
-          _this.both.insurance =insurance.name+" ¥"+insurance.price+"/次";
-          sessionStorage.removeItem("insurance");
-        }
-        _this.$nextTick(function () {
-          _this.go();
-        })
+          androidIos.bridge(_this);
       },
       methods:{
           asdfgh:function(){
@@ -521,6 +313,207 @@
           },
           go:function(){
             var _this = this;
+            var newTimeCjj = new Date();
+            var yearCjj = newTimeCjj.getFullYear();
+            var monthCjj = newTimeCjj.getMonth()+1;
+            var dateCjj = newTimeCjj.getDate();
+            var hourCjj = newTimeCjj.getHours();
+            var minCjj = newTimeCjj.getMinutes();
+            var secCjj = newTimeCjj.getSeconds();
+            var dateCjjS = dateCjj+1;
+            var hourCjjS = hourCjj+1;
+            var newDateCjj = new Date(yearCjj+"/"+monthCjj+"/"+dateCjj+" "+hourCjjS+":"+minCjj+":"+secCjj);
+            var newDataCjj = new Date((new Date()).getTime()+24*60*60*1000);
+            _this.both.timeBeforeS = _this.ten(newDateCjj.getFullYear())+"-"+ _this.ten((newDateCjj.getMonth()+1))+"-"+_this.ten(newDateCjj.getDate());
+            _this.both.timeBeforeF = _this.ten(newDateCjj.getHours())+":"+_this.ten(newDateCjj.getMinutes())+":"+_this.ten(newDateCjj.getSeconds());
+            _this.both.timeAfterS = _this.ten(newDataCjj.getFullYear())+"-"+ _this.ten((newDataCjj.getMonth()+1))+"-"+_this.ten(newDataCjj.getDate());
+            _this.both.timeAfterF = "08:00:00";
+            var newOrder = sessionStorage.getItem("newOrder");
+            var histroyAddress = sessionStorage.getItem("histroyAddress");
+            var startAddress = sessionStorage.getItem("startAddress");
+            var endAddress = sessionStorage.getItem("endAddress");
+            var tranType =  sessionStorage.getItem("tranType");
+            var goodsType =  sessionStorage.getItem("goodsType");
+            var appoint = sessionStorage.getItem("appoint");
+            var insurance =   sessionStorage.getItem("insurance");
+            var pk = _this.$route.query.pk;
+            _this.pk = pk ==undefined || _this.$route.query.type == undefined || _this.$route.query.type == "2"?"":pk;
+            if(pk != undefined && newOrder == undefined){
+              $.ajax({
+                type: "POST",
+                url: androidIos.ajaxHttp()+"/order/invoiceDetail",
+                data:JSON.stringify({pk:pk,source:sessionStorage.getItem("source"),userCode:sessionStorage.getItem("token")}),
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                async:false,
+                timeout: 10000,
+                success: function (invoiceDetail) {
+                  var list=[];
+                  for(var i =0;i<invoiceDetail.invPackDao.length;i++){
+                    _this.both.initialWeight = _this.both.initialWeight*1 + invoiceDetail.invPackDao[i].weight/1000*1;
+                    var listJson = {
+                      pkInvPackB:invoiceDetail.invPackDao[i].pkInvPackB,
+                      goodsType:invoiceDetail.invPackDao[i].goodsName+"-"+invoiceDetail.invPackDao[i].goodsTypeName,
+                      goodstypenumber:invoiceDetail.invPackDao[i].goodsCode+"-"+invoiceDetail.invPackDao[i].goodsType,
+                      number:invoiceDetail.invPackDao[i].num,
+                      unitWight:"吨",
+                      wight:invoiceDetail.invPackDao[i].weight/1000,
+                      wightTen:"1",
+                      unitWeight:"立方米",
+                      weight:invoiceDetail.invPackDao[i].volume*1,
+                      weightTen:"1",
+                    }
+                    list.push(listJson);
+                  }
+                  var pdlist = {
+                    startAddress:{
+                      people:invoiceDetail.delivery.contact,
+                      tel:invoiceDetail.delivery.mobile,
+                      city:invoiceDetail.delivery.province+"-"+invoiceDetail.delivery.city+"-"+invoiceDetail.delivery.area,
+                      address:invoiceDetail.delivery.detailAddr,
+                      company:invoiceDetail.delivery.addrName,
+                      pk:invoiceDetail.delivery.pkAddress,
+                    },
+                    endAddress:{
+                      people:invoiceDetail.arrival.contact,
+                      tel:invoiceDetail.arrival.mobile,
+                      city:invoiceDetail.arrival.province+"-"+invoiceDetail.arrival.city+"-"+invoiceDetail.arrival.area,
+                      address:invoiceDetail.arrival.detailAddr,
+                      company:invoiceDetail.arrival.addrName,
+                      pk:invoiceDetail.arrival.pkAddress,
+                    },
+                    timeBeforeF:invoiceDetail.deliDate.split(" ")[1],
+                    timeBeforeS:invoiceDetail.deliDate.split(" ")[0],
+                    timeAfterF:invoiceDetail.arriDate.split(" ")[1],
+                    timeAfterS:invoiceDetail.arriDate.split(" ")[0],
+                    productList:list,
+                    tranType:"",
+                    trantypenumber:"",
+                    appoint:invoiceDetail.carrierDto.carrierName,
+                    pk_carrier:invoiceDetail.carrierDto.pkCarrier,
+                    driver_name:"",
+                    insurance:"",
+                    payment:invoiceDetail.balatype ==null?"到付":invoiceDetail.balatype,
+                    pay:0,
+                    read:true,
+                    scrollTop:0,
+                    initialWeight:_this.both.initialWeight
+                  }
+                  _this.both = pdlist;
+                  _this.$nextTick(function () {
+                    $(".pickmessage h1,.arrmessage h1,#time .lablebox").addClass("imgno");
+                    for(var i = 0 ; i<$(".goodsTypeLabel").length;i++){
+                      $(".goodsTypeLabel").eq(i).addClass("imgno");
+                    }
+                  })
+                },
+                complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                  if(status=='timeout'){//超时,status还有success,error等值的情况
+                    androidIos.second("网络请求超时");
+                  }else if(status=='error'){
+                    androidIos.errorwife();
+                  }
+                }
+              })
+            }
+            if(_this.pk == ""){
+                var json = {
+                  page:1,
+                  size:1,
+                  keyword:"",
+                  user:sessionStorage.getItem("token"),
+                  source:sessionStorage.getItem("source")
+                }
+                var listData=[]
+                $.ajax({
+                  type: "POST",
+                  url: androidIos.ajaxHttp()+"/order/getHistoryOrder",
+                  data:JSON.stringify(json),
+                  contentType: "application/json;charset=utf-8",
+                  dataType: "json",
+                  timeout: 10000,
+                  success: function (getHistoryOrder) {
+                    if(getHistoryOrder.success="1"){
+                      if(getHistoryOrder.total-1>0){
+                        _this.histroyAddressLength = true;
+                      }
+                    }else{
+                      androidIos.second(getHistoryOrder.message)
+                    }
+                  },
+                  complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                    if(status=='timeout'){//超时,status还有success,error等值的情况
+                      androidIos.second("网络请求超时");
+                    }else if(status=='error'){
+                      androidIos.errorwife();
+                    }
+                  }
+                })
+            }
+            if(newOrder!=undefined){
+              newOrder = JSON.parse(newOrder);
+              _this.both = newOrder;
+              _this.$nextTick(function () {
+                $("#newOrderBox").animate({scrollTop: _this.both.scrollTop}, 0);
+              })
+              sessionStorage.removeItem("newOrder");
+            }
+            if(histroyAddress!=undefined){
+              histroyAddress = JSON.parse(histroyAddress);
+              _this.both = histroyAddress;
+              sessionStorage.removeItem("histroyAddress");
+            }
+            if(startAddress!=undefined){
+              startAddress = JSON.parse(startAddress);
+              _this.both.startAddress.people = startAddress.name;
+              _this.both.startAddress.tel = startAddress.phone;
+              _this.both.startAddress.city = startAddress.province + '-' + startAddress.city + '-'  + startAddress.area;
+              _this.both.startAddress.address = startAddress.address;
+              _this.both.startAddress.company = startAddress.company;
+              _this.both.startAddress.pk =  startAddress.pk;
+              sessionStorage.removeItem("startAddress");
+            }
+            if(endAddress!=undefined){
+              endAddress = JSON.parse(endAddress);
+              _this.both.endAddress.people = endAddress.name;
+              _this.both.endAddress.tel = endAddress.phone;
+              _this.both.endAddress.city = endAddress.province + '-' + endAddress.city + '-'  + endAddress.area;
+              _this.both.endAddress.address = endAddress.address;
+              _this.both.endAddress.company = endAddress.company;
+              _this.both.endAddress.pk =  endAddress.pk;
+              sessionStorage.removeItem("endAddress");
+            }
+            if(goodsType!=undefined){
+              goodsType = JSON.parse(goodsType);
+              _this.both.productList[goodsType.index].goodsType =goodsType.parentName + '-' +goodsType.name;
+              _this.both.productList[goodsType.index].goodstypenumber =goodsType.parentcode + '-' +goodsType.code;
+              var listGood = [];
+              for(var i=0;i < _this.both.productList.length ;i++){
+                if(_this.both.productList[i].goodsType != ""){
+                  listGood.push(_this.both.productList[i].goodsType)
+                }
+              }
+              sessionStorage.removeItem("goodsType");
+            }
+            if(tranType!=undefined){
+              tranType = JSON.parse(tranType);
+              _this.both.tranType =tranType.displayName;
+              _this.both.trantypenumber =tranType.value;
+              _this.price = "";
+              sessionStorage.removeItem("tranType");
+            }
+            if(appoint!=undefined){
+              appoint = JSON.parse(appoint);
+              _this.both.appoint =appoint.name;
+              _this.both.pk_carrier = appoint.pk_carrier;
+              _this.both.driver_name = appoint.driver_name;
+              sessionStorage.removeItem("appoint");
+            }
+            if(insurance!=undefined){
+              insurance = JSON.parse(insurance);
+              _this.both.insurance =insurance.name+" ¥"+insurance.price+"/次";
+              sessionStorage.removeItem("insurance");
+            }
             $(document).on('click','.lablebox input',function () {
               var $Val = $.trim($(this).val())
               $(this).val('').focus().val($Val)

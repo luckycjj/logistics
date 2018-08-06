@@ -52,6 +52,12 @@
       },
       mounted:function(){
             var _this = this;
+            androidIos.bridge(_this);
+
+      },
+       methods:{
+          go:function () {
+            var _this = this;
             var siteSure = sessionStorage.getItem("siteSure");
             var timeSite = sessionStorage.getItem("timeSite");
             var timeSure = sessionStorage.getItem("timeSure");
@@ -89,12 +95,11 @@
               _this.listBox.list[timeSure.number].timeS = new Date(_this.listBox.list[timeSure.number].endTime.replace('-','/').replace('-','/')).getTime();
               sessionStorage.removeItem("timeSure");
             }
-           var asc = function(x,y){
+            var asc = function(x,y){
               return (x['timeF'] > y['timeF']) ? 1 : -1
             }
             _this.listBox.list.sort(asc);
-      },
-       methods:{
+          },
          chooseTime:function (index) {
            var _this = this;
            var json = {

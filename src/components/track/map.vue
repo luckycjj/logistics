@@ -28,13 +28,17 @@
     },
     mounted: function () {
       var _this = this;
-      var http = window.location.href;
-      if(http.indexOf("/track/map")!=-1){
-        _this.navShow = true;
-      }
-      _this.init()
+      androidIos.bridge(_this);
     },
     methods: {
+      go:function () {
+        var _this = this;
+        var http = window.location.href;
+        if(http.indexOf("/track/map")!=-1){
+          _this.navShow = true;
+        }
+        _this.init()
+      },
       init: function () {
         var _this = this;
         _this.carList = JSON.parse(sessionStorage.getItem("carOrder"));

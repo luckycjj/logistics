@@ -40,18 +40,22 @@
       }
     },
     mounted:function () {
-      var self = this;
-      self.mescroll = new MeScroll("mescroll", { //请至少在vue的mounted生命周期初始化mescroll,以确保您配置的id能够被找到
-        up: {
-          callback: self.upCallback, //上拉回调
-          isBounce: false, //此处禁止ios回弹,解析(务必认真阅读,特别是最后一点): http://www.mescroll.com/qa.html#q10
-        },
-        down: {
-          offset: 2.1 * $("html").css("font-size").replace("px", "")
-        }
-      });
+      var _this = this;
+      androidIos.bridge(_this);
     },
     methods:{
+      go:function () {
+        var self = this;
+        self.mescroll = new MeScroll("mescroll", { //请至少在vue的mounted生命周期初始化mescroll,以确保您配置的id能够被找到
+          up: {
+            callback: self.upCallback, //上拉回调
+            isBounce: false, //此处禁止ios回弹,解析(务必认真阅读,特别是最后一点): http://www.mescroll.com/qa.html#q10
+          },
+          down: {
+            offset: 2.1 * $("html").css("font-size").replace("px", "")
+          }
+        });
+      },
       upCallback: function(page) {
         //联网加载数据
         var self = this;

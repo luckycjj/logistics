@@ -28,14 +28,18 @@
     },
     mounted: function () {
       var _this = this;
-      var http = window.location.href;
-      if(http.indexOf("/orderLogistics/map") != -1){
-        _this.navShow = true;
-        $("#orderLogistics .amap-zoomcontrol").show();
-      }
-      _this.init()
+      androidIos.bridge(_this);
     },
     methods: {
+      go:function () {
+        var _this = this;
+        var http = window.location.href;
+        if(http.indexOf("/orderLogistics/map") != -1){
+          _this.navShow = true;
+          $("#orderLogistics .amap-zoomcontrol").show();
+        }
+        _this.init();
+      },
       init: function () {
         var _this = this;
         var ordertype = sessionStorage.getItem("orderType");

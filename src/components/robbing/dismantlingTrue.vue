@@ -16,7 +16,8 @@
 </template>
 
 <script>
-    export default {
+  import {androidIos} from "../../js/app";
+  export default {
         name: "dismantlingTrue",
        data(){
            return{
@@ -25,62 +26,66 @@
        },
        mounted:function () {
          var _this = this;
-         var dismantling =   sessionStorage.getItem("dismantling");
-         if(dismantling!=undefined){
-           dismantling = JSON.parse(dismantling);
-           var listBox = [];
-           for(var i = 0 ; i<dismantling.productsList.length;i++){
-             var productsList = dismantling.productsList[i];
-             var num = 0;
-             var list= [];
-             for(var x = 0;x< productsList.list.length;x++){
-               var number = 0;
-               number = productsList.list[x].number*1 +  productsList.list[x].weight*1 + productsList.list[x].volume*1;
-               num = num*1 + number*1;
-               if(number*1 != 0){
-                 list.push(productsList.list[x]);
-               }
-             }
-             if(num*1 != 0){
-               listBox.push({list:list});
-             }
-           }
-           var json ={
-             productsList:listBox,
-             type:dismantling.type,
-             address:dismantling.address,
-             trantype:dismantling.trantype,
-             pickTime:dismantling.pickTime,
-             arrivTime:dismantling.arrivTime,
-           }
-           _this.productBox =json;
-         }
+         androidIos.bridge(_this);
        },
       methods:{
-        sure:function () {
+          go:function () {
             var _this = this;
-            var listBox = [];
-            for(var i = 0 ; i<_this.productBox.productsList.length;i++){
-               var list = [];
-               var productsList = _this.productBox.productsList[i];
-               for(var x = 0;x< productsList.list.length;x++){
-                   var json = {
-                     product:productsList.list[x].products,
-                     productCode:productsList.list[x].productsCode,
-                     num: productsList.list[x].number*1,
-                     weight:productsList.list[x].weight*1000,
-                     volume:productsList.list[x].volume*1,
-                   }
-                   list.push(json)
-               }
-               var data = {
-                   car:"车辆"+(i*1+1),
-                   list:list
-               }
-               listBox.push(data);
+            var dismantling =   sessionStorage.getItem("dismantling");
+            if(dismantling!=undefined){
+              dismantling = JSON.parse(dismantling);
+              var listBox = [];
+              for(var i = 0 ; i<dismantling.productsList.length;i++){
+                var productsList = dismantling.productsList[i];
+                var num = 0;
+                var list= [];
+                for(var x = 0;x< productsList.list.length;x++){
+                  var number = 0;
+                  number = productsList.list[x].number*1 +  productsList.list[x].weight*1 + productsList.list[x].volume*1;
+                  num = num*1 + number*1;
+                  if(number*1 != 0){
+                    list.push(productsList.list[x]);
+                  }
+                }
+                if(num*1 != 0){
+                  listBox.push({list:list});
+                }
+              }
+              var json ={
+                productsList:listBox,
+                type:dismantling.type,
+                address:dismantling.address,
+                trantype:dismantling.trantype,
+                pickTime:dismantling.pickTime,
+                arrivTime:dismantling.arrivTime,
+              }
+              _this.productBox =json;
             }
-            console.log(JSON.stringify(listBox));
-        }
+          },
+          sure:function () {
+              var _this = this;
+              var listBox = [];
+              for(var i = 0 ; i<_this.productBox.productsList.length;i++){
+                 var list = [];
+                 var productsList = _this.productBox.productsList[i];
+                 for(var x = 0;x< productsList.list.length;x++){
+                     var json = {
+                       product:productsList.list[x].products,
+                       productCode:productsList.list[x].productsCode,
+                       num: productsList.list[x].number*1,
+                       weight:productsList.list[x].weight*1000,
+                       volume:productsList.list[x].volume*1,
+                     }
+                     list.push(json)
+                 }
+                 var data = {
+                     car:"车辆"+(i*1+1),
+                     list:list
+                 }
+                 listBox.push(data);
+              }
+              console.log(JSON.stringify(listBox));
+          }
       }
     }
 </script>
