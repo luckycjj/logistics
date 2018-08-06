@@ -1,4 +1,5 @@
 import bridge from './bridge';
+import {bomb} from "./zujian";
 var androidIos = {
   gobackFrom: function (that) {
     var addPageList = window.sessionStorage.getItem("addPageList");
@@ -35,11 +36,6 @@ var androidIos = {
       return  bignumber/len;
   },
   ajaxHttp: function () {
-    //陈满
-    /*var http = 'http://10.10.10.222:8085';*/
-    //李雷
-   /* var http = 'http://10.10.10.217:8085';*/
-    //服务器
     var http = 'http://222.73.159.76:8085';
     return http;
   },
@@ -144,6 +140,28 @@ var androidIos = {
       "<div id='common-black' style='line-height: 0.8rem;'>" +
       "<div class='common-imgbox'></div>" + message + "</div>" +
       "</div>");
+  },
+  bridge:function (that) {
+    new Promise(function (resolve,reject) {
+      if(bridge.invoke('token') != undefined){
+        bridge.invoke('token','',function(response) {
+          resolve(response);
+        })
+      }else{
+        reject(2)
+      }
+    }).then(function (data) {
+      data = JSON.parse(data);
+      sessionStorage.setItem("token", data.userCode);
+      sessionStorage.setItem("source", data.source);
+      that.$nextTick(function() {
+        that.go();
+      });
+    }).catch(function (error) {
+      that.$nextTick(function() {
+        that.go();
+      });
+    })
   },
   jsonsort: function (obj) {
     var keys = [];

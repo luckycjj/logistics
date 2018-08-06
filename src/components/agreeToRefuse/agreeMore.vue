@@ -57,92 +57,96 @@
       },
       mounted:function () {
          var _this = this ;
-         _this.phone = _this.$route.query.ph;
-        $.ajax({
-          type: "POST",
-          url: androidIos.ajaxHttp() + "/driver/findDriverInfo",
-          data: JSON.stringify({
-            userCode:_this.phone,
-            source:sessionStorage.getItem("source")
-          }),
-          contentType: "application/json;charset=utf-8",
-          dataType: "json",
-          timeout:30000,
-          success: function(findDriverInfo){
-            if(findDriverInfo.success == "1"){
-              _this.ftpUrl = findDriverInfo.ftpUrl;
-              _this.name = findDriverInfo.driverName;
-              _this.Drivepic = findDriverInfo.ftpUrl + findDriverInfo.driverLic;
-              _this.IDpic = findDriverInfo.ftpUrl + findDriverInfo.idCardPos;
-            }else{
-              androidIos.second(findDriverInfo.message);
-            }
-          },
-          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-            if(status=='timeout'){//超时,status还有success,error等值的情况
-              androidIos.second("当前状况下网络状态差，请检查网络！")
-            }else if(status=="error"){
-              androidIos.errorwife();
-            }
-          }
-        });
-        $(document).unbind("click").on("click",".label img",function (even) {
-          if (even.target.className != "closed" ) {
-            var img = $(this).attr("src");
-            $("#imgBigbox").remove();
-            $("body").append(
-              "<div id='imgBigbox'><div class='pinch-zoom'><img id='zoomimg'  src=" +
-              img +
-              " '></div><div id='zhezhaoImg'></div></div>"
-            );
-            $("#imgBigbox").css({
-              width: "100%",
-              height: "100%",
-              position: "fixed",
-              top: "0",
-              left: "0",
-              background: "rgb(0,0,0)",
-              "z-index": "999",
-              display: "block"
-            });
-            $("#zhezhaoImg").css({
-              width: "100%",
-              height: "100%",
-              position: "absolute",
-              background: "rgba(0,0,0,0)",
-              "z-index": "999",
-              top: "0",
-              left: "0"
-            });
-            $("#imgBigbox img").css({ width: "100%", position: "absolute" });
-            var image = document.getElementById("zoomimg");
-            image.onload = function() {
-              var height = $("#imgBigbox img").height();
-              $("div.pinch-zoom").each(function() {
-                new PinchZoom($(this), {});
-              });
-              $(".pinch-zoom-container").css({
-                width: "100%",
-                height: "100%"
-              });
-              $("#imgBigbox img").css("top", "50%");
-              $(".pinch-zoom").css({ width: "100%", height: "100%" });
-              $("#imgBigbox img").css("margin-top", -height / 2 + "px");
-              var setImgBox;
-              var setImgBoxNumber = 10;
-              setImgBox = setInterval(function() {
-                setImgBoxNumber--;
-                if (setImgBoxNumber < 9) {
-                  clearInterval(setImgBox);
-                  setImgBoxNumber = 10;
-                  $("#zhezhaoImg").remove();
-                }
-              }, 100);
-            };
-          }
-        });
+         androidIos.bridge(_this);
       },
       methods:{
+        go:function () {
+          var _this = this;
+          _this.phone = _this.$route.query.ph;
+          $.ajax({
+            type: "POST",
+            url: androidIos.ajaxHttp() + "/driver/findDriverInfo",
+            data: JSON.stringify({
+              userCode:_this.phone,
+              source:sessionStorage.getItem("source")
+            }),
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            timeout:30000,
+            success: function(findDriverInfo){
+              if(findDriverInfo.success == "1"){
+                _this.ftpUrl = findDriverInfo.ftpUrl;
+                _this.name = findDriverInfo.driverName;
+                _this.Drivepic = findDriverInfo.ftpUrl + findDriverInfo.driverLic;
+                _this.IDpic = findDriverInfo.ftpUrl + findDriverInfo.idCardPos;
+              }else{
+                androidIos.second(findDriverInfo.message);
+              }
+            },
+            complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+              if(status=='timeout'){//超时,status还有success,error等值的情况
+                androidIos.second("当前状况下网络状态差，请检查网络！")
+              }else if(status=="error"){
+                androidIos.errorwife();
+              }
+            }
+          });
+          $(document).unbind("click").on("click",".label img",function (even) {
+            if (even.target.className != "closed" ) {
+              var img = $(this).attr("src");
+              $("#imgBigbox").remove();
+              $("body").append(
+                "<div id='imgBigbox'><div class='pinch-zoom'><img id='zoomimg'  src=" +
+                img +
+                " '></div><div id='zhezhaoImg'></div></div>"
+              );
+              $("#imgBigbox").css({
+                width: "100%",
+                height: "100%",
+                position: "fixed",
+                top: "0",
+                left: "0",
+                background: "rgb(0,0,0)",
+                "z-index": "999",
+                display: "block"
+              });
+              $("#zhezhaoImg").css({
+                width: "100%",
+                height: "100%",
+                position: "absolute",
+                background: "rgba(0,0,0,0)",
+                "z-index": "999",
+                top: "0",
+                left: "0"
+              });
+              $("#imgBigbox img").css({ width: "100%", position: "absolute" });
+              var image = document.getElementById("zoomimg");
+              image.onload = function() {
+                var height = $("#imgBigbox img").height();
+                $("div.pinch-zoom").each(function() {
+                  new PinchZoom($(this), {});
+                });
+                $(".pinch-zoom-container").css({
+                  width: "100%",
+                  height: "100%"
+                });
+                $("#imgBigbox img").css("top", "50%");
+                $(".pinch-zoom").css({ width: "100%", height: "100%" });
+                $("#imgBigbox img").css("margin-top", -height / 2 + "px");
+                var setImgBox;
+                var setImgBoxNumber = 10;
+                setImgBox = setInterval(function() {
+                  setImgBoxNumber--;
+                  if (setImgBoxNumber < 9) {
+                    clearInterval(setImgBox);
+                    setImgBoxNumber = 10;
+                    $("#zhezhaoImg").remove();
+                  }
+                }, 100);
+              };
+            }
+          });
+        },
         agresRefuse:function (type) {
           var _this = this;
           var message = type == 1 ? "同意" : "拒绝" ;
