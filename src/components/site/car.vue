@@ -300,7 +300,7 @@
                           nowweight:tt.weight*1,
                           type:tt.weight*1 > 0 ? 2 :1,
                           carType:pdType,
-                          now:pdType == 0  && i % 3 == 0 ? 0 :pdType == 0  && i % 3 == 2 ? 2 : 1 ,
+                          now:pdType == 0  && i % 3 == 0 ? 0 :pdType == 0  && i % 3 == 1 ? 2 : 1 ,
                         }
                         listData.push(json);
                       }
@@ -378,7 +378,7 @@
                       nowweight:tt.weight*1,
                       type:tt.weight*1 > 0 ? 2 :1,
                       carType:pdType,
-                      now:pdType == 0  && i % 3 == 0 ? 0 :pdType == 0  && i % 3 == 2 ? 2 : 1 ,
+                      now:pdType == 0  && i % 3 == 0 ? 0 :pdType == 0  && i % 3 == 1 ? 2 : 1 ,
                     }
                     listData.push(json);
                   }

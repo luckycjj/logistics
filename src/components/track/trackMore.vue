@@ -208,7 +208,7 @@
         </div>
         <ul class="errorUl">
           <li v-for="(item,index) in cancelReason" :class="index%2==0?'errorAbnormalLeft':'errorAbnormalRight'" @click="cancelReasonClick($event)">
-            {{item.name}}
+            {{item.displayName}}
           </li>
           <div class="clearBoth"></div>
           <input type="text" placeholder="其他原因" maxlength="40" v-model="cancelreason">
@@ -244,15 +244,7 @@
         errorPriceBox:false,
         cancelReasonBox:false,
         errorAbnormal:[],
-        cancelReason:[{
-          name:"货主联系不上"
-        },{
-          name:"货物不真实"
-        },{
-          name:"订单接错"
-        },{
-          name:"司机临时有事"
-        }],
+        cancelReason:[],
         errorPriceList:[],
         errorabnormal:"",
         cancelreason:"",
@@ -296,7 +288,30 @@
         self.$nextTick(function () {
           $(document).on('click','#cancel',function () {
             self.cancelReasonBox = true;
-          })
+            if(self.cancelReason.length == 0) {
+              $.ajax({
+                type: "GET",
+                url: androidIos.ajaxHttp() + "/settings/getSysConfigList",
+                data: {
+                  str: "carrier_closeOrder",
+                  userCode: sessionStorage.getItem("token"),
+                  source: sessionStorage.getItem("source")
+                },
+                dataType: "json",
+                timeout: 10000,
+                success: function (getSysConfigList) {
+                  self.cancelReason = getSysConfigList;
+                },
+                complete: function (XMLHttpRequest, status) { //请求完成后最终执行参数
+                  if (status == 'timeout') {//超时,status还有success,error等值的情况
+                    androidIos.second("网络请求超时");
+                  } else if (status == 'error') {
+                    androidIos.errorwife();
+                  }
+                }
+              })
+            }
+            })
         })
       },
       upCallback: function(page) {
@@ -657,7 +672,7 @@
           var list = [];
           for(var i = 0 ;i<_this.cancelReason.length;i++){
             if($("#cancelReason .errorUl li").eq(i).hasClass("errorPriceBoxLi")){
-              list.push(_this.cancelReason[i].name)
+              list.push(_this.cancelReason[i].displayName)
             }
           }
           if(list.length == 0 && _this.cancelreason == ''){
@@ -668,10 +683,9 @@
           androidIos.loading("正在取消");
           $.ajax({
             type: "POST",
-            url: androidIos.ajaxHttp()+"/order/closeOrder",
+            url: androidIos.ajaxHttp()+"/order/carrierCloseOrder",
             data:JSON.stringify({
-              reason:list[0]==undefined?'':list[0],
-              cancelreason:_this.cancelreason,
+              remark:list[0] == undefined && _this.cancelreason != '' ? '其他原因:' + _this.cancelreason :list[0] != undefined && _this.cancelreason != '' ? list[0] + ',其他原因:' + _this.cancelreason : list[0] ,
               pk:_this.$route.query.pk,
               userCode:sessionStorage.getItem("token"),
               source:sessionStorage.getItem("source")

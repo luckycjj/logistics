@@ -1,7 +1,7 @@
 <template>
   <div id="changeCarpeople">
     <div id="title" v-title data-title="司机列表"></div>
-    <div id="mescroll" class="mescroll" :style="{bottom:manage?'1.2rem':0}">
+    <div id="mescroll" class="mescroll" :style="{bottom : manage && productPk == ''?'1.2rem':0}">
       <ul id="dataList" class="data-list">
         <li v-for="(item,index) in pdlist">
           <div id="peopleMessage">
@@ -37,7 +37,7 @@
         </li>
       </ul>
     </div>
-    <button v-if="manage" id="newCar" @click="newdriver()">新增司机</button>
+    <button v-if="manage && productPk == ''" id="newCar" @click="newdriver()">新增司机</button>
   </div>
 </template>
 
