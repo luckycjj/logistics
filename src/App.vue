@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="bigbigtest">
+  <div id="app" class="bigbigtest appBox">
     <div id="appBox">
     <div id="carTitleBox">
       <div class="carTitleBox">
@@ -43,8 +43,8 @@
         sessionStorage.setItem("source",response.source);
       });
       //15555555555 18098690941
-    /* sessionStorage.setItem("token","18098690941");
-     sessionStorage.setItem("source",2);*/
+     /*sessionStorage.setItem("token","15555555555");
+     sessionStorage.setItem("source",1);*/
     },
     updated: function () {
       var _this = this;

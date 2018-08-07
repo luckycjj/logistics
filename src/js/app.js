@@ -2,18 +2,26 @@ import bridge from './bridge';
 import {bomb} from "./zujian";
 var androidIos = {
   gobackFrom: function (that) {
-    var addPageList = window.sessionStorage.getItem("addPageList");
-    $("#errorwifeBox").remove();
-    $("#common-blackBox").remove();
-    $(".tanBox-bigBox").remove();
-    if (addPageList * 1 > 0) {
-      var number = addPageList * 1 - 1;
-      sessionStorage.setItem("addPageList", number);
+    if(bomb.hasClass("app","appBox")){
+      bomb.removeClass("app","appBox");
+      var addPageList = window.sessionStorage.getItem("addPageList");
       $("#errorwifeBox").remove();
-      that.$router.go(-1);
-    } else {
-      bridge.invoke('gobackfrom');
+      $("#common-blackBox").remove();
+      $(".tanBox-bigBox").remove();
+      if (addPageList * 1 > 0) {
+        var number = addPageList * 1 - 1;
+        sessionStorage.setItem("addPageList", number);
+        $("#errorwifeBox").remove();
+        that.$router.go(-1);
+        setTimeout(function () {
+          bomb.addClass("app","appBox");
+        },500)
+      } else {
+        bomb.addClass("app","appBox");
+        bridge.invoke('gobackfrom');
+      }
     }
+
   },
   fixed:function (number,length) {
       var len = 1;
