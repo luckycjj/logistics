@@ -200,22 +200,6 @@
         <button @click="errorPriceChange()" id="gogogo4" class="gogogo">提交</button>
       </div>
     </div>
-    <div id="cancelReasonBox" v-if="cancelReasonBox">
-      <div id="cancelReason">
-        <div id="cancelReasonTitle">
-          <img src="../../images/closed.png" @click="cancelReasonClosed()">
-          <p>选择取消订单理由</p>
-        </div>
-        <ul class="errorUl">
-          <li v-for="(item,index) in cancelReason" :class="index%2==0?'errorAbnormalLeft':'errorAbnormalRight'" @click="cancelReasonClick($event)">
-            {{item.displayName}}
-          </li>
-          <div class="clearBoth"></div>
-          <input type="text" placeholder="其他原因" maxlength="40" v-model="cancelreason">
-        </ul>
-        <button @click="cancelReasonChange()" id="gogogo3" class="gogogo">提交</button>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -242,12 +226,9 @@
         peopleType:0,
         errorAbnormalBox:false,
         errorPriceBox:false,
-        cancelReasonBox:false,
         errorAbnormal:[],
-        cancelReason:[],
         errorPriceList:[],
         errorabnormal:"",
-        cancelreason:"",
         errorPricetype:"",
         errorPrice:"",
         mescroll:"",
@@ -285,34 +266,6 @@
             offset: 2.1 * $("html").css("font-size").replace("px", "")
           }
         });
-        self.$nextTick(function () {
-          $(document).on('click','#cancel',function () {
-            self.cancelReasonBox = true;
-            if(self.cancelReason.length == 0) {
-              $.ajax({
-                type: "GET",
-                url: androidIos.ajaxHttp() + "/settings/getSysConfigList",
-                data: {
-                  str: "carrier_closeOrder",
-                  userCode: sessionStorage.getItem("token"),
-                  source: sessionStorage.getItem("source")
-                },
-                dataType: "json",
-                timeout: 10000,
-                success: function (getSysConfigList) {
-                  self.cancelReason = getSysConfigList;
-                },
-                complete: function (XMLHttpRequest, status) { //请求完成后最终执行参数
-                  if (status == 'timeout') {//超时,status还有success,error等值的情况
-                    androidIos.second("网络请求超时");
-                  } else if (status == 'error') {
-                    androidIos.errorwife();
-                  }
-                }
-              })
-            }
-            })
-        })
       },
       upCallback: function(page) {
         //联网加载数据
@@ -333,10 +286,8 @@
           sessionStorage.setItem("dispatchPK",self.$route.query.pk);
           self.$nextTick(function () {
             if ((self.type == 1) && self.peopleType == 2) {
-              $("#cancel").show();
               $("#erweimaLook").hide();
             } else if (self.peopleType == 1) {
-              $("#cancel").hide();
               $("#erweimaLook").show();
               document.getElementById("erweimaLook").onclick = function () {
                 androidIos.addPageList();
@@ -344,7 +295,6 @@
               }
             } else {
               $("#erweimaLook").hide();
-              $("#cancel").hide();
             }
             if(self.type >0 && self.type < 8 ){
               if($(".sw-bullet").length == 0 && self.carList.length > 1){
@@ -590,8 +540,6 @@
         }else{
            bomb.first("请不要频繁点击");
         }
-
-
        /* if(!bomb.hasClass("errorAbnormalChangeImg","gray")){
           bridge.invoke("replacement",_this.$route.query.pk)
         }*/
@@ -666,66 +614,6 @@
         _this.errorPricetype = "";
         $("#errorPriceBox .errorUl li").removeClass("errorPriceBoxLi");
       },
-      cancelReasonChange:function(){
-        var _this = this;
-        if(bomb.hasClass("gogogo3","gogogo")){
-          var list = [];
-          for(var i = 0 ;i<_this.cancelReason.length;i++){
-            if($("#cancelReason .errorUl li").eq(i).hasClass("errorPriceBoxLi")){
-              list.push(_this.cancelReason[i].displayName)
-            }
-          }
-          if(list.length == 0 && _this.cancelreason == ''){
-            bomb.first("请选择或填写取消订单的理由");
-            return false;
-          }
-          bomb.removeClass("gogogo3","gogogo");
-          androidIos.loading("正在取消");
-          $.ajax({
-            type: "POST",
-            url: androidIos.ajaxHttp()+"/order/carrierCloseOrder",
-            data:JSON.stringify({
-              remark:list[0] == undefined && _this.cancelreason != '' ? '其他原因:' + _this.cancelreason :list[0] != undefined && _this.cancelreason != '' ? list[0] + ',其他原因:' + _this.cancelreason : list[0] ,
-              pk:_this.$route.query.pk,
-              userCode:sessionStorage.getItem("token"),
-              source:sessionStorage.getItem("source")
-            }),
-            dataType: "json",
-            contentType: "application/json;charset=utf-8",
-            timeout: 10000,
-            success: function (closeOrder) {
-              if(closeOrder.success == "1"){
-                _this.$cjj("取消成功");
-                setTimeout(function () {
-                  bridge.invoke('gobackfrom');
-                },500)
-              }else{
-                androidIos.second(closeOrder.message);
-              }
-            },
-            complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-              bomb.addClass("gogogo3","gogogo");
-              $("#common-blackBox").remove();
-              if(status=='timeout'){//超时,status还有success,error等值的情况
-                _this.cancelReasonBox = false;
-                androidIos.second("网络请求超时");
-              }else if(status=='error'){
-                _this.cancelReasonBox = false;
-                androidIos.errorwife();
-              }
-            }
-          })
-        }else{
-          bomb.first("请不要频繁点击")
-        }
-
-      },
-      cancelReasonClosed:function(){
-        var _this = this;
-        _this.cancelReasonBox = false;
-        _this.cancelreason = "";
-        $("#cancelReasonBox .errorUl li").removeClass("errorPriceBoxLi");
-      },
       errorPriceListListClick:function (e) {
         if(!this.hasClass(e.target,"errorPriceBoxLi")){
           $("#errorPriceBox .errorUl li").removeClass("errorPriceBoxLi");
@@ -740,14 +628,6 @@
           this.addClass(e.target,"errorPriceBoxLi");
         }else{
           $("#errorAbnormalBox .errorUl li").removeClass("errorPriceBoxLi");
-        }
-      },
-      cancelReasonClick:function(e){
-        if(!this.hasClass(e.target,"errorPriceBoxLi")){
-          $("#cancelReasonBox .errorUl li").removeClass("errorPriceBoxLi");
-          this.addClass(e.target,"errorPriceBoxLi");
-        }else{
-          $("#cancelReasonBox .errorUl li").removeClass("errorPriceBoxLi");
         }
       },
       mapSClick:function(){

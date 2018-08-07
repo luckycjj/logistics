@@ -92,8 +92,9 @@
         <button class="noYes gogogo" id="gogogo2" @click="ohyeah()">同意</button>
         <div class="clearBoth"></div>
       </div>
-      <div class="go" v-else-if="type==3" @click="sendCar()">
-        <button>派车</button>
+      <div class="go" v-else-if="type==3">
+        <button style="width:50%;background:#7bb5f9;" @click="closedOrderButton()">取消订单</button>
+        <button @click="sendCar()" style="width:50%;">派车</button>
       </div>
     </div>
     <div id="cancelReasonBox" v-if="cancelReasonBox">
@@ -104,12 +105,28 @@
         </div>
         <ul class="errorUl">
           <li v-for="(item,index) in cancelReason" :class="index%2==0?'errorAbnormalLeft':'errorAbnormalRight'" @click="cancelReasonClick($event)">
-            {{item.name}}
+            {{item.displayName}}
           </li>
           <div class="clearBoth"></div>
           <input type="text" placeholder="其他原因" v-model="cancelreason" maxlength="50">
         </ul>
         <button @click="cancelReasonChange()" class="gogogo" id="gogogo1">提交</button>
+      </div>
+    </div>
+    <div id="closedOrderBox" v-if="closedOrderBox">
+      <div id="closedOrder">
+        <div id="closedOrderTitle">
+          <img src="../../images/closed.png" @click="closedOrderClosed()">
+          <p>选择取消订单理由</p>
+        </div>
+        <ul class="errorUl">
+          <li v-for="(item,index) in closedOrder" :class="index%2==0?'errorAbnormalLeft':'errorAbnormalRight'" @click="closedOrderClick($event)">
+            {{item.displayName}}
+          </li>
+          <div class="clearBoth"></div>
+          <input type="text" placeholder="其他原因" maxlength="40" v-model="closedOrderReason">
+        </ul>
+        <button @click="orderClosedChange()" id="gogogo3" class="gogogo">提交</button>
       </div>
     </div>
   </div>
@@ -136,18 +153,11 @@
         pdlist:[],
         imgsetTime:"",
         cancelReasonBox:false,
-        cancelReason:[{
-          name:"价格不符"
-        },{
-          name:"目前没车"
-        },{
-          name:"没时间"
-        },{
-          name:"任性不想运"
-        },{
-          name:"有急事"
-        }],
+        cancelReason:[],
         cancelreason:"",
+        closedOrderBox:false,
+        closedOrder:[],
+        closedOrderReason:"",
       }
     },
     mounted:function () {
@@ -310,7 +320,34 @@
       },
       ohno:function(){
         var _this = this;
-        _this.cancelReasonBox = true;
+        androidIos.first("确定拒绝订单吗？");
+        $(".tanBox-yes").unbind('click').click(function(){
+          $(".tanBox-bigBox").remove();
+          _this.cancelReasonBox = true;
+          if(_this.cancelReason.length == 0) {
+            $.ajax({
+              type: "GET",
+              url: androidIos.ajaxHttp() + "/settings/getSysConfigList",
+              data: {
+                str: "refusal",
+                userCode: sessionStorage.getItem("token"),
+                source: sessionStorage.getItem("source")
+              },
+              dataType: "json",
+              timeout: 10000,
+              success: function (getSysConfigList) {
+                _this.cancelReason = getSysConfigList;
+              },
+              complete: function (XMLHttpRequest, status) { //请求完成后最终执行参数
+                if (status == 'timeout') {//超时,status还有success,error等值的情况
+                  androidIos.second("网络请求超时");
+                } else if (status == 'error') {
+                  androidIos.errorwife();
+                }
+              }
+            })
+          }
+        });
       },
       ohyeah:function(){
         var _this = this;
@@ -354,11 +391,101 @@
         }
 
       },
+      closedOrderButton:function () {
+         var _this = this;
+         androidIos.first("确定取消订单吗？");
+        $(".tanBox-yes").unbind('click').click(function(){
+          $(".tanBox-bigBox").remove();
+          _this.closedOrderBox = true;
+          if(_this.closedOrder.length == 0) {
+            $.ajax({
+              type: "GET",
+              url: androidIos.ajaxHttp() + "/settings/getSysConfigList",
+              data: {
+                str: "carrier_closeOrder",
+                userCode: sessionStorage.getItem("token"),
+                source: sessionStorage.getItem("source")
+              },
+              dataType: "json",
+              timeout: 10000,
+              success: function (getSysConfigList) {
+                _this.closedOrder = getSysConfigList;
+              },
+              complete: function (XMLHttpRequest, status) { //请求完成后最终执行参数
+                if (status == 'timeout') {//超时,status还有success,error等值的情况
+                  androidIos.second("网络请求超时");
+                } else if (status == 'error') {
+                  androidIos.errorwife();
+                }
+              }
+            })
+          }
+        });
+      },
+      orderClosedChange:function () {
+        var _this = this;
+        if(bomb.hasClass("gogogo3","gogogo")){
+          var list = [];
+          for(var i = 0 ;i<_this.closedOrder.length;i++){
+            if($("#closedOrder .errorUl li").eq(i).hasClass("errorPriceBoxLi")){
+              list.push(_this.closedOrder[i].displayName)
+            }
+          }
+          if((list.length == 0 || list[0] == '其他原因')&& _this.cancelreason == ''){
+            bomb.first("请选择或填写取消订单的理由");
+            return false;
+          }
+          bomb.removeClass("gogogo3","gogogo");
+          androidIos.loading("正在取消");
+          $.ajax({
+            type: "POST",
+            url: androidIos.ajaxHttp()+"/order/carrierCloseOrder",
+            data:JSON.stringify({
+              remark:list[0] == undefined && _this.cancelreason != '' ? '其他原因:' + _this.cancelreason :list[0] != undefined && _this.cancelreason != '' ? list[0] + ',其他原因:' + _this.cancelreason : list[0] ,
+              pk:_this.$route.query.pk,
+              userCode:sessionStorage.getItem("token"),
+              source:sessionStorage.getItem("source")
+            }),
+            dataType: "json",
+            contentType: "application/json;charset=utf-8",
+            timeout: 10000,
+            success: function (closeOrder) {
+              if(closeOrder.success == "1"){
+                _this.$cjj("取消成功");
+                setTimeout(function () {
+                  bridge.invoke('gobackfrom');
+                },500)
+              }else{
+                androidIos.second(closeOrder.message);
+              }
+            },
+            complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+              bomb.addClass("gogogo3","gogogo");
+              $("#common-blackBox").remove();
+              if(status=='timeout'){//超时,status还有success,error等值的情况
+                _this.cancelReasonBox = false;
+                androidIos.second("网络请求超时");
+              }else if(status=='error'){
+                _this.cancelReasonBox = false;
+                androidIos.errorwife();
+              }
+            }
+          })
+        }else{
+          bomb.first("请不要频繁点击")
+        }
+      },
       cancelReasonClosed:function(){
         var _this = this;
         _this.cancelReasonBox = false;
         _this.cancelreason = "";
         $("#cancelReasonBox .errorUl li").removeClass("errorPriceBoxLi");
+      },
+      closedOrderClosed:function () {
+        var _this = this;
+        _this.closedOrderBox = false;
+        _this.closedOrderReason = "";
+        $("#closedOrderBox .errorUl li").removeClass("errorPriceBoxLi");
       },
       cancelReasonClick:function(e){
         if(!this.hasClass(e.target,"errorPriceBoxLi")){
@@ -368,17 +495,25 @@
           $("#cancelReasonBox .errorUl li").removeClass("errorPriceBoxLi");
         }
       },
+      closedOrderClick:function (e) {
+        if(!this.hasClass(e.target,"errorPriceBoxLi")){
+          $("#closedOrderBox .errorUl li").removeClass("errorPriceBoxLi");
+          this.addClass(e.target,"errorPriceBoxLi");
+        }else{
+          $("#closedOrderBox .errorUl li").removeClass("errorPriceBoxLi");
+        }
+      },
       cancelReasonChange:function(){
         var _this = this;
         if(bomb.hasClass("gogogo1","gogogo")){
           var list =[];
           for(var i =0;i<$("#cancelReasonBox .errorUl li").length;i++){
             if($("#cancelReasonBox .errorUl li").eq(i).hasClass("errorPriceBoxLi")){
-              list.push(_this.cancelReason[i].name);
+              list.push(_this.cancelReason[i].displayName);
             }
           }
-          if(list.length == 0 && _this.cancelreason == ""){
-            bomb.first("请选择拒绝订单的理由！");
+          if((list.length == 0 || list[0] == '其他原因') && _this.cancelreason == ""){
+            bomb.first("请选择或填写拒绝订单的理由！");
             return false;
           }
           var json = {
@@ -555,34 +690,6 @@
 </script>
 
 <style scoped>
-  #cancelReasonBox{
-    width:100%;
-    height: 100%;
-    position: fixed;
-    top:0;
-    left:0;
-    z-index:188;
-    background-color:rgba(0,0,0,0.5);
-  }
- #cancelReason{
-    position: absolute;
-    bottom:0;
-    background: white;
-    width:100%;
-  }
-  #cancelReasonTitle p{
-    width:100%;
-    text-align: center;
-    line-height: 1rem;
-    font-size: 0.375rem;
-    color:#999;
-    position: relative;
-  }
-  #cancelReasonTitle img{
-    position: absolute;
-    width:1rem;
-    z-index: 1;
-  }
   #full_feature{
     padding-top: 0!important;
     width:94%;
@@ -933,7 +1040,7 @@
     background: #dbdbdb;
     margin: 0.375rem auto;
   }
-  #scoreBox,#cancelReasonBox{
+  #scoreBox,#cancelReasonBox,#closedOrderBox{
     width:100%;
     height: 100%;
     position: fixed;
@@ -942,13 +1049,13 @@
     z-index:188;
     background-color:rgba(0,0,0,0.5);
   }
-  #score,#cancelReason{
+  #score,#cancelReason,#closedOrder{
     position: absolute;
     bottom:0;
     background: white;
     width:100%;
   }
-  #scoreTitle p,#cancelReasonTitle p{
+  #scoreTitle p,#cancelReasonTitle p,#closedOrderTitle p{
     width:100%;
     text-align: center;
     line-height: 1rem;
@@ -956,7 +1063,7 @@
     color:#999;
     position: relative;
   }
-  #scoreTitle img,#cancelReasonTitle img{
+  #scoreTitle img,#cancelReasonTitle img,#closedOrderTitle img{
     position: absolute;
     width:1rem;
     z-index: 1;
@@ -1011,7 +1118,7 @@
     float: right;
     margin-top: 0.1rem;
   }
-  #score button,#cancelReason button{
+  #score button,#cancelReason button,#closedOrderBox button{
     width:96%;
     margin-left: 2%;
     border-radius: 0.3rem;

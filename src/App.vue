@@ -8,7 +8,6 @@
         <h3  id="manage" class="asd"  v-if="doNow==1"><span>管理</span></h3>
         <h3  id="site" style="display: none" class="asd"  v-if="doNow==2"><span id="Sitechoosesite">拆段</span><!-- | <span id="Sitedismantling">拆量</span>--></h3>
         <h3  id="search" class="asd"  v-if="doNow==3" ><h5 id="searchSpan"></h5></h3>
-        <h3  id="cancel" class="asd"  v-if="doNow==4" style="display: none;">取消订单</h3>
         <img id="erweimaLook"  src="./images/erweima.png" v-if="doNow==4" style="display: none">
       </div>
       <div id="table"></div>
