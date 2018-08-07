@@ -284,7 +284,7 @@
               data: JSON.stringify({pk: _this.$route.query.pk, userCode: sessionStorage.getItem("token"), source:sessionStorage.getItem("source")}),
               contentType: "application/json;charset=utf-8",
               dataType: "json",
-              timeout: 10000,
+              timeout: 30000,
               success: function (grabSingle) {
                 $("#common-blackBox").remove();
                 bomb.addClass("gogogo","gogogo");
@@ -334,7 +334,7 @@
                 source: sessionStorage.getItem("source")
               },
               dataType: "json",
-              timeout: 10000,
+              timeout: 30000,
               success: function (getSysConfigList) {
                 _this.cancelReason = getSysConfigList;
               },
@@ -363,7 +363,7 @@
               data: JSON.stringify({pk: _this.$route.query.pk, userCode: sessionStorage.getItem("token"), source:sessionStorage.getItem("source")}),
               contentType: "application/json;charset=utf-8",
               dataType: "json",
-              timeout: 10000,
+              timeout: 30000,
               success: function (grabSingle) {
                 $("#common-blackBox").remove();
                 bomb.addClass("gogogo2","gogogo");
@@ -378,6 +378,7 @@
               },
               complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
                 bomb.addClass("gogogo2","gogogo");
+                $("#common-blackBox").remove();
                 if(status=='timeout'){//超时,status还有success,error等值的情况
                   androidIos.second("网络请求超时");
                 }else if(status=='error'){
@@ -407,7 +408,7 @@
                 source: sessionStorage.getItem("source")
               },
               dataType: "json",
-              timeout: 10000,
+              timeout: 30000,
               success: function (getSysConfigList) {
                 _this.closedOrder = getSysConfigList;
               },
@@ -448,7 +449,7 @@
             }),
             dataType: "json",
             contentType: "application/json;charset=utf-8",
-            timeout: 10000,
+            timeout: 30000,
             success: function (closeOrder) {
               if(closeOrder.success == "1"){
                 _this.$cjj("取消成功");
@@ -531,7 +532,7 @@
             data: JSON.stringify(json),
             contentType: "application/json;charset=utf-8",
             dataType: "json",
-            timeout: 10000,
+            timeout: 30000,
             success: function (refuseAppoin) {
               bomb.addClass("gogogo1","gogogo");
               $("#common-blackBox").remove();
@@ -597,7 +598,7 @@
         data:JSON.stringify({pk:thisThat.$route.query.pk,userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")}),
         contentType: "application/json;charset=utf-8",
         dataType: "json",
-        timeout: 10000,
+        timeout: 30000,
         success: function (loadSegmentDetail) {
           thisThat.carloading = false;
           if (loadSegmentDetail.success == "" || loadSegmentDetail.success == "1") {

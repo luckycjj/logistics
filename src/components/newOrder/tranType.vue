@@ -31,7 +31,7 @@
               url: androidIos.ajaxHttp()+"/settings/getTransType",
               contentType: "application/json;charset=utf-8",
               dataType: "json",
-              timeout: 10000,
+              timeout: 30000,
               success: function (getTransType) {
                 for(var i = 0;i<getTransType.length;i++){
                   getTransType[i].checked = false;

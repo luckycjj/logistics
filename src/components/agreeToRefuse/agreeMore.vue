@@ -208,7 +208,7 @@
               }),
               contentType: "application/json;charset=utf-8",
               dataType: "json",
-              timeout: 10000,
+              timeout: 30000,
               success: function (http) {
                 $(".tanBox-bigBox").remove();
                 if (http.success == "1") {
