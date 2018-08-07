@@ -224,14 +224,14 @@
                 }
                 if(self.productList[i].wight!=""){
                   if(self.productList[i].wightTen<1){
-                    self.productList[i].wight=(self.productList[i].wight.toString().match(/\d+(\.\d{0,1})?/)||[''])[0];
+                    self.productList[i].wight=(self.productList[i].wight.toString().match(/\d+(\.\d{0,3})?/)||[''])[0];
                   }else{
-                    self.productList[i].wight=(self.productList[i].wight.toString().match(/\d+(\.\d{0,4})?/)||[''])[0];
+                    self.productList[i].wight=(self.productList[i].wight.toString().match(/\d+(\.\d{0,3})?/)||[''])[0];
                   }
                 }
                 if(self.productList[i].weight!=""){
                   if(self.productList[i].weightTen<1){
-                    self.productList[i].weight=(self.productList[i].weight.toString().match(/\d+(\.\d{0,0})?/)||[''])[0]*1;
+                    self.productList[i].weight=(self.productList[i].weight.toString().match(/\d+(\.\d{0,3})?/)||[''])[0];
                   }else{
                     self.productList[i].weight=(self.productList[i].weight.toString().match(/\d+(\.\d{0,3})?/)||[''])[0];
                   }
@@ -631,93 +631,99 @@
             $("#USER_AGES,#USER_AGE,#USER_AGET,#USER_AGEFo").focus(function(){
               document.activeElement.blur();
             });
-            for(var i = 0;i<_this.both.productList.length;i++){
-              var unitWight = new LArea();
-              unitWight.init({
-                'trigger': '#Z00'+i,
-                'valueTo': '#Z00'+i,
-                'keys': {
-                  id: 'id',
-                  name: 'name'
-                },
-                'type': 1,
-                'data':[{
-                  "code":"1",
-                  "region":"吨"
-                },{
-                  "code":"0.001",
-                  "region":"千克"
-                }]
-              });
-              unitWight.value = [0];
-              unitWight.addPointer = function (name) {
-                name = JSON.parse(name);
-                if(_this.both.productList[name.id.substr(4)*1].wight !=""){
-                  _this.both.productList[name.id.substr(4)*1].wight = _this.both.productList[name.id.substr(4)*1].wight/(name.firstCode/_this.both.productList[name.id.substr(4)*1].wightTen);
+            _this.$nextTick(function () {
+              for(var i = 0;i<_this.both.productList.length;i++){
+                var x = 0 , y = 0;
+                x = Math.floor(1 / _this.both.productList[i].wightTen / 1000);
+                y = Math.floor(1 / _this.both.productList[i].weightTen / 1000);
+                var unitWight = new LArea();
+                unitWight.init({
+                  'trigger': '#Z00'+i,
+                  'valueTo': '#Z00'+i,
+                  'keys': {
+                    id: 'id',
+                    name: 'name'
+                  },
+                  'type': 1,
+                  'data':[{
+                    "code":"1",
+                    "region":"吨"
+                  },{
+                    "code":"0.001",
+                    "region":"千克"
+                  }]
+                });
+                unitWight.value = [x];
+                unitWight.addPointer = function (name) {
+                  name = JSON.parse(name);
+                  if(_this.both.productList[name.id.substr(4)*1].wight !=""){
+                    _this.both.productList[name.id.substr(4)*1].wight = _this.both.productList[name.id.substr(4)*1].wight/(name.firstCode/_this.both.productList[name.id.substr(4)*1].wightTen);
+                  }
+                  _this.both.productList[name.id.substr(4)*1].wightTen = name.firstCode;
+                  _this.both.productList[name.id.substr(4)*1].unitWight = name.firstVal;
                 }
-                _this.both.productList[name.id.substr(4)*1].wightTen = name.firstCode;
-                _this.both.productList[name.id.substr(4)*1].unitWight = name.firstVal;
+                 var unitWeight = new LArea();
+                 unitWeight.init({
+                   'trigger': '#Z01'+i,
+                   'valueTo': '#Z01'+i,
+                   'keys': {
+                     id: 'id',
+                     name: 'name'
+                   },
+                   'type': 1,
+                   'data':[{
+                     "code":"1",
+                     "region":"立方米"
+                   },{
+                     "code":"0.001",
+                     "region":"升"
+                   }]
+                 });
+                 unitWeight.value = [y];
+                 unitWeight.addPointer = function (name) {
+                    name = JSON.parse(name);
+                    if(_this.both.productList[name.id.substr(4)*1].weight !=""){
+                      _this.both.productList[name.id.substr(4)*1].weight = _this.both.productList[name.id.substr(4)*1].weight/(name.firstCode/_this.both.productList[name.id.substr(4)*1].weightTen);
+                    }
+                    _this.both.productList[name.id.substr(4)*1].weightTen = name.firstCode;
+                    _this.both.productList[name.id.substr(4)*1].unitWeight = name.firstVal;
+                  }
               }
-              var unitWeight = new LArea();
-              unitWeight.init({
-                'trigger': '#Z01'+i,
-                'valueTo': '#Z01'+i,
-                'keys': {
-                  id: 'id',
-                  name: 'name'
-                },
-                'type': 1,
-                'data':[{
-                  "code":"1",
-                  "region":"立方米"
+              if(_this.pk == ""){
+                var payment = new LArea();
+                var pppp =[{
+                  "code":"2",
+                  "region":"月结"
                 },{
-                  "code":"0.001",
-                  "region":"升"
-                }]
-              });
-              unitWeight.value = [0];
-              unitWeight.addPointer = function (name) {
-                name = JSON.parse(name);
-                if(_this.both.productList[name.id.substr(4)*1].weight !=""){
-                  _this.both.productList[name.id.substr(4)*1].weight = _this.both.productList[name.id.substr(4)*1].weight/(name.firstCode/_this.both.productList[name.id.substr(4)*1].weightTen);
-                }
-                _this.both.productList[name.id.substr(4)*1].weightTen = name.firstCode;
-                _this.both.productList[name.id.substr(4)*1].unitWeight = name.firstVal;
-              }
-            }
-            if(_this.pk == ""){
-              var payment = new LArea();
-              var pppp =[{
-                "code":"2",
-                "region":"月结"
-              },{
-                "code":"3",
-                "region":"到付"
-              }];
-              payment.init({
-                'trigger': '#Z02',
-                'valueTo': '#Z02',
-                'keys': {
-                  id: 'id',
-                  name: 'name'
-                },
-                'type': 1,
-                'data':pppp
-              });
-              var x = 0;
-              if(_this.both.payment != ""){
-                for(var i =0;i<pppp.length;i++){
-                  if(pppp[i].region == _this.both.payment){
-                    x = i;
+                  "code":"3",
+                  "region":"到付"
+                }];
+                payment.init({
+                  'trigger': '#Z02',
+                  'valueTo': '#Z02',
+                  'keys': {
+                    id: 'id',
+                    name: 'name'
+                  },
+                  'type': 1,
+                  'data':pppp
+                });
+                var x = 0;
+                if(_this.both.payment != ""){
+                  for(var i =0;i<pppp.length;i++){
+                    if(pppp[i].region == _this.both.payment){
+                      x = i;
+                    }
                   }
                 }
+                payment.value = [x];
+                payment.addPointer = function (name) {
+                  name = JSON.parse(name);
+                  _this.both.payment = name.firstVal;
+                }
               }
-              payment.value = [x];
-              payment.addPointer = function (name) {
-                name = JSON.parse(name);
-                _this.both.payment = name.firstVal;
-              }
-            }
+            })
+
 
           },
         payChoose:function(e){
