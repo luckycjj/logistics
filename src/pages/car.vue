@@ -16,7 +16,7 @@
   #carBox{
     width:100%;
     height:auto;
-    top:1.21875rem;
+    top:1.3rem;
     bottom:0;
     position: absolute;
     margin-top: 0.03125rem;

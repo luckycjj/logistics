@@ -276,8 +276,9 @@
     width: 100%;
     position: absolute;
     top: 0;
-    height: 1.25rem;
+    height: 1.3rem;
     background: white;
+    border-bottom: 1px solid #e0e0e0;
   }
   #appoint .carTitleback{
     position: absolute;
@@ -373,7 +374,7 @@
   #appoint .nav{
     width:100%;
     position: absolute;
-    top:1.26rem;
+    top:1.32rem;
   }
   #appoint .nav p{
     float: left;
@@ -440,7 +441,7 @@
   }
   #appoint .mescroll{
     position: fixed;
-    top:2.21875rem;
+    top:2.3rem;
     bottom: 0;
     height: auto;
     background-color: rgb(245, 245, 249)!important;

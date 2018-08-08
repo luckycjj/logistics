@@ -1,7 +1,7 @@
 <template>
   <div id="trackMore">
     <div id="title" v-title data-title="订单详情"></div>
-    <div v-if="carloading" style="position: fixed;top:1.21875rem;bottom:0;height:auto;width:100%;">
+    <div v-if="carloading" style="position: fixed;top:1.3rem;bottom:0;height:auto;width:100%;">
       <img src="../../images/carloading.gif" style="width:4rem;position: absolute;top:50%;left:50%;margin-left: -2rem;margin-top: -4rem">
       <p style="font-size: 0.4rem;top:50%;text-align: center;line-height: 1rem;color:#e8551b;width:100%;position: absolute">正在加载中...</p>
     </div>
@@ -938,7 +938,7 @@
   }
   #trackMore .mescroll{
     position: fixed;
-    top:1.21875rem;
+    top:1.3rem;
     bottom: 1.2rem;
     height: auto;
   }

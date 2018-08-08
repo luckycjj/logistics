@@ -43,8 +43,8 @@
         sessionStorage.setItem("source",response.source);
       });
       //15555555555 18098690941
-     /*sessionStorage.setItem("token","15555555555");
-     sessionStorage.setItem("source",1);*/
+     /*sessionStorage.setItem("token","18098690941");
+     sessionStorage.setItem("source",2);*/
     },
     updated: function () {
       var _this = this;
@@ -218,10 +218,11 @@
   }
   #appBox .carTitleBox{
     width: 100%;
-    height:1.21875rem;
+   /* height:1.21875rem;*/
+    height: 1.3rem;
     background: white;
     position: relative;
-    border-bottom: 0.03125rem solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
   }
   .carTitleback{
     position: absolute;
@@ -237,9 +238,10 @@
   }
   #appBox p{
     text-align: center;
-    font-size: 0.45rem;
-    line-height: 1.25rem;
+    font-size: 0.426667rem;
+    line-height: 1.3rem;
     color:#333;
+    letter-spacing: 0.0133rem;
   }
   .asd{
     text-align: right;
@@ -300,7 +302,7 @@
   #errorwifeBox{
     position: fixed;
     z-index: 999;
-    top:1.21875rem;
+    top:1.3rem;
     width:100%;
     bottom:0;
     height: auto;

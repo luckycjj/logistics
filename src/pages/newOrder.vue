@@ -20,7 +20,7 @@
             $("#newOrderBox").css("top",0);
             $("#appBox").hide();
           }else{
-            $("#newOrderBox").css("top","1.21875rem");
+            $("#newOrderBox").css("top","1.3rem");
             $("#appBox").show();
           }
         })
@@ -33,7 +33,7 @@
             $("#newOrderBox").css("top",0);
             $("#appBox").hide();
           }else{
-            $("#newOrderBox").css("top","1.21875rem");
+            $("#newOrderBox").css("top","1.3rem");
             $("#appBox").show();
           }
         })
@@ -45,7 +45,7 @@
     #newOrderBox{
       width:100%;
       height:auto;
-      top:1.21875rem;
+      top:1.3rem;
       bottom:0;
       position: absolute;
       overflow: scroll;

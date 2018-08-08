@@ -253,7 +253,7 @@
   #uploadDataT{
     position: fixed;
     left: 0;
-    top:1.21875rem;
+    top:1.3rem;
     bottom:0;
     height: auto;
     overflow-y: scroll;

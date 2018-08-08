@@ -260,6 +260,18 @@
       },
       ok:function () {
         var _this = this;
+        if(_this.message.carpk != ""){
+           androidIos.first("确定要修改车辆信息吗？");
+          $(".tanBox-yes").unbind('click').click(function(){
+            $(".tanBox-bigBox").remove();
+            _this.gogo();
+          });
+        }else{
+          _this.gogo();
+        }
+      },
+      gogo:function () {
+        var _this = this;
         if(bomb.hasClass("ok","okgo")){
           if(bomb.hasClass("ok","upColor")){
             if(_this.message.carNumber.length==6){
@@ -285,6 +297,7 @@
               pkCar:_this.message.carpk
             }
             bomb.removeClass("ok","okgo");
+            androidIos.loading("正在修改");
             var jax = _this.message.carpk == "" ? '/driver/addCar':'/driver/modifyCar';
             $.ajax({
               type: "POST",
@@ -294,7 +307,6 @@
               dataType: "json",
               timeout:30000,
               success: function (addCar) {
-                bomb.addClass("ok","okgo");
                 if(addCar.success=="1"){
                   _this.$cjj("保存成功");
                   setTimeout(function () {
@@ -305,11 +317,11 @@
                 }
               },
               complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                $("#common-blackBox").remove();
+                bomb.addClass("ok","okgo");
                 if(status=='timeout'){//超时,status还有success,error等值的情况
-                  bomb.addClass("ok","okgo");
                   androidIos.second("当前状况下网络状态差，请检查网络！")
                 }else if(status=='error'){
-                  bomb.addClass("ok","okgo");
                   androidIos.errorwife();
                 }
               }
@@ -320,7 +332,6 @@
         }else{
           bomb.first("请不要频繁点击");
         }
-
       },
       carkeyboard:function (name) {
         var _this = this;
