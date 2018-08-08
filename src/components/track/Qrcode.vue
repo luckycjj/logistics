@@ -28,16 +28,12 @@
       },
      useqrcode:function(){
        //生成的二维码内容，可以添加变量
-       var json;
-       if(this.$route.query.ty == 0){
-          json = {
-             pk:this.QueryDetail,
-             type:this.$route.query.ty
-          }
-          json = JSON.stringify(json);
-       }else{
-         json = this.QueryDetail;
-       }
+       // 0 交接二维码 1签收二维码 2订单二维码
+       var json = {
+         pk:this.QueryDetail,
+         type:this.$route.query.ty
+       };
+       json = JSON.stringify(json);
        var canvas = document.getElementById('canvas');
        QRCode.toCanvas(canvas, json, function (error) {
        })

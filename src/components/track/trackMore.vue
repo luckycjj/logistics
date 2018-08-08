@@ -249,6 +249,33 @@
     mounted:function () {
       var _this = this;
       androidIos.bridge(_this);
+      var sss = setInterval(function () {
+        if((_this.carList.length == 1 && $(".amap-lib-marker-to").length == _this.carList.length) || (_this.carList.length>1&&$(".amap-lib-marker-to").length - 2  == _this.carList.length) ){
+          clearInterval(sss);
+          for(var i = 0 ;i < $(".amap-lib-marker-to").length ;i++){
+            var dd = 0;
+            if( _this.carList.length > 1 ){
+              if(i == 0){
+                dd = _this.carList.length - 1;
+              }else if(i == ($(".sw-slides li").length -1)){
+                dd = 0 ;
+              }else{
+                dd = i -1;
+              }
+            }else{
+              dd = i ;
+            }
+            var ordertype = _this.carList[dd].ordertype;
+            if(ordertype == '20' || ordertype == '31' || ordertype == '32'){
+              $(".amap-lib-marker-to").eq(i).addClass("amaplibmarkertos");
+              $(".amap-lib-marker-from").eq(i).addClass("amaplibmarkerfroms");
+            }else{
+              $(".amap-lib-marker-to").eq(i).addClass("amaplibmarkerto");
+              $(".amap-lib-marker-from").eq(i).addClass("amaplibmarkerfrom");
+            }
+          }
+        }
+      },100);
     },
     methods:{
       go:function () {
@@ -291,7 +318,7 @@
               $("#erweimaLook").show();
               document.getElementById("erweimaLook").onclick = function () {
                 androidIos.addPageList();
-                self.$router.push({path: '/track/qrcode', query: {ty: 3}});
+                self.$router.push({path: '/track/qrcode', query: {ty: 2}});
               }
             } else {
               $("#erweimaLook").hide();
@@ -375,33 +402,6 @@
                   }
                 }
               }
-              var sss = setInterval(function () {
-                if(self.carList.length == 1 || (self.carList.length>1&&$(".amap-lib-marker-to").length - 2  == self.carList.length) ){
-                  clearInterval(sss);
-                 for(var i = 0 ;i < $(".amap-lib-marker-to").length ;i++){
-                   var dd = 0;
-                   if( self.carList.length > 1 ){
-                     if(i == 0){
-                       dd = self.carList.length - 1;
-                     }else if(i == ($(".sw-slides li").length -1)){
-                       dd = 0 ;
-                     }else{
-                       dd = i -1;
-                     }
-                   }else{
-                     dd = i ;
-                   }
-                   var ordertype = _this.carList[dd].ordertype;
-                   if(ordertype == '20' || ordertype == '31' || ordertype == '32' || ordertype == '33' || ordertype == '41' ){
-                     $(".amap-lib-marker-to").eq(i).addClass("amaplibmarkertos");
-                     $(".amap-lib-marker-from").eq(i).addClass("amaplibmarkerfroms");
-                   }else{
-                     $(".amap-lib-marker-to").eq(i).addClass("amaplibmarkerto");
-                     $(".amap-lib-marker-from").eq(i).addClass("amaplibmarkerfrom");
-                   }
-                 }
-                }
-              },100)
             }
           });
         }, function() {

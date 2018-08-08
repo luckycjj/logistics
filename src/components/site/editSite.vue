@@ -117,54 +117,79 @@
             bomb.first("手机号码格式不对");
             return false;
           }
-          var json ={
-            pkAddress:_this.start.addresspk == ""?undefined:_this.start.addresspk,
-            addrName:_this.start.company,
-            mobile:_this.start.phone,
-            detailAddr:_this.start.address,
-            province:_this.start.province,
-            city:_this.start.city,
-            area:_this.start.area,
-            contact:_this.start.name,
-            checked:_this.start.checked,
-            userCode:sessionStorage.getItem("token"),
-            source:sessionStorage.getItem("source")
-          }
-          var json2 = {
-            addr_name:_this.start.company,
-            phone:_this.start.phone,
-            detail_addr:_this.start.address,
-            userCode:sessionStorage.getItem("token"),
-            pk_province:_this.start.province,
-            pk_city:_this.start.city,
-            pk_area:_this.start.area,
-            contact:_this.start.name,
-            source:sessionStorage.getItem("source")
-          }
-          var jiekou = _this.start.addresspk == ""?"/addAddress":"/address/updateAddres";
-          $.ajax({
-            type: "POST",
-            url: androidIos.ajaxHttp()+jiekou,
-            data:_this.start.addresspk == "" ? json2 : JSON.stringify(json),
-            dataType: "json",
-            timeout: 10000,
-            success: function (addAddress) {
-              $("#common-blackBox").remove();
-              if(addAddress.success=="1"){
-                androidIos.gobackFrom(_this);
-              }else{
-                androidIos.second(addAddress.message);
+          if(_this.start.addresspk == ""){
+            $.ajax({
+              type: "POST",
+              url: androidIos.ajaxHttp() + "/addAddress",
+              data:{
+                addr_name:_this.start.company,
+                phone:_this.start.phone,
+                detail_addr:_this.start.address,
+                userCode:sessionStorage.getItem("token"),
+                pk_province:_this.start.province,
+                pk_city:_this.start.city,
+                pk_area:_this.start.area,
+                contact:_this.start.name,
+                source:sessionStorage.getItem("source")
+              },
+              dataType: "json",
+              timeout: 30000,
+              success: function (addAddress) {
+                $("#common-blackBox").remove();
+                if(addAddress.success=="1"){
+                  androidIos.gobackFrom(_this);
+                }else{
+                  androidIos.second(addAddress.message);
+                }
+              },
+              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                $("#common-blackBox").remove();
+                if(status=='timeout'){//超时,status还有success,error等值的情况
+                  androidIos.second("网络请求超时");
+                }else if(status=='error'){
+                  androidIos.errorwife();
+                }
               }
-            },
-            complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-              $("#common-blackBox").remove();
-              if(status=='timeout'){//超时,status还有success,error等值的情况
-                androidIos.second("网络请求超时");
-              }else if(status=='error'){
-                androidIos.errorwife();
+            })
+          }else{
+            $.ajax({
+              type: "POST",
+              url: androidIos.ajaxHttp() + "/address/updateAddres",
+              data:JSON.stringify({
+                  pkAddress:_this.start.addresspk == ""?undefined:_this.start.addresspk,
+                  addrName:_this.start.company,
+                  mobile:_this.start.phone,
+                  detailAddr:_this.start.address,
+                  province:_this.start.province,
+                  city:_this.start.city,
+                  area:_this.start.area,
+                  contact:_this.start.name,
+                  checked:_this.start.checked,
+                  userCode:sessionStorage.getItem("token"),
+                  source:sessionStorage.getItem("source")
+              }),
+              dataType: "json",
+              contentType: "application/json;charset=utf-8",
+              timeout: 30000,
+              success: function (addAddress) {
+                $("#common-blackBox").remove();
+                if(addAddress.success=="1"){
+                  androidIos.gobackFrom(_this);
+                }else{
+                  androidIos.second(addAddress.message);
+                }
+              },
+              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                $("#common-blackBox").remove();
+                if(status=='timeout'){//超时,status还有success,error等值的情况
+                  androidIos.second("网络请求超时");
+                }else if(status=='error'){
+                  androidIos.errorwife();
+                }
               }
-            }
-          })
+            })
+          }
+
         }
       }
     }
