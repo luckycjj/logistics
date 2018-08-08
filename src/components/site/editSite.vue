@@ -145,7 +145,7 @@
           $.ajax({
             type: "POST",
             url: androidIos.ajaxHttp()+jiekou,
-            data:_this.start.addresspk == "" ? json2 : json,
+            data:_this.start.addresspk == "" ? json2 : JSON.stringify(json),
             dataType: "json",
             timeout: 10000,
             success: function (addAddress) {

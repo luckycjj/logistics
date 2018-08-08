@@ -15,7 +15,7 @@ var androidIos = {
         that.$router.go(-1);
         setTimeout(function () {
           bomb.addClass("app","appBox");
-        },500)
+        },800)
       } else {
         bomb.addClass("app","appBox");
         bridge.invoke('gobackfrom');

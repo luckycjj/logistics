@@ -173,7 +173,6 @@
         sessionStorage.removeItem("Sitedismantling");
         sessionStorage.setItem("dispatchPK",self.$route.query.pk);
         $(document).on("click","#Sitechoosesite",function () {
-          androidIos.addPageList();
           var list=[];
           for(var i = 0;i < self.pdlist[0].goodsmessage.productList.length ; i++){
             var pro = self.pdlist[0].goodsmessage.productList[i];
@@ -195,6 +194,11 @@
             endAddresspk:self.pdlist[0].endMessage.addresspk,
             product:list
           }
+          if((new Date(json.endTime)).getTime() - (new Date()).getTime() < 0){
+             bomb.first("该订单到达时间小于当前时间，无法拆段");
+             return false;
+          }
+          androidIos.addPageList();
           sessionStorage.setItem("Sitechoosesite",JSON.stringify(json));
           self.$router.push({ path: '/site/chooseSite'});
         });
