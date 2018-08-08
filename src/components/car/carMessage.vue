@@ -24,7 +24,7 @@
                <p>{{item.carMessage.carPeople.name}}</p>
                <h1>驾龄：{{item.carMessage.carPeople.year}}年</h1>
              </div>
-            <div class="tel" v-if="item.carType == 1 && carType == 0" @click="changeCarpeople(item.carMessage.carPeople.carPeoplePk,0)">
+            <div class="tel replace" v-if="item.carType == 1 && carType == 0" @click="changeCarpeople(item.carMessage.carPeople.carPeoplePk,0)">
               <img src="../../images/replace.png">
             </div>
             <div class="tel" @click="tel(item.carMessage.carPeople.tel)">
@@ -421,7 +421,7 @@
   }
   #carMessage .mescroll{
     position: fixed;
-    top:1.3rem;
+    top:1.21875rem;
     bottom: 1.2rem;
     height: auto;
   }
@@ -480,6 +480,10 @@
     display: block;
     margin: 0 auto;
     width:100%;
+  }
+  #peopleMessage  .replace img{
+    width:80%;
+    margin-top: 10%!important;
   }
   #productList{
     margin-top: 0.2rem;

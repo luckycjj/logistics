@@ -11,7 +11,7 @@
               <h1>驾龄：{{item.year}}年</h1>
             </div>
             <div v-if="!manage">
-              <div class="tel" @click="change(item,1)" v-if="carPeoplePk!='' && !item.pkTrue">
+              <div class="tel replace" @click="change(item,1)" v-if="carPeoplePk!='' && !item.pkTrue">
                 <img src="../../images/replace.png">
               </div>
               <div class="tel" @click="change(item,2)" v-if="carPeoplePk!='' && item.pkTrue">
@@ -348,6 +348,10 @@
     width:1.2rem;
     float: right;
     margin-top: 0.3rem;
+  }
+  #changeCarpeople  #peopleMessage .replace img{
+    width: 0.5rem !important;
+    margin-top: 0.05rem!important;
   }
   #changeCarpeople #peopleMessage .tel img{
     display: block;

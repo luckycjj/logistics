@@ -123,7 +123,7 @@
             var img = _this.orderPk =="" && pd.carType == '0' && (pd.now == '0' || pd.now == '1' || pd.now == '2')?"<div class='clearImg' style='display: "+display+"'></div><div class='reaseImg' style='display: "+display+"'></div>":_this.orderPk =="" && pd.carType == '0' && pd.now == '3'  ? "<div class='clearImg' style='right:0.6rem;display: " + display + "'></div>" : "";
             var str = '<div class="top" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
               '<span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span>'+type+'<div class="clearBoth"></div>'+
-              '<span class="weight">满载：<span style="font-size: 0.35rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span>'+
+              '<span class="weight">满载：<span style="font-size: 0.3125rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span>'+
               img +
               '</div>';
             if(pd.pkDriver!=""){
@@ -510,15 +510,18 @@
     display: none;
   }
   #car #mescroll{
-    margin-top: 0.2rem;
+    margin-top: 0.5rem;
   }
-  #car ul{
+  #car #mescroll ul{
     width:100%;
   }
-  #car li{
-    width: 100%;
+  #car #mescroll ul li{
+    width: 94%;
     background: white;
-    margin-bottom: 0.2rem;
+    /* margin-bottom: 0.2rem; */
+    margin: 0 auto 0.3rem auto;
+    border-radius: 0.2rem;
+    box-shadow: 0 5px 10px #cecbcb;
   }
   #car li .top{
     width:95%;
@@ -526,20 +529,29 @@
     padding-bottom: 0.15rem;
     position: relative;
   }
-  #car li .top .carnumber,#car li .top .cartype{
-    font-size: 0.35rem;
+  #car li .top .carnumber{
+    font-size: 0.4rem;
     line-height: 1rem;
     margin-right:0.2rem;
+    color:#333;
+  }
+  #car li .top .cartype{
+    font-size: 0.3125rem;
+    line-height: 1rem;
+    margin-right:0.2rem;
+    color:#999999;
   }
   #car li .top .weight{
-    font-size: 0.35rem;
+    font-size: 0.3125rem;
     margin-right:0.2rem;
+    color:#999999;
   }
   #car li .top .nowtype{
     float: right;
-    font-size: 0.35rem;
+    font-size: 0.4rem;
     line-height: 1rem;
     margin-right: 5%;
+    color:#333;
   }
   #car li .bottom{
     position: relative;
@@ -574,7 +586,7 @@
     height: auto;
   }
   #car .secondBox p{
-    font-size: 0.3125rem;
+    font-size: 0.35rem;
     color:#333;
   }
   #car .secondBox p span{
@@ -583,12 +595,12 @@
   }
   #car .secondBox h1{
     font-size: 0.3125rem;
-    color:#333;
+    color:#999;
   }
   #car  .secondBox h2, #car secondBox span{
     font-size: 0.3125rem;
-    color:#333;
-    line-height: 0.7rem;
+    color:#999;
+    line-height: 0.5rem;
   }
   #car .secondBox h2 span{
     margin-left: 0.2rem;
