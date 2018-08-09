@@ -576,7 +576,7 @@
   }
   #car li .bottom{
     position: relative;
-    width:95%;
+    width:90%;
     margin-left: 5%;
     padding-bottom: 0.15rem;
     border-top: 1px solid #dbdbdb;
@@ -599,7 +599,7 @@
   #car .thirdBox{
     width:30%;
     background-image: url("../../images/tel.png");
-    background-position: 77% 50%;
+    background-position: 100% 50%;
     background-repeat: no-repeat;
     background-size: 0.8rem 0.8rem;
     position: absolute;

@@ -65,7 +65,7 @@
           </div>
           <div class="company">
             <div class="firstBox">
-              <img :src="item.owner.logo" :onerror="errorlogo">
+              <img :src="item.owner.logo" :onerror="errorlogo" class="companyImg">
             </div>
             <div class="secondBox">
               <p><span>{{item.owner.company}}</span></p>
@@ -259,6 +259,25 @@
               $("#site").hide();
             }else{
               $("#site").show();
+            }
+            for(var x = 0 ; x < $(".firstBox").length;x++){
+              var className = document.getElementsByClassName("companyImg")[x];
+              className.onload = function () {
+                for (var i = 0; i < $(".firstBox").length; i++) {
+                  var heightImg = $(".companyImg").eq(i).height();
+                  var heightBox = $(".firstBox").eq(i).height();
+                  var widthBox = $(".firstBox").eq(i).width();
+                  var htmlSize = $("html").css("fontSize").replace("px", "");
+                  if (heightImg > heightBox) {
+                    $(".companyImg").eq(i).css("marginTop", (heightBox - heightImg) / 2 / htmlSize + "rem");
+                  } else {
+                    $(".companyImg").eq(i).height(heightBox / htmlSize + "rem");
+                    $(".companyImg").eq(i).width("auto");
+                    var widthImg = $(".companyImg").eq(i).width();
+                    $(".companyImg").eq(i).css("marginLeft", (widthBox - widthImg) / 2 / htmlSize + "rem");
+                  }
+                }
+              }
             }
           })
         }, function() {
