@@ -698,7 +698,7 @@
               carrier:{
                 logo:invoiceDetail.carrierDto!=null?invoiceDetail.carrierDto.carrierImg:"",
                 company:invoiceDetail.carrierDto!=null?invoiceDetail.carrierDto.carrierName:"",
-                tranType: invoiceDetail.carrierDto!=null?invoiceDetail.carrierDto.tranType:"" ,
+                tranType: invoiceDetail.carrierDto!=null ? (invoiceDetail.carrierDto.tranType == "" ||  invoiceDetail.carrierDto.tranType == null ? "陆运" : invoiceDetail.carrierDto.tranType):"",
                 year:invoiceDetail.carrierDto!=null?((((new Date()).getTime()-(new Date(invoiceDetail.carrierDto.createDate.replace('-','/').replace('-','/'))).getTime())/1000/60/60/24/365 -0.5)<0?"不到半年":androidIos.fixed(((new Date()).getTime()-(new Date(invoiceDetail.carrierDto.createDate.replace('-','/').replace('-','/'))).getTime())/1000/60/60/24/365 ,1)+"年"):"",
                 grade:invoiceDetail.carrierDto!=null?(invoiceDetail.carrierDto.score == null || invoiceDetail.carrierDto.score == "" ? 0:invoiceDetail.carrierDto.score*1):"0",
                 phone:invoiceDetail.carrierDto!=null?invoiceDetail.carrierDto.mobile:"",

@@ -153,6 +153,27 @@
             self.pdlist[0].carMessage.carPeopleFu = changeCarFupeople;
           }
           self.type = curPageData[0].carMessage.carPeople.carPeoplePk!=""?1:2;
+          self.$nextTick(function () {
+            for(var x = 0 ; x < document.getElementsByClassName("peopleImg").length;x++){
+              var className = document.getElementsByClassName("peopleImg")[x];
+              className.onload = function () {
+                for (var i = 0; i < document.getElementsByClassName("peopleImg").length; i++) {
+                  var heightImg = $(".peopleImg").eq(i).height();
+                  var heightBox = $(".imgBoxOverFllow").eq(i).height();
+                  var widthBox = $(".imgBoxOverFllow").eq(i).width();
+                  var htmlSize = $("html").css("fontSize").replace("px", "");
+                  if (heightImg > heightBox) {
+                    $(".peopleImg").eq(i).css("marginTop", (heightBox - heightImg) / 2 / htmlSize + "rem");
+                  } else {
+                    $(".peopleImg").eq(i).height(heightBox / htmlSize + "rem");
+                    $(".peopleImg").eq(i).width("auto");
+                    var widthImg = $(".peopleImg").eq(i).width();
+                    $(".peopleImg").eq(i).css("marginLeft", (widthBox - widthImg) / 2 / htmlSize + "rem");
+                  }
+                }
+              }
+            }
+          })
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
           self.mescroll.endErr();
