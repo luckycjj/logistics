@@ -297,7 +297,8 @@
               pkCar:_this.message.carpk
             }
             bomb.removeClass("ok","okgo");
-            androidIos.loading("正在修改");
+            var messageNow = _this.message.carpk == "" ? "正在新增" : "正在修改";
+            androidIos.loading(messageNow);
             var jax = _this.message.carpk == "" ? '/driver/addCar':'/driver/modifyCar';
             $.ajax({
               type: "POST",

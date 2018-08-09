@@ -65,7 +65,7 @@
           </div>
           <div class="company">
             <div class="firstBox">
-              <img :src="item.owner.logo">
+              <img :src="item.owner.logo" :onerror="errorlogo">
             </div>
             <div class="secondBox">
               <p><span>{{item.owner.company}}</span></p>
@@ -158,6 +158,7 @@
         closedOrderBox:false,
         closedOrder:[],
         closedOrderReason:"",
+        errorlogo: 'this.src="' + require('../../images/carpeople.png') + '"'
       }
     },
     mounted:function () {
@@ -661,7 +662,7 @@
                 /*type:loadSegmentDetail.payStatus == null||loadSegmentDetail.payStatus ==""?"月结":loadSegmentDetail.payStatus*/
               },
               owner:{
-                logo:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPMAAADICAMAAAAKlSdjAAAAilBMVEUAAAAymf8ymf8wl/8zmP8zmf8ymP8zmP8ymf8ymP8wmv8tnv8ymP8ymf8mmf8ymf8ymf8zmf8ymv8AkP8ymf8ymf8ymP8ymP8ymP8ymf8xmf8umP8ymf8xmf8wmP8xmf8ymf8ymf8ymf8ymP8zmf8ymf8vmf8ymP8ymf8smf8wmv8xmv8xmf8zmf9gs/33AAAALXRSTlMAwIBAajL93XOkNQqL4QbGmKBMAvXvvJC1Y1EW+VooHehH16nQlCyuew8jQzlJ+gi6AAAEPUlEQVR42u3diW7iMBSF4ROgIW1IYMhCNgj71t73f71RVTGinXiUDrZjp/d7g5/FsrL4gjHGGOsrv5jMTqnTjezgbXxotjnF1LH4tAyhz5NDRgiWEfSIBmSMfQ0d/IwMkrxCvSglo7gFlFuQYeIjFCvIOMEFSkUBmWcBpXIykHvFvZ/wNRPtoNAbGSkOoc6EzLSBOlsy0wLqVGSmFMpcyFBbKLMiQyVQ5oUM5eJGZ3OcLZ/KCKqE9ZvnuEY1u4cL1FtlBjWPj9BjnpjSnPnQpd6a0bwPoU+dmNCc1NBpY0KzB7123TcHIfS6up03D6Bb1nnzC3TLu25OoF3ddfMe2kVdN2fQb91x8zP0G3MzN3MzN3MzNwPRtTgP/vBsaX5z7mS5j2942tK9wJbmOX2SzNFaXlEvmqkaoqWhSz1ppqREO1PqTTMt0MqVetQ8RivLPjVXaMXrUzOF3MzN3MzN3MzNLXAzN5vavB5+GJnaTM6H/QPNIsY233DzuwhtjPrUnKCVTZ+aU7QSxj1qXqKdUX+a9xFa2vWleVyjrfC5H80HH9+wmjhfBWY3u5PBZ97wggdd1mY3k+NDtsz43/YMko0s+D8XkKqMLWgOQsi0sGLd9iBRWVnRvA4hz4HskEOaqPODOVqaQppXssUVN707w0BoJHHRsMUzJPHJGltIciVrVPjQ1zf6G5X40MMzSYRWkGNE9njiZm7mZm7mZm42XLfNgfMYG5sneIjPzdzMzdzMzdzMzbwP42ZuNhs3czM3czM3/2/zdPAYG5t/4t6Tm7mZm7mZm+1q3g0fsjG1OXD+2FakVrx3bqZJV83bvMSdcL4jZeLJC+6tBkkHzdUowlcvAamRlvjKf9be7L6iQTkmFXYRGkx0N3totHJJvm0omJimtzkINT7dXqDZSm/zWePYkDVEHK3NR43PPc8g4mlt9iGSkmweRAqtzRFETtL3YSOIbLQ21xCZSt9vDyCSa20uIODH0psziBy0Nu8gsCTpzW6JZuFaa7O7QqNoK7+ZFsJlW2sz7X00GZCCZneIJqtYczOlF/ztTLKbxcN/jwHpbqbxMsJnx5TUNJO7KPGZf447uWYQHPLX4c1yMFV5H6PKvPnwZuPtYiOvDX1Db+5XtcLN3MzN3MzN3MzN3MzN3MzNZA9ZzUuyRw05hmSPEHKUZI0AskzJFgvI4pEt3iCLvyY7ZADws1bu6gjgh50gVkCmyIboESTbBGS2ZA7p/InJJyGuzz5UCIvJc+q8G5NQ4si2/kep8y79NRhGUM0joSlk+0VCM0CMm7mZm7mZm7mZm7mZm7mZm7mZm7mZm7m5CTdz83/ISegE2RYkNIA+LyR0BvR9wAU0GpPIEbKVMQkkF2i0JIEJ5JuQQA6tZtRoH0K+MBUtHXpFi0owxFKB8ER/i70IutXn1LmXzkZHyCWe8Zku8hqMMcZYX/0GEkRPYmJUkM4AAAAASUVORK5CYII=",
+                logo:loadSegmentDetail.customerDto != null ? loadSegmentDetail.customerDto.customerImg : "",
                 company:loadSegmentDetail.customerDto!=null?loadSegmentDetail.customerDto.customerName:"",
                 year:loadSegmentDetail.customerDto!=null?((((new Date()).getTime()-(new Date(loadSegmentDetail.customerDto.createDate.replace('-','/').replace('-','/'))).getTime())/1000/60/60/24/365 -0.5)<0?"不到半年":androidIos.fixed(((new Date()).getTime()-(new Date(invoiceDetail.customerDto.createDate.replace('-','/').replace('-','/'))).getTime())/1000/60/60/24/365 ,1)+"年"):"",
                 phone:loadSegmentDetail.customerDto!=null?loadSegmentDetail.customerDto.mobile:"",
@@ -847,14 +848,20 @@
     position: relative;
   }
   .firstBox{
-    width: 20%;
     float: left;
     position: absolute;
     top: 50%;
-    margin-top: -0.7rem;
+    margin-top: -0.9rem;
+    width:1.8rem;
+    height:1.8rem;
+    overflow: hidden;
+    border-radius: 50%;
+    line-height: 1.8rem;
   }
   .firstBox img{
     width:100%;
+    display: inline-block;
+    vertical-align: middle;
   }
   .secondBox{
     width:50%;
