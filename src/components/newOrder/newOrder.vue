@@ -198,7 +198,8 @@
               pk_carrier:"",
               driver_name:"",
               insurance:"",
-              payment:"月结",
+              payment:"",
+              paymentVal : "",
               pay:0,
               read:true,
               scrollTop:0,
@@ -691,13 +692,35 @@
               }
               if(_this.pk == ""){
                 var payment = new LArea();
-                var pppp =[{
-                  "code":"2",
-                  "region":"月结"
-                },{
-                  "code":"3",
-                  "region":"到付"
-                }];
+                var pppp = [];
+                $.ajax({
+                  type: "GET",
+                  url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
+                  data:{str:"balatype",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
+                  dataType: "json",
+                  async:false,
+                  timeout: 10000,
+                  success: function (getSysConfigList) {
+                    for(var i = 0; i<getSysConfigList.length;i++){
+                      if(i == 0){
+                        _this.both.payment =   getSysConfigList[i].displayName;
+                        _this.both.paymentVal = getSysConfigList[i].value;
+                      }
+                       var json = {
+                          "code" : getSysConfigList[i].value,
+                          "region" : getSysConfigList[i].displayName
+                       }
+                       pppp.push(json)
+                    }
+                  },
+                  complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                    if(status=='timeout'){//超时,status还有success,error等值的情况
+                      androidIos.second("网络请求超时");
+                    }else if(status=='error'){
+                      androidIos.errorwife();
+                    }
+                  }
+                })
                 payment.init({
                   'trigger': '#Z02',
                   'valueTo': '#Z02',
@@ -720,6 +743,7 @@
                 payment.addPointer = function (name) {
                   name = JSON.parse(name);
                   _this.both.payment = name.firstVal;
+                  _this.both.paymentVal = name.firstCode;
                 }
               }
             })
@@ -1085,7 +1109,7 @@
               driver_name:self.driver_name,
               if_insurance:self.insurance,
               pay:self.pay==1?"收货方":"发货方",
-              payment:self.payment,
+              payment:self.paymentVal,
               est_amount:_this.price*1,
               pk:_this.pk
             };

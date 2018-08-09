@@ -2,8 +2,8 @@
   <div id="car">
     <div id="title" v-title data-title="车辆信息"></div>
     <div class="nav" v-if="orderPk!=''">
-      <p class="active" i="0">自营车辆</p>
-      <p i="1">社会车辆</p>
+      <p class="active" i="0" @click="navClick(0)">自营车辆</p>
+      <p i="1" @click="navClick(1)">社会车辆</p>
       <div class="clearBoth"></div>
     </div>
     <div id="mescroll" class="mescroll" :style="{ bottom : listType == 0  && orderPk == '' ? '1.2rem' : '0' }" :class="orderPk==''?'mesrollTop':''">
@@ -55,6 +55,7 @@
         pageNum:"",
         orderPk:"",
         show:false,
+        pdType:0,
       }
     },
     mounted:function () {
@@ -87,26 +88,13 @@
           }
         });
         _this.mescroll = mescroll;
-        /*初始化菜单*/
-        var pdType=0;
-        $(document).on('click','.nav p',function () {
-          var i=$(this).attr("i");
-          if(pdType!=i) {
-            //更改列表条件
-            pdType=i;
-            $(".nav .active").removeClass("active");
-            $(this).addClass("active");
-            //重置列表数据
-            mescroll.resetUpScroll();
-          }
-        })
 
         /*联网加载列表数据  page = {num:1, size:10}; num:当前页 从1开始, size:每页数据条数 */
         function getListData(page){
           //联网加载数据
-          getListDataFromNet(pdType, page.num, page.size, function(curPageData){
+          getListDataFromNet(_this.pdType, page.num, page.size, function(curPageData){
             mescroll.endSuccess(curPageData.length);
-            setListData(curPageData, page.num, page.size,pdType);
+            setListData(curPageData, page.num, page.size,_this.pdType);
           }, function(){
             mescroll.endErr();
           });
@@ -352,7 +340,7 @@
                 carType:_this.search.carType,
                 userCode:sessionStorage.getItem("token"),
                 source:sessionStorage.getItem("source"),
-                checkStatus:_this.orderPk == "" ? "" : 2,
+                checkStatus:_this.orderPk == "" ? "" : "",
               }),
               contentType: "application/json;charset=utf-8",
               dataType: "json",
@@ -407,6 +395,16 @@
               }
             })
           },500)
+        }
+      },
+      navClick:function (number) {
+        var _this = this;
+        var i = number;
+        if(_this.pdType != i) {
+          _this.pdType = i;
+          $(".nav .active").removeClass("active");
+          $(".nav p").eq(i).addClass("active");
+          _this.mescroll.resetUpScroll();
         }
       },
       newCar:function(){

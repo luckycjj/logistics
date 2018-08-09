@@ -59,9 +59,9 @@
             <p>付款方</p>
             <h1>{{item.pickPay.people}}</h1>
             <div class="clearBoth"></div>
-            <p>结算方式</p>
+            <!--<p>结算方式</p>
             <h1>{{item.pickPay.type}}</h1>
-            <div class="clearBoth"></div>
+            <div class="clearBoth"></div>-->
           </div>
           <div class="company">
             <div class="firstBox">
@@ -658,7 +658,7 @@
               },
               pickPay:{
                 people:"发货方",
-                type:loadSegmentDetail.payStatus == null||loadSegmentDetail.payStatus ==""?"月结":loadSegmentDetail.payStatus
+                /*type:loadSegmentDetail.payStatus == null||loadSegmentDetail.payStatus ==""?"月结":loadSegmentDetail.payStatus*/
               },
               owner:{
                 logo:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPMAAADICAMAAAAKlSdjAAAAilBMVEUAAAAymf8ymf8wl/8zmP8zmf8ymP8zmP8ymf8ymP8wmv8tnv8ymP8ymf8mmf8ymf8ymf8zmf8ymv8AkP8ymf8ymf8ymP8ymP8ymP8ymf8xmf8umP8ymf8xmf8wmP8xmf8ymf8ymf8ymf8ymP8zmf8ymf8vmf8ymP8ymf8smf8wmv8xmv8xmf8zmf9gs/33AAAALXRSTlMAwIBAajL93XOkNQqL4QbGmKBMAvXvvJC1Y1EW+VooHehH16nQlCyuew8jQzlJ+gi6AAAEPUlEQVR42u3diW7iMBSF4ROgIW1IYMhCNgj71t73f71RVTGinXiUDrZjp/d7g5/FsrL4gjHGGOsrv5jMTqnTjezgbXxotjnF1LH4tAyhz5NDRgiWEfSIBmSMfQ0d/IwMkrxCvSglo7gFlFuQYeIjFCvIOMEFSkUBmWcBpXIykHvFvZ/wNRPtoNAbGSkOoc6EzLSBOlsy0wLqVGSmFMpcyFBbKLMiQyVQ5oUM5eJGZ3OcLZ/KCKqE9ZvnuEY1u4cL1FtlBjWPj9BjnpjSnPnQpd6a0bwPoU+dmNCc1NBpY0KzB7123TcHIfS6up03D6Bb1nnzC3TLu25OoF3ddfMe2kVdN2fQb91x8zP0G3MzN3MzN3MzNwPRtTgP/vBsaX5z7mS5j2942tK9wJbmOX2SzNFaXlEvmqkaoqWhSz1ppqREO1PqTTMt0MqVetQ8RivLPjVXaMXrUzOF3MzN3MzN3MzNLXAzN5vavB5+GJnaTM6H/QPNIsY233DzuwhtjPrUnKCVTZ+aU7QSxj1qXqKdUX+a9xFa2vWleVyjrfC5H80HH9+wmjhfBWY3u5PBZ97wggdd1mY3k+NDtsz43/YMko0s+D8XkKqMLWgOQsi0sGLd9iBRWVnRvA4hz4HskEOaqPODOVqaQppXssUVN707w0BoJHHRsMUzJPHJGltIciVrVPjQ1zf6G5X40MMzSYRWkGNE9njiZm7mZm7mZm42XLfNgfMYG5sneIjPzdzMzdzMzdzMzbwP42ZuNhs3czM3czM3/2/zdPAYG5t/4t6Tm7mZm7mZm+1q3g0fsjG1OXD+2FakVrx3bqZJV83bvMSdcL4jZeLJC+6tBkkHzdUowlcvAamRlvjKf9be7L6iQTkmFXYRGkx0N3totHJJvm0omJimtzkINT7dXqDZSm/zWePYkDVEHK3NR43PPc8g4mlt9iGSkmweRAqtzRFETtL3YSOIbLQ21xCZSt9vDyCSa20uIODH0psziBy0Nu8gsCTpzW6JZuFaa7O7QqNoK7+ZFsJlW2sz7X00GZCCZneIJqtYczOlF/ztTLKbxcN/jwHpbqbxMsJnx5TUNJO7KPGZf447uWYQHPLX4c1yMFV5H6PKvPnwZuPtYiOvDX1Db+5XtcLN3MzN3MzN3MzN3MzN3MzNZA9ZzUuyRw05hmSPEHKUZI0AskzJFgvI4pEt3iCLvyY7ZADws1bu6gjgh50gVkCmyIboESTbBGS2ZA7p/InJJyGuzz5UCIvJc+q8G5NQ4si2/kep8y79NRhGUM0joSlk+0VCM0CMm7mZm7mZm7mZm7mZm7mZm7mZm7mZm7m5CTdz83/ISegE2RYkNIA+LyR0BvR9wAU0GpPIEbKVMQkkF2i0JIEJ5JuQQA6tZtRoH0K+MBUtHXpFi0owxFKB8ER/i70IutXn1LmXzkZHyCWe8Zku8hqMMcZYX/0GEkRPYmJUkM4AAAAASUVORK5CYII=",
