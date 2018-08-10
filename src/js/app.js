@@ -48,6 +48,10 @@ var androidIos = {
     var http = 'http://222.73.159.76:8085';
     return http;
   },
+  imgAjax:function () {
+    var http = 'http://47.97.214.8:8085';
+    return http;
+  },
   addPageList: function () {
     var addPageList = window.sessionStorage.getItem("addPageList");
     var number = addPageList * 1 + 1;
@@ -152,11 +156,11 @@ var androidIos = {
   },
   bridge:function (that) {
     new Promise(function (resolve,reject) {
-      /*if(bridge.invoke('token') != undefined){*/
+     /* if(bridge.invoke('token') != undefined){*/
         bridge.invoke('token','',function(response) {
           resolve(response);
         })
-     /* }else{
+      /*}else{
         reject(2)
       }*/
     }).then(function (data) {

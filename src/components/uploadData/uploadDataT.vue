@@ -246,7 +246,7 @@ export default {
       _this.$nextTick(function() {
         if(!(( _this.type == 1 && _this.letterType == 1 )|| _this.type==2) && ( _this.companyType == 0 || _this.creator == 0 )){
           $("#box").aiiUpload({
-            action: androidIos.ajaxHttp() + "/uploadFile",
+            action: androidIos.imgAjax() + "/uploadFile",
             max_w: 1000,
             max_h: 1000
           });
@@ -260,7 +260,7 @@ export default {
             );
           }
           $("#box1").aiiUpload({
-            action: androidIos.ajaxHttp() + "/uploadFile",
+            action: androidIos.imgAjax() + "/uploadFile",
             max_w: 1000,
             max_h: 1000
           });
@@ -275,7 +275,7 @@ export default {
           }
         }
         $("#box2").aiiUpload({
-          action: androidIos.ajaxHttp() + "/uploadFile",
+          action: androidIos.imgAjax() + "/uploadFile",
           max_w: 1000,
           max_h: 1000
         });
@@ -290,7 +290,7 @@ export default {
         }
         if( ( _this.type == 1 && _this.letterType == 1 )|| _this.type==2 ){
           $("#box3").aiiUpload({
-            action: androidIos.ajaxHttp() + "/uploadFile",
+            action: androidIos.imgAjax() + "/uploadFile",
             max_w: 1000,
             max_h: 1000
           });
@@ -305,7 +305,7 @@ export default {
           }
           if(_this.type == 1 && _this.letterType == 1){
             $("#box4").aiiUpload({
-              action: androidIos.ajaxHttp() + "/uploadFile",
+              action: androidIos.imgAjax() + "/uploadFile",
               max_w: 1000,
               max_h: 1000
             });
