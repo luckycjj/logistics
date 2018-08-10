@@ -7,7 +7,7 @@
       <div class="clearBoth"></div>
     </div>
     <div id="mescroll" class="mescroll" :style="{ bottom : listType == 0  && orderPk == '' ? '1.2rem' : '0' }" :class="orderPk==''?'mesrollTop':''">
-      <ul id="dataList" class="data-list">
+      <ul id="dataList0" class="data-list">
       </ul>
     </div>
     <button id="newCar" @click="newCar()" v-if="listType == '0' && orderPk == ''">新增车辆</button>
@@ -73,7 +73,7 @@
           up: {
             callback: getListData, //上拉回调,此处可简写; 相当于 callback: function (page) { getListData(page); }
             noMoreSize: 4, //如果列表已无数据,可设置列表的总数量要大于半页才显示无更多数据;避免列表数据过少(比如只有一条数据),显示无更多数据会不好看; 默认5
-            clearEmptyId: "dataList", //相当于同时设置了clearId和empty.warpId; 简化写法;默认null
+            clearEmptyId: "dataList0", //相当于同时设置了clearId和empty.warpId; 简化写法;默认null
             page:{
               size:10
             },
@@ -102,7 +102,7 @@
 
         /*设置列表数据*/
         function setListData(curPageData, num, size,type){
-          var listDom=document.getElementById("dataList");
+          var listDom=document.getElementById("dataList0");
           var nnnn = 0;
           for (var i = 0; i < curPageData.length; i++) {
             var pd=curPageData[i];
@@ -135,7 +135,7 @@
             liDom.dataset.nowtype = pd.now;
             liDom.innerHTML=str;
             listDom.appendChild(liDom);
-            $("#car #dataList li .top").unbind('click').click(function () {
+            $("#car #dataList0 li .top").unbind('click').click(function () {
               var that = $(this);
               if($("#search").find("h5").text() != "取消"){
                 var carNumber = $(this).find(".carnumber").text();
@@ -161,7 +161,7 @@
                 _this.$router.push({ path: '/car',query:{title: carNumber,pkCar:pkcar,carType:cartype}});
               }
             })
-            $("#car #dataList li .thirdBox").unbind('click').click(function () {
+            $("#car #dataList0 li .thirdBox").unbind('click').click(function () {
               var tel = $(this).attr("data-tel");
               bridge.invoke('callTelephone',tel);
             })
@@ -194,13 +194,13 @@
                 if(_this.listType == '0'){
                   var display = $("#car .clearImg").css("display");
                   if(display == "block"){
-                    if($("#dataList li").length > 0){
+                    if($("#dataList0 li").length > 0){
                       $("#car .clearImg").css("display","none");
                       $("#car .reaseImg").css("display","none");
                       $(this).find("h5").text("编辑");
                     }
                   }else{
-                    if($("#dataList li").length > 0){
+                    if($("#dataList0 li").length > 0){
                       $("#car .clearImg").css("display","block");
                       $("#car .reaseImg").css("display","block");
                       $(this).find("h5").text("取消");

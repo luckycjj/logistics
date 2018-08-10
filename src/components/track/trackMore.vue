@@ -842,7 +842,7 @@
               }
               tracking.push(trackingJson);
             }
-            thisThat.endtype = loadSegmentDetail.type == undefined ? "0" : "1";
+            thisThat.endtype = loadSegmentDetail.type;
             sessionStorage.setItem("dataStart",loadSegmentDetail.delivery.addressLatAndLon);
             sessionStorage.setItem("dataEnd",loadSegmentDetail.arrival.addressLatAndLon);
             var pdlist = [{
