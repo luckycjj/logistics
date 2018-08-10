@@ -247,13 +247,16 @@
     margin-top: 0.2rem;
   }
   #agreeList li{
-    width: 100%;
+    width: 94%;
     background: white;
-    margin-bottom: 0.2rem;
+    /* margin-bottom: 0.2rem; */
+    margin: 0 auto 0.2rem auto;
+    border-radius: 0.2rem;
+    box-shadow: 0 5px 10px #cecbcb;
+    overflow: hidden;
   }
   #agreeList .firstBox{
-     width:70%;
-     float: left;
+     width:100%;
   }
   #agreeList .firstBox p,#agreeList .firstBox h1{
     font-size: 0.4rem;
@@ -265,14 +268,15 @@
      padding-top: 0.2rem;
   }
   #agreeList .secondBox{
-    width:30%;
-    float: right;
+    width:100%;
+    margin-top: 0.2rem;
   }
   #agreeList .secondBox button{
-     width:100%;
+     width:50%;
      color:white;
      font-size: 0.375rem;
      line-height: 1.2rem;
+    float: left;
   }
   #agreeList .no{
      background: #c7c7c7;
