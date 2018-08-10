@@ -210,7 +210,7 @@
               data: JSON.stringify({
                 userCode: sessionStorage.getItem("token"),
                 source: sessionStorage.getItem("source"),
-                pkDriver: _this.$route.query.pkDriver,
+                pkDriver: _this.$route.query.pk,
                 memo:type == 1 ? undefined : _this.refuseResule
               }),
               contentType: "application/json;charset=utf-8",
@@ -219,10 +219,9 @@
               success: function (http) {
                 $(".tanBox-bigBox").remove();
                 if (http.success == "1") {
-                  _this.pdlist.splice(number, 1);
                   _this.$cjj(message + "成功");
                   setTimeout(function () {
-                    bridge.invoke("gobackfrom");
+                    androidIos.gobackFrom(_this);
                   },500)
                 } else {
                   androidIos.second(http.message);
