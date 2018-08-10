@@ -394,10 +394,6 @@
     float: right;
     margin-top: 0.3rem;
   }
-  #changeCarpeople  #peopleMessage .replace img{
-    width: 0.5rem !important;
-    margin-top: 0.05rem!important;
-  }
   #changeCarpeople #peopleMessage .tel img{
     display: block;
     margin: 0 auto;

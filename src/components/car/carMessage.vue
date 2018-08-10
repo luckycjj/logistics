@@ -506,10 +506,6 @@
     margin: 0 auto;
     width:100%;
   }
-  #peopleMessage  .replace img{
-    width:80%;
-    margin-top: 10%!important;
-  }
   #productList{
     margin-top: 0.2rem;
   }
