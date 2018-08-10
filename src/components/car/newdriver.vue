@@ -168,6 +168,18 @@
       },
       save:function () {
         var _this = this;
+        if(_this.start.name == ""){
+          bomb.first("请输入司机姓名");
+          return false;
+        }
+        if(_this.start.phone.length < 11 || _this.start.phone == ""){
+          bomb.first("请输入正确的手机号码");
+          return false;
+        }
+        if(_this.start.timeValue == ""){
+          bomb.first("请选择司机驾龄");
+          return false;
+        }
         if(bomb.hasClass("save","colorful")){
             var json = {
               pk: _this.start.driverPk == ""? undefined: _this.start.driverPk,

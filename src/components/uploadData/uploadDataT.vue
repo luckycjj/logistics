@@ -199,7 +199,7 @@ export default {
                   water.bank = getCarrAndCompanyInfo.bank;
                   water.bankNumber = getCarrAndCompanyInfo.bankAccount;
                   water.company = getCarrAndCompanyInfo.corpName;
-                  water.name = getCarrAndCompanyInfo.userName;
+                  water.name = getCarrAndCompanyInfo.userName.replace(/[0-9]/g,'');
                   water.IDpic = getCarrAndCompanyInfo.idCardPos;
                   water.Licensepic = getCarrAndCompanyInfo.businessLicense;
                   water.Roadpic = getCarrAndCompanyInfo.roadTransLicense;
@@ -208,7 +208,7 @@ export default {
                 }else{
                   _this.type = 2;
                   _this.httpurl = getCarrAndCompanyInfo.ftpUrl;
-                  water.name = getCarrAndCompanyInfo.driverName;
+                  water.name = getCarrAndCompanyInfo.driverName.replace(/[0-9]/g,'');
                   water.Drivepic = getCarrAndCompanyInfo.driverLic;
                   water.IDpic = getCarrAndCompanyInfo.idCardPos;
                   water.nvitationodeIC = getCarrAndCompanyInfo.inviteCode;
@@ -634,8 +634,8 @@ a {
   color: #666;
 }
 .labelBox .label input {
-  height: 0.375rem;
-  margin-top: 0.3125rem;
+  height: 0.4rem;
+  margin-top: 0.3rem;
   margin-left: 0.3rem;
   font-size: 0.375rem;
   float: right;
