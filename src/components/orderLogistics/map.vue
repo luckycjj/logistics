@@ -89,7 +89,9 @@
                   var marker;
                   if(ordertype ==  "40" ){
                     driving.search([_this.startJ, _this.startW], [_this.endJ, _this.endW], function(status, result) {
-                      $(".goodsmessage p .distance").text("相距"+$(".planTitle p").text().split("公里")[0].split("(")[1] +"km");
+                      var lnglat = new AMap.LngLat(_this.peopleJ, _this.peopleW);
+                      _this.lnglat(lnglat);
+                      $("#carMessageBox .km").text("相距"+_this.lnglat(lnglat));
                       var sss = setInterval(function () {
                         if($(".amap-lib-marker-to").length>0){
                           clearInterval(sss);
@@ -109,7 +111,9 @@
                     marker.setMap(map);
                   }else{
                     driving.search([_this.peopleJ, _this.peopleW],[_this.startJ, _this.startW], function(status, result) {
-                      $(".goodsmessage p .distance").text("相距"+$(".planTitle p").text().split("公里")[0].split("(")[1] +"km");
+                      var lnglat = new AMap.LngLat(_this.peopleJ, _this.peopleW);
+                      _this.lnglat(lnglat);
+                      $("#carMessageBox .km").text("相距"+_this.lnglat(lnglat));
                       var sss = setInterval(function () {
                         if($(".amap-lib-marker-to").length>0){
                           clearInterval(sss);
@@ -147,6 +151,18 @@
                       }
                     });
                     if(ordertype ==  "40"){
+                      driving.search([_this.startJ, _this.startW], [_this.endJ, _this.endW], function(status, result) {
+                        var lnglat = new AMap.LngLat(_this.peopleJ, _this.peopleW);
+                        _this.lnglat(lnglat);
+                        $("#carMessageBox .km").text("相距"+_this.lnglat(lnglat));
+                        var sss = setInterval(function () {
+                          if($(".amap-lib-marker-to").length>0){
+                            clearInterval(sss);
+                            $(".amap-lib-marker-to").addClass("amaplibmarkerto");
+                            $(".amap-lib-marker-from").addClass("amaplibmarkerfrom");
+                          }
+                        },100)
+                      });
                       if (marker) {
                         marker.setMap(null);
                         marker = null;
@@ -157,8 +173,10 @@
                       });
                       marker.setMap(map);
                     }else{
-                      driving.search([_this.peopleJ,_this.peopleW],[_this.startJ, _this.startW], function(status, result) {
-                        $(".goodsmessage p .distance").text("相距"+$(".planTitle p").text().split("公里")[0].split("(")[1] +"km");
+                      driving.search([_this.peopleJ, _this.peopleW],[_this.startJ, _this.startW], function(status, result) {
+                        var lnglat = new AMap.LngLat(_this.peopleJ, _this.peopleW);
+                        _this.lnglat(lnglat);
+                        $("#carMessageBox .km").text("相距"+_this.lnglat(lnglat));
                         var sss = setInterval(function () {
                           if($(".amap-lib-marker-to").length>0){
                             clearInterval(sss);
@@ -177,6 +195,8 @@
       lnglat:function(lnglat){
         var _this = this;
         var myDistance = lnglat.distance([_this.startJ, _this.startW]);//这里测量距离
+        myDistance = (myDistance/1000).toFixed(3);
+        myDistance = myDistance-1 > 0 ? myDistance+'千米':myDistance*1000+'米';
         return myDistance
       },
     },
