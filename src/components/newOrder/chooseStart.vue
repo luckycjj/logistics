@@ -113,7 +113,7 @@
                   bomb.first("手机号码不足11位");
                   return false;
                }
-               var reg = /^1[3|4|5|7|8][0-9]{9}$/;
+               var reg = /^1([3|5|8][0-9]|4[5|7|9]|66|7[0|1|3|5|6|7|8]|9[8|9])[0-9]{8}$/;
                if(!reg.test(_this.start.phone)){
                  bomb.first("手机号码格式不对");
                  return false;

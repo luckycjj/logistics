@@ -422,7 +422,7 @@
                   page:1,
                   size:1,
                   keyword:"",
-                  user:sessionStorage.getItem("token"),
+                  userCode:sessionStorage.getItem("token"),
                   source:sessionStorage.getItem("source")
                 }
                 var listData=[]
