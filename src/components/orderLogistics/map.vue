@@ -14,8 +14,8 @@
         navShow:false,
         startJ :sessionStorage.getItem("dataStart") == "" || sessionStorage.getItem("dataStart") == null || sessionStorage.getItem("dataStart") == "null" ? "" :sessionStorage.getItem("dataStart").split(",")[0],
         startW :sessionStorage.getItem("dataStart") == "" || sessionStorage.getItem("dataStart") == null || sessionStorage.getItem("dataStart") == "null" ? "" :sessionStorage.getItem("dataStart").split(",")[1],
-        endJ:sessionStorage.getItem("dataEnd") == "" || sessionStorage.getItem("dataEnd") == null || sessionStorage.getItem("dataEnd") == "null" ? "" :sessionStorage.getItem("dataStart").split(",")[0],
-        endW:sessionStorage.getItem("dataEnd") == "" || sessionStorage.getItem("dataEnd") == null || sessionStorage.getItem("dataEnd") == "null" ? "" :sessionStorage.getItem("dataStart").split(",")[1],
+        endJ:sessionStorage.getItem("dataEnd") == "" || sessionStorage.getItem("dataEnd") == null || sessionStorage.getItem("dataEnd") == "null" ? "" :sessionStorage.getItem("dataEnd").split(",")[0],
+        endW:sessionStorage.getItem("dataEnd") == "" || sessionStorage.getItem("dataEnd") == null || sessionStorage.getItem("dataEnd") == "null" ? "" :sessionStorage.getItem("dataEnd").split(",")[1],
         peopleJ:120.40,
         peopleW:30.26,
         setTime:"",
@@ -91,7 +91,7 @@
                     driving.search([_this.startJ, _this.startW], [_this.endJ, _this.endW], function(status, result) {
                       var lnglat = new AMap.LngLat(_this.peopleJ, _this.peopleW);
                       _this.lnglat(lnglat);
-                      $("#carMessageBox .km").text("相距"+_this.lnglat(lnglat));
+                      $("#orderLogistics .distance").text("相距"+_this.lnglat(lnglat));
                       var sss = setInterval(function () {
                         if($(".amap-lib-marker-to").length>0){
                           clearInterval(sss);
@@ -113,7 +113,7 @@
                     driving.search([_this.peopleJ, _this.peopleW],[_this.startJ, _this.startW], function(status, result) {
                       var lnglat = new AMap.LngLat(_this.peopleJ, _this.peopleW);
                       _this.lnglat(lnglat);
-                      $("#carMessageBox .km").text("相距"+_this.lnglat(lnglat));
+                      $("#orderLogistics .distance").text("相距"+_this.lnglat(lnglat));
                       var sss = setInterval(function () {
                         if($(".amap-lib-marker-to").length>0){
                           clearInterval(sss);
@@ -154,7 +154,7 @@
                       driving.search([_this.startJ, _this.startW], [_this.endJ, _this.endW], function(status, result) {
                         var lnglat = new AMap.LngLat(_this.peopleJ, _this.peopleW);
                         _this.lnglat(lnglat);
-                        $("#carMessageBox .km").text("相距"+_this.lnglat(lnglat));
+                        $("#orderLogistics .distance").text("相距"+_this.lnglat(lnglat));
                         var sss = setInterval(function () {
                           if($(".amap-lib-marker-to").length>0){
                             clearInterval(sss);
@@ -176,7 +176,7 @@
                       driving.search([_this.peopleJ, _this.peopleW],[_this.startJ, _this.startW], function(status, result) {
                         var lnglat = new AMap.LngLat(_this.peopleJ, _this.peopleW);
                         _this.lnglat(lnglat);
-                        $("#carMessageBox .km").text("相距"+_this.lnglat(lnglat));
+                        $("#orderLogistics .distance").text("相距"+_this.lnglat(lnglat));
                         var sss = setInterval(function () {
                           if($(".amap-lib-marker-to").length>0){
                             clearInterval(sss);
