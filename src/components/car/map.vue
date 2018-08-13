@@ -12,10 +12,10 @@
     data(){
       return{
         navShow:false,
-        startJ :sessionStorage.getItem("dataStart") == "" ? "" :sessionStorage.getItem("dataStart").split(",")[0],
-        startW :sessionStorage.getItem("dataStart") == "" ? "" :sessionStorage.getItem("dataStart").split(",")[1],
-        endJ:sessionStorage.getItem("dataEnd") == "" ? "" :sessionStorage.getItem("dataStart").split(",")[0],
-        endW:sessionStorage.getItem("dataEnd") == "" ? "" :sessionStorage.getItem("dataStart").split(",")[1],
+        startJ :sessionStorage.getItem("dataStart") == "" || sessionStorage.getItem("dataStart") == null || sessionStorage.getItem("dataStart") == "null"? "" :sessionStorage.getItem("dataStart").split(",")[0],
+        startW :sessionStorage.getItem("dataStart") == "" || sessionStorage.getItem("dataStart") == null || sessionStorage.getItem("dataStart") == "null" ? "" :sessionStorage.getItem("dataStart").split(",")[1],
+        endJ:sessionStorage.getItem("dataEnd") == "" || sessionStorage.getItem("dataEnd") == null || sessionStorage.getItem("dataEnd") == "null" ? "" :sessionStorage.getItem("dataStart").split(",")[0],
+        endW:sessionStorage.getItem("dataEnd") == "" || sessionStorage.getItem("dataEnd") == null || sessionStorage.getItem("dataEnd") == "null" ? "" :sessionStorage.getItem("dataStart").split(",")[1],
         peopleJ:120.40,
         peopleW:30.26,
         setTimeSS:"",

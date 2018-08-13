@@ -828,7 +828,7 @@
                 goodsCode:loadSegmentDetail.invPackDao[i].goodsCode+"-"+loadSegmentDetail.invPackDao[i].goodsType,
                 goods:loadSegmentDetail.invPackDao[i].goodsName+"-"+loadSegmentDetail.invPackDao[i].goodsTypeName,
                 number:loadSegmentDetail.invPackDao[i].num,
-                weight:weight,
+                weight: weight/1000 - 1 <0 ? weight + "千克" : weight/1000 + "吨",
                 volume:loadSegmentDetail.invPackDao[i].volume*1,
               }
               weh += listJson.weight*1 + weh ;
@@ -901,10 +901,10 @@
                 name:loadSegmentDetail.driverDto[i].driverName,
                 year:loadSegmentDetail.driverDto[i].driverAge*1 < 1 ? "小于1" : loadSegmentDetail.driverDto[i].driverAge,
                 tel:loadSegmentDetail.driverDto[i].mobile,
-                startJ :loadSegmentDetail.delivery.addressLatAndLon == "" ? "" :loadSegmentDetail.delivery.addressLatAndLon.split(",")[0],
-                startW : loadSegmentDetail.delivery.addressLatAndLon == "" ? "" :loadSegmentDetail.delivery.addressLatAndLon.split(",")[1],
-                endJ:loadSegmentDetail.arrival.addressLatAndLon == "" ? "" :loadSegmentDetail.arrival.addressLatAndLon.split(",")[0],
-                endW:loadSegmentDetail.arrival.addressLatAndLon == "" ? "" :loadSegmentDetail.arrival.addressLatAndLon.split(",")[1],
+                startJ :loadSegmentDetail.delivery.addressLatAndLon == ""||loadSegmentDetail.delivery.addressLatAndLon == null ? "" :loadSegmentDetail.delivery.addressLatAndLon.split(",")[0],
+                startW : loadSegmentDetail.delivery.addressLatAndLon == ""||loadSegmentDetail.delivery.addressLatAndLon == null ? "" :loadSegmentDetail.delivery.addressLatAndLon.split(",")[1],
+                endJ:loadSegmentDetail.arrival.addressLatAndLon == "" ||loadSegmentDetail.arrival.addressLatAndLon == null ? "" :loadSegmentDetail.arrival.addressLatAndLon.split(",")[0],
+                endW:loadSegmentDetail.arrival.addressLatAndLon == "" ||loadSegmentDetail.arrival.addressLatAndLon == null ? "" :loadSegmentDetail.arrival.addressLatAndLon.split(",")[1],
                 pkDriver:loadSegmentDetail.driverDto[i].pkDriver,
                 peopleJ:loadSegmentDetail.driverDto[i].driverPosition.split(",")[0],
                 peopleW:loadSegmentDetail.driverDto[i].driverPosition.split(",")[1],
