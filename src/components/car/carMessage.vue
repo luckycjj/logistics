@@ -309,21 +309,22 @@
   function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
     //延时一秒,模拟联网
     setTimeout(function () {
-      $.ajax({
-        type: "POST",
-        url: androidIos.ajaxHttp()+"/carrier/getCarDetail",
-        data:JSON.stringify({
-          pk:thisThat.$route.query.pkCar,
-          userCode:sessionStorage.getItem("token"),
-          source:sessionStorage.getItem("source")
-        }),
-        contentType: "application/json;charset=utf-8",
-        dataType: "json",
-        timeout: 30000,
-        success: function (getCarDetail) {
-          if(getCarDetail.success == "1"){
-            var list = [];
-            for(var i =0 ;i<getCarDetail.invoice.length;i++){
+      if(thisThat.$route.query.pkCar != undefined){
+        $.ajax({
+          type: "POST",
+          url: androidIos.ajaxHttp()+"/carrier/getCarDetail",
+          data:JSON.stringify({
+            pk:thisThat.$route.query.pkCar,
+            userCode:sessionStorage.getItem("token"),
+            source:sessionStorage.getItem("source")
+          }),
+          contentType: "application/json;charset=utf-8",
+          dataType: "json",
+          timeout: 30000,
+          success: function (getCarDetail) {
+            if(getCarDetail.success == "1"){
+              var list = [];
+              for(var i =0 ;i<getCarDetail.invoice.length;i++){
                 var invoice = getCarDetail.invoice[i];
                 var proList =[];
                 for(var x = 0; x<invoice.itemDaos.length;x++){
@@ -346,47 +347,49 @@
                   type:invoice.status,
                 }
                 list.push(json);
+              }
+              var data=[{
+                orderType:1,
+                carType:1,
+                carState:getCarDetail.weight*1>0?1:2,
+                carMessage:{
+                  number:getCarDetail.carNo,
+                  tranType:getCarDetail.carType,
+                  weight:getCarDetail.loadWeight*1,
+                  nowWeight:getCarDetail.weight*1,
+                  carPeople:{
+                    tel:getCarDetail.driverDto.length==0?"":getCarDetail.driverDto[0].carrierName,
+                    name:getCarDetail.driverDto.length==0?"":getCarDetail.driverDto[0].driverName,
+                    year:getCarDetail.driverDto.length==0?"":(getCarDetail.driverDto[0].driverAge*1<1?"小于1":getCarDetail.driverDto[0].driverAge),
+                    pic:getCarDetail.driverDto.length==0?"":getCarDetail.driverDto[0].driverImg,
+                    carPeoplePk:getCarDetail.driverDto.length==0?"":getCarDetail.driverDto[0].pkDriver
+                  },
+                  carPeopleFu:{
+                    tel:"",
+                    name:"",
+                    year:"",
+                    pic:"",
+                    carPeoplePk:""
+                  },
+                },
+                list:list
+              }];
+              var listData=data;//模拟分页数据
+              successCallback&&successCallback(listData);//成功回调
+            }else{
+              androidIos.second(getCarDetail.message)
             }
-            var data=[{
-              orderType:1,
-              carType:1,
-              carState:getCarDetail.weight*1>0?1:2,
-              carMessage:{
-                number:getCarDetail.carNo,
-                tranType:getCarDetail.carType,
-                weight:getCarDetail.loadWeight*1,
-                nowWeight:getCarDetail.weight*1,
-                carPeople:{
-                  tel:getCarDetail.driverDto.length==0?"":getCarDetail.driverDto[0].carrierName,
-                  name:getCarDetail.driverDto.length==0?"":getCarDetail.driverDto[0].driverName,
-                  year:getCarDetail.driverDto.length==0?"":(getCarDetail.driverDto[0].driverAge*1<1?"小于1":getCarDetail.driverDto[0].driverAge),
-                  pic:getCarDetail.driverDto.length==0?"":getCarDetail.driverDto[0].driverImg,
-                  carPeoplePk:getCarDetail.driverDto.length==0?"":getCarDetail.driverDto[0].pkDriver
-                },
-                carPeopleFu:{
-                  tel:"",
-                  name:"",
-                  year:"",
-                  pic:"",
-                  carPeoplePk:""
-                },
-              },
-              list:list
-            }];
-            var listData=data;//模拟分页数据
-            successCallback&&successCallback(listData);//成功回调
-          }else{
-            androidIos.second(getCarDetail.message)
+          },
+          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+            if(status=='timeout'){//超时,status还有success,error等值的情况
+              androidIos.second("网络请求超时");
+            }else if(status=='error'){
+              androidIos.errorwife();
+            }
           }
-        },
-        complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-          if(status=='timeout'){//超时,status还有success,error等值的情况
-            androidIos.second("网络请求超时");
-          }else if(status=='error'){
-            androidIos.errorwife();
-          }
-        }
-      })
+        })
+      }
+
     },500)
   }
 </script>

@@ -129,10 +129,10 @@
               <h6>规格</h6><h5>{{item.number * 1}}件/{{item.wight * 1}}{{item.unitWight}}/{{item.weight * 1}}{{item.unitWeight}}</h5>
               <div class="clearBoth"></div>
             </div>
-            <div class="message_insurance">
+            <!--<div class="message_insurance">
               <h6>保险</h6><h5>{{both.insurance}}</h5>
               <div class="clearBoth"></div>
-            </div>
+            </div>-->
             <div class="message_price">
               <h6>金额</h6><h5>¥{{price}}</h5>
               <div class="clearBoth"></div>
