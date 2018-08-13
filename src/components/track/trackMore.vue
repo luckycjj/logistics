@@ -77,7 +77,7 @@
               <div class="clearBoth"></div>
               <div v-for="itemS in item.goodsmessage.productList ">
                 <h2>{{itemS.goods}}</h2>
-                <h3>{{itemS.number}}件/{{itemS.weight/1000}}吨/{{itemS.volume}}立方米</h3>
+                <h3>{{itemS.number}}件/{{itemS.weight}}/{{itemS.volume}}立方米</h3>
                 <div class="clearBoth"></div>
               </div>
               <div class="clearBoth"></div>
@@ -823,11 +823,12 @@
             var list=[];
             var weh = 0;
             for(var i =0;i<loadSegmentDetail.invPackDao.length;i++){
+              var weight = loadSegmentDetail.invPackDao[i].weigthUnit==3?loadSegmentDetail.invPackDao[i].weight*1000:loadSegmentDetail.invPackDao[i].weight*1;
               var listJson = {
                 goodsCode:loadSegmentDetail.invPackDao[i].goodsCode+"-"+loadSegmentDetail.invPackDao[i].goodsType,
                 goods:loadSegmentDetail.invPackDao[i].goodsName+"-"+loadSegmentDetail.invPackDao[i].goodsTypeName,
                 number:loadSegmentDetail.invPackDao[i].num,
-                weight:loadSegmentDetail.invPackDao[i].weigthUnit==3?loadSegmentDetail.invPackDao[i].weight*1000:loadSegmentDetail.invPackDao[i].weight*1,
+                weight:weight,
                 volume:loadSegmentDetail.invPackDao[i].volume*1,
               }
               weh += listJson.weight*1 + weh ;

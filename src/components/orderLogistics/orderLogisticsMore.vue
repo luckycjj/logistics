@@ -62,7 +62,7 @@
               <div class="clearBoth"></div>
               <div v-for="itemS in item.goodsmessage.productList ">
                 <h2>{{itemS.goods}}</h2>
-                <h3>{{itemS.number}}件/{{itemS.weight/1000}}吨/{{itemS.volume}}立方米</h3>
+                <h3>{{itemS.number}}件/{{itemS.weight}}/{{itemS.volume}}立方米</h3>
                 <div class="clearBoth"></div>
               </div>
               <div class="clearBoth"></div>
@@ -654,10 +654,11 @@
           if(invoiceDetail.success == "" || invoiceDetail.success == "1"){
             var list=[];
             for(var i =0;i<invoiceDetail.invPackDao.length;i++){
+              var weight = invoiceDetail.invPackDao[i].weigthUnit==3?invoiceDetail.invPackDao[i].weight*1000:invoiceDetail.invPackDao[i].weight*1;
               var listJson = {
                 goods:invoiceDetail.invPackDao[i].goodsName+"-"+invoiceDetail.invPackDao[i].goodsTypeName,
                 number:invoiceDetail.invPackDao[i].num,
-                weight:invoiceDetail.invPackDao[i].weigthUnit==3?invoiceDetail.invPackDao[i].weight*1000:invoiceDetail.invPackDao[i].weight*1,
+                weight : weight/1000 - 1 <0 ? weight + "千克" : weight/1000 + "吨",
                 volume:invoiceDetail.invPackDao[i].volume*1,
               }
               list.push(listJson);
