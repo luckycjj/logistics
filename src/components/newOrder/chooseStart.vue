@@ -9,7 +9,7 @@
         <div class="clearBoth"></div>
       </div>
       <div class="company inputUp">
-        <input type="text" maxlength="40" placeholder="收货方公司名" v-model="start.company"/>
+        <input type="text" maxlength="40" placeholder="请输入公司名" v-model="start.company"/>
       </div>
       <div class="company inputUp">
         <p id="X00" :class="start.province!=''?'blackColor':''" v-html="start.province==''?'选择省市区':start.province+'-'+start.city+'-'+start.area"></p>
@@ -128,7 +128,8 @@
                    pk_city:_this.start.city,
                    pk_area:_this.start.area,
                    contact:_this.start.name,
-                   source:sessionStorage.getItem("source")
+                   source:sessionStorage.getItem("source"),
+                   type:_this.$route.query.type
                  }
                  $.ajax({
                    type: "POST",
@@ -168,7 +169,8 @@
                    contact:_this.start.name,
                    checked:_this.start.checked,
                    userCode:sessionStorage.getItem("token"),
-                   source:sessionStorage.getItem("source")
+                   source:sessionStorage.getItem("source"),
+                   type:_this.$route.query.type
                  }
                  $.ajax({
                    type: "POST",

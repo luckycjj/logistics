@@ -156,7 +156,7 @@
       addNew:function(){
         var _this = this;
         androidIos.addPageList();
-        _this.$router.push({ path: '/newOrder/chooseStart'});
+        _this.$router.push({ path: '/newOrder/chooseStart',"type":_this.$route.query.type});
       },
       chooseLine:function (item) {
         var _this = this;
@@ -193,7 +193,8 @@
             data:JSON.stringify({
               pk:_this.pdlist[index].pkAddress,
               userCode:sessionStorage.getItem("token"),
-              source:sessionStorage.getItem("source")
+              source:sessionStorage.getItem("source"),
+              type:thisthatsecond.$route.query.type
             }),
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -224,7 +225,8 @@
               keyword:$("#addressMessage #carTitleBox input").val(),
               pk:_this.pk,
               userCode:sessionStorage.getItem("token"),
-              source:sessionStorage.getItem("source")
+              source:sessionStorage.getItem("source"),
+              type:thisthatsecond.$route.query.type
             }),
             contentType: "application/json;charset=utf-8",
             dataType: "json",
@@ -253,7 +255,7 @@
         var _this = this;
         androidIos.addPageList();
         sessionStorage.setItem("addresspk",JSON.stringify(pk));
-        _this.$router.push({ path: '/newOrder/chooseStart',query:{"pk":pk.pkAddress}});
+        _this.$router.push({ path: '/newOrder/chooseStart',query:{"pk":pk.pkAddress,"type":_this.$route.query.type}});
       }
     }
   }
@@ -266,7 +268,8 @@
         keyword:$("#addressMessage #carTitleBox input").val(),
         pk:thisthatsecond.pk,
         userCode:sessionStorage.getItem("token"),
-        source:sessionStorage.getItem("source")
+        source:sessionStorage.getItem("source"),
+        type:thisthatsecond.$route.query.type
       }
       var listData=[];
         $.ajax({

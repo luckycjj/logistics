@@ -203,7 +203,8 @@
               pay:0,
               read:true,
               scrollTop:0,
-              initialWeight:0
+              initialWeight:0,
+              price:"",
             },
             pk:"",
             price:"",
@@ -454,6 +455,7 @@
             if(newOrder!=undefined){
               newOrder = JSON.parse(newOrder);
               _this.both = newOrder;
+              _this.price = _this.both.price;
               _this.$nextTick(function () {
                 $("#newOrderBox").animate({scrollTop: _this.both.scrollTop}, 0);
               })
@@ -472,6 +474,8 @@
               _this.both.startAddress.address = startAddress.address;
               _this.both.startAddress.company = startAddress.company;
               _this.both.startAddress.pk =  startAddress.pk;
+              _this.price = "";
+              _this.both.price = "";
               sessionStorage.removeItem("startAddress");
             }
             if(endAddress!=undefined){
@@ -482,6 +486,8 @@
               _this.both.endAddress.address = endAddress.address;
               _this.both.endAddress.company = endAddress.company;
               _this.both.endAddress.pk =  endAddress.pk;
+              _this.price = "";
+              _this.both.price = "";
               sessionStorage.removeItem("endAddress");
             }
             if(goodsType!=undefined){
@@ -494,6 +500,8 @@
                   listGood.push(_this.both.productList[i].goodsType)
                 }
               }
+              _this.price = "";
+              _this.both.price = "";
               sessionStorage.removeItem("goodsType");
             }
             if(tranType!=undefined){
@@ -501,6 +509,7 @@
               _this.both.tranType =tranType.displayName;
               _this.both.trantypenumber =tranType.value;
               _this.price = "";
+              _this.both.price = "";
               sessionStorage.removeItem("tranType");
             }
             if(appoint!=undefined){
@@ -769,7 +778,7 @@
                 weight = weight*1 + _this.both.productList[x].wight * _this.both.productList[x].wightTen;
                 volumn = volumn*1 + _this.both.productList[x].weight * _this.both.productList[x].weightTen;
               }
-              if(weightList.length == self.productList.length){
+              if(weightList.length == self.productList.length && _this.both.price == ""){
                 var json = {
                   startCity:_this.both.startAddress.city.split("-")[1].replace("市",""),
                   endCity:_this.both.endAddress.city.split("-")[1].replace("市",""),
@@ -803,8 +812,6 @@
                     }
                   }
                 })
-              }else{
-                _this.price = "";
               }
             }
           }
@@ -838,9 +845,15 @@
           }
         },
         weightKeyup:function(){
-          this.suremend()
+          var _this = this;
+          _this.price = "";
+          _this.both.price = "";
+          _this.suremend();
         },
         volumeKeyup:function(){
+          var _this = this;
+          _this.price = "";
+          _this.both.price = "";
           this.suremend()
         },
         readChoose:function(){
@@ -850,6 +863,7 @@
         goStartAddress:function () {
           var _this = this;
           if(_this.pk == ""){
+            _this.both.price = _this.price;
             _this.both.scrollTop =  _this.getPageScroll();
             sessionStorage.setItem("newOrder",JSON.stringify(_this.both));
             androidIos.addPageList();
@@ -859,6 +873,7 @@
         },
         histroyAddress:function(){
           var _this = this;
+          _this.both.price = _this.price;
           _this.both.scrollTop =  _this.getPageScroll();
           sessionStorage.setItem("newOrder",JSON.stringify(_this.both));
           androidIos.addPageList();
@@ -867,6 +882,7 @@
         goEndAddress:function () {
           var _this = this;
           if(_this.pk == ""){
+            _this.both.price = _this.price;
             _this.both.scrollTop =  _this.getPageScroll();
             sessionStorage.setItem("newOrder",JSON.stringify(_this.both));
             androidIos.addPageList();
@@ -876,6 +892,7 @@
         },
         tranType:function () {
           var _this = this;
+          _this.both.price = _this.price;
           _this.both.scrollTop =  _this.getPageScroll();
           sessionStorage.setItem("newOrder",JSON.stringify(_this.both));
           androidIos.addPageList();
@@ -884,6 +901,7 @@
         goodsType:function (index) {
           var _this = this;
           if(_this.pk == ""){
+            _this.both.price = _this.price;
             _this.both.scrollTop =  _this.getPageScroll();
             sessionStorage.setItem("newOrder",JSON.stringify(_this.both));
             androidIos.addPageList();
@@ -892,6 +910,7 @@
         },
         appoint:function(){
           var _this = this;
+          _this.both.price = _this.price;
           _this.both.scrollTop =  _this.getPageScroll();
           sessionStorage.setItem("newOrder",JSON.stringify(_this.both));
           androidIos.addPageList();
@@ -899,6 +918,7 @@
         },
         insurance:function(){
           var _this = this;
+          _this.both.price = _this.price;
           _this.both.scrollTop =  _this.getPageScroll();
           sessionStorage.setItem("newOrder",JSON.stringify(_this.both));
           androidIos.addPageList();
@@ -906,6 +926,7 @@
         },
         calculatorGo:function(){
           var _this = this;
+          _this.both.price = _this.price;
           _this.both.scrollTop =  _this.getPageScroll();
           sessionStorage.setItem("newOrder",JSON.stringify(_this.both));
           androidIos.addPageList();
@@ -913,6 +934,7 @@
         },
         needKnow:function(){
           var _this = this;
+          _this.both.price = _this.price;
           _this.both.scrollTop =  _this.getPageScroll();
           sessionStorage.setItem("newOrder",JSON.stringify(_this.both));
           androidIos.addPageList();

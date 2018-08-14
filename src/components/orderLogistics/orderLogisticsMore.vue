@@ -126,7 +126,7 @@
               <button style="width:94%;margin:0 3%;display: block;" @click="payOrder()">支付</button>
               <div class="clearBoth"></div>
             </div>
-            <div class="go" v-else-if="(type == '0' || type == '10'  || type == '20') && orderSource == 1">
+            <div class="go" v-else-if="(type == '0' || type == '10') && orderSource == 1">
               <button style="background: transparent;color:#3492ff;" @click="closedOrder()">取消订单</button>
               <button @click="changeOrder()">修改订单</button>
               <div class="clearBoth"></div>
