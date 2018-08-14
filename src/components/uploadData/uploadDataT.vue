@@ -133,6 +133,19 @@ export default {
       httpurl: "",
     };
   },
+  watch:{
+    water:{
+      handler:function(val,oldval){
+        var _this = this;
+        if(_this.$route.query.type == 1){
+          localStorage.setItem("UPMESSA",JSON.stringify(_this.water));
+        }else if(_this.$route.query.type == 2){
+          localStorage.setItem("DRIVERMESSA",JSON.stringify(_this.water));
+        }
+      },
+      deep:true
+    }
+  },
   mounted: function() {
     var _this = this;
     androidIos.bridge(_this);
@@ -140,6 +153,33 @@ export default {
   methods: {
     go: function() {
       var _this = this;
+      $.ajax({
+        type: "POST",
+        url: androidIos.ajaxHttp() + "/settings/findParamValueByName ",
+        data: JSON.stringify({
+          userCode:sessionStorage.getItem("token"),
+          source:sessionStorage.getItem("source"),
+          paramName:"resourcePath"
+        }),
+        contentType: "application/json;charset=utf-8",
+        dataType: "json",
+        async:false,
+        timeout:30000,
+        success: function(findParamValueByName){
+          if(findParamValueByName.success == "1"){
+            _this.httpurl = findParamValueByName.paramValue;
+          }else{
+            androidIos.second(findParamValueByName.message);
+          }
+        },
+        complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+          if(status=='timeout'){//超时,status还有success,error等值的情况
+            androidIos.second("当前状况下网络状态差，请检查网络！")
+          }else if(status=="error"){
+            androidIos.errorwife();
+          }
+        }
+      });
       //revise 1修改 2不修改
       _this.nvitationodeICRevise = _this.$route.query.revise == undefined ? 1 : _this.$route.query.revise ;
 
@@ -155,6 +195,7 @@ export default {
               }),
               contentType: "application/json;charset=utf-8",
               dataType: "json",
+              async:false,
               timeout:10000,
               success: function(getInviteCode){
                 if(getInviteCode.success == "1"){
@@ -173,7 +214,17 @@ export default {
               }
             });
           }
+          if(localStorage.getItem("UPMESSA") != null && _this.$route.query.type == 1){
+             _this.water = JSON.parse(localStorage.getItem("UPMESSA"));
+          }else if(localStorage.getItem("DRIVERMESSA") != null && _this.$route.query.type == 2){
+            _this.water = JSON.parse(localStorage.getItem("DRIVERMESSA"));
+          }
         }else{
+          if(_this.$route.query.type == 1){
+            localStorage.removeItem("UPMESSA");
+          }else if(_this.$route.query.type == 2){
+            localStorage.removeItem("DRIVERMESSA");
+          }
           var json = {
             userCode:sessionStorage.getItem("token"),
             source:sessionStorage.getItem("source")
@@ -385,16 +436,11 @@ export default {
       var _this = this;
       if (bomb.hasClass("submit", "letgo")) {
         var water = _this.water;
-        var idF = $("#box .cjjimgbox .h5u_options_hiddenP");
-        var idS = $("#box1 .cjjimgbox .h5u_options_hiddenP");
-        var idT = $("#box2 .cjjimgbox .h5u_options_hiddenP");
-        var idFo = $("#box3 .cjjimgbox .h5u_options_hiddenP");
-        var idFi = $("#box4 .cjjimgbox .h5u_options_hiddenP");
-        water.Licensepic = idF.text();
-        water.Roadpic = idS.text();
-        water.IDpic = idT.text();
-        water.Drivepic = idFo.text();
-        water.Travelpic = idFi.text();
+        if(_this.$route.query.type == 1){
+          water = JSON.parse(localStorage.getItem("UPMESSA"));
+        }else if(_this.$route.query.type == 2){
+          water = JSON.parse(localStorage.getItem("DRIVERMESSA"));
+        }
         if (_this.type == "1") {
           if (_this.letterType == "1") {
             if (water.name == "") {
@@ -525,6 +571,11 @@ export default {
               _this.tanBox = true;
               _this.tanBoxmessage =
                 "请等待运维专员审核";
+              if(_this.$route.query.type == 1){
+                localStorage.removeItem("UPMESSA");
+              }else if(_this.$route.query.type == 2){
+                localStorage.removeItem("DRIVERMESSA");
+              }
             }else if(data.success=="-1"){
               androidIos.second(data.message);
             }

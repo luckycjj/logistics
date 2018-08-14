@@ -83,6 +83,24 @@ import  {androidIos} from './app';
         var thisclose = $(this);
         $(".tanBox-yes").unbind('click').click(function () {
           $(".tanBox-bigBox").remove();
+          var parentsId = thisclose.parents(".imgUpload").attr("id");
+          var message = sessionStorage.getItem("source") == "2" ?JSON.parse(localStorage.getItem("UPMESSA")):JSON.parse(localStorage.getItem("DRIVERMESSA")) ;
+          if(parentsId == "box"){
+            message.Licensepic = "";
+          }else if(parentsId == "box1"){
+            message.Roadpic = "";
+          }else if(parentsId == "box2"){
+            message.IDpic = "";
+          }else if(parentsId == "box3"){
+            message.Drivepic = "";
+          }else if(parentsId == "box4"){
+            message.Travelpic = "";
+          }
+          if(sessionStorage.getItem("source") == "2"){
+            localStorage.setItem("UPMESSA",JSON.stringify(message));
+          }else if(sessionStorage.getItem("source") == "3"){
+            localStorage.setItem("DRIVERMESSA",JSON.stringify(message));
+          }
           thisclose.parents(".upbox").find(".cjjimgbox").html("");
           thisclose.parents(".upbox").find("img").hide();
           thisclose.parents(".upbox").find("input").val("");
@@ -194,6 +212,55 @@ import  {androidIos} from './app';
           $("#h5u_preview_" + rand_id).show();
           $("#closed_" + rand_id).show();
           $("#h5u_options_" + rand_id).append("<p class='h5u_options_hiddenP'>" + json.message + "</p>");
+          var message = "";
+          if(sessionStorage.getItem("source") == "2"){
+            message = localStorage.getItem("UPMESSA") != null ? JSON.parse(localStorage.getItem("UPMESSA")) : {
+              Drivepic : "",
+              IDpic: "",
+              Licensepic: "",
+              Roadpic: "",
+              Travelpic: "",
+              bank: "",
+              bankNumber: "",
+              company: "",
+              name: "",
+              nvitationodeIC: "",
+              peopleNumber: ""};
+          }else if(sessionStorage.getItem("source") == "3"){
+            message = localStorage.getItem("DRIVERMESSA") != null ? JSON.parse(localStorage.getItem("DRIVERMESSA")) : {
+              Drivepic : "",
+              IDpic: "",
+              Licensepic: "",
+              Roadpic: "",
+              Travelpic: "",
+              bank: "",
+              bankNumber: "",
+              company: "",
+              name: "",
+              nvitationodeIC: "",
+              peopleNumber: ""};
+          }
+          if(parentsId == "box"){
+            var idF = $("#box .cjjimgbox .h5u_options_hiddenP");
+            message.Licensepic = idF.text();
+          }else if(parentsId == "box1"){
+            var idS = $("#box1 .cjjimgbox .h5u_options_hiddenP");
+            message.Roadpic = idS.text();
+          }else if(parentsId == "box2"){
+            var idT = $("#box2 .cjjimgbox .h5u_options_hiddenP");
+            message.IDpic = idT.text();
+          }else if(parentsId == "box3"){
+            var idFo = $("#box3 .cjjimgbox .h5u_options_hiddenP");
+            message.Drivepic = idFo.text();
+          }else if(parentsId == "box4"){
+            var idFi = $("#box4 .cjjimgbox .h5u_options_hiddenP");
+            message.Travelpic = idFi.text();
+          }
+          if(sessionStorage.getItem("source") == "2"){
+            localStorage.setItem("UPMESSA",JSON.stringify(message));
+          }else if(sessionStorage.getItem("source") == "3"){
+            localStorage.setItem("DRIVERMESSA",JSON.stringify(message));
+          }
         } else if (json.success == "-1") {
           androidIos.second(json.message);
         }
