@@ -1,6 +1,7 @@
 <template>
   <div id="chooseStart">
-    <div id="title" v-title data-title="地址簿"></div>
+    <div id="title" v-title data-title="发货地址" v-if="addressType == 1"></div>
+    <div id="title" v-title data-title="收货地址" v-if="addressType == 2"></div>
     <div id="inputKeyup">
       <div class="name">
         <input type="text" maxlength="20" placeholder="请输入姓名" v-model="start.name"/>
@@ -43,12 +44,13 @@
             cityCode:"",
             areaCode:"",
             checked:""
-          }
-
+          },
+          addressType:"",
         }
       },
       mounted:function () {
           var _this = this;
+        _this.addressType = _this.$route.query.type;
           androidIos.bridge(_this);
       },
       methods:{

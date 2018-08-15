@@ -62,7 +62,7 @@
               <div class="clearBoth"></div>
               <div v-for="itemS in item.goodsmessage.productList ">
                 <h2>{{itemS.goods}}</h2>
-                <h3>{{itemS.number}}件/{{itemS.weight}}/{{itemS.volume}}立方米</h3>
+                <h3>{{itemS.number}}件<span v-if="itemS.weight.replace(/[^0-9]/g,'')*1 > 0">/{{itemS.weight}}</span><span v-if="(itemS.volume).replace(/[^0-9]/g,'')*1 > 0">/{{itemS.volume}}</span></h3>
                 <div class="clearBoth"></div>
               </div>
               <div class="clearBoth"></div>
@@ -126,13 +126,14 @@
               <button style="width:94%;margin:0 3%;display: block;" @click="payOrder()">支付</button>
               <div class="clearBoth"></div>
             </div>
-            <div class="go" v-else-if="(type == '0' || type == '10') && orderSource == 1">
+            <div class="go" v-else-if="(type == '10') && orderSource == 1">
               <button style="background: transparent;color:#3492ff;" @click="closedOrder()">取消订单</button>
               <button @click="changeOrder()">修改订单</button>
               <div class="clearBoth"></div>
             </div>
-            <div class="go" v-else-if="(type == '60' || type == '70') && orderSource == 3">
-              <button style="width:94%;margin:0 3%;display: block;" @click="scoreYes(3)">签收</button>
+            <div class="go" v-else-if=" type == '0' && orderSource == 1">
+              <button style="background: transparent;color:#3492ff;" @click="closedOrder()">关闭</button>
+              <button >发布</button>
               <div class="clearBoth"></div>
             </div>
             <div class="go" v-else-if="type=='1000' && orderSource == 1">
@@ -169,11 +170,11 @@
       <div id="cancelReason">
         <div id="cancelReasonTitle">
           <img src="../../images/closed.png" @click="cancelReasonClosed()">
-          <p>选择取消订单理由</p>
+          <p>选择关闭订单的理由</p>
         </div>
         <ul class="errorUl">
           <li v-for="(item,index) in cancelReason" :class="index%2==0?'errorAbnormalLeft':'errorAbnormalRight'" @click="cancelReasonClick($event)">
-            {{item.name}}
+            {{item.displayName}}
           </li>
           <div class="clearBoth"></div>
           <input type="text" maxlength="30" placeholder="其他原因" v-model="cancelreason">
@@ -204,15 +205,7 @@
         pdlist:[],
         cancelReasonBox:false,
         scoreBox:false,
-        cancelReason:[{
-          name:"行程有变，不需要车"
-        },{
-          name:"平台派车接货太远"
-        },{
-          name:"发错订单"
-        },{
-          name:"联系不上司机"
-        }],
+        cancelReason:[],
         scoreList:"",
         scorereason:"",
         cancelreason:"",
@@ -366,6 +359,25 @@
       closedOrder:function () {
         var self = this;
         self.cancelReasonBox = true;
+        if(self.cancelReason.length == 0){
+          $.ajax({
+            type: "GET",
+            url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
+            data:{str:"order_closed",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
+            dataType: "json",
+            timeout: 10000,
+            success: function (getSysConfigList) {
+              self.cancelReason = getSysConfigList;
+            },
+            complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+              if(status=='timeout'){//超时,status还有success,error等值的情况
+                androidIos.second("网络请求超时");
+              }else if(status=='error'){
+                androidIos.errorwife();
+              }
+            }
+          })
+        }
         $("#errorwifeBox").remove();
       },
       pickMessage:function (m) {
@@ -435,6 +447,7 @@
       scoreClosed:function(){
         var _this = this;
         _this.scoreBox = false;
+        _this.cancelreason = "";
       },
       cancelReasonClick:function(e){
         if(!this.hasClass(e.target,"errorPriceBoxLi")){
@@ -450,11 +463,11 @@
           var list =[];
           for(var i =0;i<$("#cancelReasonBox .errorUl li").length;i++){
             if($("#cancelReasonBox .errorUl li").eq(i).hasClass("errorPriceBoxLi")){
-              list.push(_this.cancelReason[i].name);
+              list.push(_this.cancelReason[i].value);
             }
           }
           if(list.length == 0 && _this.cancelreason == ""){
-            bomb.first("请选择取消订单的理由！");
+            bomb.first("请选择关闭订单的理由！");
             return false;
           }
           bomb.removeClass("gogogo","gogogo");
@@ -476,7 +489,11 @@
               if(closeOrder.success == "1"){
                 _this.cancelReasonBox = false;
                 $("#cancelReasonBox .errorUl li").removeClass("errorPriceBoxLi");
-                bridge.invoke('gobackfrom');
+                _this.cancelreason = "";
+                _this.$cjj("关闭成功");
+                setTimeout(function () {
+                  bridge.invoke('gobackfrom');
+                },500);
               }else{
                 androidIos.second(closeOrder.message);
               }
@@ -659,7 +676,7 @@
                 goods:invoiceDetail.invPackDao[i].goodsName+"-"+invoiceDetail.invPackDao[i].goodsTypeName,
                 number:invoiceDetail.invPackDao[i].num,
                 weight : weight/1000 - 1 <0 ? weight + "千克" : weight/1000 + "吨",
-                volume:invoiceDetail.invPackDao[i].volume*1,
+                volume:invoiceDetail.invPackDao[i].volume*1 - 1 < 0 ? invoiceDetail.invPackDao[i].volume*1000 + "升" : invoiceDetail.invPackDao[i].volume*1 + "立方米",
               }
               list.push(listJson);
             }
@@ -832,6 +849,11 @@
     background-repeat: no-repeat;
     background-size: 0.5rem 0.5rem;
     background-position: 0 0.05rem;
+    color:#333;
+  }
+  .goodsmessage h3 span{
+    font-size: 0.36rem;
+    color:#333;
   }
   .goodsmessage h1{
     background-image: url("../../images/trantype.png");

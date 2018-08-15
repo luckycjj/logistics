@@ -2,7 +2,7 @@
   <div id="goods">
     <div id="title" v-title data-title="货物类别"></div>
     <ul v-if="list.length>0">
-      <li v-for="item in list" @click="choose(item)">
+      <li v-for="(item,index) in list" @click="choose(item,index%3)">
         {{item.text}}
       </li>
     </ul>
@@ -81,7 +81,7 @@
           }
         })
       },
-      choose:function (item) {
+      choose:function (item,index) {
         var _this = this;
         var json = {
            parentName:_this.parentName,
@@ -89,7 +89,8 @@
            name:item.text,
            code:item.value,
            tranpk:item.def,
-           index: _this.$route.query.index
+           index: _this.$route.query.index,
+           protype:index
         }
         sessionStorage.setItem("goodsType",JSON.stringify(json));
         var addPageList = sessionStorage.getItem("addPageList");

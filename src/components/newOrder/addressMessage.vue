@@ -1,6 +1,7 @@
 <template>
   <div id="addressMessage">
-    <div id="title" v-title data-title="地址簿"></div>
+    <div id="title" v-title data-title="发货地址" v-if="addressType == 1"></div>
+    <div id="title" v-title data-title="收货地址" v-if="addressType == 2"></div>
     <div id="carTitleBox"   @click="event($event)">
       <div class="carTitleBox">
         <div class="carTitleback" @click="goback()"></div>
@@ -44,11 +45,13 @@
         pk:"",
         size:"",
         number:"",
-        manage:false
+        manage:false,
+        addressType:"",
       }
     },
     mounted:function () {
       var _this = this;
+      _this.addressType = _this.$route.query.type;
       androidIos.bridge(_this);
     },
     methods:{
@@ -62,7 +65,7 @@
             if(startAddressmessage!= undefined){
               self.pk =JSON.parse(startAddressmessage).pk;
             }
-          }else if(type == "2"){
+          }else if(type == "3"){
             var endAddressmessage = sessionStorage.getItem("endAddressmessage");
             if(endAddressmessage!= undefined){
               self.pk =JSON.parse(endAddressmessage).pk;
@@ -156,7 +159,7 @@
       addNew:function(){
         var _this = this;
         androidIos.addPageList();
-        _this.$router.push({ path: '/newOrder/chooseStart',"type":_this.$route.query.type});
+        _this.$router.push({ path: '/newOrder/chooseStart',query:{type:_this.$route.query.type}});
       },
       chooseLine:function (item) {
         var _this = this;
@@ -174,7 +177,7 @@
           }
           if(type == "1"){
             sessionStorage.setItem("startAddress",JSON.stringify(json));
-          }else if(type == "2"){
+          }else if(type == "3"){
             sessionStorage.setItem("endAddress",JSON.stringify(json));
           }
           sessionStorage.removeItem("startAddressmessage");
@@ -255,7 +258,7 @@
         var _this = this;
         androidIos.addPageList();
         sessionStorage.setItem("addresspk",JSON.stringify(pk));
-        _this.$router.push({ path: '/newOrder/chooseStart',query:{"pk":pk.pkAddress,"type":_this.$route.query.type}});
+        _this.$router.push({ path: '/newOrder/chooseStart',query:{pk:pk.pkAddress,type:_this.$route.query.type}});
       }
     }
   }

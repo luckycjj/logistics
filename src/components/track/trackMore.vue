@@ -77,7 +77,7 @@
               <div class="clearBoth"></div>
               <div v-for="itemS in item.goodsmessage.productList ">
                 <h2>{{itemS.goods}}</h2>
-                <h3>{{itemS.number}}件/{{itemS.weight}}/{{itemS.volume}}立方米</h3>
+                <h3>{{itemS.number}}件<span v-if="itemS.weight.replace(/[^0-9]/g,'')*1 > 0">/{{itemS.weight}}</span><span v-if="itemS.volume.replace(/[^0-9]/g,'')*1 > 0">/{{itemS.volume}}</span></h3>
                 <div class="clearBoth"></div>
               </div>
               <div class="clearBoth"></div>
@@ -829,7 +829,7 @@
                 goods:loadSegmentDetail.invPackDao[i].goodsName+"-"+loadSegmentDetail.invPackDao[i].goodsTypeName,
                 number:loadSegmentDetail.invPackDao[i].num,
                 weight: weight/1000 - 1 <0 ? weight + "千克" : weight/1000 + "吨",
-                volume:loadSegmentDetail.invPackDao[i].volume*1,
+                volume:loadSegmentDetail.invPackDao[i].volume*1 - 1 < 0 ? loadSegmentDetail.invPackDao[i].volume*1000 + "升" : loadSegmentDetail.invPackDao[i].volume*1 + "立方米",
               }
               weh += listJson.weight*1 + weh ;
               list.push(listJson);
@@ -1006,6 +1006,11 @@
     background-repeat: no-repeat;
     background-size: 0.5rem 0.5rem;
     background-position: 0 0.05rem;
+    color:#333;
+  }
+  .goodsmessage h3 span{
+    font-size: 0.36rem;
+    color:#333;
   }
   .goodsmessage h1{
     background-image: url("../../images/trantype.png");

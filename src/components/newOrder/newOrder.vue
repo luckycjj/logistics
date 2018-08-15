@@ -1,11 +1,10 @@
 <template>
     <div id="newOrder">
       <div id="title" v-title data-title="发布货源"></div>
-      <div id="histroyAddress" @click="histroyAddress()"  v-if="pk==''&& histroyAddressLength">
-           常用路线
-      </div>
-      <div class="clearBoth"></div>
       <div id="peopleAddress">
+          <div id="histroyAddress" @click="histroyAddress()"  v-if="pk==''&& histroyAddressLength">
+            常用路线
+          </div>
           <div class="right">
             <div class="message  pickmessage">
               <p>发货方信息</p>
@@ -40,24 +39,24 @@
           <div class="clearBoth"></div>
         </div>
         <div class="label" :class="both.productList.length>1?'labelTop':''">
-          <div class="lablebox goodsTypeLabel">
+          <div class="lablebox goodsTypeLabel borderno">
             <span class="required">货物类别</span>
             <p v-html="item.goodsType==''?'请选择货物类型':item.goodsType" :class="item.goodsType==''?'':'blackColor'" @click="goodsType(index)" :datatype="item.goodstypenumber"></p>
             <div class="clearBoth"></div>
           </div>
-          <div class="lablebox imgno">
+          <!--<div class="lablebox imgno">
             <span>货物件数</span>
             <input type="tel" placeholder="请输入货物件数" v-model="item.number" maxlength="10"/>
             <div class="clearBoth"></div>
-          </div>
-          <div class="lablebox">
+          </div>-->
+          <div class="lablebox borderno" style="border-top: 1px solid #dadada!important;" v-if="item.protype == 0 || item.protype == 2">
             <span class="required">货物重量</span>
             <div class="unit" :id="'Z00'+index">{{item.unitWight}}</div>
             <input type="text" placeholder="请输入货物重量" maxlength="10" v-model="item.wight" @keyup="weightKeyup()"/>
             <div class="clearBoth"></div>
           </div>
-          <div class="lablebox borderno">
-            <span>货物体积</span>
+          <div class="lablebox borderno" style="border-top: 1px solid #dadada!important;" v-if="item.protype == 1 || item.protype == 2">
+            <span class="required">货物体积</span>
             <div class="unit" :id="'Z01'+index">{{item.unitWeight}}</div>
             <input type="text" placeholder="请输入货物体积" maxlength="10" v-model="item.weight" @keyup="volumeKeyup()"/>
             <div class="clearBoth"></div>
@@ -88,7 +87,7 @@
       </div>
       <div  v-if="pk==''" id="payment" class="label">
         <div class="lablebox imgno">
-          <span class="required">付款方</span>
+          <span>付款方</span>
           <div id="pay">
              <label><!--<div class="circleBox" @click="payChoose(0)"><div class="circletrue" v-if="both.pay == 0"></div></div>-->发货方<div class="clearBoth"></div></label>
              <!--<label><div class="circleBox" @click="payChoose(1)"><div class="circletrue" v-if="both.pay == 1"></div></div>收货方<div class="clearBoth"></div></label>-->
@@ -97,8 +96,8 @@
           <div class="clearBoth"></div>
         </div>
         <div class="lablebox borderno">
-          <span class="required">结算方式</span>
-          <div  id="Z02">{{both.payment}}</div>
+          <span>备注</span>
+          <p v-html="both.remark==''?'请填写备注':both.remark" :class="both.remark==''?'':'blackColor'" @click="remark()"></p>
           <div class="clearBoth"></div>
         </div>
       </div>
@@ -126,7 +125,7 @@
             </div>
             <div class="message_product" v-for="(item,index) in both.productList">
               <h6>货物</h6><h5>{{item.goodsType}}</h5><div class="clearBoth"></div>
-              <h6>规格</h6><h5>{{item.number * 1}}件/{{item.wight * 1}}{{item.unitWight}}/{{item.weight * 1}}{{item.unitWeight}}</h5>
+              <h6>规格</h6><h5>{{item.number * 1}}件<span v-if="item.wight * 1 >0">/{{item.wight * 1}}{{item.unitWight}}</span><span v-if="item.weight * 1 >0">/{{item.weight * 1}}{{item.unitWeight}}</span></h5>
               <div class="clearBoth"></div>
             </div>
             <!--<div class="message_insurance">
@@ -183,6 +182,7 @@
               productList:[{
                 pkInvPackB:"",
                 goodsType:"",
+                protype:2,
                 goodstypenumber:"",
                 number:1,
                 wight:"",
@@ -198,8 +198,7 @@
               pk_carrier:"",
               driver_name:"",
               insurance:"",
-              payment:"",
-              paymentVal : "",
+              remark:"",
               pay:0,
               read:true,
               scrollTop:0,
@@ -364,6 +363,7 @@
                       unitWeight:"立方米",
                       weight:invoiceDetail.invPackDao[i].volume*1,
                       weightTen:"1",
+                      protype:invoiceDetail.invPackDao[i].weight*1 != 0 && invoiceDetail.invPackDao[i].volume*1 == 0 ? 0 :invoiceDetail.invPackDao[i].weight*1 == 0 && invoiceDetail.invPackDao[i].volume*1 != 0 ? 1 : 2,
                     }
                     list.push(listJson);
                   }
@@ -395,7 +395,6 @@
                     pk_carrier:invoiceDetail.carrierDto.pkCarrier,
                     driver_name:"",
                     insurance:"",
-                    payment:invoiceDetail.balatype ==null?"到付":invoiceDetail.balatype,
                     pay:0,
                     read:true,
                     scrollTop:0,
@@ -494,6 +493,7 @@
               goodsType = JSON.parse(goodsType);
               _this.both.productList[goodsType.index].goodsType =goodsType.parentName + '-' +goodsType.name;
               _this.both.productList[goodsType.index].goodstypenumber =goodsType.parentcode + '-' +goodsType.code;
+              _this.both.productList[goodsType.index].protype = goodsType.protype;
               var listGood = [];
               for(var i=0;i < _this.both.productList.length ;i++){
                 if(_this.both.productList[i].goodsType != ""){
@@ -646,118 +646,64 @@
                 var x = 0 , y = 0;
                 x = Math.floor(1 / _this.both.productList[i].wightTen / 1000);
                 y = Math.floor(1 / _this.both.productList[i].weightTen / 1000);
-                var unitWight = new LArea();
-                unitWight.init({
-                  'trigger': '#Z00'+i,
-                  'valueTo': '#Z00'+i,
-                  'keys': {
-                    id: 'id',
-                    name: 'name'
-                  },
-                  'type': 1,
-                  'data':[{
-                    "code":"1",
-                    "region":"吨"
-                  },{
-                    "code":"0.001",
-                    "region":"千克"
-                  }]
-                });
-                unitWight.value = [x];
-                unitWight.addPointer = function (name) {
-                  name = JSON.parse(name);
-                  if(_this.both.productList[name.id.substr(4)*1].wight !=""){
-                    _this.both.productList[name.id.substr(4)*1].wight = _this.both.productList[name.id.substr(4)*1].wight/(name.firstCode/_this.both.productList[name.id.substr(4)*1].wightTen);
-                  }
-                  _this.both.productList[name.id.substr(4)*1].wightTen = name.firstCode;
-                  _this.both.productList[name.id.substr(4)*1].unitWight = name.firstVal;
-                }
-                 var unitWeight = new LArea();
-                 unitWeight.init({
-                   'trigger': '#Z01'+i,
-                   'valueTo': '#Z01'+i,
-                   'keys': {
-                     id: 'id',
-                     name: 'name'
-                   },
-                   'type': 1,
-                   'data':[{
-                     "code":"1",
-                     "region":"立方米"
-                   },{
-                     "code":"0.001",
-                     "region":"升"
-                   }]
-                 });
-                 unitWeight.value = [y];
-                 unitWeight.addPointer = function (name) {
+                if(_this.both.productList[i].protype == 0 || _this.both.productList[i].protype == 2){
+                  var unitWight = new LArea();
+                  unitWight.init({
+                    'trigger': '#Z00'+i,
+                    'valueTo': '#Z00'+i,
+                    'keys': {
+                      id: 'id',
+                      name: 'name'
+                    },
+                    'type': 1,
+                    'data':[{
+                      "code":"1",
+                      "region":"吨"
+                    },{
+                      "code":"0.001",
+                      "region":"千克"
+                    }]
+                  });
+                  unitWight.value = [x];
+                  unitWight.addPointer = function (name) {
                     name = JSON.parse(name);
-                    if(_this.both.productList[name.id.substr(4)*1].weight !=""){
-                      _this.both.productList[name.id.substr(4)*1].weight = _this.both.productList[name.id.substr(4)*1].weight/(name.firstCode/_this.both.productList[name.id.substr(4)*1].weightTen);
+                    if(_this.both.productList[name.id.substr(4)*1].wight !=""){
+                      _this.both.productList[name.id.substr(4)*1].wight = _this.both.productList[name.id.substr(4)*1].wight/(name.firstCode/_this.both.productList[name.id.substr(4)*1].wightTen);
                     }
-                    _this.both.productList[name.id.substr(4)*1].weightTen = name.firstCode;
-                    _this.both.productList[name.id.substr(4)*1].unitWeight = name.firstVal;
-                  }
-              }
-              if(_this.pk == ""){
-                var payment = new LArea();
-                var pppp = [];
-                $.ajax({
-                  type: "GET",
-                  url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
-                  data:{str:"balatype",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
-                  dataType: "json",
-                  async:false,
-                  timeout: 10000,
-                  success: function (getSysConfigList) {
-                    for(var i = 0; i<getSysConfigList.length;i++){
-                      if(i == 0){
-                        _this.both.payment =   getSysConfigList[i].displayName;
-                        _this.both.paymentVal = getSysConfigList[i].value;
-                      }
-                       var json = {
-                          "code" : getSysConfigList[i].value,
-                          "region" : getSysConfigList[i].displayName
-                       }
-                       pppp.push(json)
-                    }
-                  },
-                  complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                    if(status=='timeout'){//超时,status还有success,error等值的情况
-                      androidIos.second("网络请求超时");
-                    }else if(status=='error'){
-                      androidIos.errorwife();
-                    }
-                  }
-                })
-                payment.init({
-                  'trigger': '#Z02',
-                  'valueTo': '#Z02',
-                  'keys': {
-                    id: 'id',
-                    name: 'name'
-                  },
-                  'type': 1,
-                  'data':pppp
-                });
-                var x = 0;
-                if(_this.both.payment != ""){
-                  for(var i =0;i<pppp.length;i++){
-                    if(pppp[i].region == _this.both.payment){
-                      x = i;
-                    }
+                    _this.both.productList[name.id.substr(4)*1].wightTen = name.firstCode;
+                    _this.both.productList[name.id.substr(4)*1].unitWight = name.firstVal;
                   }
                 }
-                payment.value = [x];
-                payment.addPointer = function (name) {
-                  name = JSON.parse(name);
-                  _this.both.payment = name.firstVal;
-                  _this.both.paymentVal = name.firstCode;
+                if(_this.both.productList[i].protype == 1 || _this.both.productList[i].protype == 2) {
+                  var unitWeight = new LArea();
+                  unitWeight.init({
+                    'trigger': '#Z01' + i,
+                    'valueTo': '#Z01' + i,
+                    'keys': {
+                      id: 'id',
+                      name: 'name'
+                    },
+                    'type': 1,
+                    'data': [{
+                      "code": "1",
+                      "region": "立方米"
+                    }, {
+                      "code": "0.001",
+                      "region": "升"
+                    }]
+                  });
+                  unitWeight.value = [y];
+                  unitWeight.addPointer = function (name) {
+                    name = JSON.parse(name);
+                    if (_this.both.productList[name.id.substr(4) * 1].weight != "") {
+                      _this.both.productList[name.id.substr(4) * 1].weight = _this.both.productList[name.id.substr(4) * 1].weight / (name.firstCode / _this.both.productList[name.id.substr(4) * 1].weightTen);
+                    }
+                    _this.both.productList[name.id.substr(4) * 1].weightTen = name.firstCode;
+                    _this.both.productList[name.id.substr(4) * 1].unitWeight = name.firstVal;
+                  }
                 }
               }
             })
-
-
           },
         payChoose:function(e){
           var _this = this;
@@ -775,10 +721,19 @@
                 if( _this.both.productList[x].wight != ""){
                   weightList.push( _this.both.productList[x].wight);
                 }
+                if(_this.both.productList[x].protype == 0 && _this.both.productList[x].wight*1 == 0){
+                   return false;
+                }
+                if(_this.both.productList[x].protype == 1 && _this.both.productList[x].weight*1 == 0){
+                  return false;
+                }
+                if(_this.both.productList[x].protype == 2 && _this.both.productList[x].wight*1 == 0 && _this.both.productList[x].weight*1 == 0){
+                  return false;
+                }
                 weight = weight*1 + _this.both.productList[x].wight * _this.both.productList[x].wightTen;
                 volumn = volumn*1 + _this.both.productList[x].weight * _this.both.productList[x].weightTen;
               }
-              if(weightList.length == self.productList.length && _this.both.price == ""){
+              if(( weight*1 > 0 || volumn*1 > 0) && _this.both.price == ""){
                 var json = {
                   startCity:_this.both.startAddress.city.split("-")[1].replace("市",""),
                   endCity:_this.both.endAddress.city.split("-")[1].replace("市",""),
@@ -820,7 +775,13 @@
             if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&self.tranType != "" ){
               for(var i = 0;i<self.productList.length;i++) {
                 if(_this.price!=""){
-                  if (self.productList[i].goodsType == ""  || self.productList[i].wight*1 == "0" ) {
+                  if (self.productList[i].goodsType == "") {
+                    bomb.removeClass("submit", "submit");
+                  }else if(self.productList[i].protype == 0 && self.productList[i].wight*1 == "0"){
+                    bomb.removeClass("submit", "submit");
+                  }else if(self.productList[i].protype == 1 && self.productList[i].weight*1 == "0"){
+                    bomb.removeClass("submit", "submit");
+                  }else if(self.productList[i].protype == 2 && self.productList[i].wight*1 == "0" && self.productList[i].weight*1 == "0"){
                     bomb.removeClass("submit", "submit");
                   } else {
                     bomb.addClass("submit", "submit");
@@ -833,7 +794,13 @@
           }else{
             if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!="" ){
               for(var i = 0;i<self.productList.length;i++) {
-                if (self.productList[i].goodsType == "" || self.productList[i].wight*1 == "0" ) {
+                if (self.productList[i].goodsType == "") {
+                  bomb.removeClass("submit", "submit");
+                }else if(self.productList[i].protype == 0 && self.productList[i].wight*1 == "0"){
+                  bomb.removeClass("submit", "submit");
+                }else if(self.productList[i].protype == 1 && self.productList[i].weight*1 == "0"){
+                  bomb.removeClass("submit", "submit");
+                }else if(self.productList[i].protype == 2 && self.productList[i].wight*1 == "0" && self.productList[i].weight*1 == "0"){
                   bomb.removeClass("submit", "submit");
                 } else {
                   bomb.addClass("submit", "submit");
@@ -854,7 +821,7 @@
           var _this = this;
           _this.price = "";
           _this.both.price = "";
-          this.suremend()
+          _this.suremend()
         },
         readChoose:function(){
           var _this = this;
@@ -887,7 +854,7 @@
             sessionStorage.setItem("newOrder",JSON.stringify(_this.both));
             androidIos.addPageList();
             sessionStorage.setItem("endAddressmessage",JSON.stringify(_this.both.endAddress));
-            _this.$router.push({ path: '/newOrder/addressMessage',query:{"type":2}});
+            _this.$router.push({ path: '/newOrder/addressMessage',query:{"type":3}});
           }
         },
         tranType:function () {
@@ -915,6 +882,14 @@
           sessionStorage.setItem("newOrder",JSON.stringify(_this.both));
           androidIos.addPageList();
           _this.$router.push({ path: '/newOrder/appoint',query:{carrier:_this.both.pk_carrier,driver:_this.both.driver_name}});
+        },
+        remark:function () {
+          var _this = this;
+          _this.both.price = _this.price;
+          _this.both.scrollTop =  _this.getPageScroll();
+          sessionStorage.setItem("newOrder",JSON.stringify(_this.both));
+          androidIos.addPageList();
+          _this.$router.push({ path: '/newOrder/remark'});
         },
         insurance:function(){
           var _this = this;
@@ -954,6 +929,7 @@
              var json = {
                pkInvPackB:"",
                goodsType:"",
+               protype:2,
                goodstypenumber:"",
                number:1,
                wight:"",
@@ -1072,10 +1048,23 @@
                     bomb.first("请选择第" + (i+1) + "个货物");
                     return false;
                   }
-                  if(self.productList[i].wight*1 == "0"){
-                    bomb.first("请填写第" + (i+1) + "个货物的重量");
-                    return false;
+                  if(self.productList[i].protype == 0){
+                    if(self.productList[i].wight*1 == "0"){
+                      bomb.first("请填写第" + (i+1) + "个货物的重量");
+                      return false;
+                    }
+                  }else if(self.productList[i].protype == 1){
+                    if(self.productList[i].weight*1 == "0"){
+                      bomb.first("请填写第" + (i+1) + "个货物的体积");
+                      return false;
+                    }
+                  }else if(self.productList[i].protype == 2){
+                    if(self.productList[i].weight*1 == "0" && self.productList[i].wight*1 == "0"){
+                      bomb.first("请填写第" + (i+1) + "个货物的体积或重量");
+                      return false;
+                    }
                   }
+
                 }
                 if(self.tranType == "" ){
                   bomb.first("请选择运输类别");
@@ -1131,7 +1120,6 @@
               driver_name:self.driver_name,
               if_insurance:self.insurance,
               pay:self.pay==1?"收货方":"发货方",
-              payment:self.paymentVal,
               est_amount:_this.price*1,
               pk:_this.pk
             };
@@ -1243,6 +1231,10 @@
     white-space: nowrap;
     height:0.7rem;
   }
+  .message_product h5 span{
+    font-size: 0.375rem;
+    color:#333;
+  }
   .message_product,#newOrderMessage h3,#newOrderMessage h4{
     width:94%;
     padding: 0 3%;
@@ -1277,7 +1269,8 @@
     color:#3399ff;
   }
   #histroyAddress{
-    float: right;
+    position: absolute;
+    right:0;
     background: #3399FF;
     color:white;
     font-size: 0.3125rem;
@@ -1293,6 +1286,7 @@
      margin: 0.3rem auto 0 auto;
      border-radius: 0.12rem;
      box-shadow: 0 0.1rem 10px #d8d8d8;
+     position: relative;
    }
   #peopleAddress .right{
     float: left;
