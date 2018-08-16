@@ -2,7 +2,7 @@
   <div id="remark">
     <div id="title" v-title data-title="备注"></div>
     <ul>
-      <li v-for="(item,index) in remarkList" :class="item.show ? 'chooseTrue': ''" @click="chooseLine(item,index)">{{item.displayName}}</li>
+      <li v-for="(item,index) in remarkList" class="ulli" :class="item.show ? 'chooseTrue': ''" @click="chooseLine(item,index,$event)">{{item.displayName}}</li>
       <div class="clearBoth"></div>
     </ul>
     <textarea placeholder="请填写备注" v-model="remark" @keyup="remarkKeyUp()"></textarea>
@@ -46,6 +46,7 @@
               data:{str:"remarks",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
               dataType: "json",
               timeout: 20000,
+              async:false,
               success: function (getSysConfigList) {
                 _this.remarkList = getSysConfigList;
               },
@@ -57,31 +58,41 @@
                 }
               }
             })
+            var newOrder = sessionStorage.getItem("newOrder");
+            if(newOrder != undefined){
+                newOrder = JSON.parse(newOrder);
+                _this.remark = newOrder.remark;
+                _this.$nextTick(function () {
+                  _this.keyUp();
+                })
+            }
           },
           keyUp:function () {
-            var _this = this;
-            var list = _this.remark.split(",");
-           for(var x = 0 ; x < _this.remarkList.length ; x++ ){
-             var jjj = 0;
-             for(var i = 0 ; i < list.length; i++) {
-               if(list[i] == _this.remarkList[x].displayName){
-                 _this.remarkList[x].show = true;
-                 jjj++;
+             var _this = this;
+             var list = _this.remark.split(",");
+             for(var x = 0 ; x < _this.remarkList.length ; x++ ){
+               var jjj = 0;
+               for(var i = 0 ; i < list.length; i++) {
+                 if(list[i] === _this.remarkList[x].displayName){
+                   _this.remarkList[x].show = true;
+                   _this.addClass(document.getElementsByClassName("ulli")[x],"chooseTrue");
+                   jjj++;
+                 }
+               }
+               if(jjj == 0){
+                 _this.remarkList[x].show = false;
+                 _this.removeClass(document.getElementsByClassName("ulli")[x],"chooseTrue");
                }
              }
-             if(jjj == 0){
-               _this.remarkList[x].show = false;
-             }
-           }
-
           },
         remarkKeyUp:function () {
             var _this = this;
            _this.suremend();
         },
-          chooseLine:function (item,index) {
+          chooseLine:function (item,index,e) {
             var _this = this;
             if( !item.show){
+              _this.addClass(e.target,"chooseTrue");
               _this.remarkList[index].show = !_this.remarkList[index].show;
               if(_this.remark == ""){
                 _this.remark = item.displayName + "," ;
@@ -94,6 +105,7 @@
                 }
               }
             }else{
+              _this.removeClass(e.target,"chooseTrue");
               _this.remarkList[index].show = !_this.remarkList[index].show;
               var list = _this.remark.split(",");
               for(var i = 0; i < list.length; i++){
@@ -111,7 +123,9 @@
             }
           },
         save:function () {
-
+            var _this = this;
+           sessionStorage.setItem("remark",_this.remark);
+           androidIos.gobackFrom(_this);
         },
         addClass:function(obj,cls){//增加class
           var idJson = obj.className.split(" ");

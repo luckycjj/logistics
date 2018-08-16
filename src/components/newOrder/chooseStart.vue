@@ -122,21 +122,23 @@
                }
                if(pk == undefined){
                  var json ={
-                   addr_name:_this.start.company,
-                   phone:_this.start.phone,
-                   detail_addr:_this.start.address,
+                   addrName:_this.start.company,
+                   mobile:_this.start.phone,
+                   detailAddr:_this.start.address,
                    userCode:sessionStorage.getItem("token"),
-                   pk_province:_this.start.province,
-                   pk_city:_this.start.city,
-                   pk_area:_this.start.area,
+                   province:_this.start.province,
+                   city:_this.start.city,
+                   area:_this.start.area,
                    contact:_this.start.name,
                    source:sessionStorage.getItem("source"),
-                   type:_this.$route.query.type
+                   addrType:_this.$route.query.type,
+                   ifDefault:0,
                  }
                  $.ajax({
                    type: "POST",
-                   url: androidIos.ajaxHttp()+"/addAddress",
-                   data:json,
+                   url: androidIos.ajaxHttp()+"/address/addAddres",
+                   data:JSON.stringify(json),
+                   contentType: "application/json;charset=utf-8",
                    dataType: "json",
                    timeout: 10000,
                    success: function (addAddress) {
@@ -146,9 +148,6 @@
                      }else{
                        androidIos.second(addAddress.message);
                      }
-                   },
-                   error:function () {
-
                    },
                    complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
                      $("#common-blackBox").remove();
@@ -172,7 +171,8 @@
                    checked:_this.start.checked,
                    userCode:sessionStorage.getItem("token"),
                    source:sessionStorage.getItem("source"),
-                   type:_this.$route.query.type
+                   type:_this.$route.query.type,
+                   ifDefault:0,
                  }
                  $.ajax({
                    type: "POST",
@@ -188,9 +188,6 @@
                      }else{
                        androidIos.second(addAddress.message);
                      }
-                   },
-                   error:function () {
-
                    },
                    complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
                      $("#common-blackBox").remove();

@@ -121,7 +121,7 @@
             $.ajax({
               type: "POST",
               url: androidIos.ajaxHttp() + "/addAddress",
-              data:{
+              data:JSON.stringify({
                 addr_name:_this.start.company,
                 phone:_this.start.phone,
                 detail_addr:_this.start.address,
@@ -131,8 +131,9 @@
                 pk_area:_this.start.area,
                 contact:_this.start.name,
                 source:sessionStorage.getItem("source")
-              },
+              }),
               dataType: "json",
+              contentType: "application/json;charset=utf-8",
               timeout: 30000,
               success: function (addAddress) {
                 $("#common-blackBox").remove();

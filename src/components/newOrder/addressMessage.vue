@@ -1,7 +1,7 @@
 <template>
   <div id="addressMessage">
     <div id="title" v-title data-title="发货地址" v-if="addressType == 1"></div>
-    <div id="title" v-title data-title="收货地址" v-if="addressType == 2"></div>
+    <div id="title" v-title data-title="收货地址" v-if="addressType == 3"></div>
     <div id="carTitleBox"   @click="event($event)">
       <div class="carTitleBox">
         <div class="carTitleback" @click="goback()"></div>
@@ -9,24 +9,30 @@
         <p @click="sousuo()" id="sousuo">管理</p>
       </div>
     </div>
-    <div id="mescroll" class="mescroll">
+    <div id="mescroll" class="mescroll" :style="{bottom : !(addressType == 1 && total >= 10) ? '1.2rem':'0rem'}">
       <ul id="dataList" class="data-list">
-        <li v-for="(item,index) in pdlist" @click="chooseLine(item)">
-          <div class="firstBox">
-            <p>{{item.contact}}<span>{{item.mobile}}</span></p>
-            <h1>{{item.province}}-{{item.city}}-{{item.area}}&nbsp;&nbsp;{{item.detailAddr}}</h1>
+        <li v-for="(item,index) in pdlist" style="overflow: hidden">
+          <div class="moveDiv" style="position: relative">
+            <div class="firstBox"  @click="chooseLine(item)">
+              <p>{{item.contact}}<span>{{item.mobile}}</span></p>
+              <h1>{{item.province}}-{{item.city}}-{{item.area}}&nbsp;&nbsp;{{item.detailAddr}}</h1>
+            </div>
+            <div class="secondBox">
+              <img src="../../images/edit.png" @click="editLine(item)" v-if="manage">
+              <img src="../../images/clean.png" @click="cleanLine(index)" v-if="manage">
+              <img src="../../images/checked.png"  v-if="!manage&&item.checked == '1'">
+              <div class="clearBoth"></div>
+            </div>
+            <div class="thirdBox" v-if="addressType == 1">
+              <p v-if="item.ifDefault==0" @click="moren(1,index)">设置默认</p>
+              <p v-else-if="item.ifDefault==1" @click="moren(0,index)">取消默认</p>
+            </div>
+            <div class="clearBoth"></div>
           </div>
-          <div class="secondBox">
-             <img src="../../images/edit.png" @click="editLine(item)" v-if="manage">
-             <img src="../../images/clean.png" @click="cleanLine(index)" v-if="manage">
-            <img src="../../images/checked.png"  v-if="!manage&&item.checked == '1'">
-             <div class="clearBoth"></div>
-          </div>
-          <div class="clearBoth"></div>
         </li>
       </ul>
     </div>
-    <button id="addNew" @click="addNew()">新增地址</button>
+    <button id="addNew" @click="addNew()" v-if="!(addressType == 1 && total >= 10)">新增地址</button>
   </div>
 </template>
 
@@ -47,6 +53,7 @@
         number:"",
         manage:false,
         addressType:"",
+        total:100,
       }
     },
     mounted:function () {
@@ -79,6 +86,10 @@
             empty:{
               warpId:'mescroll',
               icon:"data:image/png;base64,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",
+            },
+            page: {
+              num: 0, //当前页码,默认0,回调之前会加1,即callback(page)会从1开始
+              size: 15, //每页数据的数量
             }
           },
           down: {
@@ -104,6 +115,54 @@
             _this.mescroll.resetUpScroll();
           }
         }
+      },
+      moren:function (type,number) {
+        var _this = this;
+        var json ={
+          pkAddress:_this.pdlist[number].pkAddress,
+          addrName:_this.pdlist[number].addrName,
+          mobile:_this.pdlist[number].mobile,
+          detailAddr:_this.pdlist[number].detailAddr,
+          province:_this.pdlist[number].province,
+          city:_this.pdlist[number].city,
+          area:_this.pdlist[number].area,
+          contact:_this.pdlist[number].contact,
+          checked:_this.pdlist[number].checked,
+          userCode:sessionStorage.getItem("token"),
+          source:sessionStorage.getItem("source"),
+          type:_this.$route.query.type,
+          ifDefault:type,
+        }
+        var newtype = type == "1" ? "设置" : "取消" ;
+        androidIos.loading("正在" + newtype);
+        $.ajax({
+          type: "POST",
+          url: androidIos.ajaxHttp()+"/address/updateAddres",
+          data:JSON.stringify(json),
+          contentType: "application/json;charset=utf-8",
+          dataType: "json",
+          timeout: 10000,
+          success: function (addAddress) {
+            $("#common-blackBox").remove();
+            if(addAddress.success=="1"){
+               _this.$cjj(newtype + "成功");
+               for(var i = 0 ;i < _this.pdlist.length;i++){
+                 _this.pdlist[i].ifDefault = 0;
+               }
+              _this.pdlist[number].ifDefault = type;
+            }else{
+              androidIos.second(addAddress.message);
+            }
+          },
+          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+            $("#common-blackBox").remove();
+            if(status=='timeout'){//超时,status还有success,error等值的情况
+              androidIos.second("网络请求超时");
+            }else if(status=='error'){
+              androidIos.errorwife();
+            }
+          }
+        })
       },
       sousuo:function(){
         var _this = this;
@@ -144,6 +203,59 @@
           self.mescroll.endSuccess(curPageData.length);
           self.$nextTick(function () {
             $("#addressMessage .secondBox").css("height","50%");
+            if(self.addressType == "1"){
+              var lines = $(".moveDiv");
+              var len = lines.length;
+              var lastX, lastXForMobile;
+              // 用于记录被按下的对象
+              var pressedObj;  // 当前左滑的对象
+              var lastLeftObj; // 上一个左滑的对象
+              // 用于记录按下的点
+              var start;
+              // 网在移动端运行时的监听
+              for (var i = 0; i < len; ++i) {
+                lines[i].addEventListener('touchstart', function(e){
+                  lastXForMobile = e.changedTouches[0].pageX;
+                  pressedObj = this; // 记录被按下的对象
+
+                  // 记录开始按下时的点
+                  var touches = event.touches[0];
+                  start = {
+                    x: touches.pageX, // 横坐标
+                    y: touches.pageY  // 纵坐标
+                  };
+                });
+                lines[i].addEventListener('touchmove',function(e){
+                  // 计算划动过程中x和y的变化量
+                  var touches = event.touches[0];
+                  var delta = {
+                    x: touches.pageX - start.x,
+                    y: touches.pageY - start.y
+                  };
+                  if (Math.abs(delta.x) > Math.abs(delta.y)) {
+                    event.preventDefault();
+                  }
+                });
+                lines[i].addEventListener('touchend', function(e){
+                  if (lastLeftObj && pressedObj != lastLeftObj) { // 点击除当前左滑对象之外的任意其他位置
+                    $(lastLeftObj).animate({left:"0"}, 200); // 右滑
+                    lastLeftObj = null; // 清空上一个左滑的对象
+                  }
+                  var diffX = e.changedTouches[0].pageX - lastXForMobile;
+                  if (diffX < -150) {
+                    $(pressedObj).animate({left:"-2rem"}, 200); // 左滑
+                    lastLeftObj && lastLeftObj != pressedObj &&
+                    $(lastLeftObj).animate({left:"0"}, 200); // 已经左滑状态的按钮右滑
+                    lastLeftObj = pressedObj; // 记录上一个左滑的对象
+                  } else if (diffX > 150) {
+                    if (pressedObj == lastLeftObj) {
+                      $(pressedObj).animate({left:"0"}, 200); // 右滑
+                      lastLeftObj = null; // 清空上一个左滑的对象
+                    }
+                  }
+                });
+              }
+            }
           })
 
         }, function() {
@@ -206,6 +318,7 @@
             success: function (deleteAddres) {
               if(deleteAddres.success=="1"){
                 _this.pdlist.splice(index,1);
+                _this.total = _this.total - 1;
                 _this.$cjj("删除成功");
               }else{
                 androidIos.second(getAddres.message)
@@ -285,6 +398,7 @@
           success: function (getAddres) {
             if(getAddres.success=="1"){
               listData = getAddres.list;
+              thisthatsecond.total = getAddres.total;
               successCallback&&successCallback(listData);//成功回调
             }else{
               androidIos.second(getAddres.message);
@@ -423,5 +537,23 @@
     bottom:0;
     left:0;
     font-size: 0.4rem;
+  }
+  #addressMessage .thirdBox{
+    position:absolute;
+    right:-2rem;
+    width:2rem;
+    height: 100%;
+    background: #2c9cff;
+  }
+  #addressMessage .thirdBox p{
+    color:white;
+    font-size: 0.375rem;
+    text-align: center;
+    position: absolute;
+    top:50%;
+    margin-top: -0.5rem;
+    line-height: 1rem;
+    text-align: center;
+    width: 100%;
   }
 </style>

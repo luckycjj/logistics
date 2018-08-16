@@ -44,11 +44,6 @@
             <p v-html="item.goodsType==''?'请选择货物类型':item.goodsType" :class="item.goodsType==''?'':'blackColor'" @click="goodsType(index)" :datatype="item.goodstypenumber"></p>
             <div class="clearBoth"></div>
           </div>
-          <!--<div class="lablebox imgno">
-            <span>货物件数</span>
-            <input type="tel" placeholder="请输入货物件数" v-model="item.number" maxlength="10"/>
-            <div class="clearBoth"></div>
-          </div>-->
           <div class="lablebox borderno" style="border-top: 1px solid #dadada!important;" v-if="item.protype == 0 || item.protype == 2">
             <span class="required">货物重量</span>
             <div class="unit" :id="'Z00'+index">{{item.unitWight}}</div>
@@ -114,6 +109,39 @@
         </div>
       </div>
       <button id="submit" class="gogogo" @click="submitGo()">提交</button>
+      <div id="vehicleBox" v-if="vehicleBox">
+           <div id="vehicle">
+             <img src="../../images/closed.png" @click="vehicleBoxClosed()">
+             <p>选择车辆车型</p>
+             <div class="vehicleBox">
+               <div class="vehicle" v-if="both.carList.length > 0">
+                 <h6>用车类型</h6>
+                 <ul>
+                   <li v-for="(item,index) in both.carList" :class="item.choose ? 'chooseTrue' : ''" @click="carListS(index,1)">{{item.displayName}}</li>
+                   <li @click="lookMore(1)" v-if="both.carListMore">全部</li>
+                   <div class="clearBoth"></div>
+                 </ul>
+               </div>
+               <div class="vehicle" v-if="both.carWidthList.length > 0">
+                 <h6>车长<span>（米，可多选）</span></h6>
+                 <ul>
+                   <li v-for="(item,index) in both.carWidthList" v-if="item.look" :class="item.choose ? 'chooseTrue' : ''" @click="carListS(index,2)">{{item.displayName}}</li>
+                   <li @click="lookMore(2)" v-if="both.carWidthListMore">全部</li>
+                   <div class="clearBoth"></div>
+                 </ul>
+               </div>
+               <div class="vehicle" v-if="both.carTypeList.length > 0">
+                 <h6>车型<span>（可多选）</span></h6>
+                 <ul>
+                   <li v-for="(item,index) in both.carTypeList" v-if="item.look"  :class="item.choose ? 'chooseTrue' : ''" @click="carListS(index,3)">{{item.displayName}}</li>
+                   <li @click="lookMore(3)" v-if="both.carTypeListMore">全部</li>
+                   <div class="clearBoth"></div>
+                 </ul>
+               </div>
+             </div>
+             <button @click="carListSure()">确定</button>
+           </div>
+      </div>
       <div id="newOrderMessageBox" v-if="newOrderMessageBox">
           <div id="newOrderMessage">
             <p>请确认订单信息</p>
@@ -128,10 +156,6 @@
               <h6>规格</h6><h5>{{item.number * 1}}件<span v-if="item.wight * 1 >0">/{{item.wight * 1}}{{item.unitWight}}</span><span v-if="item.weight * 1 >0">/{{item.weight * 1}}{{item.unitWeight}}</span></h5>
               <div class="clearBoth"></div>
             </div>
-            <!--<div class="message_insurance">
-              <h6>保险</h6><h5>{{both.insurance}}</h5>
-              <div class="clearBoth"></div>
-            </div>-->
             <div class="message_price">
               <h6>金额</h6><h5>¥{{price}}</h5>
               <div class="clearBoth"></div>
@@ -204,12 +228,20 @@
               scrollTop:0,
               initialWeight:0,
               price:"",
+              carList:[],
+              carWidthList:[],
+              carTypeList:[],
+              carListMore:false,
+              carWidthListMore:false,
+              carTypeListMore:false,
+              carBoth:""
             },
             pk:"",
             price:"",
             price123:false,
             newOrderMessageBox:false,
             histroyAddressLength:false,
+            vehicleBox:false,
             suremend: new Debounce(this.ajaxPost, 1000)
           }
        },
@@ -333,10 +365,10 @@
             var histroyAddress = sessionStorage.getItem("histroyAddress");
             var startAddress = sessionStorage.getItem("startAddress");
             var endAddress = sessionStorage.getItem("endAddress");
-            var tranType =  sessionStorage.getItem("tranType");
             var goodsType =  sessionStorage.getItem("goodsType");
             var appoint = sessionStorage.getItem("appoint");
             var insurance =   sessionStorage.getItem("insurance");
+            var remark = sessionStorage.getItem("remark");
             var pk = _this.$route.query.pk;
             _this.pk = pk ==undefined || _this.$route.query.type == undefined || _this.$route.query.type == "2"?"":pk;
             if(pk != undefined && newOrder == undefined){
@@ -459,6 +491,44 @@
                 $("#newOrderBox").animate({scrollTop: _this.both.scrollTop}, 0);
               })
               sessionStorage.removeItem("newOrder");
+            }else{
+              $.ajax({
+                type: "POST",
+                url: androidIos.ajaxHttp()+"/address/getAddres",
+                data:JSON.stringify({
+                  page:1,
+                  size:1,
+                  keyword:"",
+                  pk:"",
+                  userCode:sessionStorage.getItem("token"),
+                  source:sessionStorage.getItem("source"),
+                  type:1
+                }),
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                timeout: 10000,
+                success: function (getAddres) {
+                  if(getAddres.success=="1"){
+                     _this.both.startAddress = {
+                       people:getAddres.list[0].contact,
+                       tel:getAddres.list[0].mobile,
+                       city:getAddres.list[0].province+"-"+getAddres.list[0].city+"-"+getAddres.list[0].area,
+                       address:getAddres.list[0].detailAddr,
+                       company:getAddres.list[0].addrName,
+                       pk:getAddres.list[0].pkAddress,
+                     }
+                  }else{
+                    androidIos.second(getAddres.message);
+                  }
+                },
+                complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                  if(status=='timeout'){//超时,status还有success,error等值的情况
+                    androidIos.second("网络请求超时");
+                  }else if(status=='error'){
+                    androidIos.errorwife();
+                  }
+                }
+              })
             }
             if(histroyAddress!=undefined){
               histroyAddress = JSON.parse(histroyAddress);
@@ -504,14 +574,6 @@
               _this.both.price = "";
               sessionStorage.removeItem("goodsType");
             }
-            if(tranType!=undefined){
-              tranType = JSON.parse(tranType);
-              _this.both.tranType =tranType.displayName;
-              _this.both.trantypenumber =tranType.value;
-              _this.price = "";
-              _this.both.price = "";
-              sessionStorage.removeItem("tranType");
-            }
             if(appoint!=undefined){
               appoint = JSON.parse(appoint);
               _this.both.appoint =appoint.name;
@@ -523,6 +585,10 @@
               insurance = JSON.parse(insurance);
               _this.both.insurance =insurance.name+" ¥"+insurance.price+"/次";
               sessionStorage.removeItem("insurance");
+            }
+            if(remark!=undefined){
+              _this.both.remark =remark;
+              sessionStorage.removeItem("remark");
             }
             $(document).on('click','.lablebox input',function () {
               var $Val = $.trim($(this).val())
@@ -709,6 +775,25 @@
           var _this = this;
          /* _this.both.pay = e;*/
         },
+        lookMore:function (type) {
+            var _this = this.both;
+           if(type == 1){
+             for(var i = 0 ;i < _this.carList.length;i++){
+               _this.carList[i].look = true;
+             }
+             _this.carListMore = false;
+           }else if(type == 2){
+             for(var i = 0 ;i < _this.carWidthList.length;i++){
+               _this.carWidthList[i].look = true;
+             }
+             _this.carWidthListMore = false;
+           }else if(type == 3){
+             for(var i = 0 ;i < _this.carTypeList.length;i++){
+               _this.carTypeList[i].look = true;
+             }
+             _this.carTypeListMore = false;
+           }
+        },
         ajaxPost: function() {
           var _this = this;
           var self = _this.both;
@@ -811,6 +896,47 @@
             }
           }
         },
+        carListS:function (index,type) {
+          var _this = this.both;
+          if(type == 1){
+            var trueMen = _this.carList[index].choose;
+            for(var i = 0 ;i < _this.carList.length;i++){
+              _this.carList[i].choose = false;
+            }
+            if(!trueMen){
+              _this.carList[index].choose = !_this.carList[index].choose;
+            }
+          }else if(type == 2){
+            var x = 0;
+            if(!_this.carWidthList[index].choose){
+              for(var i = 0 ; i < _this.carWidthList.length;i++){
+                if(_this.carWidthList[i].choose){
+                  x++;
+                }
+              }
+              if(x >= 5){
+                bomb.first("车长最多选择5种");
+                return false;
+              }
+            }
+            _this.carWidthList[index].choose = !_this.carWidthList[index].choose;
+          }else if(type == 3){
+            var x = 0;
+            if(!_this.carTypeList[index].choose){
+              for(var i = 0 ; i < _this.carTypeList.length;i++){
+                if(_this.carTypeList[i].choose){
+                  x++;
+                }
+              }
+              if(x >= 3){
+                bomb.first("车型最多选择3种");
+                return false;
+              }
+            }
+            _this.carTypeList[index].choose = !_this.carTypeList[index].choose;
+          }
+
+        },
         weightKeyup:function(){
           var _this = this;
           _this.price = "";
@@ -821,7 +947,7 @@
           var _this = this;
           _this.price = "";
           _this.both.price = "";
-          _this.suremend()
+          _this.suremend();
         },
         readChoose:function(){
           var _this = this;
@@ -859,11 +985,170 @@
         },
         tranType:function () {
           var _this = this;
-          _this.both.price = _this.price;
-          _this.both.scrollTop =  _this.getPageScroll();
-          sessionStorage.setItem("newOrder",JSON.stringify(_this.both));
-          androidIos.addPageList();
-          _this.$router.push({ path: '/newOrder/tranType',query:{"tranpk":_this.both.trantypenumber}});
+          _this.vehicleBox = true;
+          if(_this.both.carList.length == 0){
+            $.ajax({
+              type: "POST",
+              url: androidIos.ajaxHttp()+"/settings/getTransType",
+              contentType: "application/json;charset=utf-8",
+              dataType: "json",
+              timeout: 30000,
+              success: function (getSysConfigList) {
+                if(getSysConfigList.length > 2){
+                  _this.both.carListMore = true
+                }
+                for(var i = 0; i < getSysConfigList.length;i++){
+                  getSysConfigList[i].choose = false;
+                  getSysConfigList[i].look = false;
+                  if(i < 2){
+                    getSysConfigList[i].look = true;
+                  }
+                }
+                _this.both.carList = getSysConfigList;
+              },
+              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                if(status=='timeout'){//超时,status还有success,error等值的情况
+                  androidIos.second("网络请求超时");
+                }else if(status=='error'){
+                  androidIos.errorwife();
+                }
+              }
+            })
+          }
+          if(_this.both.carTypeList.length == 0){
+            $.ajax({
+              type: "GET",
+              url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
+              data:{str:"car_type",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
+              dataType: "json",
+              timeout: 10000,
+              success: function (getSysConfigList) {
+                if(getSysConfigList.length > 2){
+                  _this.both.carTypeListMore = true
+                }
+                for(var i = 0; i < getSysConfigList.length;i++){
+                  getSysConfigList[i].choose = false;
+                  getSysConfigList[i].look = false;
+                  if(i < 2){
+                    getSysConfigList[i].look = true;
+                  }
+                }
+                _this.both.carTypeList = getSysConfigList;
+              },
+              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                if(status=='timeout'){//超时,status还有success,error等值的情况
+                  androidIos.second("网络请求超时");
+                }else if(status=='error'){
+                  androidIos.errorwife();
+                }
+              }
+            })
+          }
+          if(_this.both.carWidthList.length == 0){
+            $.ajax({
+              type: "GET",
+              url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
+              data:{str:"car_length",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
+              dataType: "json",
+              timeout: 10000,
+              success: function (getSysConfigList) {
+                if(getSysConfigList.length > 5){
+                  _this.both.carWidthListMore = true
+                }
+                for(var i = 0; i < getSysConfigList.length;i++){
+                  getSysConfigList[i].choose = false;
+                  getSysConfigList[i].look = false;
+                  if(i < 5){
+                    getSysConfigList[i].look = true;
+                  }
+                }
+                _this.both.carWidthList = getSysConfigList;
+              },
+              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                if(status=='timeout'){//超时,status还有success,error等值的情况
+                  androidIos.second("网络请求超时");
+                }else if(status=='error'){
+                  androidIos.errorwife();
+                }
+              }
+            })
+          }
+          console.log(_this.both.carBoth)
+          if(_this.both.carList.length > 0 && _this.both.carWidthList.length > 0 && _this.both.carTypeList.length > 0){
+            _this.both.carList = _this.both.carBoth.carList;
+            _this.both.carWidthList = _this.both.carBoth.carWidthList;
+            _this.both.carTypeList = _this.both.carBoth.carTypeList;
+          }
+
+        },
+        vehicleBoxClosed:function () {
+          var _this = this;
+          _this.vehicleBox = false;
+ /*         for(var i = 0;i < _this.both.carList.length;i++){
+            _this.both.carList[i].choose = false;
+          }
+          for(var i = 0;i < _this.both.carWidthList.length;i++){
+            _this.both.carWidthList[i].choose = false;
+          }
+          for(var i = 0;i < _this.both.carTypeList.length;i++){
+            _this.both.carTypeList[i].choose = false;
+          }*/
+        },
+        carListSure:function () {
+            var self = this.both;
+            var x = [],y =[],z = [];
+            for(var i = 0; i < self.carList.length ; i++){
+               if(self.carList[i].choose){
+                  x.push({
+                     name : self.carList[i].displayName,
+                     value : self.carList[i].value
+                  })
+               }
+            }
+          for(var i = 0; i < self.carWidthList.length ; i++){
+            if(self.carWidthList[i].choose){
+              y.push({
+                name : self.carWidthList[i].displayName,
+                value : self.carWidthList[i].value
+              })
+            }
+          }
+          for(var i = 0; i < self.carTypeList.length ; i++){
+            if(self.carTypeList[i].choose){
+              z.push({
+                name : self.carTypeList[i].displayName,
+                value : self.carTypeList[i].value
+              })
+            }
+          }
+          if(x.length == 0){
+               bomb.first("请选择用车类型");
+               return false;
+          }
+          if(y.length == 0){
+            bomb.first("请选择车长");
+            return false;
+          }
+          if(z.length == 0){
+            bomb.first("请选择车型");
+            return false;
+          }
+          this.vehicleBox = false;
+          self.carBoth = {
+            carList:self.carList,
+            carWidthList:self.carWidthList,
+            carTypeList:self.carTypeList,
+          }
+          self.tranType = "";
+          for(var x1 = 0; x1 < x.length ; x1++){
+            self.tranType = self.tranType + x[x1].name + ",";
+          }
+          for(var y1 = 0; y1 < y.length ; y1++){
+            self.tranType = self.tranType + y[y1].name + "米,";
+          }
+          for(var z1 = 0; z1 < z.length ; z1++){
+            self.tranType = self.tranType + z[z1].name + ",";
+          }
         },
         goodsType:function (index) {
           var _this = this;
@@ -1386,8 +1671,8 @@
     line-height: 1.4rem;
     font-size: 0.4rem;
     color:#333;
-    padding-left: 0.2rem;
-    margin-left: -0.2rem;
+    padding-left: 0.3rem;
+    margin-left: -0.3rem;
   }
    .lablebox input{
      line-height: 0.375rem;
@@ -1540,5 +1825,78 @@
   }
   .imgno{
     background-image: none!important;
+  }
+  #vehicleBox{
+    position: fixed;
+    width:100%;
+    top:0;
+    bottom:0;
+    height: auto;
+    z-index: 44;
+    background: rgba(0,0,0,0.3);
+  }
+  #vehicle{
+     width: 100%;
+     background: white;
+     position: absolute;
+    bottom:0;
+  }
+  #vehicle button{
+    width:90%;
+    line-height: 1rem;
+    background: #2c9cff;
+    color:white;
+    display: block;
+    margin: 0.8rem auto 0.3rem auto;
+    font-size: 0.375rem;
+    border-radius: 0.2rem;
+  }
+  #vehicle p{
+     text-align: center;
+    font-size: 0.375rem;
+    color:#333;
+    line-height: 1rem;
+    border-bottom: 1px solid #e6e6e6;
+  }
+  .vehicleBox{
+    width:93%;
+    margin: 0 auto;
+    max-height: 10rem;
+  }
+  .vehicle{
+    margin-top: 0.3rem;
+  }
+  .vehicleBox h6{
+    font-size: 0.375rem;
+    font-weight: bold;
+  }
+  .vehicleBox h6 span{
+    font-weight: normal;
+  }
+  .vehicle li{
+    float: left;
+    display: block;
+    width: 18.5%;
+    padding:0 1.375% ;
+    text-align: center;
+    line-height: 0.8rem;
+    font-size: 0.35rem;
+    background: #f3f3f3;
+    color:#666;
+    border-radius: 0.2rem;
+    margin-top: 0.4rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-left: 3%;
+  }
+  .chooseTrue{
+     background: #2c9cff!important;
+    color:white!important;
+  }
+  #vehicle img{
+    position: absolute;
+    width:1rem;
+    z-index: 1;
   }
 </style>

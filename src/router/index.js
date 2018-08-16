@@ -15,7 +15,6 @@ import  newOrderF from '@/components/newOrder/newOrder'
 import  newOrderS from '@/components/newOrder/chooseStart'
 import  newOrderT from '@/components/newOrder/remark'
 import  newOrderFo from '@/components/newOrder/histroyAddress'
-import  newOrderFi from '@/components/newOrder/tranType'
 import  newOrderSi from '@/components/newOrder/goodsType'
 import  newOrderSe from '@/components/newOrder/goods'
 import  newOrderEg from '@/components/newOrder/appoint'
@@ -147,7 +146,6 @@ export default new Router({
         {path: 'chooseStart', component: newOrderS},
         {path:'remark',component:newOrderT},
         {path: 'histroyAddress', component: newOrderFo},
-        {path: 'tranType', component: newOrderFi},
         {path: 'goodsType', component: newOrderSi},
         {path: 'goods', component: newOrderSe},
         {path: 'appoint', component: newOrderEg},
