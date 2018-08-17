@@ -115,6 +115,16 @@
             if(invoiceDetail.success!="-1"){
               var list=[];
               for(var i =0;i<invoiceDetail.invPackDao.length;i++){
+                var protype = 0;
+                if(invoiceDetail.invPackDao[i].weight*1 == 0){
+                  protype = 1;
+                }else{
+                  if(invoiceDetail.invPackDao[i].volume ==0){
+                    protype = 0;
+                  }else{
+                    protype = 2;
+                  }
+                }
                 var listJson = {
                   pkInvPackB:invoiceDetail.invPackDao[i].pkInvPackB,
                   goodsType:invoiceDetail.invPackDao[i].goodsName+"-"+invoiceDetail.invPackDao[i].goodsTypeName,
@@ -126,10 +136,12 @@
                   unitWeight:"立方米",
                   weight:invoiceDetail.invPackDao[i].volume*1,
                   weightTen:"1",
+                  protype:protype,
                 }
                 list.push(listJson);
               }
               var pdlist = {
+                histroyAddressLength:true,
                 startAddress:{
                   people:invoiceDetail.delivery.contact,
                   tel:invoiceDetail.delivery.mobile,
@@ -146,10 +158,10 @@
                   company:invoiceDetail.arrival.addrName,
                   pk:invoiceDetail.arrival.pkAddress,
                 },
-                timeBeforeF:invoiceDetail.deliDate.split(" ")[1],
-                timeBeforeS:invoiceDetail.deliDate.split(" ")[0],
-                timeAfterF:invoiceDetail.arriDate.split(" ")[1],
-                timeAfterS:invoiceDetail.arriDate.split(" ")[0],
+                timeBeforeF:_this.day(60*60*1000).split(" ")[1],
+                timeBeforeS:_this.day(60*60*1000).split(" ")[0],
+                timeAfterF:"08:00:00",
+                timeAfterS:_this.day(24*60*60*1000).split(" ")[0],
                 productList:list,
                 tranType:"",
                 trantypenumber:"",
@@ -157,12 +169,25 @@
                 pk_carrier:"",
                 driver_name:"",
                 insurance:"",
-                payment:invoiceDetail.balatype ==null?"到付":invoiceDetail.balatype,
                 pay:0,
-                price:"",
                 read:true,
                 scrollTop:0,
-                initialWeight:0
+                initialWeight:0,
+                price:"",
+                carList:[],
+                carListSure:"",
+                carListSureValue:"",
+                carWidthList:[],
+                carWidthListSure:"",
+                carWidthListSureValue:"",
+                cartypeOther:"",
+                cartypeOtherSure:"",
+                carTypeList:[],
+                carTypeListSure:"",
+                carTypeListSureValue:"",
+                carListMore:false,
+                carWidthListMore:false,
+                carTypeListMore:false,
               }
               sessionStorage.setItem("histroyAddress",JSON.stringify(pdlist));
               androidIos.gobackFrom(_this);
@@ -183,6 +208,19 @@
             }
           }
         })
+      },
+      day:function (time) {
+         var _this = this;
+         var newDate = new Date((new Date()).getTime()*1 + time*1);
+         return _this.ten(newDate.getFullYear()) + "-" + _this.ten(newDate.getMonth() + 1) + "-" + _this.ten(newDate.getDate()) + " " +  _this.ten(newDate.getHours()) + ":" + _this.ten(newDate.getMinutes()) + ":" + _this.ten(newDate.getSeconds());
+      },
+      ten:function (min) {
+        if(min<10){
+          min = "0"+min;
+        }else{
+          min = min;
+        }
+        return min;
       }
     }
   }

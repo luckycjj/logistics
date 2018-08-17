@@ -122,7 +122,7 @@
             下单时间：{{item.time}}
           </div>
           <div id="sure">
-            <div class="go" v-if="type=='10000'">
+            <div class="go" v-if="(type=='10000' && orderSource == 2 ) || (type == 0  && orderSource == 1 && payStatus != 30 && pdlist[0].pickPay.type != '月结')">
               <button style="width:94%;margin:0 3%;display: block;" @click="payOrder()">支付</button>
               <div class="clearBoth"></div>
             </div>
@@ -131,9 +131,13 @@
               <button @click="changeOrder()">修改订单</button>
               <div class="clearBoth"></div>
             </div>
-            <div class="go" v-else-if=" type == '0' && orderSource == 1">
+            <div class="go" v-else-if=" type == '0' && orderSource == 1 &&  (pdlist[0].pickPay.type == '月结' || (payStatus == 30 && pdlist[0].pickPay.type != '月结'))">
               <button style="background: transparent;color:#3492ff;" @click="closedOrder()">关闭</button>
               <button >发布</button>
+              <div class="clearBoth"></div>
+            </div>
+            <div class="go" v-else-if="(type == '60' || type == '70') && orderSource == 3">
+              <button style="width:94%;margin:0 3%;display: block;" @click="scoreYes(3)">签收</button>
               <div class="clearBoth"></div>
             </div>
             <div class="go" v-else-if="type=='1000' && orderSource == 1">
@@ -198,6 +202,7 @@
     data(){
       return{
         orderSource:1,
+        payStatus:"",
         carloading:true,
         type:"",
         pick:true,
@@ -419,12 +424,49 @@
             score:"0"
           }]
         }else if(type == 3){
+          androidIos.loading("正在签收");
           _this.scoreList = [{
             name:"货物",
             score:"0"
-          }]
+          }];
+          var succ = 0;
+          $.ajax({
+            type: "POST",
+            url: androidIos.ajaxHttp()+"/order/signInv",
+            data:JSON.stringify({
+              pk:_this.$route.query.pk,
+              userCode:sessionStorage.getItem("token"),
+              source:sessionStorage.getItem("source")
+            }),
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            timeout: 10000,
+            async:false,
+            success: function (signInv) {
+              if(signInv.success == "1"){
+                _this.$cjj("签收成功");
+                succ = 1;
+              }else{
+                succ = 0;
+                androidIos.second(signInv.message);
+              }
+            },
+            complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+              $("#common-blackBox").remove();
+              if(status=='timeout'){//超时,status还有success,error等值的情况
+                androidIos.second("网络请求超时");
+              }else if(status=='error'){
+                androidIos.errorwife();
+              }
+            }
+          })
+          if(succ == 0){
+             return false;
+          }
         }
         _this.$nextTick(function () {
+          _this.scoreBox = true;
+          _this.scorereason = "";
           for(var i =0 ;i<_this.scoreList.length;i++){
             $("#star_grade00"+i).html("");
             $("#star_grade00"+i).markingSystem({
@@ -440,8 +482,6 @@
             });
             $("#star_grade00"+i+" .set_image_top").css("z-index",10);
           }
-          _this.scoreBox = true;
-          _this.scorereason = "";
         })
       },
       scoreClosed:function(){
@@ -516,7 +556,6 @@
       },
       scoreChange:function(){
         var _this = this;
-        var orderTypeList = _this.$route.query.type;
         if(bomb.hasClass("gogogo","gogogo")){
           var list = [];
           var zongNumber = 0;
@@ -528,25 +567,14 @@
             zongNumber = zongNumber + json.score*1
             list.push(json)
           }
-          var remark = "";
-          for(var i = 0 ;i < list.length ; i++){
-            remark += list[i].name + "(" + list[i].score + "分" + ")" + " ";
-          }
-          var cjJson = orderTypeList == 1 ?{
+          var cjJson ={
             scoreList:JSON.stringify(list),
             average:(zongNumber/_this.scoreList.length).toFixed(1),
             scorereason:_this.scorereason,
             pk:_this.$route.query.pk,
             userCode:sessionStorage.getItem("token"),
             source:sessionStorage.getItem("source")
-          }:{
-            pk:_this.$route.query.pk,
-            userCode:sessionStorage.getItem("token"),
-            source:sessionStorage.getItem("source"),
-            remark:remark + " " + _this.scorereason,
           }
-          bomb.removeClass("gogogo","gogogo");
-          if(orderTypeList == 1){
             $.ajax({
               type: "POST",
               url: androidIos.ajaxHttp()+"/order/clientAppraisal",
@@ -574,33 +602,6 @@
                 }
               }
             })
-          }else{
-            $.ajax({
-              type: "POST",
-              url: androidIos.ajaxHttp()+"/order/signInv",
-              data:cjJson,
-              dataType: "json",
-              timeout: 10000,
-              success: function (signInv) {
-                bomb.addClass("gogogo","gogogo");
-                if(signInv.success == "1"){
-                  _this.scoreBox = false;
-                  _this.mescroll.resetUpScroll();
-                }else{
-                  androidIos.second(signInv.message);
-                }
-              },
-              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                _this.cancelReasonBox = false;
-                bomb.addClass("gogogo","gogogo");
-                if(status=='timeout'){//超时,status还有success,error等值的情况
-                  androidIos.second("网络请求超时");
-                }else if(status=='error'){
-                  androidIos.errorwife();
-                }
-              }
-            })
-          }
 
         }else{
           bomb.first("请不要频繁点击");
@@ -691,7 +692,7 @@
             // 新建=0 已确认=10 司机发车=20 部分提货=30 已提货=40 部分到货=50 已到货=60 部分签收=70 已签收=80 已回单=90 关闭=100
             // thisThat.$route.query.type 1发货方2付款3收货方
             var trackingStatusValue = "";
-            if(thisThat.$route.query.type == "1" || thisThat.$route.query.type == "3"){
+            if(thisThat.$route.query.type == "1"  || thisThat.$route.query.type == "3"){
               if(invoiceDetail.trackingStatusValue == "80" && invoiceDetail.ifAppraise == "N"){
                 trackingStatusValue = 1000;
               }else if(invoiceDetail.trackingStatusValue == "80" && invoiceDetail.ifAppraise == "Y"){
@@ -706,6 +707,7 @@
             }
             sessionStorage.setItem("dataStart",invoiceDetail.delivery.addressLatAndLon);
             sessionStorage.setItem("dataEnd",invoiceDetail.arrival.addressLatAndLon);
+            thisThat.payStatus = invoiceDetail.payStatus;
             var pdlist = [{
               orderType:trackingStatusValue,
               orderTypeName:invoiceDetail.trackingStatus,

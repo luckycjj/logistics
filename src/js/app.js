@@ -65,8 +65,8 @@ var androidIos = {
       return  bignumber/len;
   },
   ajaxHttp: function () {
-    var http = 'http://10.10.10.231:8085';
-    //var http = 'http://222.73.159.76:8085';
+    //var http = 'http://10.10.10.231:8085';
+    var http = 'http://222.73.159.76:8085';
     return http;
   },
   addPageList: function () {

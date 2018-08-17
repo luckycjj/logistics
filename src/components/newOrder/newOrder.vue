@@ -2,7 +2,7 @@
     <div id="newOrder">
       <div id="title" v-title data-title="发布货源"></div>
       <div id="peopleAddress">
-          <div id="histroyAddress" @click="histroyAddress()"  v-if="pk==''&& histroyAddressLength">
+          <div id="histroyAddress" @click="histroyAddress()"  v-if="pk==''&& both.histroyAddressLength">
             常用路线
           </div>
           <div class="right">
@@ -65,8 +65,8 @@
       </div>
       <div  v-if="pk==''" id="insurance" class="label" style="margin-top: 0;">
         <div class="lablebox">
-          <span class="required">运输方式</span>
-          <p v-html="both.tranType==''?'请选择运输类别':both.tranType" :class="both.tranType==''?'':'blackColor'" @click="tranType()"></p>
+          <span class="required">车辆车型</span>
+          <p v-html="both.tranType==''?'请选择车辆车型':both.tranType" :class="both.tranType==''?'':'blackColor'" @click="tranType()"></p>
           <div class="clearBoth"></div>
         </div>
         <div class="lablebox borderno">
@@ -84,8 +84,7 @@
         <div class="lablebox imgno">
           <span>付款方</span>
           <div id="pay">
-             <label><!--<div class="circleBox" @click="payChoose(0)"><div class="circletrue" v-if="both.pay == 0"></div></div>-->发货方<div class="clearBoth"></div></label>
-             <!--<label><div class="circleBox" @click="payChoose(1)"><div class="circletrue" v-if="both.pay == 1"></div></div>收货方<div class="clearBoth"></div></label>-->
+             <label>发货方<div class="clearBoth"></div></label>
             <div class="clearBoth"></div>
           </div>
           <div class="clearBoth"></div>
@@ -118,7 +117,7 @@
                  <h6>用车类型</h6>
                  <ul>
                    <li v-for="(item,index) in both.carList" :class="item.choose ? 'chooseTrue' : ''" @click="carListS(index,1)">{{item.displayName}}</li>
-                   <li @click="lookMore(1)" v-if="both.carListMore">全部</li>
+                   <li @click="lookMore(1)" class="cartypelookMore" v-if="both.carListMore">全部</li>
                    <div class="clearBoth"></div>
                  </ul>
                </div>
@@ -126,15 +125,16 @@
                  <h6>车长<span>（米，可多选）</span></h6>
                  <ul>
                    <li v-for="(item,index) in both.carWidthList" v-if="item.look" :class="item.choose ? 'chooseTrue' : ''" @click="carListS(index,2)">{{item.displayName}}</li>
-                   <li @click="lookMore(2)" v-if="both.carWidthListMore">全部</li>
+                   <li @click="lookMore(2)" class="cartypelookMore" v-if="both.carWidthListMore">全部</li>
                    <div class="clearBoth"></div>
+                   <div class="cartypeOther" v-if="!both.carWidthListMore"><span>其它车长：</span><input v-model="both.cartypeOther" placeholder="点击输入"/>米</div>
                  </ul>
                </div>
                <div class="vehicle" v-if="both.carTypeList.length > 0">
                  <h6>车型<span>（可多选）</span></h6>
                  <ul>
                    <li v-for="(item,index) in both.carTypeList" v-if="item.look"  :class="item.choose ? 'chooseTrue' : ''" @click="carListS(index,3)">{{item.displayName}}</li>
-                   <li @click="lookMore(3)" v-if="both.carTypeListMore">全部</li>
+                   <li @click="lookMore(3)" class="cartypelookMore" v-if="both.carTypeListMore">全部</li>
                    <div class="clearBoth"></div>
                  </ul>
                </div>
@@ -183,6 +183,7 @@
        data(){
           return{
             both:{
+              histroyAddressLength:false,
               startAddress:{
                 people:"",
                 tel:"",
@@ -217,7 +218,7 @@
                 weightTen:"1",
               }],
               tranType:"",
-              trantypenumber:"",
+              tranTypeValue:"",
               appoint:"",
               pk_carrier:"",
               driver_name:"",
@@ -229,18 +230,24 @@
               initialWeight:0,
               price:"",
               carList:[],
+              carListSure:"",
+              carListSureValue:"",
               carWidthList:[],
+              carWidthListSure:"",
+              carWidthListSureValue:"",
+              cartypeOther:"",
+              cartypeOtherSure:"",
               carTypeList:[],
+              carTypeListSure:"",
+              carTypeListSureValue:"",
               carListMore:false,
               carWidthListMore:false,
               carTypeListMore:false,
-              carBoth:""
             },
             pk:"",
             price:"",
             price123:false,
             newOrderMessageBox:false,
-            histroyAddressLength:false,
             vehicleBox:false,
             suremend: new Debounce(this.ajaxPost, 1000)
           }
@@ -271,15 +278,18 @@
                 }
               }
               _this.price=(_this.price.toString().match(/\d+(\.\d{0,2})?/)||[''])[0];
+              _this.both.cartypeOther = (_this.both.cartypeOther.toString().match(/\d+(\.\d{0,1})?/)||[''])[0];
               if(_this.pk == ""){
                 if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&self.tranType != "" ){
                   for(var i = 0;i<self.productList.length;i++) {
                     if(_this.price!=""){
-                      if (self.productList[i].goodsType == ""  || self.productList[i].wight*1 == "0" ) {
+                      if (self.productList[i].goodsType == ""  || (self.productList[i].wight*1 == "0" && self.productList[i].weight*1 == "0"  ) ) {
                         bomb.removeClass("submit", "submit");
                       } else {
                         bomb.addClass("submit", "submit");
                       }
+                    }else{
+                      bomb.removeClass("submit", "submit");
                     }
                   }
                   _this.suremend();
@@ -289,7 +299,7 @@
               }else{
                 if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!="" ){
                   for(var i = 0;i<self.productList.length;i++) {
-                    if (self.productList[i].goodsType == "" || self.productList[i].wight*1 == "0" ) {
+                    if (self.productList[i].goodsType == "" || (self.productList[i].wight*1 == "0" && self.productList[i].weight*1 == "0"  ) ) {
                       bomb.removeClass("submit", "submit");
                     } else {
                       bomb.addClass("submit", "submit");
@@ -300,8 +310,6 @@
                 }
               }
             })
-
-
          },
          deep:true
        }
@@ -314,11 +322,14 @@
           asdfgh:function(){
             var _this = this;
             var self = _this.both;
+            if(_this.price!= ""){
+              self.price = _this.price;
+            }
             if(_this.pk == ""){
               if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&self.tranType != "" ){
                 for(var i = 0;i<self.productList.length;i++) {
                   if(_this.price!=""){
-                    if (self.productList[i].goodsType == ""  || self.productList[i].wight*1 == "0" ) {
+                    if (self.productList[i].goodsType == ""  ||(self.productList[i].wight*1 == "0" && self.productList[i].weight*1 == "0"  ) ) {
                       bomb.removeClass("submit", "submit");
                     } else {
                       bomb.addClass("submit", "submit");
@@ -333,7 +344,7 @@
             }else {
               if (self.startAddress.people != "" && self.timeBeforeF != "" && self.timeBeforeS != "" && self.timeAfterF != "" && self.timeAfterS != "" && self.endAddress.people != "") {
                 for (var i = 0; i < self.productList.length; i++) {
-                  if (self.productList[i].goodsType == "" || self.productList[i].wight * 1 == "0") {
+                  if (self.productList[i].goodsType == "" || (self.productList[i].wight*1 == "0" && self.productList[i].weight*1 == "0"  )) {
                     bomb.removeClass("submit", "submit");
                   } else {
                     bomb.addClass("submit", "submit");
@@ -449,41 +460,13 @@
                 }
               })
             }
-            if(_this.pk == ""){
-                var json = {
-                  page:1,
-                  size:1,
-                  keyword:"",
-                  userCode:sessionStorage.getItem("token"),
-                  source:sessionStorage.getItem("source")
-                }
-                var listData=[]
-                $.ajax({
-                  type: "POST",
-                  url: androidIos.ajaxHttp()+"/order/getHistoryOrder",
-                  data:JSON.stringify(json),
-                  contentType: "application/json;charset=utf-8",
-                  dataType: "json",
-                  timeout: 10000,
-                  success: function (getHistoryOrder) {
-                    if(getHistoryOrder.success="1"){
-                      if(getHistoryOrder.total-1>0){
-                        _this.histroyAddressLength = true;
-                      }
-                    }else{
-                      androidIos.second(getHistoryOrder.message)
-                    }
-                  },
-                  complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                    if(status=='timeout'){//超时,status还有success,error等值的情况
-                      androidIos.second("网络请求超时");
-                    }else if(status=='error'){
-                      androidIos.errorwife();
-                    }
-                  }
-                })
+            if(histroyAddress!=undefined){
+              histroyAddress = JSON.parse(histroyAddress);
+              _this.both = histroyAddress;
+              sessionStorage.removeItem("histroyAddress");
+              sessionStorage.removeItem("newOrder");
             }
-            if(newOrder!=undefined){
+            if(newOrder!=undefined && sessionStorage.getItem("newOrder")!= undefined){
               newOrder = JSON.parse(newOrder);
               _this.both = newOrder;
               _this.price = _this.both.price;
@@ -509,14 +492,14 @@
                 timeout: 10000,
                 success: function (getAddres) {
                   if(getAddres.success=="1"){
-                     _this.both.startAddress = {
-                       people:getAddres.list[0].contact,
-                       tel:getAddres.list[0].mobile,
-                       city:getAddres.list[0].province+"-"+getAddres.list[0].city+"-"+getAddres.list[0].area,
-                       address:getAddres.list[0].detailAddr,
-                       company:getAddres.list[0].addrName,
-                       pk:getAddres.list[0].pkAddress,
-                     }
+                    _this.both.startAddress = {
+                      people:getAddres.list[0].contact,
+                      tel:getAddres.list[0].mobile,
+                      city:getAddres.list[0].province+"-"+getAddres.list[0].city+"-"+getAddres.list[0].area,
+                      address:getAddres.list[0].detailAddr,
+                      company:getAddres.list[0].addrName,
+                      pk:getAddres.list[0].pkAddress,
+                    }
                   }else{
                     androidIos.second(getAddres.message);
                   }
@@ -530,10 +513,40 @@
                 }
               })
             }
-            if(histroyAddress!=undefined){
-              histroyAddress = JSON.parse(histroyAddress);
-              _this.both = histroyAddress;
-              sessionStorage.removeItem("histroyAddress");
+            if(_this.pk == ""){
+              if(!_this.both.histroyAddressLength){
+                var json = {
+                  page:1,
+                  size:1,
+                  keyword:"",
+                  userCode:sessionStorage.getItem("token"),
+                  source:sessionStorage.getItem("source")
+                }
+                $.ajax({
+                  type: "POST",
+                  url: androidIos.ajaxHttp()+"/order/getHistoryOrder",
+                  data:JSON.stringify(json),
+                  contentType: "application/json;charset=utf-8",
+                  dataType: "json",
+                  timeout: 10000,
+                  success: function (getHistoryOrder) {
+                    if(getHistoryOrder.success="1"){
+                      if(getHistoryOrder.total-1>0){
+                        _this.both.histroyAddressLength = true;
+                      }
+                    }else{
+                      androidIos.second(getHistoryOrder.message)
+                    }
+                  },
+                  complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                    if(status=='timeout'){//超时,status还有success,error等值的情况
+                      androidIos.second("网络请求超时");
+                    }else if(status=='error'){
+                      androidIos.errorwife();
+                    }
+                  }
+                })
+              }
             }
             if(startAddress!=undefined){
               startAddress = JSON.parse(startAddress);
@@ -564,12 +577,9 @@
               _this.both.productList[goodsType.index].goodsType =goodsType.parentName + '-' +goodsType.name;
               _this.both.productList[goodsType.index].goodstypenumber =goodsType.parentcode + '-' +goodsType.code;
               _this.both.productList[goodsType.index].protype = goodsType.protype;
-              var listGood = [];
-              for(var i=0;i < _this.both.productList.length ;i++){
-                if(_this.both.productList[i].goodsType != ""){
-                  listGood.push(_this.both.productList[i].goodsType)
-                }
-              }
+              _this.both.productList[goodsType.index].number = 1;
+              _this.both.productList[goodsType.index].wight = "";
+              _this.both.productList[goodsType.index].weight = "";
               _this.price = "";
               _this.both.price = "";
               sessionStorage.removeItem("goodsType");
@@ -771,10 +781,6 @@
               }
             })
           },
-        payChoose:function(e){
-          var _this = this;
-         /* _this.both.pay = e;*/
-        },
         lookMore:function (type) {
             var _this = this.both;
            if(type == 1){
@@ -798,7 +804,7 @@
           var _this = this;
           var self = _this.both;
           if(_this.pk == ""){
-            if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&self.tranType != "" ){
+            if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read &&self.tranType != self.tranTypeValue ){
               var weight =0;
               var volumn = 0;
               var weightList = [];
@@ -822,7 +828,11 @@
                 var json = {
                   startCity:_this.both.startAddress.city.split("-")[1].replace("市",""),
                   endCity:_this.both.endAddress.city.split("-")[1].replace("市",""),
-                  transType: _this.both.tranType,
+                  transType: {
+                    vehicleType:_this.both.carListSure,
+                    carLength:_this.both.carWidthListSure + _this.both.cartypeOtherSure,
+                    carModel:_this.both.carTypeListSure,
+                  },
                   weight:weight,
                   volume:volumn,
                   userCode:sessionStorage.getItem("token"),
@@ -839,6 +849,7 @@
                   success: function (checkPrice) {
                     if(checkPrice.success=="1"){
                       _this.price = checkPrice.message;
+                      _this.both.price = _this.price;
                       _this.price123 = true;
                     }else if(checkPrice.success=="-1"){
                       androidIos.second(checkPrice.message)
@@ -986,6 +997,7 @@
         tranType:function () {
           var _this = this;
           _this.vehicleBox = true;
+          _this.both.tranTypeValue = _this.both.tranType;
           if(_this.both.carList.length == 0){
             $.ajax({
               type: "POST",
@@ -1023,13 +1035,13 @@
               dataType: "json",
               timeout: 10000,
               success: function (getSysConfigList) {
-                if(getSysConfigList.length > 2){
+                if(getSysConfigList.length > 3){
                   _this.both.carTypeListMore = true
                 }
                 for(var i = 0; i < getSysConfigList.length;i++){
                   getSysConfigList[i].choose = false;
                   getSysConfigList[i].look = false;
-                  if(i < 2){
+                  if(i < 3){
                     getSysConfigList[i].look = true;
                   }
                 }
@@ -1073,18 +1085,36 @@
               }
             })
           }
-          console.log(_this.both.carBoth)
           if(_this.both.carList.length > 0 && _this.both.carWidthList.length > 0 && _this.both.carTypeList.length > 0){
-            _this.both.carList = _this.both.carBoth.carList;
-            _this.both.carWidthList = _this.both.carBoth.carWidthList;
-            _this.both.carTypeList = _this.both.carBoth.carTypeList;
+            var list1 = _this.both.carListSure.split(",");
+            var list2 = _this.both.carWidthListSure.split(",");
+            var list3 = _this.both.carTypeListSure.split(",");
+            var len1 = list1.length;
+            var len2 = list2.length;
+            var len3 = list3.length;
+            list1.splice(len1-1,1);
+            list2.splice(len2-1,1);
+            list3.splice(len3-1,1);
+            _this.both.cartypeOther = _this.both.cartypeOtherSure;
+            for(var z =0 ;z < 3;z++){
+              var child = z == 0 ? list1 : z==1 ? list2 :list3 ;
+              var forChild = z == 0 ? _this.both.carList : z == 1 ? _this.both.carWidthList : _this.both.carTypeList;
+              for(var i = 0 ; i < child.length ; i++){
+                for(var x = 0 ; x <forChild.length ; x++){
+                  if(child[i] == forChild[x].displayName){
+                    forChild[x].choose = true;
+                  }
+                }
+              }
+            }
           }
 
         },
         vehicleBoxClosed:function () {
           var _this = this;
           _this.vehicleBox = false;
- /*         for(var i = 0;i < _this.both.carList.length;i++){
+          _this.both.tranTypeValue = _this.both.tranType;
+          for(var i = 0;i < _this.both.carList.length;i++){
             _this.both.carList[i].choose = false;
           }
           for(var i = 0;i < _this.both.carWidthList.length;i++){
@@ -1092,7 +1122,8 @@
           }
           for(var i = 0;i < _this.both.carTypeList.length;i++){
             _this.both.carTypeList[i].choose = false;
-          }*/
+          }
+          _this.both.cartypeOther = "";
         },
         carListSure:function () {
             var self = this.both;
@@ -1133,22 +1164,52 @@
             bomb.first("请选择车型");
             return false;
           }
-          this.vehicleBox = false;
-          self.carBoth = {
-            carList:self.carList,
-            carWidthList:self.carWidthList,
-            carTypeList:self.carTypeList,
+          for(var i = 0; i < self.carList.length ; i++){
+            if(self.carList[i].choose){
+              self.carList[i].choose = !self.carList[i].choose;
+            }
           }
+          for(var i = 0; i < self.carWidthList.length ; i++){
+            if(self.carWidthList[i].choose){
+              self.carWidthList[i].choose = !self.carWidthList[i].choose;
+            }
+          }
+          for(var i = 0; i < self.carTypeList.length ; i++){
+            if(self.carTypeList[i].choose){
+              self.carTypeList[i].choose = !self.carTypeList[i].choose;
+            }
+          }
+          this.vehicleBox = false;
+          self.tranTypeValue = self.tranType;
           self.tranType = "";
+          self.carListSure = "";
+          self.carListSureValue = "";
+          self.carWidthListSure = "";
+          self.carWidthListSureValue = "";
+          self.carTypeListSure = "";
+          self.carTypeListSureValue = "";
+          self.cartypeOtherSure = "";
           for(var x1 = 0; x1 < x.length ; x1++){
             self.tranType = self.tranType + x[x1].name + ",";
+            self.carListSure =self.carListSure + x[x1].name + ",";
+            self.carListSureValue =self.carListSureValue + x[x1].value + ",";
           }
           for(var y1 = 0; y1 < y.length ; y1++){
             self.tranType = self.tranType + y[y1].name + "米,";
+            self.carWidthListSure =self.carWidthListSure + y[y1].name + ",";
+            self.carWidthListSureValue =self.carWidthListSureValue + y[y1].value + ",";
+          }
+          if( self.cartypeOther != ""){
+            self.tranType = self.tranType + self.cartypeOther + "米,";
           }
           for(var z1 = 0; z1 < z.length ; z1++){
             self.tranType = self.tranType + z[z1].name + ",";
+            self.carTypeListSure = self.carTypeListSure + z[z1].name + ",";
+            self.carTypeListSureValue = self.carTypeListSureValue + z[z1].value + ",";
           }
+          self.cartypeOtherSure = self.cartypeOther;
+          this.price = "";
+          self.price = "";
         },
         goodsType:function (index) {
           var _this = this;
@@ -1378,6 +1439,7 @@
               }
               list.push(listjson);
             }
+            var tran1 = "",tran2 = "",tran3 = "";
             var json = {
               userCode:sessionStorage.getItem("token"),
               source:sessionStorage.getItem("source"),
@@ -1400,12 +1462,17 @@
               act_leav_date:self.timeBeforeS + " " + self.timeBeforeF,
               act_arri_date:self.timeAfterS +" " + self.timeAfterF,
               goodspack:list,
-              pk_trans_type:self.trantypenumber,
+              pk_trans_type:{
+                vehicleType:self.carListSureValue,
+                carLength:self.carWidthListSure + self.cartypeOtherSure,
+                carModel:self.carTypeListSureValue,
+              },
               pk_carrier:self.pk_carrier,
               driver_name:self.driver_name,
               if_insurance:self.insurance,
               pay:self.pay==1?"收货方":"发货方",
               est_amount:_this.price*1,
+              remark:self.remark,
               pk:_this.pk
             };
             androidIos.loading("正在提交");
@@ -1868,10 +1935,11 @@
   }
   .vehicleBox h6{
     font-size: 0.375rem;
-    font-weight: bold;
+    color:#333;
   }
   .vehicleBox h6 span{
-    font-weight: normal;
+    color:#999;
+    font-size: 0.35rem;
   }
   .vehicle li{
     float: left;
@@ -1881,7 +1949,7 @@
     text-align: center;
     line-height: 0.8rem;
     font-size: 0.35rem;
-    background: #f3f3f3;
+    background-color: #f3f3f3;
     color:#666;
     border-radius: 0.2rem;
     margin-top: 0.4rem;
@@ -1891,12 +1959,37 @@
     margin-left: 3%;
   }
   .chooseTrue{
-     background: #2c9cff!important;
+     background-color: #2c9cff!important;
     color:white!important;
   }
   #vehicle img{
     position: absolute;
     width:1rem;
     z-index: 1;
+  }
+  .cartypelookMore{
+     background-image: url("../../images/cartypeLook.png");
+     background-size: 0.25rem;
+     background-repeat: no-repeat;
+    background-position: 93% 50%;
+  }
+  .cartypeOther{
+     margin-left: 3%;
+    font-size: 0.375rem;
+    color:#333;
+    line-height: 1rem;
+    margin-top: 0.2rem;
+  }
+  .cartypeOther span{
+    font-size: 0.375rem;
+    color:#999;
+  }
+  .cartypeOther input{
+     width:2rem;
+     height: 0.375rem;
+     font-size: 0.375rem;
+     padding:0.15rem 0.2rem ;
+    margin: 0 0.1rem 0 0.3rem;
+    border: 1px solid #dcdcdc;
   }
 </style>

@@ -9,19 +9,22 @@
         <p @click="sousuo()" id="sousuo">管理</p>
       </div>
     </div>
-    <div id="mescroll" class="mescroll" :style="{bottom : !(addressType == 1 && total >= 10) ? '1.2rem':'0rem'}">
+    <div id="mescroll" class="mescroll">
       <ul id="dataList" class="data-list">
         <li v-for="(item,index) in pdlist" style="overflow: hidden">
           <div class="moveDiv" style="position: relative">
-            <div class="firstBox"  @click="chooseLine(item)">
+            <div  @click="chooseLine(item)" style="width:10rem;">
+            <div class="firstBox">
               <p>{{item.contact}}<span>{{item.mobile}}</span></p>
               <h1>{{item.province}}-{{item.city}}-{{item.area}}&nbsp;&nbsp;{{item.detailAddr}}</h1>
             </div>
+              <div class="clearBoth"></div>
             <div class="secondBox">
               <img src="../../images/edit.png" @click="editLine(item)" v-if="manage">
               <img src="../../images/clean.png" @click="cleanLine(index)" v-if="manage">
               <img src="../../images/checked.png"  v-if="!manage&&item.checked == '1'">
               <div class="clearBoth"></div>
+            </div>
             </div>
             <div class="thirdBox" v-if="addressType == 1">
               <p v-if="item.ifDefault==0" @click="moren(1,index)">设置默认</p>
@@ -32,7 +35,7 @@
         </li>
       </ul>
     </div>
-    <button id="addNew" @click="addNew()" v-if="!(addressType == 1 && total >= 10)">新增地址</button>
+    <button id="addNew" @click="addNew()">新增地址</button>
   </div>
 </template>
 
@@ -318,7 +321,6 @@
             success: function (deleteAddres) {
               if(deleteAddres.success=="1"){
                 _this.pdlist.splice(index,1);
-                _this.total = _this.total - 1;
                 _this.$cjj("删除成功");
               }else{
                 androidIos.second(getAddres.message)
@@ -398,7 +400,6 @@
           success: function (getAddres) {
             if(getAddres.success=="1"){
               listData = getAddres.list;
-              thisthatsecond.total = getAddres.total;
               successCallback&&successCallback(listData);//成功回调
             }else{
               androidIos.second(getAddres.message);
@@ -541,6 +542,7 @@
   #addressMessage .thirdBox{
     position:absolute;
     right:-2rem;
+    top: 0;
     width:2rem;
     height: 100%;
     background: #2c9cff;
