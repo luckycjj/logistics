@@ -316,6 +316,9 @@
      },
       mounted:function(){
           var _this = this;
+          if(_this.$route.query.newordertrantype != undefined){
+             sessionStorage.setItem("NEWORDERTRANTYPE",_this.$route.query.newordertrantype)
+          }
           androidIos.bridge(_this);
       },
       methods:{

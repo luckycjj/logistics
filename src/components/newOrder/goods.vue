@@ -43,6 +43,9 @@
         _this.parentName = _this.$route.query.name;
         var json = {
           value:_this.parentcode,
+          userCode:sessionStorage.getItem("token"),
+          source:sessionStorage.getItem("source"),
+          type:sessionStorage.getItem("NEWORDERTRANTYPE"),
         }
         $.ajax({
           type: "POST",
@@ -88,7 +91,7 @@
            parentcode:_this.parentcode,
            name:item.text,
            code:item.value,
-           tranpk:item.def,
+           tranpk:item.type,
            index: _this.$route.query.index,
            protype:item.def
         }

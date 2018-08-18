@@ -36,10 +36,16 @@
             if(list.length>0){
               _this.nowId = list[0];
             }
+            //0全部 1冷链 2普货 3危险品 4集装箱
             $.ajax({
               type: "POST",
               url: androidIos.ajaxHttp()+"/getGoodsClass",
               contentType: "application/json;charset=utf-8",
+              data:JSON.stringify({
+                userCode:sessionStorage.getItem("token"),
+                source:sessionStorage.getItem("source"),
+                type:sessionStorage.getItem("NEWORDERTRANTYPE"),
+              }),
               dataType: "json",
               timeout: 10000,
               success: function (getGoodsClass) {
