@@ -173,13 +173,13 @@ var androidIos = {
   },
   bridge:function (that) {
     new Promise(function (resolve,reject) {
-      if(bridge.invoke('token') != undefined){
+     /* if(bridge.invoke('token') != undefined){*/
         bridge.invoke('token','',function(response) {
           resolve(response);
         })
-      }else{
+     /* }else{
         reject(2)
-      }
+      }*/
     }).then(function (data) {
       data = JSON.parse(data);
       sessionStorage.setItem("token", data.userCode);

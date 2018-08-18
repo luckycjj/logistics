@@ -114,9 +114,9 @@
             <p>付款方</p>
             <h1>{{item.pickPay.people}}</h1>
             <div class="clearBoth"></div>
-            <!--<p>结算方式</p>
-            <h1>{{item.pickPay.type}}</h1>
-            <div class="clearBoth"></div>-->
+            <p>备注</p>
+            <h1 style="text-indent:0.7rem;">{{item.pickPay.remark}}</h1>
+            <div class="clearBoth"></div>
           </div>
           <div class="error" v-if="type > 1 && type < 8 && peopleType == 1">
             <div class="errorFirst" @click="errorFirst()">
@@ -881,7 +881,7 @@
               },
               pickPay:{
                 people:"发货方",
-                /*type:loadSegmentDetail.payStatus == null||loadSegmentDetail.payStatus ==""?"月结":loadSegmentDetail.payStatus*/
+                remark:loadSegmentDetail.remark
               },
               owner:{
                 logo:loadSegmentDetail.customerDto!=null?loadSegmentDetail.customerDto.customerImg:"",

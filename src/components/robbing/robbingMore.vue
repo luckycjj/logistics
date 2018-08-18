@@ -59,9 +59,9 @@
             <p>付款方</p>
             <h1>{{item.pickPay.people}}</h1>
             <div class="clearBoth"></div>
-            <!--<p>结算方式</p>
-            <h1>{{item.pickPay.type}}</h1>
-            <div class="clearBoth"></div>-->
+            <p>备注</p>
+            <h1 style="text-indent:0.7rem;">{{item.pickPay.remark}}</h1>
+            <div class="clearBoth"></div>
           </div>
           <div class="company">
             <div class="firstBox">
@@ -650,10 +650,10 @@
                 grade:loadSegmentDetail.appraiseScore==""?0:loadSegmentDetail.appraiseScore
               },
               goodsmessage:{
-                startAddress:loadSegmentDetail.delivery!=null?(loadSegmentDetail.delivery.province/*+loadSegmentDetail.delivery.city*/+loadSegmentDetail.delivery.area):"",
-                endAddress:loadSegmentDetail.arrival!=null?(loadSegmentDetail.arrival.province/*+loadSegmentDetail.arrival.city*/+loadSegmentDetail.arrival.area):"",
+                startAddress:loadSegmentDetail.delivery!=null?(loadSegmentDetail.delivery.province+loadSegmentDetail.delivery.area):"",
+                endAddress:loadSegmentDetail.arrival!=null?(loadSegmentDetail.arrival.province+loadSegmentDetail.arrival.area):"",
                 distance:"0",
-                tranType:loadSegmentDetail.transType,
+                tranType:loadSegmentDetail.transType + "(" + loadSegmentDetail.carLength + "米)(" + loadSegmentDetail.carModel + ")",
                 productList:list,
                 money:loadSegmentDetail.price*1,
                 startTime:loadSegmentDetail.deliDate,
@@ -663,14 +663,14 @@
                 name:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.contact:"",
                 tel:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.mobile:"",
                 company:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.addrName:"",
-                address:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.province/*+loadSegmentDetail.delivery.city*/+loadSegmentDetail.delivery.area+loadSegmentDetail.delivery.detailAddr:"",
+                address:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.province+loadSegmentDetail.delivery.area+loadSegmentDetail.delivery.detailAddr:"",
                 addresspk:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.pkAddress:"",
               },
               endMessage:{
                 name:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.contact:"",
                 tel:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.mobile:"",
                 company:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.addrName:"",
-                address:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.province/*+loadSegmentDetail.arrival.city*/+loadSegmentDetail.arrival.area+loadSegmentDetail.arrival.detailAddr:"",
+                address:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.province+loadSegmentDetail.arrival.area+loadSegmentDetail.arrival.detailAddr:"",
                 addresspk:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.pkAddress:"",
               },
               insurance:{
@@ -679,7 +679,7 @@
               },
               pickPay:{
                 people:"发货方",
-                /*type:loadSegmentDetail.payStatus == null||loadSegmentDetail.payStatus ==""?"月结":loadSegmentDetail.payStatus*/
+                remark:loadSegmentDetail.remark
               },
               owner:{
                 logo:loadSegmentDetail.customerDto != null ? loadSegmentDetail.customerDto.customerImg : "",

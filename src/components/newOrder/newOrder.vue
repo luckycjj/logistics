@@ -1440,6 +1440,48 @@
               list.push(listjson);
             }
             var tran1 = "",tran2 = "",tran3 = "";
+            var carListSureValueList = self.carListSureValue.split(",");
+            var carListSureValue = "";
+            for(var i = 0 ; i < carListSureValueList.length ;i ++){
+               if(carListSureValueList[i] == ""){
+                 carListSureValueList.splice(i,1)
+               }
+            }
+            for(var i = 0 ; i < carListSureValueList.length;i++){
+              if(i < carListSureValueList.length -1){
+                carListSureValue += carListSureValueList[i] + ",";
+              }else{
+                carListSureValue += carListSureValueList[i];
+              }
+            }
+            var carWidthListSureValueList = (self.carWidthListSure + self.cartypeOtherSure).split(",");
+            var carWidthListSureValue = "";
+            for(var i = 0 ; i < carWidthListSureValueList.length ;i ++){
+              if(carWidthListSureValueList[i] == ""){
+                carWidthListSureValueList.splice(i,1)
+              }
+            }
+            for(var i = 0 ; i < carWidthListSureValueList.length;i++){
+              if(i < carWidthListSureValueList.length -1){
+                carWidthListSureValue += carWidthListSureValueList[i] + ",";
+              }else{
+                carWidthListSureValue += carWidthListSureValueList[i];
+              }
+            }
+            var carTypeListSureValueList = self.carTypeListSureValue.split(",")
+            var carTypeListSureValue = "";
+            for(var i = 0 ; i < carTypeListSureValueList.length ;i ++){
+              if(carTypeListSureValueList[i] == ""){
+                carTypeListSureValueList.splice(i,1)
+              }
+            }
+            for(var i = 0 ; i < carTypeListSureValueList.length;i++){
+              if(i < carTypeListSureValueList.length -1){
+                carTypeListSureValue += carTypeListSureValueList[i] + ",";
+              }else{
+                carTypeListSureValue += carTypeListSureValueList[i];
+              }
+            }
             var json = {
               userCode:sessionStorage.getItem("token"),
               source:sessionStorage.getItem("source"),
@@ -1462,11 +1504,9 @@
               act_leav_date:self.timeBeforeS + " " + self.timeBeforeF,
               act_arri_date:self.timeAfterS +" " + self.timeAfterF,
               goodspack:list,
-              pk_trans_type:{
-                vehicleType:self.carListSureValue,
-                carLength:self.carWidthListSure + self.cartypeOtherSure,
-                carModel:self.carTypeListSureValue,
-              },
+              vehicleType:carListSureValue,
+              carLength:carWidthListSureValue,
+              carModel:carTypeListSureValue,
               pk_carrier:self.pk_carrier,
               driver_name:self.driver_name,
               if_insurance:self.insurance,

@@ -90,7 +90,7 @@
            code:item.value,
            tranpk:item.def,
            index: _this.$route.query.index,
-           protype:item.def-1
+           protype:item.def
         }
         sessionStorage.setItem("goodsType",JSON.stringify(json));
         var addPageList = sessionStorage.getItem("addPageList");
