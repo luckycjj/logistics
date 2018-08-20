@@ -216,6 +216,7 @@
                 weight:"",
                 unitWeight:"立方米",
                 weightTen:"1",
+                tranpk:"",
               }],
               tranType:"",
               tranTypeValue:"",
@@ -523,7 +524,8 @@
                   size:1,
                   keyword:"",
                   userCode:sessionStorage.getItem("token"),
-                  source:sessionStorage.getItem("source")
+                  source:sessionStorage.getItem("source"),
+                  type:sessionStorage.getItem("NEWORDERTRANTYPE") == '0' ? '' :sessionStorage.getItem("NEWORDERTRANTYPE"),
                 }
                 $.ajax({
                   type: "POST",
@@ -581,6 +583,7 @@
               _this.both.productList[goodsType.index].goodstypenumber =goodsType.parentcode + '-' +goodsType.code;
               _this.both.productList[goodsType.index].protype = goodsType.protype;
               _this.both.productList[goodsType.index].number = 1;
+              _this.both.productList[goodsType.index].tranpk = goodsType.tranpk;
               _this.both.productList[goodsType.index].wight = "";
               _this.both.productList[goodsType.index].weight = "";
               _this.price = "";
@@ -1287,6 +1290,7 @@
                weight:"",
                unitWeight:"立方米",
                weightTen:"1",
+               tranpk:"",
              }
              _this.both.productList.push(json);
              _this.$nextTick(function () {

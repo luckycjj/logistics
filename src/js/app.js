@@ -3,39 +3,38 @@ import {bomb} from "./zujian";
 var androidIos = {
   gobackFrom: function (that) {
     if(bomb.hasClass("app","appBox")){
-      var addPageList = window.sessionStorage.getItem("addPageList");
       $("#errorwifeBox").remove();
       $("#common-blackBox").remove();
       $(".tanBox-bigBox").remove();
       var http =  location.href;
       if(http.indexOf("/uploadData/uploadDataT") != -1){
-        var message = JSON.parse(localStorage.getItem("UPMESSA"));
-         if(message != null && (message.Drivepic != "" || message.IDpic != "" || message.Licensepic != "" || message.Roadpic != "" || message.Travelpic != "" || message.bank != "" || message.bankNumber != "" || message.company != "" || message.name != "" || message.nvitationodeIC != "" || message.peopleNumber != "" )){
-           androidIos.first("信息尚未上传，需要保存吗？");
-           $(".tanBox-close").unbind('click').click(function(){
-             $(".tanBox-bigBox").remove();
-             localStorage.removeItem("UPMESSA");
-             androidIos.gogogogo(that);
-           });
-           $(".tanBox-yes").unbind('click').click(function(){
-             $(".tanBox-bigBox").remove();
-             androidIos.gogogogo(that);
-           });
-         }else{
-           androidIos.gogogogo(that);
-         }
+       var message = sessionStorage.getItem("source") == "2" ? JSON.parse(localStorage.getItem("UPMESSA")) :  JSON.parse(localStorage.getItem("DRIVERMESSA"));
+       if(message != null && (message.Drivepic != "" || message.IDpic != "" || message.Licensepic != "" || message.Roadpic != "" || message.Travelpic != "" || message.bank != "" || message.bankNumber != "" || message.company != "" || message.name != "" || (message.nvitationodeIC != null &&  message.nvitationodeIC != "" )|| message.peopleNumber != "" )){
+         androidIos.first("信息尚未上传，需要保存吗？");
+         $(".tanBox-close").unbind('click').click(function(){
+           $(".tanBox-bigBox").remove();
+           localStorage.removeItem("UPMESSA");
+           androidIos.gogogogo();
+         });
+         $(".tanBox-yes").unbind('click').click(function(){
+           $(".tanBox-bigBox").remove();
+           androidIos.gogogogo();
+         });
+       }else{
+         androidIos.gogogogo();
+       }
       }else{
-        androidIos.gogogogo(that);
+        androidIos.gogogogo();
       }
     }
 
   },
-  gogogogo:function (that) {
+  gogogogo:function () {
     var addPageList = sessionStorage.getItem("addPageList");
     if (addPageList * 1 > 0) {
       var number = addPageList * 1 - 1;
       sessionStorage.setItem("addPageList", number);
-      that.$router.go(-1);
+      window.history.go(-1);
       setTimeout(function () {
         bomb.addClass("app","appBox");
       },500)
@@ -65,7 +64,7 @@ var androidIos = {
       return  bignumber/len;
   },
   ajaxHttp: function () {
-    //var http = 'http://10.10.10.231:8085';
+    //var http = 'http://10.10.10.206:8085';
     var http = 'http://222.73.159.76:8085';
     return http;
   },

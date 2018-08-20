@@ -3,7 +3,7 @@
     <div id="title" v-title data-title="货物类别"></div>
     <ul>
       <li v-for="item in list" @click="choose(item)">
-        {{item.text}}
+        {{item.displayName}}
       </li>
     </ul>
   </div>
@@ -39,24 +39,23 @@
             //0全部 1冷链 2普货 3危险品 4集装箱
             $.ajax({
               type: "POST",
-              url: androidIos.ajaxHttp()+"/getGoodsClass",
-              contentType: "application/json;charset=utf-8",
-              data:JSON.stringify({
+              url: androidIos.ajaxHttp()+"/settings/getGoodClassByTransType",
+              data:{
                 userCode:sessionStorage.getItem("token"),
                 source:sessionStorage.getItem("source"),
                 type:sessionStorage.getItem("NEWORDERTRANTYPE"),
-              }),
+              },
               dataType: "json",
               timeout: 10000,
               success: function (getGoodsClass) {
-                if(getGoodsClass.success){
+                if(getGoodsClass.success || getGoodsClass.success == "1"){
                   if(_this.nowId == ""||(list.length == 1 && productList[_this.$route.query.index].goodsType!="")){
-                    _this.list = getGoodsClass.data;
+                    _this.list = getGoodsClass.list;
                   }else{
                     var json =[];
-                    for(var i = 0; i<getGoodsClass.data.length;i++){
-                      if(getGoodsClass.data[i].text == _this.nowId){
-                        json.push(getGoodsClass.data[i])
+                    for(var i = 0; i<getGoodsClass.list.length;i++){
+                      if(getGoodsClass.list[i].displayName == _this.nowId){
+                        json.push(getGoodsClass.list[i])
                       }
                     }
                     _this.list = json;
@@ -77,7 +76,7 @@
           choose:function (item) {
             var _this = this;
             androidIos.addPageList();
-            _this.$router.push({ path: '/newOrder/goods',query:{name: item.text,code:item.value,index:_this.$route.query.index}});
+            _this.$router.push({ path: '/newOrder/goods',query:{name: item.displayName,code:item.value,index:_this.$route.query.index}});
           }
       }
     }

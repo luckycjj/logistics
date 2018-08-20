@@ -232,7 +232,8 @@
         size:pageSize,
         keyword:$("#histroyAddress #carTitleBox input").val(),
         userCode:sessionStorage.getItem("token"),
-        source:sessionStorage.getItem("source")
+        source:sessionStorage.getItem("source"),
+        type:sessionStorage.getItem("NEWORDERTRANTYPE") == '0' ? '' :sessionStorage.getItem("NEWORDERTRANTYPE"),
       }
       var listData=[]
       $.ajax({

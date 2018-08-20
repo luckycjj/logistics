@@ -22,7 +22,8 @@
       return{
         parentcode:"",
         parentName:"",
-        list:[]
+        list:[],
+        tranType:"",
       }
     },
     mounted:function(){
@@ -36,7 +37,11 @@
         var list =[];
         for(var i = 0; i<productList.length;i++){
           if(productList[i].goodstypenumber != "" && i != _this.$route.query.index){
-            list.push(productList[i].goodstypenumber.split("-")[1])
+            list.push({
+              goodstypenumber:productList[i].goodstypenumber.split("-")[1],
+              tranType:productList[i].tranpk
+            });
+            _this.tranType = productList[i].tranpk;
           }
         }
         _this.parentcode = _this.$route.query.code;
@@ -45,7 +50,7 @@
           value:_this.parentcode,
           userCode:sessionStorage.getItem("token"),
           source:sessionStorage.getItem("source"),
-          type:sessionStorage.getItem("NEWORDERTRANTYPE"),
+          type:sessionStorage.getItem("NEWORDERTRANTYPE") == '0' ? '' :sessionStorage.getItem("NEWORDERTRANTYPE"),
         }
         $.ajax({
           type: "POST",
@@ -54,14 +59,17 @@
           dataType: "json",
           timeout: 10000,
           success: function (getGoodsType) {
-            if(getGoodsType.success){
+            if(getGoodsType.success || getGoodsType.success == "1" || getGoodsType.success == ""){
               if(list.length == 0){
                 _this.list = getGoodsType.data;
               }else{
                 var json =[];
                 for(var i = 0; i < getGoodsType.data.length ; i++ ){
                   for(var x = 0 ; x <list.length ;x++){
-                    if(getGoodsType.data[i].value == list[x]){
+                    if(getGoodsType.data[i].value == list[x].goodstypenumber){
+                      break;
+                    }
+                    if(getGoodsType.data[i].transType != _this.tranType){
                       break;
                     }
                     if(x - list.length +1 == 0){
@@ -91,7 +99,7 @@
            parentcode:_this.parentcode,
            name:item.text,
            code:item.value,
-           tranpk:item.type,
+           tranpk:item.transType,
            index: _this.$route.query.index,
            protype:item.def
         }
