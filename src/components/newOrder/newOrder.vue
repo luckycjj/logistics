@@ -289,7 +289,7 @@
               _this.price=(_this.price.toString().match(/\d+(\.\d{0,2})?/)||[''])[0];
               _this.both.cartypeOther = (_this.both.cartypeOther.toString().match(/\d+(\.\d{0,1})?/)||[''])[0];
               if(_this.pk == ""){
-                if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&((self.tranType != ""&& weightBoth <= 40) || (self.tranType == ""&& weightBoth > 40))){
+                if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&((self.tranType != ""&& weightBoth <= 40) || weightBoth > 40)){
                   for(var i = 0;i<self.productList.length;i++) {
                     if(_this.price!=""){
                       if (self.productList[i].goodsType == "" || (self.productList[i].wight*1 == "0" && self.productList[i].weight*1 == "0"  ) ) {
@@ -338,7 +338,7 @@
               self.price = _this.price;
             }
             if(_this.pk == ""){
-              if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&self.tranType != "" ){
+              if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&((self.tranType != ""&& weightBoth <= 40) || weightBoth > 40) ){
                 for(var i = 0;i<self.productList.length;i++) {
                   if(_this.price!=""){
                     if (self.productList[i].goodsType == ""  ||(self.productList[i].wight*1 == "0" && self.productList[i].weight*1 == "0"  ) ) {
@@ -837,16 +837,59 @@
             volumn = volumn*1 + _this.both.productList[x].weight * _this.both.productList[x].weightTen;
           }
           if(_this.pk == ""){
-            if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read &&((self.tranType != self.tranTypeValue && weight <= 40) || (self.tranType == "" && weight > 40))){
+            if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read &&((self.tranType != self.tranTypeValue && weight <= 40) ||  weight > 40)){
               if(( weight*1 > 0 || volumn*1 > 0) && _this.both.price == ""){
+                /*{
+                  vehicleType:weight <= 40 ? carListSureValue : "",
+                    carLength:weight <= 40 ? carWidthListSureValue : "",
+                  carModel:weight <= 40 ? carTypeListSureValue : "",
+                }*/
+                var carListSureValueList = self.carListSureValue.split(",");
+                var carListSureValue = "";
+                for(var i = 0 ; i < carListSureValueList.length ;i ++){
+                  if(carListSureValueList[i] == ""){
+                    carListSureValueList.splice(i,1)
+                  }
+                }
+                for(var i = 0 ; i < carListSureValueList.length;i++){
+                  if(i < carListSureValueList.length -1){
+                    carListSureValue += carListSureValueList[i] + ",";
+                  }else{
+                    carListSureValue += carListSureValueList[i];
+                  }
+                }
+                var carWidthListSureValueList = (self.carWidthListSure + self.cartypeOtherSure).split(",");
+                var carWidthListSureValue = "";
+                for(var i = 0 ; i < carWidthListSureValueList.length ;i ++){
+                  if(carWidthListSureValueList[i] == ""){
+                    carWidthListSureValueList.splice(i,1)
+                  }
+                }
+                for(var i = 0 ; i < carWidthListSureValueList.length;i++){
+                  if(i < carWidthListSureValueList.length -1){
+                    carWidthListSureValue += carWidthListSureValueList[i] + ",";
+                  }else{
+                    carWidthListSureValue += carWidthListSureValueList[i];
+                  }
+                }
+                var carTypeListSureValueList = self.carTypeListSureValue.split(",")
+                var carTypeListSureValue = "";
+                for(var i = 0 ; i < carTypeListSureValueList.length ;i ++){
+                  if(carTypeListSureValueList[i] == ""){
+                    carTypeListSureValueList.splice(i,1)
+                  }
+                }
+                for(var i = 0 ; i < carTypeListSureValueList.length;i++){
+                  if(i < carTypeListSureValueList.length -1){
+                    carTypeListSureValue += carTypeListSureValueList[i] + ",";
+                  }else{
+                    carTypeListSureValue += carTypeListSureValueList[i];
+                  }
+                }
                 var json = {
                   startCity:_this.both.startAddress.city.split("-")[1].replace("市",""),
                   endCity:_this.both.endAddress.city.split("-")[1].replace("市",""),
-                  transType: {
-                    vehicleType:_this.both.carListSure,
-                    carLength:_this.both.carWidthListSure + _this.both.cartypeOtherSure,
-                    carModel:_this.both.carTypeListSure,
-                  },
+                  transType:weight <= 40 ? carListSureValue : "",
                   weight:weight,
                   volume:volumn,
                   userCode:sessionStorage.getItem("token"),
@@ -882,7 +925,7 @@
           }
           var self = _this.both;
           if(_this.pk == ""){
-            if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&((self.tranType != ""&& weightBoth <= 40) || (self.tranType == ""&& weightBoth > 40))){
+            if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&((self.tranType != ""&& weightBoth <= 40) ||  weightBoth > 40)){
               for(var i = 0;i<self.productList.length;i++) {
                 if(_this.price!=""){
                   if (self.productList[i].goodsType == "") {
@@ -1445,6 +1488,7 @@
           if(bomb.hasClass("submit","gogogo")){
             var self = _this.both;
             var list = [];
+            var weightBoth = 0;
             for( var i = 0 ; i < self.productList.length ; i++ ){
               var listjson = {
                 pkInvPackB:self.productList[i].pkInvPackB == ""?undefined:self.productList[i].pkInvPackB,
@@ -1454,9 +1498,9 @@
                 weight:self.productList[i].wight*self.productList[i].wightTen*1000,
                 volume:self.productList[i].weight*self.productList[i].weightTen
               }
+              weightBoth = weightBoth + self.productList[i].wight*self.productList[i].wightTen;
               list.push(listjson);
             }
-            var tran1 = "",tran2 = "",tran3 = "";
             var carListSureValueList = self.carListSureValue.split(",");
             var carListSureValue = "";
             for(var i = 0 ; i < carListSureValueList.length ;i ++){
@@ -1521,9 +1565,9 @@
               act_leav_date:self.timeBeforeS + " " + self.timeBeforeF,
               act_arri_date:self.timeAfterS +" " + self.timeAfterF,
               goodspack:list,
-              vehicleType:carListSureValue,
-              carLength:carWidthListSureValue,
-              carModel:carTypeListSureValue,
+              vehicleType:weightBoth <= 40 ? carListSureValue : "",
+              carLength:weightBoth <= 40 ? carWidthListSureValue : "",
+              carModel:weightBoth <= 40 ? carTypeListSureValue : "",
               pk_carrier:self.pk_carrier,
               driver_name:self.driver_name,
               if_insurance:self.insurance,
