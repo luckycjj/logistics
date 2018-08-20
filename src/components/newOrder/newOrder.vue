@@ -64,7 +64,7 @@
         <div class="clearBoth"></div>
       </div>
       <div  v-if="pk==''" id="insurance" class="label" style="margin-top: 0;">
-        <div class="lablebox">
+        <div class="lablebox" v-if="both.carTypeLook">
           <span class="required">车辆车型</span>
           <p v-html="both.tranType==''?'请选择车辆车型':both.tranType" :class="both.tranType==''?'':'blackColor'" @click="tranType()"></p>
           <div class="clearBoth"></div>
@@ -244,6 +244,7 @@
               carListMore:false,
               carWidthListMore:false,
               carTypeListMore:false,
+              carTypeLook:true,
             },
             pk:"",
             price:"",
@@ -259,6 +260,7 @@
             var _this = this;
             _this.$nextTick(function () {
               var self = _this.both;
+              var weightBoth = 0;
               for(var i = 0;i<self.productList.length;i++){
                 if(self.productList[i].number!=""){
                   self.productList[i].number=(self.productList[i].number.toString().match(/\d+(\.\d{0,0})?/)||[''])[0]*1;
@@ -269,6 +271,7 @@
                   }else{
                     self.productList[i].wight=(self.productList[i].wight.toString().match(/\d+(\.\d{0,3})?/)||[''])[0];
                   }
+                  weightBoth = weightBoth + self.productList[i].wight * self.productList[i].wightTen;
                 }
                 if(self.productList[i].weight!=""){
                   if(self.productList[i].weightTen<1){
@@ -278,13 +281,18 @@
                   }
                 }
               }
+              if( weightBoth > 40){
+                self.carTypeLook = false;
+              }else{
+                self.carTypeLook = true;
+              }
               _this.price=(_this.price.toString().match(/\d+(\.\d{0,2})?/)||[''])[0];
               _this.both.cartypeOther = (_this.both.cartypeOther.toString().match(/\d+(\.\d{0,1})?/)||[''])[0];
               if(_this.pk == ""){
-                if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&self.tranType != "" ){
+                if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&((self.tranType != ""&& weightBoth <= 40) || (self.tranType == ""&& weightBoth > 40))){
                   for(var i = 0;i<self.productList.length;i++) {
                     if(_this.price!=""){
-                      if (self.productList[i].goodsType == ""  || (self.productList[i].wight*1 == "0" && self.productList[i].weight*1 == "0"  ) ) {
+                      if (self.productList[i].goodsType == "" || (self.productList[i].wight*1 == "0" && self.productList[i].weight*1 == "0"  ) ) {
                         bomb.removeClass("submit", "submit");
                       } else {
                         bomb.addClass("submit", "submit");
@@ -809,27 +817,27 @@
         ajaxPost: function() {
           var _this = this;
           var self = _this.both;
+          var weight =0;
+          var volumn = 0;
+          var weightList = [];
+          for(var x = 0;x<_this.both.productList.length;x++){
+            if( _this.both.productList[x].wight != ""){
+              weightList.push( _this.both.productList[x].wight);
+            }
+            if(_this.both.productList[x].protype == 0 && _this.both.productList[x].wight*1 == 0){
+              return false;
+            }
+            if(_this.both.productList[x].protype == 1 && _this.both.productList[x].weight*1 == 0){
+              return false;
+            }
+            if(_this.both.productList[x].protype == 2 && _this.both.productList[x].wight*1 == 0 && _this.both.productList[x].weight*1 == 0){
+              return false;
+            }
+            weight = weight*1 + _this.both.productList[x].wight * _this.both.productList[x].wightTen;
+            volumn = volumn*1 + _this.both.productList[x].weight * _this.both.productList[x].weightTen;
+          }
           if(_this.pk == ""){
-            if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read &&self.tranType != self.tranTypeValue ){
-              var weight =0;
-              var volumn = 0;
-              var weightList = [];
-              for(var x = 0;x<_this.both.productList.length;x++){
-                if( _this.both.productList[x].wight != ""){
-                  weightList.push( _this.both.productList[x].wight);
-                }
-                if(_this.both.productList[x].protype == 0 && _this.both.productList[x].wight*1 == 0){
-                   return false;
-                }
-                if(_this.both.productList[x].protype == 1 && _this.both.productList[x].weight*1 == 0){
-                  return false;
-                }
-                if(_this.both.productList[x].protype == 2 && _this.both.productList[x].wight*1 == 0 && _this.both.productList[x].weight*1 == 0){
-                  return false;
-                }
-                weight = weight*1 + _this.both.productList[x].wight * _this.both.productList[x].wightTen;
-                volumn = volumn*1 + _this.both.productList[x].weight * _this.both.productList[x].weightTen;
-              }
+            if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read &&((self.tranType != self.tranTypeValue && weight <= 40) || (self.tranType == "" && weight > 40))){
               if(( weight*1 > 0 || volumn*1 > 0) && _this.both.price == ""){
                 var json = {
                   startCity:_this.both.startAddress.city.split("-")[1].replace("市",""),
@@ -874,7 +882,7 @@
           }
           var self = _this.both;
           if(_this.pk == ""){
-            if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&self.tranType != "" ){
+            if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&((self.tranType != ""&& weightBoth <= 40) || (self.tranType == ""&& weightBoth > 40))){
               for(var i = 0;i<self.productList.length;i++) {
                 if(_this.price!=""){
                   if (self.productList[i].goodsType == "") {
@@ -1396,7 +1404,9 @@
                   bomb.first("请选择提货到货时间");
                   return false;
                 }
+                var weightBoth = 0;
                 for(var i = 0;i<self.productList.length;i++) {
+                  weightBoth = weightBoth + self.productList[i].wight * self.productList[i].wightTen;
                   if (self.productList[i].goodsType == ""){
                     bomb.first("请选择第" + (i+1) + "个货物");
                     return false;
@@ -1419,7 +1429,7 @@
                   }
 
                 }
-                if(self.tranType == "" ){
+                if(self.tranType == "" && weightBoth <= 40){
                   bomb.first("请选择运输类别");
                   return false;
                 }
