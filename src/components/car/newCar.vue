@@ -7,6 +7,11 @@
       <div class="clearBoth"></div>
     </div>
     <div class="box" style="margin-top: 0px;">
+      <span>车&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;长</span>
+      <p id="Z02" :class="message.carlength=='请选择车长'?'carnumber':''">{{message.carlength}}</p>
+      <div class="clearBoth"></div>
+    </div>
+    <div class="box" style="margin-top: 0px;">
       <span>车牌号码</span>
       <h6 @click="carList=true" >{{message.plateName}}</h6>
       <p @click="keyboardshow()" :class="message.carNumber=='请输入车牌号'?'carnumber':(message.carNumber!='请输入车牌号'&&message.carNumber.length==7)?'carGreen':(message.carNumber!='请输入车牌号'&&message.carNumber.length==6)?'carBrown':''">{{message.carNumber}}</p>
@@ -21,6 +26,16 @@
     <div class="box" style="margin-top: 0px;">
       <span>司 机</span>
       <p id="Z01" :class="message.driver=='请选择司机'?'carnumber':''">{{message.driver}}</p>
+      <div class="clearBoth"></div>
+    </div>
+    <div class="box" style="margin-top: 0px;height: auto">
+      <span>行驶证</span>
+      <div class="clearBoth"></div>
+      <div class="imgBoxBigs" style="float: left;margin:0 5% 0.5rem 5%; ">
+        <div class="imgBox">
+          <div id="box4" class="imgUpload"></div>
+        </div>
+      </div>
       <div class="clearBoth"></div>
     </div>
     <button id="ok" class="okgo gogogo" @click="ok()">确定</button>
@@ -60,13 +75,16 @@
       return {
         message:{
           type: '请选择车型',
+          carlength:'请选择车长',
           carCode:"",
+          carlengthCode:"",
           carNumber:"请输入车牌号",
           plateName:"沪",
           weight:"",
           driver:"请选择司机",
           driverPk:"",
-          carpk:""
+          carpk:"",
+          Travelpic:"",
         },
         carTypeList:[],
         keyboardNumber:[],
@@ -77,17 +95,13 @@
         },
         carList:false,
         keyboard:false,
+        httpurl:"",
       }
     },
     watch:{
       message:{
         handler:function(val,oldval){
           this.message.weight=(this.message.weight.match(/\d+(\.\d{0,3})?/)||[''])[0];
-          if(this.message.carNumber!="请输入车牌号"&&this.message.type!="请选择车型"&&this.message.carNumber.length>5&&this.message.weight!=""){
-            bomb.addClass("ok","upColor");
-          }else{
-            bomb.removeClass("ok","upColor");
-          }
         },
         deep:true
       }
@@ -105,9 +119,38 @@
         _this.keyboardLetter.second = shujvyuan.fifth().second;
         _this.keyboardLetter.third = shujvyuan.fifth().third;
         var carchange = sessionStorage.getItem("carchange");
+        $.ajax({
+          type: "POST",
+          url: androidIos.ajaxHttp() + "/settings/findParamValueByName ",
+          data: JSON.stringify({
+            userCode:sessionStorage.getItem("token"),
+            source:sessionStorage.getItem("source"),
+            paramName:"resourcePath"
+          }),
+          contentType: "application/json;charset=utf-8",
+          dataType: "json",
+          async:false,
+          timeout:30000,
+          success: function(findParamValueByName){
+            if(findParamValueByName.success == "1"){
+              _this.httpurl = findParamValueByName.paramValue;
+            }else{
+              androidIos.second(findParamValueByName.message);
+            }
+          },
+          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+            if(status=='timeout'){//超时,status还有success,error等值的情况
+              androidIos.second("当前状况下网络状态差，请检查网络！")
+            }else if(status=="error"){
+              androidIos.errorwife();
+            }
+          }
+        });
         if(carchange != undefined){
           carchange = JSON.parse(carchange);
           carchange.driver = carchange.driver == "" ? "请选择司机" : carchange.driver;
+          carchange.type = carchange.type == "" ? "请选择车型" : carchange.type;
+          carchange.carlength = carchange.carlength == "" ? "请选择车长" : carchange.carlength + "米";
           _this.message = carchange;
           sessionStorage.removeItem("carchange");
         }
@@ -116,15 +159,29 @@
             _this.carTypeList[i].code = 2;
           }
         }
+        $("#box4").aiiUpload({
+          action: androidIos.ajaxHttp() + "/uploadFile",
+          max_w: 1000,
+          max_h: 1000
+        });
+        if (_this.message.Travelpic != null && _this.message.Travelpic != "") {
+          $("#box4 img").attr("src", _this.httpurl + _this.message.Travelpic);
+          $("#box4 img").show();
+          $("#box4 .closed").show();
+          $("#box4 .cjjimgbox").css("display", "none");
+          $("#box4 .cjjimgbox").html(
+            "<p class='h5u_options_hiddenP'>" + _this.message.Travelpic + "</p>"
+          );
+        }
         $.ajax({
-          type: "POST",
-          url: androidIos.ajaxHttp()+"/settings/getCarType",
-          contentType: "application/json;charset=utf-8",
+          type: "GET",
+          url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
+          data:{str:"car_type",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
           dataType: "json",
-          timeout: 30000,
+          timeout: 10000,
           success: function (getCarType) {
             var list = [];
-           for(var i = 0; i<getCarType.length;i++){
+            for(var i = 0; i<getCarType.length;i++){
               var json = {
                 "code":getCarType[i].value,
                 "region":getCarType[i].displayName,
@@ -133,10 +190,10 @@
             }
             var x = 0;
             for(var i = 0;i<list.length;i++){
-               if(list[i].region == _this.message.type){
-                 _this.message.carCode = list[i].code;
-                 x = i;
-               }
+              if(list[i].region == _this.message.type){
+                _this.message.carCode = list[i].code;
+                x = i;
+              }
             }
             var area = new LArea();
             area.init({
@@ -163,7 +220,55 @@
               androidIos.errorwife();
             }
           }
-        })
+        });
+        $.ajax({
+          type: "GET",
+          url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
+          data:{str:"car_length",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
+          dataType: "json",
+          timeout: 10000,
+          success: function (getCarType) {
+            var list = [];
+            for(var i = 0; i<getCarType.length;i++){
+              var json = {
+                "code":getCarType[i].value,
+                "region":getCarType[i].displayName + "米",
+              }
+              list.push(json)
+            }
+            var x = 0;
+            for(var i = 0;i<list.length;i++){
+              if(list[i].region == _this.message.carlength){
+                _this.message.carCode = list[i].code;
+                x = i;
+              }
+            }
+            var area = new LArea();
+            area.init({
+              'trigger': '#Z02',
+              'valueTo': '#Z02',
+              'keys': {
+                id: 'id',
+                name: 'name'
+              },
+              'type': 1,
+              'data': list
+            });
+            area.value = [x];
+            area.addPointer = function (name) {
+              name = JSON.parse(name);
+              _this.message.carlength =  name.firstVal;
+              _this.message.carlengthCode = name.firstCode;
+            }
+          },
+          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+            if(status=='timeout'){//超时,status还有success,error等值的情况
+              androidIos.second("网络请求超时");
+            }else if(status=='error'){
+              androidIos.errorwife();
+            }
+          }
+        });
         $.ajax({
           type: "POST",
           url: androidIos.ajaxHttp()+"/driver/getDriverPage",
@@ -273,63 +378,83 @@
       gogo:function () {
         var _this = this;
         if(bomb.hasClass("ok","okgo")){
-          if(bomb.hasClass("ok","upColor")){
-            if(_this.message.carNumber.length==6){
-              var type = /^[A-Z][0-9,A-Z]{5}$/;
-              if(!type.test(_this.message.carNumber)){
-                bomb.first("请填写正确的车牌号！")
-                return false;
-              }
-            }else if(_this.message.carNumber.length==7){
-              var type = /^[A-Z][0-9,A-Z]{6}$/;
-              if(!type.test(_this.message.carNumber)){
-                bomb.first("请填写正确的车牌号！")
-                return false;
-              }
-            }
-            var carJson={
-              userCode:sessionStorage.getItem("token"),
-              source:sessionStorage.getItem("source"),
-              carNo:_this.message.plateName+_this.message.carNumber,
-              carType:_this.message.carCode,
-              loadWeight:_this.message.weight,
-              pkDriver:_this.message.driverPk,
-              pkCar:_this.message.carpk
-            }
-            bomb.removeClass("ok","okgo");
-            var messageNow = _this.message.carpk == "" ? "正在新增" : "正在修改";
-            androidIos.loading(messageNow);
-            var jax = _this.message.carpk == "" ? '/driver/addCar':'/driver/modifyCar';
-            $.ajax({
-              type: "POST",
-              url: androidIos.ajaxHttp() + jax,
-              data: JSON.stringify(carJson),
-              contentType: "application/json;charset=utf-8",
-              dataType: "json",
-              timeout:30000,
-              success: function (addCar) {
-                if(addCar.success=="1"){
-                  _this.$cjj("保存成功");
-                  setTimeout(function () {
-                    androidIos.gobackFrom(_this);
-                  },500);
-                }else{
-                  androidIos.second(addCar.message);
-                }
-              },
-              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                $("#common-blackBox").remove();
-                bomb.addClass("ok","okgo");
-                if(status=='timeout'){//超时,status还有success,error等值的情况
-                  androidIos.second("当前状况下网络状态差，请检查网络！")
-                }else if(status=='error'){
-                  androidIos.errorwife();
-                }
-              }
-            })
-          }else if(!bomb.hasClass("ok","upColor")){
-            bomb.first("请填写完整相关信息！")
+          if(_this.message.type == "请选择车型"){
+            bomb.first("请选择车型");
+            return false;
           }
+          if(_this.message.carlength == "请选择车长"){
+            bomb.first("请选择车长");
+            return false;
+          }
+          if(_this.message.carNumber == "请输入车牌号" || _this.message.carNumber.length < 6){
+            bomb.first("请输入车牌号");
+            return false;
+          }
+          if(_this.message.carNumber.length==6){
+            var type = /^[A-Z][0-9,A-Z]{5}$/;
+            if(!type.test(_this.message.carNumber)){
+              bomb.first("请填写正确的车牌号");
+              return false;
+            }
+          }else if(_this.message.carNumber.length==7){
+            var type = /^[A-Z][0-9,A-Z]{6}$/;
+            if(!type.test(_this.message.carNumber)){
+              bomb.first("请填写正确的车牌号");
+              return false;
+            }
+          }
+          if(this.message.weight == "" ){
+            bomb.first("请输入载量");
+            return false;
+          }
+          var idFi = $("#box4 .cjjimgbox .h5u_options_hiddenP");
+          _this.message.Travelpic = idFi.text();
+          if(_this.message.Travelpic == ""){
+            bomb.first("请上传行驶证");
+            return false;
+          }
+          var carJson={
+            userCode:sessionStorage.getItem("token"),
+            source:sessionStorage.getItem("source"),
+            carNo:_this.message.plateName + _this.message.carNumber,
+            carType:_this.message.carCode,
+            loadWeight:_this.message.weight,
+            pkDriver:_this.message.driverPk,
+            pkCar:_this.message.carpk,
+            drivingLicense:_this.message.Travelpic,
+            length : _this.message.carlengthCode
+          }
+          bomb.removeClass("ok","okgo");
+          var messageNow = _this.message.carpk == "" ? "正在新增" : "正在修改";
+          androidIos.loading(messageNow);
+          var jax = _this.message.carpk == "" ? '/driver/addCar':'/driver/modifyCar';
+          $.ajax({
+            type: "POST",
+            url: androidIos.ajaxHttp() + jax,
+            data: JSON.stringify(carJson),
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            timeout:30000,
+            success: function (addCar) {
+              if(addCar.success=="1"){
+                _this.$cjj("保存成功");
+                setTimeout(function () {
+                  androidIos.gobackFrom(_this);
+                },500);
+              }else{
+                androidIos.second(addCar.message);
+              }
+            },
+            complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+              $("#common-blackBox").remove();
+              bomb.addClass("ok","okgo");
+              if(status=='timeout'){//超时,status还有success,error等值的情况
+                androidIos.second("当前状况下网络状态差，请检查网络！")
+              }else if(status=='error'){
+                androidIos.errorwife();
+              }
+            }
+          })
         }else{
           bomb.first("请不要频繁点击");
         }
@@ -400,15 +525,12 @@
     width:90%;
     display: block;
     margin:0.5rem auto;
-    background: #d2d2d2;
+    background: #3399FF;
     color:white;
-    line-height: 1rem;
-    border-radius: 0.6rem;
-    font-size: 0.375rem;
+    line-height: 1.2rem;
+    border-radius: 0.2rem;
+    font-size: 0.4rem;
     letter-spacing: 0.09375rem;
-  }
-  .upColor{
-   background: #3399FF!important;
   }
   .box h6{
     float: left;
@@ -507,5 +629,24 @@
   .addColor{
     background: red!important;
   }
-
+  .imgBox {
+    width: 4rem;
+    height: 2.6rem;
+    background: #c9c9c9;
+    overflow: hidden;
+    position: relative;
+  }
+  .imgBox img {
+    width: 4rem;
+    height: 2rem;
+  }
+  .imgBoxBig {
+    float: left;
+    width: 50%;
+    margin-bottom: 0.2rem;
+    overflow: hidden;
+  }
+  .imgBoxBig .imgBox {
+    margin: 0.3125rem auto;
+  }
 </style>

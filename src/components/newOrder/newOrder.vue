@@ -453,7 +453,23 @@
                     pay:0,
                     read:true,
                     scrollTop:0,
-                    initialWeight:_this.both.initialWeight
+                    initialWeight:_this.both.initialWeight,
+                    price:"",
+                    carList:[],
+                    carListSure:"",
+                    carListSureValue:"",
+                    carWidthList:[],
+                    carWidthListSure:"",
+                    carWidthListSureValue:"",
+                    cartypeOther:"",
+                    cartypeOtherSure:"",
+                    carTypeList:[],
+                    carTypeListSure:"",
+                    carTypeListSureValue:"",
+                    carListMore:false,
+                    carWidthListMore:false,
+                    carTypeListMore:false,
+                    carTypeLook:true,
                   }
                   _this.both = pdlist;
                   _this.$nextTick(function () {

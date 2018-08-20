@@ -211,7 +211,7 @@ import  {androidIos} from './app';
           $("#h5u_options_" + rand_id).css("display", "none");
           $("#h5u_preview_" + rand_id).show();
           $("#closed_" + rand_id).show();
-          $("#h5u_options_" + rand_id).append("<p class='h5u_options_hiddenP'>" + json.message + "</p>");
+          $("#h5u_options_" + rand_id).append("<p class='h5u_options_hiddenP'>" + json.path + "</p>");
           var message = "";
           if(sessionStorage.getItem("source") == "2"){
             message = localStorage.getItem("UPMESSA") != null ? JSON.parse(localStorage.getItem("UPMESSA")) : {
@@ -256,9 +256,10 @@ import  {androidIos} from './app';
             var idFi = $("#box4 .cjjimgbox .h5u_options_hiddenP");
             message.Travelpic = idFi.text();
           }
-          if(sessionStorage.getItem("source") == "2"){
+          var http = location.href;
+          if(sessionStorage.getItem("source") == "2" && http.indexOf("/uploadData/uploadDataT") != -1 ){
             localStorage.setItem("UPMESSA",JSON.stringify(message));
-          }else if(sessionStorage.getItem("source") == "3"){
+          }else if(sessionStorage.getItem("source") == "3" && http.indexOf("/uploadData/uploadDataT") != -1){
             localStorage.setItem("DRIVERMESSA",JSON.stringify(message));
           }
         } else if (json.success == "-1") {
