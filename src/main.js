@@ -34,7 +34,11 @@ if (isAndroid() && !window.WebViewJavascriptBridge) {
             androidIos.first("信息尚未上传，需要保存吗？");
             $(".tanBox-close").unbind('click').click(function(){
               $(".tanBox-bigBox").remove();
-              localStorage.removeItem("UPMESSA");
+              if(sessionStorage.getItem("source") == 2){
+                localStorage.removeItem("UPMESSA");
+              }else if(sessionStorage.getItem("source") == 3){
+                localStorage.removeItem("DRIVERMESSA");
+              }
               androidIos.gogogogo();
             });
             $(".tanBox-yes").unbind('click').click(function(){

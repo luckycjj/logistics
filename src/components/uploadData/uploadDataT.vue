@@ -35,7 +35,9 @@
           <div class="clearBoth"></div>
           <div class="imgBoxBig">
               <div class="imgBox">
-                  <div id="box" class="imgUpload"></div>
+                <div @click="cleanIDcode()" v-if="water.Licensepic != ''" style="position:absolute;right:0rem;top:0rem;font-size: 0.3125rem;border-radius: 50%;color:white;width:0.5rem;height: 0.5rem;text-align: center;line-height: 0.45rem;z-index: 3;background: rgba(0,0,0,0.5);">x</div>
+                <div id="box" class="imgUpload" v-if="water.Licensepic == ''"></div>
+                <img id="Licensepic" :src="httpurl + water.Licensepic"  :onerror="errorlogo"  v-else>
               </div>
             <h4><span style="font-size: 0.3125rem;color:#ff803c;">*</span>营业执照</h4>
           </div>
@@ -47,6 +49,10 @@
           </div>
           <div class="clearBoth"></div>
         </h1>
+        <div class="label" v-if="creator == 0 && companyType != 2" style="border-bottom: none;">
+          <span><span style="font-size: 0.3125rem;color:#ff803c;">*</span>信用代码</span>
+          <input type="tel" placeholder="输入统一社会信用代码" v-model="water.creditCode" maxlength="18">
+        </div>
       </div>
       <div class="labelBox">
         <p>个人信息</p>
@@ -54,20 +60,22 @@
           <span style="float: left;"><span style="font-size: 0.375rem;color:#ff803c;">*</span>您的姓名</span>
           <input type="text" placeholder="输入姓名" maxlength="10"   v-model="water.name">
         </div>
-        <div class="label" v-if="type == 2">
-          <span style="float: left;"><span style="font-size: 0.375rem;color:#ff803c;">*</span>身份证号码</span>
-          <input type="text" placeholder="输入身份证号码" maxlength="18"   v-model="water.peopleNumber">
-        </div>
-        <div class="label" style="height: auto;border:none">
-          <h1><h5 style="margin-left: 0;">身份证</h5></h1>
+        <div class="label" style="height: auto;border: none;">
+          <h1 ><h5 style="margin-left: 0;">身份证</h5></h1>
           <div style="margin-left: 0.18rem;margin-top: 0.3rem;">
             <div class="imgBox">
-              <div id="box2" class="imgUpload"></div>
+              <div @click="cleanIDcode()" v-if="water.IDpic != ''" style="position:absolute;right:0rem;top:0rem;font-size: 0.3125rem;border-radius: 50%;color:white;width:0.5rem;height: 0.5rem;text-align: center;line-height: 0.45rem;z-index: 3;background: rgba(0,0,0,0.5);">x</div>
+              <div id="box2" class="imgUpload" v-if="water.IDpic == ''"></div>
+              <img id="IDCODEIMG" :src="httpurl + water.IDpic"  :onerror="errorlogo"  v-else>
             </div>
             <h5 style="font-size: 0.3125rem;text-align: center;width:4rem;"><span style="font-size: 0.3125rem;color:#ff803c;">*</span>正面</h5>
           </div>
         </div>
-        <div class="label" style="height: auto;border:none" v-if="( type == 1 && letterType == 1 )|| type==2">
+        <div class="label" style="border:none;">
+          <span style="float: left;"><span style="font-size: 0.375rem;color:#ff803c;">*</span>身份证号码</span>
+          <input type="text" placeholder="输入身份证号码" maxlength="18"   v-model="water.peopleNumber">
+        </div>
+        <div class="label" style="height: auto;border-bottom:none;border-top:0.03125rem solid #dcdcdc;" v-if="( type == 1 && letterType == 1 )|| type==2">
           <span>证件</span>
           <div class="clearBoth"></div>
           <div class="imgBoxBigs" style="float: left;margin-left: 0.18rem; ">
@@ -120,6 +128,7 @@ export default {
         company: "",
         bank: "",
         bankNumber: "",
+        creditCode:"",
         name: "",
         IDpic: "",
         Licensepic: "",
@@ -131,15 +140,34 @@ export default {
       tanBox: false,
       tanBoxmessage: "",
       httpurl: "",
+      errorlogo: 'this.src="' + require('../../images/timg.jpg') + '"',
     };
   },
   watch:{
     water:{
       handler:function(val,oldval){
         var _this = this;
-        if(_this.$route.query.type == 1){
+        if(sessionStorage.getItem("source") == 2){
+          var UPMESSA = localStorage.getItem("UPMESSA");
+          if(UPMESSA != undefined || UPMESSA != null){
+            UPMESSA = JSON.parse(UPMESSA);
+            _this.water.IDpic = UPMESSA.IDpic;
+            _this.water.Drivepic = UPMESSA.Drivepic;
+            _this.water.Licensepic = UPMESSA.Licensepic;
+            _this.water.Roadpic = UPMESSA.Roadpic;
+            _this.water.Travelpic = UPMESSA.Travelpic;
+          }
           localStorage.setItem("UPMESSA",JSON.stringify(_this.water));
-        }else if(_this.$route.query.type == 2){
+        }else if(sessionStorage.getItem("source") == 3){
+          var DRIVERMESSA = localStorage.getItem("DRIVERMESSA");
+          if(DRIVERMESSA != undefined || DRIVERMESSA != null){
+            DRIVERMESSA = JSON.parse(DRIVERMESSA);
+            _this.water.IDpic = DRIVERMESSA.IDpic;
+            _this.water.Drivepic = DRIVERMESSA.Drivepic;
+            _this.water.Licensepic = DRIVERMESSA.Licensepic;
+            _this.water.Roadpic = DRIVERMESSA.Roadpic;
+            _this.water.Travelpic = DRIVERMESSA.Travelpic;
+          }
           localStorage.setItem("DRIVERMESSA",JSON.stringify(_this.water));
         }
       },
@@ -220,9 +248,9 @@ export default {
             _this.water = JSON.parse(localStorage.getItem("DRIVERMESSA"));
           }
         }else{
-          if(_this.$route.query.type == 1){
+          if(sessionStorage.getItem("source") == 2){
             localStorage.removeItem("UPMESSA");
-          }else if(_this.$route.query.type == 2){
+          }else if(sessionStorage.getItem("source") == 3){
             localStorage.removeItem("DRIVERMESSA");
           }
           var json = {
@@ -296,20 +324,6 @@ export default {
       }
       _this.$nextTick(function() {
         if(!(( _this.type == 1 && _this.letterType == 1 )|| _this.type==2) && ( _this.companyType == 0 || _this.creator == 0 )){
-          $("#box").aiiUpload({
-            action: androidIos.ajaxHttp() + "/uploadFile",
-            max_w: 1000,
-            max_h: 1000
-          });
-          if (_this.water.Licensepic != null && _this.water.Licensepic != "") {
-            $("#box img").attr("src", _this.httpurl + _this.water.Licensepic);
-            $("#box img").show();
-            $("#box .closed").show();
-            $("#box .cjjimgbox").css("display", "none");
-            $("#box .cjjimgbox").html(
-              "<p class='h5u_options_hiddenP'>" + _this.water.Licensepic + "</p>"
-            );
-          }
           $("#box1").aiiUpload({
             action: androidIos.ajaxHttp() + "/uploadFile",
             max_w: 1000,
@@ -324,20 +338,6 @@ export default {
               "<p class='h5u_options_hiddenP'>" + _this.water.Roadpic + "</p>"
             );
           }
-        }
-        $("#box2").aiiUpload({
-          action: androidIos.ajaxHttp() + "/uploadFile",
-          max_w: 1000,
-          max_h: 1000
-        });
-        if (_this.water.IDpic != null && _this.water.IDpic != "") {
-          $("#box2 img").attr("src", _this.httpurl + _this.water.IDpic);
-          $("#box2 img").show();
-          $("#box2 .closed").show();
-          $("#box2 .cjjimgbox").css("display", "none");
-          $("#box2 .cjjimgbox").html(
-            "<p class='h5u_options_hiddenP'>" + _this.water.IDpic + "</p>"
-          );
         }
         if( ( _this.type == 1 && _this.letterType == 1 )|| _this.type==2 ){
           $("#box3").aiiUpload({
@@ -432,6 +432,14 @@ export default {
           });
       });
     },
+    cleanIDcode:function () {
+      var _this = this;
+      androidIos.first("确定删除吗？");
+      $(".tanBox-yes").unbind('click').click(function(){
+        $(".tanBox-bigBox").remove();
+        _this.water.IDpic = "";
+      });
+    },
     submit: function() {
       var _this = this;
       if (bomb.hasClass("submit", "letgo")) {
@@ -460,6 +468,10 @@ export default {
               return false;
             }
           } else if (_this.letterType == "2") {
+            if( _this.creator == '0' && water.creditCode.length <18 ){
+              bomb.first("请输入统一社会信用代码！");
+              return false;
+            }
             if (water.Licensepic == "" && _this.creator == '0') {
               bomb.first("请上传营业执照！");
               return false;
@@ -534,8 +546,8 @@ export default {
           bank :  _this.type == 1 && _this.letterType == 1 ? undefined : water.bank,
           bankAccount :  _this.type == 1 && _this.letterType == 1 ? undefined  : water.bankNumber,
           userName : water.name,
-          idCardPos : $("#box2 .h5u_options_hiddenP").text(),
-          businessLicense : _this.type == 1 && _this.letterType == 1 ? undefined : $("#box .h5u_options_hiddenP").text(),
+          idCardPos :water.IDpic,
+          businessLicense : _this.type == 1 && _this.letterType == 1 ? undefined : water.Licensepic,
           roadTransLicense : _this.type == 1 && _this.letterType == 1 ? undefined : $("#box1 .h5u_options_hiddenP").text(),
           driverLicense : !(this.type == 1 && _this.letterType == 1) ? undefined:$("#box4 .h5u_options_hiddenP").text(),
           drivingLicence :  !( _this.type == 1 && _this.letterType == 1) ? undefined : $("#box3 .h5u_options_hiddenP").text(),
@@ -550,7 +562,7 @@ export default {
           driverName:water.name,
           idCardNum:water.peopleNumber,
           driverLic:$("#box3 .h5u_options_hiddenP").text(),
-          idCardPos:$("#box2 .h5u_options_hiddenP").text(),
+          idCardPos:water.IDpic,
           source :sessionStorage.getItem("source"),
           userCode:sessionStorage.getItem("token")
         }
@@ -571,9 +583,9 @@ export default {
               _this.tanBox = true;
               _this.tanBoxmessage =
                 "请等待运维专员审核";
-              if(_this.$route.query.type == 1){
+              if(sessionStorage.getItem("source") == 2){
                 localStorage.removeItem("UPMESSA");
-              }else if(_this.$route.query.type == 2){
+              }else if(sessionStorage.getItem("source") == 3){
                 localStorage.removeItem("DRIVERMESSA");
               }
             }else if(data.success=="-1"){
@@ -668,7 +680,6 @@ a {
   padding-right: 0.32rem;
   line-height: 1rem;
   font-size: 0.375rem;
-  border-bottom: 0.03125rem solid #dcdcdc;
   color: #666;
 }
 .labelBox .label {
@@ -788,4 +799,8 @@ a {
   border: 1px solid #3399FF;
   color: #3399FF;
 }
+  #IDCODEIMG,#Licensepic{
+    width:4rem;
+    height: 2.6rem;
+  }
 </style>

@@ -150,8 +150,10 @@
             $("#common-blackBox").remove();
             if(addAddress.success=="1"){
                _this.$cjj(newtype + "成功");
-               for(var i = 0 ;i < _this.pdlist.length;i++){
-                 _this.pdlist[i].ifDefault = 0;
+               if(type == 1){
+                 for(var i = 0 ;i < _this.pdlist.length;i++){
+                   _this.pdlist[i].ifDefault = 0;
+                 }
                }
               _this.pdlist[number].ifDefault = type;
             }else{
