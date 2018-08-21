@@ -36,7 +36,7 @@
           <div class="imgBoxBig">
               <div class="imgBox">
                 <div @click="cleanIDcode()" v-if="water.Licensepic != ''" style="position:absolute;right:0rem;top:0rem;font-size: 0.3125rem;border-radius: 50%;color:white;width:0.5rem;height: 0.5rem;text-align: center;line-height: 0.45rem;z-index: 3;background: rgba(0,0,0,0.5);">x</div>
-                <div id="box" class="imgUpload" v-if="water.Licensepic == ''"></div>
+                <div id="box" @click="recognition(0)" class="imgUpload" v-if="water.Licensepic == ''"></div>
                 <img id="Licensepic" :src="httpurl + water.Licensepic"  :onerror="errorlogo"  v-else>
               </div>
             <h4><span style="font-size: 0.3125rem;color:#ff803c;">*</span>营业执照</h4>
@@ -65,8 +65,8 @@
           <div style="margin-left: 0.18rem;margin-top: 0.3rem;">
             <div class="imgBox">
               <div @click="cleanIDcode()" v-if="water.IDpic != ''" style="position:absolute;right:0rem;top:0rem;font-size: 0.3125rem;border-radius: 50%;color:white;width:0.5rem;height: 0.5rem;text-align: center;line-height: 0.45rem;z-index: 3;background: rgba(0,0,0,0.5);">x</div>
-              <div id="box2" class="imgUpload" v-if="water.IDpic == ''"></div>
-              <img id="IDCODEIMG" :src="httpurl + water.IDpic"  :onerror="errorlogo"  v-else>
+              <div id="box2"  @click="(1)" class="imgUpload" v-if="water.IDpic == ''"></div>
+              <img id="IDCODEIMG" :src="httpurlrecognition + water.IDpic"  :onerror="errorlogo"  v-else>
             </div>
             <h5 style="font-size: 0.3125rem;text-align: center;width:4rem;"><span style="font-size: 0.3125rem;color:#ff803c;">*</span>正面</h5>
           </div>
@@ -439,6 +439,19 @@ export default {
         $(".tanBox-bigBox").remove();
         _this.water.IDpic = "";
       });
+    },
+    recognition:function (type) {
+      var _this = this;
+      bridge.invoke("recognition",type,function (data) {
+         data = JSON.parse(data);
+         if(type == 0){
+             _this.water.IDpic = data.imgUrl;
+             _this.water.peopleNumber = data.number;
+         }else if(type == 1){
+           _this.water.Licensepic = data.imgUrl;
+           _this.water.creditCode = data.number;
+         }
+      })
     },
     submit: function() {
       var _this = this;

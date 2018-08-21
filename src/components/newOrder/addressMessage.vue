@@ -15,7 +15,7 @@
           <div class="moveDiv" style="position: relative">
             <div  @click="chooseLine(item)" style="width:10rem;">
             <div class="firstBox">
-              <p>{{item.contact}}<span>{{item.mobile}}</span></p>
+              <p><span style="color:#31b6e7" v-if="item.ifDefault == '1'">[默认]</span>{{item.contact}}<span>{{item.mobile}}</span></p>
               <h1>{{item.province}}-{{item.city}}-{{item.area}}&nbsp;&nbsp;{{item.detailAddr}}</h1>
             </div>
               <div class="clearBoth"></div>
@@ -23,7 +23,6 @@
               <img src="../../images/edit.png" @click="editLine(item)" v-if="manage">
               <img src="../../images/clean.png" @click="cleanLine(index)" v-if="manage">
               <img src="../../images/checked.png"  v-if="!manage&&item.checked == '1'">
-              <img src="../../images/moren.png"  v-if="!manage&&item.ifDefault == '1'">
               <div class="clearBoth"></div>
             </div>
             </div>
@@ -248,12 +247,12 @@
                     lastLeftObj = null; // 清空上一个左滑的对象
                   }
                   var diffX = e.changedTouches[0].pageX - lastXForMobile;
-                  if (diffX < -150) {
+                  if (diffX < -50) {
                     $(pressedObj).animate({left:"-2rem"}, 200); // 左滑
                     lastLeftObj && lastLeftObj != pressedObj &&
                     $(lastLeftObj).animate({left:"0"}, 200); // 已经左滑状态的按钮右滑
                     lastLeftObj = pressedObj; // 记录上一个左滑的对象
-                  } else if (diffX > 150) {
+                  } else if (diffX > 50) {
                     if (pressedObj == lastLeftObj) {
                       $(pressedObj).animate({left:"0"}, 200); // 右滑
                       lastLeftObj = null; // 清空上一个左滑的对象
