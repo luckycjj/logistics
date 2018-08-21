@@ -91,13 +91,13 @@
         </div>
         <div class="lablebox borderno">
           <span>备注</span>
-          <p v-html="both.remark==''?'请填写备注':both.remark" :class="both.remark==''?'':'blackColor'" @click="remark()"></p>
+          <p v-html="both.remark==''?'请填写备注,例如:自卸,走高速':both.remark" :class="both.remark==''?'':'blackColor'" @click="remark()"></p>
           <div class="clearBoth"></div>
         </div>
       </div>
       <div v-if="pk==''" id="price" class="label">
         <div class="lablebox borderno imgno">
-          <span class="required">预估价格</span>
+          <span class="required">价格</span>
           <input type="text" placeholder="请输入价格" maxlength="20" v-model="price" @keyup="asdfgh()"/>
           <div class="clearBoth"></div>
         </div>
@@ -157,7 +157,7 @@
               <div class="clearBoth"></div>
             </div>
             <div class="message_price">
-              <h6>金额</h6><h5>¥{{price}}</h5>
+              <h6>金额</h6><h5>¥{{price*1}}</h5>
               <div class="clearBoth"></div>
             </div>
             <div class="message_button">
@@ -327,6 +327,8 @@
           var _this = this;
           if(_this.$route.query.newordertrantype != undefined){
              sessionStorage.setItem("NEWORDERTRANTYPE",_this.$route.query.newordertrantype)
+          }else{
+            sessionStorage.setItem("NEWORDERTRANTYPE",0)
           }
           androidIos.bridge(_this);
       },
@@ -1423,6 +1425,10 @@
         submitGo:function(){
             var _this = this;
             if(bomb.hasClass("submit","submit")){
+              if(_this.price*1 <= 0){
+                 bomb.first("请输入价格");
+                 return false;
+              }
               var self = _this.both;
               var w = 0;
               for(var i = 0;i<self.productList.length;i++) {

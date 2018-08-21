@@ -109,7 +109,7 @@
             var type =_this.orderPk =="" ? ( pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用': '已审核'):( pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用' : (pd.type == 2 ? '运输中' : '空闲中'));
             type = '<span class="nowtype">'+type+'</span>';
             var display = $("#search").find("h5").text() == "取消" ? "block":"none";
-            var length = pd.length == "" ? "" : pd.length*1 + "米" ;
+            var length = pd.length == "" ? "" : pd.length+ "米" ;
             var img = _this.orderPk =="" && pd.carType == '0' && (pd.now == '0' || pd.now == '1' || pd.now == '2')?"<div class='clearImg' style='display: "+display+"'></div><div class='reaseImg' style='display: "+display+"'></div>":_this.orderPk =="" && pd.carType == '0' && pd.now == '3'  ? "<div class='clearImg' style='right:0.6rem;display: " + display + "'></div>" : "";
             var str = '<div class="top" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
               '<span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span class="carlength">' + length + '</span>'+type+'<div class="clearBoth"></div>'+
@@ -216,10 +216,12 @@
               event.stopPropagation();
               var that = $(this).parents("li");
               var json = {
-                type:that.find(".cartype").text(),
+                carmodel:that.find(".cartype").text(),
+                type:"",
+                carCode:"",
                 carlength:that.find(".carlength").text(),
-                carCode:that.find(".cartype").text(),
-                carlengthCode:that.find(".carlength").text(),
+                carmodelNumber:that.find(".cartype").text(),
+                carlengthCode:that.find(".carlength").text().replace(/米/g,''),
                 carNumber:that.find(".carnumber").text().substring(1),
                 plateName:that.find(".carnumber").text().substring(0,1),
                 weight:that.find(".weight span").text(),
@@ -238,6 +240,7 @@
               var that = $(this);
               $("#tanBox-yes").unbind("click").click(function () {
                 $(".tanBox-bigBox").remove();
+                androidIos.loading("正在删除");
                 $.ajax({
                   type: "POST",
                   url: androidIos.ajaxHttp()+"/driver/deleteCar",
@@ -259,6 +262,7 @@
                     }
                   },
                   complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                    $("#common-blackBox").remove();
                     if(status=='timeout'){//超时,status还有success,error等值的情况
                       androidIos.second("网络请求超时");
                     }else if(status=='error'){

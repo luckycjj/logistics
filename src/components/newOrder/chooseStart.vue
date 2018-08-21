@@ -15,8 +15,14 @@
       <div class="company inputUp">
         <p id="X00" :class="start.province!=''?'blackColor':''" v-html="start.province==''?'选择省市区':start.province+'-'+start.city+'-'+start.area"></p>
       </div>
-      <div class="address inputUp" style="border:none;">
+      <div class="address inputUp">
         <input type="text" maxlength="40" placeholder="详细地址"  v-model="start.address"/>
+      </div>
+      <div class="address inputUp" style=" color:#666;line-height:1rem;font-size: 0.35rem;border: none">
+        设置默认
+        <div class="morenBox" :class="start.moren == 1 ? 'morenBoxTrue' : ''" @click="morenClick()">
+          <div class="moren" :class="start.moren == 1 ? 'morenTrue' : ''"></div>
+        </div>
       </div>
     </div>
     <button :class="start.name!=''&&start.phone!=''&&start.company!=''&&start.address!=''&&start.province!=''?'colorful':''" @click="save()" id="save">保存</button>
@@ -43,7 +49,8 @@
             provinceCode:"",
             cityCode:"",
             areaCode:"",
-            checked:""
+            checked:"",
+            moren:0,
           },
           addressType:"",
         }
@@ -67,7 +74,8 @@
               _this.start.province = addresspk.province;
               _this.start.city = addresspk.city;
               _this.start.area = addresspk.area;
-              _this.start.checked = addresspk.checked;
+              _this.start.checked = addresspk.checked*1;
+              _this.start.moren = addresspk.ifDefault*1;
               sessionStorage.removeItem("addresspk");
               for(var i = 0; i< provinceCityArea.length;i++){
                 if(provinceCityArea[i].region == _this.start.province){
@@ -107,6 +115,14 @@
               _this.start.areaCode = name.thirdCode;
             }
           },
+        morenClick:function () {
+            var _this = this;
+            if(_this.start.moren == 0){
+              _this.start.moren = 1;
+            }else{
+              _this.start.moren = 0;
+            }
+        },
           save:function () {
              var _this = this;
              if(bomb.hasClass("save","colorful")){
@@ -132,7 +148,7 @@
                    contact:_this.start.name,
                    source:sessionStorage.getItem("source"),
                    addrType:_this.$route.query.type,
-                   ifDefault:0,
+                   ifDefault:_this.start.moren,
                  }
                  $.ajax({
                    type: "POST",
@@ -172,7 +188,7 @@
                    userCode:sessionStorage.getItem("token"),
                    source:sessionStorage.getItem("source"),
                    type:_this.$route.query.type,
-                   ifDefault:0,
+                   ifDefault:_this.start.moren,
                  }
                  $.ajax({
                    type: "POST",
@@ -277,5 +293,32 @@
   }
   .colorful{
     background: #3399FF!important;
+  }
+  .morenBox{
+     float: right;
+    height: 0.8rem;
+    margin-top: 0.1rem;
+    border-radius: 0.4rem;
+    width:1.5rem;
+    background: #f1f1f1;
+    border: 1px solid #e0e0e0;
+  }
+  .morenBoxTrue{
+     background: #2c9cff!important;
+  }
+  .moren{
+    float: left;
+    height: 0.76rem;
+    margin-left: -0.03125rem;
+    border-radius: 0.4rem;
+    width:0.76rem;
+    background: white;
+    border:1px solid #e0e0e0;
+  }
+  .morenTrue{
+     float:right!important;
+    margin-right: -0.0625rem;
+    background: white!important;
+    margin-left: 0!important;
   }
 </style>

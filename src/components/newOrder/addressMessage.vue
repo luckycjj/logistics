@@ -23,6 +23,7 @@
               <img src="../../images/edit.png" @click="editLine(item)" v-if="manage">
               <img src="../../images/clean.png" @click="cleanLine(index)" v-if="manage">
               <img src="../../images/checked.png"  v-if="!manage&&item.checked == '1'">
+              <img src="../../images/moren.png"  v-if="!manage&&item.ifDefault == '1'">
               <div class="clearBoth"></div>
             </div>
             </div>
