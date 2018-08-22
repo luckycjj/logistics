@@ -18,7 +18,7 @@
       <div class="address inputUp">
         <input type="text" maxlength="40" placeholder="详细地址"  v-model="start.address"/>
       </div>
-      <div class="address inputUp" style=" color:#666;line-height:1rem;font-size: 0.35rem;border: none">
+      <div class="address inputUp" style=" color:#666;line-height:1rem;font-size: 0.35rem;border: none" v-if="addressType == 1">
         设置默认
         <div class="morenBox" :class="start.moren == 1 ? 'morenBoxTrue' : ''" @click="morenClick()">
           <div class="moren" :class="start.moren == 1 ? 'morenTrue' : ''"></div>

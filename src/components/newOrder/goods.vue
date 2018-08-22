@@ -1,12 +1,12 @@
 <template>
   <div id="goods">
     <div id="title" v-title data-title="货物类别"></div>
-    <ul v-if="list.length>0">
+    <ul v-if="list.length > 0 && listSure">
       <li v-for="(item,index) in list" @click="choose(item)">
         {{item.text}}
       </li>
     </ul>
-    <div id="nogoods" v-if="list.length == 0">
+    <div id="nogoods" v-if="list.length == 0 && listSure">
       <img src="../../images/nojilu.png">
       <p>已选中所有类别</p>
     </div>
@@ -24,6 +24,7 @@
         parentName:"",
         list:[],
         tranType:"",
+        listSure:false,
       }
     },
     mounted:function(){
@@ -60,6 +61,7 @@
           timeout: 10000,
           success: function (getGoodsType) {
             if(getGoodsType.success || getGoodsType.success == "1" || getGoodsType.success == ""){
+              _this.listSure = true;
               if(list.length == 0){
                 _this.list = getGoodsType.data;
               }else{

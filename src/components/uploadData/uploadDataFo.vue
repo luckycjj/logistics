@@ -52,7 +52,7 @@ export default {
           data: JSON.stringify(json),
           contentType: "application/json;charset=utf-8",
           dataType: "json",
-          timeout:10000,
+          timeout:30000,
           success: function(findStatusAndNameByName){
             if(findStatusAndNameByName.success=="1"){
               androidIos.addPageList();

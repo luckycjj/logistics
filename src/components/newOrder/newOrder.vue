@@ -857,25 +857,6 @@
           if(_this.pk == ""){
             if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read &&((self.tranType != self.tranTypeValue && weight <= 40) ||  weight > 40)){
               if(( weight*1 > 0 || volumn*1 > 0) && _this.both.price == ""){
-                /*{
-                  vehicleType:weight <= 40 ? carListSureValue : "",
-                    carLength:weight <= 40 ? carWidthListSureValue : "",
-                  carModel:weight <= 40 ? carTypeListSureValue : "",
-                }*/
-                var carListSureValueList = self.carListSureValue.split(",");
-                var carListSureValue = "";
-                for(var i = 0 ; i < carListSureValueList.length ;i ++){
-                  if(carListSureValueList[i] == ""){
-                    carListSureValueList.splice(i,1)
-                  }
-                }
-                for(var i = 0 ; i < carListSureValueList.length;i++){
-                  if(i < carListSureValueList.length -1){
-                    carListSureValue += carListSureValueList[i] + ",";
-                  }else{
-                    carListSureValue += carListSureValueList[i];
-                  }
-                }
                 var carWidthListSureValueList = (self.carWidthListSure + self.cartypeOtherSure).split(",");
                 var carWidthListSureValue = "";
                 for(var i = 0 ; i < carWidthListSureValueList.length ;i ++){
@@ -883,31 +864,34 @@
                     carWidthListSureValueList.splice(i,1)
                   }
                 }
-                for(var i = 0 ; i < carWidthListSureValueList.length;i++){
-                  if(i < carWidthListSureValueList.length -1){
-                    carWidthListSureValue += carWidthListSureValueList[i] + ",";
-                  }else{
-                    carWidthListSureValue += carWidthListSureValueList[i];
-                  }
+                carWidthListSureValue = carWidthListSureValueList.join(",");
+                var listJson = carWidthListSureValue.split(",");
+                var listJSonNow = [];
+                for(var i = 0; i<listJson.length;i++){
+                    if(listJson[i].indexOf("-") != -1){
+                       listJSonNow.push({
+                          value : i ,
+                          displayName : listJson[i].split("-")[1]/2 + listJson[i].split("-")[0]/2
+                       })
+                    }else{
+                      listJSonNow.push({
+                        value : i ,
+                        displayName : listJson[i]
+                      })
+                    }
                 }
-                var carTypeListSureValueList = self.carTypeListSureValue.split(",")
-                var carTypeListSureValue = "";
-                for(var i = 0 ; i < carTypeListSureValueList.length ;i ++){
-                  if(carTypeListSureValueList[i] == ""){
-                    carTypeListSureValueList.splice(i,1)
-                  }
+                listJSonNow.sort(function (a,b) {
+                   return a.displayName - b.displayName
+                })
+                var newList = [];
+                for(var i = 0 ;i < listJSonNow.length ;i++){
+                  newList.push(listJson[listJSonNow[i].value])
                 }
-                for(var i = 0 ; i < carTypeListSureValueList.length;i++){
-                  if(i < carTypeListSureValueList.length -1){
-                    carTypeListSureValue += carTypeListSureValueList[i] + ",";
-                  }else{
-                    carTypeListSureValue += carTypeListSureValueList[i];
-                  }
-                }
+                carWidthListSureValue = newList.join(",");
                 var json = {
                   startCity:_this.both.startAddress.city.split("-")[1].replace("市",""),
                   endCity:_this.both.endAddress.city.split("-")[1].replace("市",""),
-                  transType:weight <= 40 ? carListSureValue : "",
+                  carLength:weight <= 40 ? carWidthListSureValue : "",
                   weight:weight,
                   volume:volumn,
                   userCode:sessionStorage.getItem("token"),
@@ -943,7 +927,7 @@
           }
           var self = _this.both;
           if(_this.pk == ""){
-            if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&((self.tranType != ""&& weightBoth <= 40) ||  weightBoth > 40)){
+            if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&((self.tranType != ""&& weight <= 40) ||  weight > 40)){
               for(var i = 0;i<self.productList.length;i++) {
                 if(_this.price!=""){
                   if (self.productList[i].goodsType == "") {
@@ -1530,13 +1514,7 @@
                  carListSureValueList.splice(i,1)
                }
             }
-            for(var i = 0 ; i < carListSureValueList.length;i++){
-              if(i < carListSureValueList.length -1){
-                carListSureValue += carListSureValueList[i] + ",";
-              }else{
-                carListSureValue += carListSureValueList[i];
-              }
-            }
+            carListSureValue = carListSureValueList.join(",");
             var carWidthListSureValueList = (self.carWidthListSure + self.cartypeOtherSure).split(",");
             var carWidthListSureValue = "";
             for(var i = 0 ; i < carWidthListSureValueList.length ;i ++){
@@ -1544,13 +1522,7 @@
                 carWidthListSureValueList.splice(i,1)
               }
             }
-            for(var i = 0 ; i < carWidthListSureValueList.length;i++){
-              if(i < carWidthListSureValueList.length -1){
-                carWidthListSureValue += carWidthListSureValueList[i] + ",";
-              }else{
-                carWidthListSureValue += carWidthListSureValueList[i];
-              }
-            }
+            carWidthListSureValue = carWidthListSureValueList.join(",");
             var carTypeListSureValueList = self.carTypeListSureValue.split(",")
             var carTypeListSureValue = "";
             for(var i = 0 ; i < carTypeListSureValueList.length ;i ++){
@@ -1558,13 +1530,7 @@
                 carTypeListSureValueList.splice(i,1)
               }
             }
-            for(var i = 0 ; i < carTypeListSureValueList.length;i++){
-              if(i < carTypeListSureValueList.length -1){
-                carTypeListSureValue += carTypeListSureValueList[i] + ",";
-              }else{
-                carTypeListSureValue += carTypeListSureValueList[i];
-              }
-            }
+            carTypeListSureValue = carTypeListSureValueList.join(",");
             var json = {
               userCode:sessionStorage.getItem("token"),
               source:sessionStorage.getItem("source"),

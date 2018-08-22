@@ -7,6 +7,7 @@ import  Toast from './vueJs/toast.js'
 import { isAndroid } from './js/detector';
 import bridge from './js/bridge';
 import {bomb} from "./js/zujian";
+import {androidIos} from "./js/app";
 Vue.config.productionTip = false
 Vue.use(Toast)
 /* eslint-disable no-new */
@@ -30,7 +31,8 @@ if (isAndroid() && !window.WebViewJavascriptBridge) {
         var http =  location.href;
         if(http.indexOf("/uploadData/uploadDataT") != -1){
           var message = sessionStorage.getItem("source") == "2" ? JSON.parse(localStorage.getItem("UPMESSA")) :  JSON.parse(localStorage.getItem("DRIVERMESSA"));
-          if(message != null && (message.Drivepic != "" || message.IDpic != "" || message.Licensepic != "" || message.Roadpic != "" || message.Travelpic != "" || message.bank != "" || message.bankNumber != "" || message.company != "" || message.name != "" || (message.nvitationodeIC != null &&  message.nvitationodeIC != "" )|| message.peopleNumber != "" )){
+          var type = androidIos.GetQueryString("type");
+          if(type != null && message != null && (message.Drivepic != "" || message.IDpic != "" || message.Licensepic != "" || message.Roadpic != "" || message.Travelpic != "" || message.bank != "" || message.bankNumber != "" || message.company != "" || message.name != "" || (message.nvitationodeIC != null &&  message.nvitationodeIC != "" )|| message.peopleNumber != "" )){
             androidIos.first("信息尚未上传，需要保存吗？");
             $(".tanBox-close").unbind('click').click(function(){
               $(".tanBox-bigBox").remove();

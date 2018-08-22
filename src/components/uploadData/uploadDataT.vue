@@ -66,7 +66,7 @@
             <div class="imgBox">
               <div @click="cleanIDcode()" v-if="water.IDpic != ''" style="position:absolute;right:0rem;top:0rem;font-size: 0.3125rem;border-radius: 50%;color:white;width:0.5rem;height: 0.5rem;text-align: center;line-height: 0.45rem;z-index: 3;background: rgba(0,0,0,0.5);">x</div>
               <div id="box2"  @click="(1)" class="imgUpload" v-if="water.IDpic == ''"></div>
-              <img id="IDCODEIMG" :src="httpurlrecognition + water.IDpic"  :onerror="errorlogo"  v-else>
+              <img id="IDCODEIMG" :src="httpurl + water.IDpic"  :onerror="errorlogo"  v-else>
             </div>
             <h5 style="font-size: 0.3125rem;text-align: center;width:4rem;"><span style="font-size: 0.3125rem;color:#ff803c;">*</span>正面</h5>
           </div>
@@ -284,6 +284,8 @@ export default {
                   water.Roadpic = getCarrAndCompanyInfo.roadTransLicense;
                   water.Drivepic = getCarrAndCompanyInfo.drivingLicence;
                   water.Travelpic = getCarrAndCompanyInfo.driverLicense;
+                  water.peopleNumber = getCarrAndCompanyInfo.idCardNum == null ? "123" :getCarrAndCompanyInfo.idCardNum ;
+                  water.creditCode = getCarrAndCompanyInfo.socialCreditCode == null ? "132" :getCarrAndCompanyInfo.socialCreditCode ;
                 }else{
                   _this.type = 2;
                   _this.httpurl = getCarrAndCompanyInfo.ftpUrl;
@@ -458,9 +460,13 @@ export default {
       if (bomb.hasClass("submit", "letgo")) {
         var water = _this.water;
         if(_this.$route.query.type == 1){
-          water = JSON.parse(localStorage.getItem("UPMESSA"));
+          if(localStorage.getItem("UPMESSA") !=  undefined){
+            water = JSON.parse(localStorage.getItem("UPMESSA"));
+          }
         }else if(_this.$route.query.type == 2){
-          water = JSON.parse(localStorage.getItem("DRIVERMESSA"));
+          if(localStorage.getItem("DRIVERMESSA") !=  undefined){
+            water = JSON.parse(localStorage.getItem("DRIVERMESSA"));
+          }
         }
         if (_this.type == "1") {
           if (_this.letterType == "1") {
@@ -468,10 +474,10 @@ export default {
               bomb.first("请输入姓名！");
               return false;
             }
-            if (water.IDpic == "") {
+            /*if (water.IDpic == "") {
               bomb.first("请上传身份证正面照！");
               return false;
-            }
+            }*/
             if (water.Drivepic == "") {
               bomb.first("请上传驾驶证！");
               return false;
@@ -485,10 +491,10 @@ export default {
               bomb.first("请输入统一社会信用代码！");
               return false;
             }
-            if (water.Licensepic == "" && _this.creator == '0') {
+           /* if (water.Licensepic == "" && _this.creator == '0') {
               bomb.first("请上传营业执照！");
               return false;
-            }
+            }*/
             if (water.Roadpic == "" && _this.creator == '0') {
               bomb.first("请上传道路运输许可证！");
               return false;
@@ -497,10 +503,10 @@ export default {
               bomb.first("请输入姓名！");
               return false;
             }
-            if (water.IDpic == "") {
+           /* if (water.IDpic == "") {
               bomb.first("请上传身份证正面照！");
               return false;
-            }
+            }*/
           }
         }else if(_this.type == 2){
           if(water.nvitationodeIC.length < 4){
@@ -509,10 +515,6 @@ export default {
           }
           if (water.name == "") {
             bomb.first("请输入姓名！");
-            return false;
-          }
-          if(water.peopleNumber == ""){
-            bomb.first("请输入身份证号码！");
             return false;
           }
           if (water.IDpic == "") {
@@ -536,6 +538,10 @@ export default {
           bomb.first("请输入正确的邀请码");
           return false;
         }
+        if(water.peopleNumber == ""){
+          bomb.first("请输入身份证号码！");
+          return false;
+        }
         if(water.peopleNumber != "" && water.peopleNumber != null && !androidIos.idCardCheck(water.peopleNumber )){
           bomb.first("身份证号码格式不对");
           return false;
@@ -549,7 +555,7 @@ export default {
         }
         if (
           water.name != "" &&
-          (water.name.length < 2 || !/^[\u4e00-\u9fa5]+$/.test(water.name))
+          (water.name.length < 2 || !/^[\a-z\A-Z\u4e00-\u9fa5]+$/.test(water.name))
         ) {
           bomb.first("请输入正确的姓名");
           return false;
@@ -559,14 +565,16 @@ export default {
           bank :  _this.type == 1 && _this.letterType == 1 ? undefined : water.bank,
           bankAccount :  _this.type == 1 && _this.letterType == 1 ? undefined  : water.bankNumber,
           userName : water.name,
-          idCardPos :water.IDpic,
-          businessLicense : _this.type == 1 && _this.letterType == 1 ? undefined : water.Licensepic,
+          idCardPos :"/image/Temp//15001962931YS-20180822103887859.jpg",
+          socialCreditCode:water.creditCode,
+          businessLicense : _this.type == 1 && _this.letterType == 1 ? undefined : "/image/Temp//15001962931YS-20180822103887859.jpg",
           roadTransLicense : _this.type == 1 && _this.letterType == 1 ? undefined : $("#box1 .h5u_options_hiddenP").text(),
           driverLicense : !(this.type == 1 && _this.letterType == 1) ? undefined:$("#box4 .h5u_options_hiddenP").text(),
           drivingLicence :  !( _this.type == 1 && _this.letterType == 1) ? undefined : $("#box3 .h5u_options_hiddenP").text(),
           type : _this.type == 1 && _this.letterType == 1? 3 : _this.type == 1 && _this.letterType == 2 ? 2:1,
           companyStatus: _this.type == 1 && _this.letterType == 1 ? undefined : _this.companyType,
           isYourSelf:_this.creator == 0 ? 1 : 0 ,
+          idCardNum:water.peopleNumber,
           source :sessionStorage.getItem("source"),
           userCode:sessionStorage.getItem("token")
         };
@@ -575,7 +583,7 @@ export default {
           driverName:water.name,
           idCardNum:water.peopleNumber,
           driverLic:$("#box3 .h5u_options_hiddenP").text(),
-          idCardPos:water.IDpic,
+          idCardPos:"/image/Temp//15001962931YS-20180822103887859.jpg",
           source :sessionStorage.getItem("source"),
           userCode:sessionStorage.getItem("token")
         }

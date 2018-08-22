@@ -9,7 +9,8 @@ var androidIos = {
       var http =  location.href;
       if(http.indexOf("/uploadData/uploadDataT") != -1){
        var message = sessionStorage.getItem("source") == "2" ? JSON.parse(localStorage.getItem("UPMESSA")) :  JSON.parse(localStorage.getItem("DRIVERMESSA"));
-       if(message != null && (message.Drivepic != "" || message.IDpic != "" || message.Licensepic != "" || message.Roadpic != "" || message.Travelpic != "" || message.bank != "" || message.bankNumber != "" || message.company != "" || message.name != "" || (message.nvitationodeIC != null &&  message.nvitationodeIC != "" )|| message.peopleNumber != "" )){
+       var type = androidIos.GetQueryString("type");
+       if(type != null && message != null && (message.Drivepic != "" || message.IDpic != "" || message.Licensepic != "" || message.Roadpic != "" || message.Travelpic != "" || message.bank != "" || message.bankNumber != "" || message.company != "" || message.name != "" || (message.nvitationodeIC != null &&  message.nvitationodeIC != "" )|| message.peopleNumber != "" )){
          androidIos.first("信息尚未上传，需要保存吗？");
          $(".tanBox-close").unbind('click').click(function(){
            $(".tanBox-bigBox").remove();
@@ -68,6 +69,7 @@ var androidIos = {
       return  bignumber/len;
   },
   ajaxHttp: function () {
+   // var http = 'http://10.10.10.187:8085';
     //var http = 'http://10.10.10.206:8085';
     var http = 'http://222.73.159.76:8085';
     return http;

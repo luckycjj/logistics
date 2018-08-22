@@ -281,7 +281,8 @@
       chooseLine:function (item) {
         var _this = this;
         var type = _this.$route.query.type;
-        if(!_this.manage && type != undefined){
+        var newOrder = sessionStorage.getItem("newOrder");
+        if(!_this.manage && type != undefined && newOrder != undefined){
           var json = {
             name:item.contact,
             phone:item.mobile,
