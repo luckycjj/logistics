@@ -8,7 +8,7 @@
     <div id="mescroll" class="mescroll">
       <ul id="dataList" class="data-list">
         <li v-for="item in pdlist">
-          <div class="top" v-if="type != '10000'">
+          <div class="top" v-if="type != '10000' &&  orderSource == 1">
             <div style="width:100%;position: relative;top:0;left:0;">
               <span v-html="item.orderTypeName"></span>
               <img src="../../images/order2.png" style="height: 1.64rem;">
@@ -28,19 +28,19 @@
               </li>
             </ul>
           </div>
-          <div id="evaluate" v-if="type == '1001'">
+          <div id="evaluate" v-if="type == '1001' && orderSource == 1">
             <span>评价</span>
             <div id="star_gradeS" class="star_grade"></div>
             <span style="font-size: 0.4rem">{{item.evaluate.grade}}分</span>
             <!--<img src="../../images/lookMore.png" @click="lookScore()">-->
             <div class="clearBoth"></div>
           </div>
-          <div style="width:94%;background: white;height:3rem;box-shadow: 0 0.1rem 10px #d8d8d8;overflow:hidden;position: relative;margin:0.4rem auto 0 auto;border-top-left-radius: 0.2rem;border-top-right-radius: 0.2rem;"  v-if="type == '20' || type == '40' ">
+          <div style="width:94%;background: white;height:3rem;box-shadow: 0 0.1rem 10px #d8d8d8;overflow:hidden;position: relative;margin:0.4rem auto 0 auto;border-top-left-radius: 0.2rem;border-top-right-radius: 0.2rem;"  v-if="(type == '20' || type == '40')  && orderSource == 1 ">
             <router-view/>
             <div style="width:100%;height:3rem;position: absolute;top:0;left:0;background: transparent;z-index:180;border-top-left-radius: 0.2rem;border-top-right-radius: 0.2rem;" @click="mapSClick()">
             </div>
           </div>
-          <div id="carPeopleMessage"  v-if=" item.carPeople.yes  && ( type == '20' || type == '40') " :class="type != '20' && type != '40' ? 'carPeopleMessageTitle' : '' ">
+          <div id="carPeopleMessage"  v-if=" item.carPeople.yes  && ( type == '20' || type == '40')  && orderSource == 1 " :class="type != '20' && type != '40' ? 'carPeopleMessageTitle' : '' ">
             <div class="imgBoxOverFllow">
               <img :src="item.carPeople.logo" :onerror="errorlogo2" class="peopleImg">
             </div>
@@ -56,9 +56,9 @@
           </div>
           <div class="message">
             <div class="goodsmessage">
-              <p :data-start="item.pickMessage.address" :data-end="item.endMessage.address" class="startEnd"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.startAddress}}</span><img style="float: left;margin:0.3rem 0.3rem;width:0.41rem;" src="../../images/addressImg.png"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.endAddress}}</span><span  v-if="type == '20' || type == '40' " class="distance">{{item.goodsmessage.distance}}km</span><div class="clearBoth"></div></p>
-              <h1>{{item.goodsmessage.tranType}}</h1>
-              <h4>{{item.goodsmessage.money}}元</h4>
+              <p  v-if="orderSource == 1" :data-start="item.pickMessage.address" :data-end="item.endMessage.address" class="startEnd"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.startAddress}}</span><img style="float: left;margin:0.3rem 0.3rem;width:0.41rem;" src="../../images/addressImg.png"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.endAddress}}</span><span  v-if="type == '20' || type == '40' " class="distance">{{item.goodsmessage.distance}}km</span><div class="clearBoth"></div></p>
+              <h1 v-if="orderSource == 1">{{item.goodsmessage.tranType}}</h1>
+              <h4 v-if="orderSource == 1">{{item.goodsmessage.money}}元</h4>
               <div class="clearBoth"></div>
               <div v-for="itemS in item.goodsmessage.productList ">
                 <h2>{{itemS.goods}}</h2>
@@ -66,9 +66,9 @@
                 <div class="clearBoth"></div>
               </div>
               <div class="clearBoth"></div>
-              <h5>{{item.goodsmessage.startTime}} - {{item.goodsmessage.endTime}}</h5>
+              <h5 v-if="orderSource == 1">{{item.goodsmessage.startTime}} - {{item.goodsmessage.endTime}}</h5>
             </div>
-            <div class="peoplemessage">
+            <div class="peoplemessage" v-if="orderSource == 1">
               <p><span :class="pick?'colorFull':''" @click="pickMessage('true')">发货方</span><span :class="!pick?'colorFull':''" @click="pickMessage('false')">收货方</span></p>
               <div style="background: white;box-shadow: 0 0.1rem 10px #d8d8d8;position: relative;margin:0.1rem auto 0 auto;border-radius: 0.2rem;">
                 <div class="messageBox" v-if="pick">
@@ -92,7 +92,7 @@
               </div>
             </div>
           </div>
-          <div class="insurance">
+          <div class="insurance" v-if="orderSource == 1">
             <!--<p>保险</p>
             <h1>{{item.insurance.name}}<span>¥ {{item.insurance.price}}/次</span></h1>
             <div class="clearBoth"></div>-->
@@ -120,7 +120,7 @@
             </div>
             <div class="clearBoth"></div>
           </div>
-          <div class="number">
+          <div class="number" v-if="orderSource == 1">
             订单编号：{{item.number}}<br>
             下单时间：{{item.time}}
           </div>
@@ -139,7 +139,7 @@
               <button @click="shenhe()">确认</button>
               <div class="clearBoth"></div>
             </div>
-            <div class="go" v-else-if="(type == '60' || type == '70') && orderSource == 3">
+            <div class="go" v-else-if="orderSource == 3">
               <button  class="zhifu" @click="scoreYes(3)">签收</button>
               <div class="clearBoth"></div>
             </div>
@@ -427,7 +427,7 @@
               if(orderConfirm.success == "1"){
                 _this.$cjj("发布成功");
                 setTimeout(function () {
-                  bridge.gobackFrom(_this);
+                  androidIos.gobackFrom(_this);
                 },500)
               }else{
                 androidIos.second(orderConfirm.message);
@@ -484,9 +484,8 @@
             async:false,
             success: function (signInv) {
               if(signInv.success == "1"){
-                _this.$cjj("签收成功");
-                _this.mescroll.resetUpScroll();
                 succ = 1;
+                _this.$cjj("签收成功");
               }else{
                 succ = 0;
                 androidIos.second(signInv.message);
@@ -506,23 +505,23 @@
           }
         }
         _this.$nextTick(function () {
-          _this.scoreBox = true;
-          _this.scorereason = "";
-          for(var i =0 ;i<_this.scoreList.length;i++){
-            $("#star_grade00"+i).html("");
-            $("#star_grade00"+i).markingSystem({
-              num: 5,
-              havePoint: false,
-              haveGrade: false,
-              backgroundImageInitial: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAOVBMVEUAAAD9dyr9VDr8SD/9ZjP9YDb9cS78TT39bDH9aTH9XDf9dSv9YzT9XDf9bi/9cC79aTL9cy78QkJ+hTheAAAAEnRSTlMAH/T+wNxw+5yv5zzP5odurld/oABPAAAA1klEQVQ4y62RS5LDIAxE0Q/J2Elm+v6HnUwIKRsKVtEGmu56KqH07Qr3WPkkgNAioDCDLgG/+wqh4JQKdAHIKeU5YoP/H4xtEnC8Rszwgf0IvTGawQDfNB6t0yGo1f4oO2rJUYkQNr3nMzPf1ViA/ArYbCpGri1t5nO72MSnz9Vo4Tcx+oNcP5SzLgNyu+5Qh30ciLMMHF2Acf1JcBcQXDWkmwpeTzN6r57SiCQVQJRay36ITZ6uCuRnHEMR4U+bKsYjoB1BANur2A2QjkCl2S1SKH2p/gDnoAlDysm60AAAAABJRU5ErkJggg==',
-              backgroundImageOver: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAUCAMAAAC+oj0CAAAAYFBMVEUAAAD8QkL9UVH9eHj9VFT/wsL/zc3/19f/2dn/4eH/7+///f39R0f9TU39Tk79ZWX9YmL9a2v+lJT+oaH+paX+sLD+urr/1NT/3d3/5+f//v7+goL+g4P8QkL+u7v9bGzZkjZpAAAAHXRSTlMA7d+q105ANDEoFQPs5ePGxbuIeXNlWjgsHgOioFw9/yIAAACSSURBVBjTbdDZDoQgDEDRsggC7rvOVP//LycQU3TgvjQ5adKkEJsmyLQytmZYIIpUNUNkOrecWS+ZZ1YSuF3Ng5AYkmKY1e4ArMQkacHWKdcWQDf/2uhwjb+V33c3/tIN7gx/qAGqjdxGdVXkyhEbfGSIiycXxKN/R69U7x8zEn8Qu7BUdIhf4uU6Dwgd57X4+QMzcxYilqvWAwAAAABJRU5ErkJggg==',
-              unit: '星',
-              grade:0,
-              height: 0.6* $("html").css("font-size").replace("px", ""),
-              width: 0.6* $("html").css("font-size").replace("px", ""),
-            });
-            $("#star_grade00"+i+" .set_image_top").css("z-index",10);
-          }
+            _this.scoreBox = true;
+            _this.scorereason = "";
+            for(var i =0 ;i<_this.scoreList.length;i++){
+              $("#star_grade00"+i).html("");
+              $("#star_grade00"+i).markingSystem({
+                num: 5,
+                havePoint: false,
+                haveGrade: false,
+                backgroundImageInitial: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAOVBMVEUAAAD9dyr9VDr8SD/9ZjP9YDb9cS78TT39bDH9aTH9XDf9dSv9YzT9XDf9bi/9cC79aTL9cy78QkJ+hTheAAAAEnRSTlMAH/T+wNxw+5yv5zzP5odurld/oABPAAAA1klEQVQ4y62RS5LDIAxE0Q/J2Elm+v6HnUwIKRsKVtEGmu56KqH07Qr3WPkkgNAioDCDLgG/+wqh4JQKdAHIKeU5YoP/H4xtEnC8Rszwgf0IvTGawQDfNB6t0yGo1f4oO2rJUYkQNr3nMzPf1ViA/ArYbCpGri1t5nO72MSnz9Vo4Tcx+oNcP5SzLgNyu+5Qh30ciLMMHF2Acf1JcBcQXDWkmwpeTzN6r57SiCQVQJRay36ITZ6uCuRnHEMR4U+bKsYjoB1BANur2A2QjkCl2S1SKH2p/gDnoAlDysm60AAAAABJRU5ErkJggg==',
+                backgroundImageOver: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAUCAMAAAC+oj0CAAAAYFBMVEUAAAD8QkL9UVH9eHj9VFT/wsL/zc3/19f/2dn/4eH/7+///f39R0f9TU39Tk79ZWX9YmL9a2v+lJT+oaH+paX+sLD+urr/1NT/3d3/5+f//v7+goL+g4P8QkL+u7v9bGzZkjZpAAAAHXRSTlMA7d+q105ANDEoFQPs5ePGxbuIeXNlWjgsHgOioFw9/yIAAACSSURBVBjTbdDZDoQgDEDRsggC7rvOVP//LycQU3TgvjQ5adKkEJsmyLQytmZYIIpUNUNkOrecWS+ZZ1YSuF3Ng5AYkmKY1e4ArMQkacHWKdcWQDf/2uhwjb+V33c3/tIN7gx/qAGqjdxGdVXkyhEbfGSIiycXxKN/R69U7x8zEn8Qu7BUdIhf4uU6Dwgd57X4+QMzcxYilqvWAwAAAABJRU5ErkJggg==',
+                unit: '星',
+                grade:0,
+                height: 0.6* $("html").css("font-size").replace("px", ""),
+                width: 0.6* $("html").css("font-size").replace("px", ""),
+              });
+              $("#star_grade00"+i+" .set_image_top").css("z-index",10);
+            }
         })
       },
       scoreClosed:function(){
@@ -627,7 +626,7 @@
                 bomb.addClass("gogogo","gogogo");
                 if(clientAppraisal.success == "1"){
                   _this.scoreBox = false;
-                  _this.mescroll.resetUpScroll();
+                  androidIos.gobackFrom(_this);
                 }else{
                   androidIos.second(clientAppraisal.message);
                   _this.mescroll.resetUpScroll();
@@ -701,136 +700,241 @@
   function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
     //延时一秒,模拟联网
     setTimeout(function () {
-      $.ajax({
-        type: "POST",
-        url: androidIos.ajaxHttp()+"/order/invoiceDetail",
-        data:JSON.stringify({pk:thisThat.$route.query.pk,userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")}),
-        dataType: "json",
-        contentType: "application/json;charset=utf-8",
-        timeout: 10000,
-        success: function (invoiceDetail) {
-          thisThat.carloading = false;
-          if(invoiceDetail.success == "" || invoiceDetail.success == "1"){
-            var list=[];
-            for(var i =0;i<invoiceDetail.invPackDao.length;i++){
-              var weight = invoiceDetail.invPackDao[i].weigthUnit==3?invoiceDetail.invPackDao[i].weight*1000:invoiceDetail.invPackDao[i].weight*1;
-              var listJson = {
-                goods:invoiceDetail.invPackDao[i].goodsName+"-"+invoiceDetail.invPackDao[i].goodsTypeName,
-                number:invoiceDetail.invPackDao[i].num,
-                weight : weight/1000 - 1 <0 ? weight + "千克" : weight/1000 + "吨",
-                volume:invoiceDetail.invPackDao[i].volume*1 - 1 < 0 ? invoiceDetail.invPackDao[i].volume*1000 + "升" : invoiceDetail.invPackDao[i].volume*1 + "立方米",
+      if(thisThat.$route.query.type == 1 || thisThat.$route.query.type == 2){
+        $.ajax({
+          type: "POST",
+          url: androidIos.ajaxHttp()+"/order/invoiceDetail",
+          data:JSON.stringify({pk:thisThat.$route.query.pk,userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")}),
+          dataType: "json",
+          contentType: "application/json;charset=utf-8",
+          timeout: 10000,
+          success: function (invoiceDetail) {
+            thisThat.carloading = false;
+            if(invoiceDetail.success == "" || invoiceDetail.success == "1"){
+              var list=[];
+              for(var i =0;i<invoiceDetail.invPackDao.length;i++){
+                var weight = invoiceDetail.invPackDao[i].weigthUnit==3?invoiceDetail.invPackDao[i].weight*1000:invoiceDetail.invPackDao[i].weight*1;
+                var listJson = {
+                  goods:invoiceDetail.invPackDao[i].goodsName+"-"+invoiceDetail.invPackDao[i].goodsTypeName,
+                  number:invoiceDetail.invPackDao[i].num,
+                  weight : weight/1000 - 1 <0 ? weight + "千克" : weight/1000 + "吨",
+                  volume:invoiceDetail.invPackDao[i].volume*1 - 1 < 0 ? invoiceDetail.invPackDao[i].volume*1000 + "升" : invoiceDetail.invPackDao[i].volume*1 + "立方米",
+                }
+                list.push(listJson);
               }
-              list.push(listJson);
-            }
-            var tracking=[];
-            for(var i =0 ;i<invoiceDetail.tracking.length;i++){
-              var trackingJson = {
-                type:invoiceDetail.tracking[i].tackingStatus,
-                time:invoiceDetail.tracking[i].tackingTime,
+              var tracking=[];
+              for(var i =0 ;i<invoiceDetail.tracking.length;i++){
+                var trackingJson = {
+                  type:invoiceDetail.tracking[i].tackingStatus,
+                  time:invoiceDetail.tracking[i].tackingTime,
+                }
+                tracking.push(trackingJson);
               }
-              tracking.push(trackingJson);
-            }
-            // 新建=0 已确认=10 司机发车=20 部分提货=30 已提货=40 部分到货=50 已到货=60 部分签收=70 已签收=80 已回单=90 关闭=100
-            // thisThat.$route.query.type 1发货方2付款3收货方
-            var trackingStatusValue = "";
-            if(thisThat.$route.query.type == "1"  || thisThat.$route.query.type == "3"){
-              if(invoiceDetail.trackingStatusValue == "80" && invoiceDetail.ifAppraise == "N"){
-                trackingStatusValue = 1000;
-              }else if(invoiceDetail.trackingStatusValue == "80" && invoiceDetail.ifAppraise == "Y"){
-                trackingStatusValue = 1001;
-              }else{
-                trackingStatusValue = invoiceDetail.trackingStatusValue;
+              // 新建=0 已确认=10 司机发车=20 部分提货=30 已提货=40 部分到货=50 已到货=60 部分签收=70 已签收=80 已回单=90 关闭=100
+              // thisThat.$route.query.type 1发货方2付款3收货方
+              var trackingStatusValue = "";
+              if(thisThat.$route.query.type == "1"  || thisThat.$route.query.type == "3"){
+                if(invoiceDetail.trackingStatusValue == "80" && invoiceDetail.ifAppraise == "N"){
+                  trackingStatusValue = 1000;
+                }else if(invoiceDetail.trackingStatusValue == "80" && invoiceDetail.ifAppraise == "Y"){
+                  trackingStatusValue = 1001;
+                }else{
+                  trackingStatusValue = invoiceDetail.trackingStatusValue;
+                }
+              }else if(thisThat.$route.query.type == "2"){
+                if(invoiceDetail.payStatus != "30"){
+                  trackingStatusValue = 10000;
+                }
               }
-            }else if(thisThat.$route.query.type == "2"){
-              if(invoiceDetail.payStatus != "30"){
-                trackingStatusValue = 10000;
+              sessionStorage.setItem("dataStart",invoiceDetail.delivery.addressLatAndLon);
+              sessionStorage.setItem("dataEnd",invoiceDetail.arrival.addressLatAndLon);
+              thisThat.payStatus = invoiceDetail.payStatus;
+              var pdlist = [{
+                orderType:trackingStatusValue,
+                orderTypeName:invoiceDetail.trackingStatus,
+                logistics:tracking,
+                evaluate:{
+                  grade:invoiceDetail.appraiseScore==""?0:invoiceDetail.appraiseScore
+                },
+                goodsmessage:{
+                  startAddress:invoiceDetail.delivery!=null?(invoiceDetail.delivery.province+invoiceDetail.delivery.area):"",
+                  endAddress:invoiceDetail.arrival!=null?(invoiceDetail.arrival.province+invoiceDetail.arrival.area):"",
+                  distance:"0",
+                  tranType:invoiceDetail.transType + "(" + invoiceDetail.carLength + "米)(" + invoiceDetail.carModel + ")",
+                  productList:list,
+                  money:invoiceDetail.price*1,
+                  startTime:invoiceDetail.deliDate,
+                  endTime:invoiceDetail.arriDate
+                },
+                pickMessage:{
+                  name:invoiceDetail.delivery!=null?invoiceDetail.delivery.contact:"",
+                  tel:invoiceDetail.delivery!=null?invoiceDetail.delivery.mobile:"",
+                  company:invoiceDetail.delivery!=null?invoiceDetail.delivery.addrName:"",
+                  address:invoiceDetail.delivery!=null?invoiceDetail.delivery.province+invoiceDetail.delivery.area+invoiceDetail.delivery.detailAddr:"",
+                },
+                endMessage:{
+                  name:invoiceDetail.arrival!=null?invoiceDetail.arrival.contact:"",
+                  tel:invoiceDetail.arrival!=null?invoiceDetail.arrival.mobile:"",
+                  company:invoiceDetail.arrival!=null?invoiceDetail.arrival.addrName:"",
+                  address:invoiceDetail.arrival!=null?invoiceDetail.arrival.province+invoiceDetail.arrival.area+invoiceDetail.arrival.detailAddr:"",
+                },
+                insurance:{
+                  name:"",
+                  price:"200"
+                },
+                pickPay:{
+                  people:"发货方",
+                  type:invoiceDetail.balatype == null?"":invoiceDetail.balatype,
+                  remark:invoiceDetail.remark
+                },
+                carPeople:{
+                  logo:"data:image/png;base64,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",
+                  year:invoiceDetail.driverDto!=null&&invoiceDetail.driverDto.length != 0?(invoiceDetail.driverDto[0].driverAge*1 < 1 ?"小于一年":invoiceDetail.driverDto[0].driverAge*1+'年'):"",
+                  grade:invoiceDetail.driverDto!=null&&invoiceDetail.driverDto.length != 0?invoiceDetail.driverDto[0].score*1:"",
+                  name:invoiceDetail.driverDto!=null&&invoiceDetail.driverDto.length != 0?invoiceDetail.driverDto[0].driverName:"",
+                  tel:invoiceDetail.driverDto!=null&&invoiceDetail.driverDto.length != 0?invoiceDetail.driverDto[0].mobile:"",
+                  yes:invoiceDetail.driverDto!=null&&invoiceDetail.driverDto.length != 0?true:false,
+                },
+                carrier:{
+                  logo:invoiceDetail.carrierDto!=null?invoiceDetail.carrierDto.carrierImg:"",
+                  company:invoiceDetail.carrierDto!=null?invoiceDetail.carrierDto.carrierName:"",
+                  tranType: invoiceDetail.carrierDto!=null ? (invoiceDetail.carrierDto.tranType == "" ||  invoiceDetail.carrierDto.tranType == null ? "陆运" : invoiceDetail.carrierDto.tranType):"",
+                  year:invoiceDetail.carrierDto!=null?((((new Date()).getTime()-(new Date(invoiceDetail.carrierDto.createDate.replace('-','/').replace('-','/'))).getTime())/1000/60/60/24/365 -0.5)<0?"不到半年":androidIos.fixed(((new Date()).getTime()-(new Date(invoiceDetail.carrierDto.createDate.replace('-','/').replace('-','/'))).getTime())/1000/60/60/24/365 ,1)+"年"):"",
+                  grade:invoiceDetail.carrierDto!=null?(invoiceDetail.carrierDto.score == null || invoiceDetail.carrierDto.score == "" ? 0:invoiceDetail.carrierDto.score*1):"0",
+                  phone:invoiceDetail.carrierDto!=null?invoiceDetail.carrierDto.mobile:"",
+                  pkCarrier:invoiceDetail.carrierDto!=null?invoiceDetail.carrierDto.pkCarrier:"",
+                },
+                tranNumber:"123321334343",
+                number:invoiceDetail.orderNo,
+                time:invoiceDetail.createTime
+              }]
+              if(invoiceDetail.driverDto != null && invoiceDetail.driverDto.length != 0){
+                sessionStorage.setItem("driverPk",invoiceDetail.driverDto[0].pkDriver);
               }
+              var data=pdlist;
+              var listData=data;//模拟分页数据
+              successCallback&&successCallback(listData);//成功回调
+            }else{
+              androidIos.second(invoiceDetail.message);
+              successCallback&&successCallback(thisThat.pdlist);//成功回调
             }
-            sessionStorage.setItem("dataStart",invoiceDetail.delivery.addressLatAndLon);
-            sessionStorage.setItem("dataEnd",invoiceDetail.arrival.addressLatAndLon);
-            thisThat.payStatus = invoiceDetail.payStatus;
-            var pdlist = [{
-              orderType:trackingStatusValue,
-              orderTypeName:invoiceDetail.trackingStatus,
-              logistics:tracking,
-              evaluate:{
-                grade:invoiceDetail.appraiseScore==""?0:invoiceDetail.appraiseScore
-              },
-              goodsmessage:{
-                startAddress:invoiceDetail.delivery!=null?(invoiceDetail.delivery.province+invoiceDetail.delivery.area):"",
-                endAddress:invoiceDetail.arrival!=null?(invoiceDetail.arrival.province+invoiceDetail.arrival.area):"",
-                distance:"0",
-                tranType:invoiceDetail.transType + "(" + invoiceDetail.carLength + "米)(" + invoiceDetail.carModel + ")",
-                productList:list,
-                money:invoiceDetail.price*1,
-                startTime:invoiceDetail.deliDate,
-                endTime:invoiceDetail.arriDate
-              },
-              pickMessage:{
-                name:invoiceDetail.delivery!=null?invoiceDetail.delivery.contact:"",
-                tel:invoiceDetail.delivery!=null?invoiceDetail.delivery.mobile:"",
-                company:invoiceDetail.delivery!=null?invoiceDetail.delivery.addrName:"",
-                address:invoiceDetail.delivery!=null?invoiceDetail.delivery.province+invoiceDetail.delivery.area+invoiceDetail.delivery.detailAddr:"",
-              },
-              endMessage:{
-                name:invoiceDetail.arrival!=null?invoiceDetail.arrival.contact:"",
-                tel:invoiceDetail.arrival!=null?invoiceDetail.arrival.mobile:"",
-                company:invoiceDetail.arrival!=null?invoiceDetail.arrival.addrName:"",
-                address:invoiceDetail.arrival!=null?invoiceDetail.arrival.province+invoiceDetail.arrival.area+invoiceDetail.arrival.detailAddr:"",
-              },
-              insurance:{
-                name:"",
-                price:"200"
-              },
-              pickPay:{
-                people:"发货方",
-                type:invoiceDetail.balatype == null?"":invoiceDetail.balatype,
-                remark:invoiceDetail.remark
-              },
-              carPeople:{
-                logo:"data:image/png;base64,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",
-                year:invoiceDetail.driverDto!=null&&invoiceDetail.driverDto.length != 0?(invoiceDetail.driverDto[0].driverAge*1 < 1 ?"小于一年":invoiceDetail.driverDto[0].driverAge*1+'年'):"",
-                grade:invoiceDetail.driverDto!=null&&invoiceDetail.driverDto.length != 0?invoiceDetail.driverDto[0].score*1:"",
-                name:invoiceDetail.driverDto!=null&&invoiceDetail.driverDto.length != 0?invoiceDetail.driverDto[0].driverName:"",
-                tel:invoiceDetail.driverDto!=null&&invoiceDetail.driverDto.length != 0?invoiceDetail.driverDto[0].mobile:"",
-                yes:invoiceDetail.driverDto!=null&&invoiceDetail.driverDto.length != 0?true:false,
-              },
-              carrier:{
-                logo:invoiceDetail.carrierDto!=null?invoiceDetail.carrierDto.carrierImg:"",
-                company:invoiceDetail.carrierDto!=null?invoiceDetail.carrierDto.carrierName:"",
-                tranType: invoiceDetail.carrierDto!=null ? (invoiceDetail.carrierDto.tranType == "" ||  invoiceDetail.carrierDto.tranType == null ? "陆运" : invoiceDetail.carrierDto.tranType):"",
-                year:invoiceDetail.carrierDto!=null?((((new Date()).getTime()-(new Date(invoiceDetail.carrierDto.createDate.replace('-','/').replace('-','/'))).getTime())/1000/60/60/24/365 -0.5)<0?"不到半年":androidIos.fixed(((new Date()).getTime()-(new Date(invoiceDetail.carrierDto.createDate.replace('-','/').replace('-','/'))).getTime())/1000/60/60/24/365 ,1)+"年"):"",
-                grade:invoiceDetail.carrierDto!=null?(invoiceDetail.carrierDto.score == null || invoiceDetail.carrierDto.score == "" ? 0:invoiceDetail.carrierDto.score*1):"0",
-                phone:invoiceDetail.carrierDto!=null?invoiceDetail.carrierDto.mobile:"",
-                pkCarrier:invoiceDetail.carrierDto!=null?invoiceDetail.carrierDto.pkCarrier:"",
-              },
-              tranNumber:"123321334343",
-              number:invoiceDetail.orderNo,
-              time:invoiceDetail.createTime
-            }]
-            if(invoiceDetail.driverDto != null && invoiceDetail.driverDto.length != 0){
-               sessionStorage.setItem("driverPk",invoiceDetail.driverDto[0].pkDriver);
-            }
-            var data=pdlist;
-            var listData=data;//模拟分页数据
-            successCallback&&successCallback(listData);//成功回调
-          }else{
-            androidIos.second(invoiceDetail.message);
-            successCallback&&successCallback(thisThat.pdlist);//成功回调
-          }
 
-        },
-        complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-          thisThat.carloading = false;
-          if(status=='timeout'){//超时,status还有success,error等值的情况
-            successCallback&&successCallback(thisThat.pdlist);
-            androidIos.second("网络请求超时");
-          }else if(status=='error'){
-            successCallback&&successCallback(thisThat.pdlist);
-            androidIos.errorwife();
+          },
+          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+            thisThat.carloading = false;
+            if(status=='timeout'){//超时,status还有success,error等值的情况
+              successCallback&&successCallback(thisThat.pdlist);
+              androidIos.second("网络请求超时");
+            }else if(status=='error'){
+              successCallback&&successCallback(thisThat.pdlist);
+              androidIos.errorwife();
+            }
           }
-        }
-      })
+        })
+      }else{
+        $.ajax({
+          type: "POST",
+          url: androidIos.ajaxHttp()+"/order/getGoodsDetail",
+          data:JSON.stringify({pk:thisThat.$route.query.pk,userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")}),
+          dataType: "json",
+          contentType: "application/json;charset=utf-8",
+          timeout: 30000,
+          success: function (invoiceDetail) {
+            thisThat.carloading = false;
+            if(invoiceDetail.success == "" || invoiceDetail.success == "1"){
+              var list=[];
+              for(var i =0;i<invoiceDetail.list.length;i++){
+                var weight = invoiceDetail.list[i].weight;
+                var listJson = {
+                  goods:invoiceDetail.list[i].goodsCode+"-"+invoiceDetail.list[i].goodsName,
+                  number:invoiceDetail.list[i].num,
+                  weight : weight/1000 - 1 <0 ? weight + "千克" : weight/1000 + "吨",
+                  volume:invoiceDetail.list[i].volume*1 - 1 < 0 ? invoiceDetail.list[i].volume*1000 + "升" : invoiceDetail.list[i].volume*1 + "立方米",
+                }
+                list.push(listJson);
+              }
+              var tracking=[];
+              var pdlist = [{
+                orderType:"",
+                orderTypeName:"",
+                logistics:"",
+                evaluate:{
+                  grade:"",
+                },
+                goodsmessage:{
+                  startAddress:"",
+                  endAddress:"",
+                  distance:"0",
+                  tranType:"",
+                  productList:list,
+                  money:"",
+                  startTime:"",
+                  endTime:""
+                },
+                pickMessage:{
+                  name:"",
+                  tel:"",
+                  company:"",
+                  address:"",
+                },
+                endMessage:{
+                  name:"",
+                  tel:"",
+                  company:"",
+                  address:"",
+                },
+                insurance:{
+                  name:"",
+                  price:"",
+                },
+                pickPay:{
+                  people:"",
+                  type:"",
+                  remark:"",
+                },
+                carPeople:{
+                  logo:"",
+                  year:"",
+                  grade:"",
+                  name:"",
+                  tel:"",
+                  yes:"",
+                },
+                carrier:{
+                  logo:"",
+                  company:"",
+                  tranType: "",
+                  year:"",
+                  grade:"",
+                  phone:"",
+                  pkCarrier:"",
+                },
+                tranNumber:"",
+                number:"",
+                time:"",
+              }]
+              var data=pdlist;
+              var listData=data;//模拟分页数据
+              successCallback&&successCallback(listData);//成功回调
+            }else{
+              androidIos.second(invoiceDetail.message);
+              successCallback&&successCallback(thisThat.pdlist);//成功回调
+            }
+
+          },
+          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+            thisThat.carloading = false;
+            if(status=='timeout'){//超时,status还有success,error等值的情况
+              successCallback&&successCallback(thisThat.pdlist);
+              androidIos.second("网络请求超时");
+            }else if(status=='error'){
+              successCallback&&successCallback(thisThat.pdlist);
+              androidIos.errorwife();
+            }
+          }
+        })
+      }
+
     },500)
   }
 </script>

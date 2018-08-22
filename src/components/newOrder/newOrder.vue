@@ -410,6 +410,7 @@
                   for(var i =0;i<invoiceDetail.invPackDao.length;i++){
                     _this.both.initialWeight = _this.both.initialWeight*1 + invoiceDetail.invPackDao[i].weight/1000*1;
                     var listJson = {
+                      tranpk:invoiceDetail.invPackDao[i].tranpk == undefined ? 2 : invoiceDetail.invPackDao[i].tranpk,
                       pkInvPackB:invoiceDetail.invPackDao[i].pkInvPackB,
                       goodsType:invoiceDetail.invPackDao[i].goodsName+"-"+invoiceDetail.invPackDao[i].goodsTypeName,
                       goodstypenumber:invoiceDetail.invPackDao[i].goodsCode+"-"+invoiceDetail.invPackDao[i].goodsType,
@@ -1409,7 +1410,7 @@
         submitGo:function(){
             var _this = this;
             if(bomb.hasClass("submit","submit")){
-              if(_this.price*1 <= 0){
+              if(_this.price*1 <= 0 &&  _this.pk == ''){
                  bomb.first("请输入价格");
                  return false;
               }

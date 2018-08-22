@@ -215,30 +215,36 @@ import  {androidIos} from './app';
           var message = "";
           if(sessionStorage.getItem("source") == "2"){
             message = localStorage.getItem("UPMESSA") != null ? JSON.parse(localStorage.getItem("UPMESSA")) : {
-              Drivepic : "",
+              nvitationodeIC:"",
+              company: "",
+              tranType:"",
+              tranTypeNumber:"",
+              bank: "",
+              bankNumber: "",
+              creditCode:"",
+              name: "",
               IDpic: "",
               Licensepic: "",
               Roadpic: "",
               Travelpic: "",
-              bank: "",
-              bankNumber: "",
-              company: "",
-              name: "",
-              nvitationodeIC: "",
-              peopleNumber: ""};
+              Drivepic: "",
+              peopleNumber:""};
           }else if(sessionStorage.getItem("source") == "3"){
             message = localStorage.getItem("DRIVERMESSA") != null ? JSON.parse(localStorage.getItem("DRIVERMESSA")) : {
-              Drivepic : "",
+              nvitationodeIC:"",
+              company: "",
+              tranType:"",
+              tranTypeNumber:"",
+              bank: "",
+              bankNumber: "",
+              creditCode:"",
+              name: "",
               IDpic: "",
               Licensepic: "",
               Roadpic: "",
               Travelpic: "",
-              bank: "",
-              bankNumber: "",
-              company: "",
-              name: "",
-              nvitationodeIC: "",
-              peopleNumber: ""};
+              Drivepic: "",
+              peopleNumber:""};
           }
           if(parentsId == "box"){
             var idF = $("#box .cjjimgbox .h5u_options_hiddenP");

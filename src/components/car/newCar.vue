@@ -6,6 +6,11 @@
       <p id="Z03":class="message.carmodel=='请选择车辆类型'?'carnumber':''">{{message.carmodel}}</p>
       <div class="clearBoth"></div>
     </div>
+    <div class="box" style="margin-top: 0px;" v-show="message.carmodelNumber == '5de1912471af4c2d839a27f268cd8ca7' || message.carmodelNumber == '41efd612fc2e4067a1debc30a1c36383' || message.carmodelNumber == ''">
+      <span>运输类型</span>
+      <p id="Z04" :class="message.cartrantype=='请选择运输类型'?'carnumber':''">{{message.cartrantype}}</p>
+      <div class="clearBoth"></div>
+    </div>
     <div class="box" style="margin-top: 0px;" v-show="message.carmodelNumber == '5de1912471af4c2d839a27f268cd8ca7' || message.carmodelNumber == ''">
       <span>车&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型</span>
       <p id="Z00":class="message.type=='请选择车型'?'carnumber':''">{{message.type}}</p>
@@ -83,9 +88,11 @@
           type: '请选择车型',
           carlength:'请选择车长',
           carmodel:"请选择车辆类型",
+          cartrantype:"请选择运输类型",
           carmodelNumber:"",
           carCode:"",
           carlengthCode:"",
+          cartrantypeCode:"",
           carNumber:"请输入车牌号",
           plateName:"沪",
           weight:"",
@@ -178,6 +185,7 @@
           carchange.carmodel = carchange.carmodel == "" ? "请选择车辆类型" : carchange.carmodel;
           carchange.type = carchange.type == "" ? "请选择车型" : carchange.type;
           carchange.carlength = carchange.carlength == "" ? "请选择车长" : carchange.carlength;
+          carchange.cartrantype = carchange.cartrantype == "" ? "请选择运输类型" : carchange.cartrantype;
           _this.message = carchange;
           sessionStorage.removeItem("carchange");
         }
@@ -360,7 +368,7 @@
               androidIos.errorwife();
             }
           }
-        })
+        });
         $.ajax({
           type: "POST",
           url: androidIos.ajaxHttp()+"/driver/getDriverPage",
@@ -421,6 +429,58 @@
               androidIos.errorwife();
             }
           }
+        });
+        $.ajax({
+          type: "GET",
+          url: androidIos.ajaxHttp() + "/settings/getSysConfigList",
+          data: {
+            str: "trans_type",
+            userCode: sessionStorage.getItem("token"),
+            source: sessionStorage.getItem("source")
+          },
+          dataType: "json",
+          timeout: 30000,
+          success: function (getCarType) {
+            var list = [];
+            for(var i = 0; i<getCarType.length;i++){
+              var json = {
+                "code":getCarType[i].value,
+                "region":getCarType[i].displayName,
+              }
+              list.push(json)
+            }
+            var x = 0;
+            for(var i = 0;i<list.length;i++){
+              if(list[i].region == _this.message.type){
+                _this.message.carCode = list[i].code;
+                x = i;
+              }
+            }
+            var area = new LArea();
+            area.init({
+              'trigger': '#Z04',
+              'valueTo': '#Z04',
+              'keys': {
+                id: 'id',
+                name: 'name'
+              },
+              'type': 1,
+              'data': list
+            });
+            area.value = [x];
+            area.addPointer = function (name) {
+              name = JSON.parse(name);
+              _this.message.cartrantype =  name.firstVal;
+              _this.message.cartrantypeCode = name.firstCode;
+            }
+          },
+          complete: function (XMLHttpRequest, status) { //请求完成后最终执行参数
+            if (status == 'timeout') {//超时,status还有success,error等值的情况
+              androidIos.second("网络请求超时");
+            } else if (status == 'error') {
+              androidIos.errorwife();
+            }
+          }
         })
         $(document).unbind("touchstart").on("touchstart","#keyboardBox p",function () {
           $(this).css("background","#abb4bd");
@@ -474,6 +534,10 @@
             bomb.first("请选择车辆类型");
             return false;
           }
+          if(_this.message.carlength == "请选择运输类型" && (_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383")){
+            bomb.first("请选择车长");
+            return false;
+          }
           if(_this.message.type == "请选择车型" && _this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7"){
             bomb.first("请选择车型");
             return false;
@@ -520,6 +584,7 @@
             pkCar:_this.message.carpk,
             drivingLicense:_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "2ba6da2fd9cd4689965afe5abc8f9df4" ? _this.message.Travelpic : "",
             length :_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383" ? _this.message.carlengthCode : "",
+            tranType :_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383" ? _this.message.cartrantypeCode : "",
           }
           bomb.removeClass("ok","okgo");
           var messageNow = _this.message.carpk == "" ? "正在新增" : "正在修改";

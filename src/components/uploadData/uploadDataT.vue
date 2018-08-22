@@ -11,6 +11,10 @@
             <input v-else type="text" placeholder="请输入公司名称"  v-model="water.company" maxlength="20">
           </div>
           <div class="label" v-if="creator == 0 && companyType != 2 "  style="border-bottom: none; border-top: 0.03125rem solid #dcdcdc;">
+            <span><span style="font-size: 0.375rem;color:#ff803c;">*</span>运输类型</span>
+            <div @click="tranTypeLook()" :class="water.tranType == '' ? 'tranTypeSize' : ''" v-html="water.tranType == '' ? '请选择运输类别' : water.tranType" id="tranTypeBigBox"></div>
+          </div>
+          <div class="label" v-if="creator == 0 && companyType != 2 "  style="border-bottom: none; border-top: 0.03125rem solid #dcdcdc;">
             <span>开户行</span>
             <input type="text" placeholder="输入公司账户开户行" v-model="water.bank" maxlength="20">
           </div>
@@ -97,6 +101,22 @@
       </div>
     </div>
     <button id="submit" @click="submit()" class="letgo">提交审核</button>
+    <div id="tranTypeBox" v-if="tranTypeBox">
+      <div id="tranType">
+        <img src="../../images/closed.png" @click="tranTypeClosed()">
+        <p>运输类型</p>
+        <div class="tranTypeBox">
+          <div class="tranType" v-if="tranTypeList.length > 0">
+            <h6>运输类型</h6>
+            <ul>
+              <li  @click="choosetranType(index)" :class="item.choose ? 'chooseTrue' : '' " v-for="(item,index) in tranTypeList">{{item.displayName}}</li>
+              <div class="clearBoth"></div>
+            </ul>
+          </div>
+        </div>
+        <button @click="tranTypeSure()">确定</button>
+      </div>
+    </div>
     <div class='tanBox-bigBoxS' v-if="tanBox">
       <div class='tanBoxS-box'>
         <div class='tanBoxS-class'>
@@ -125,9 +145,13 @@ export default {
       companyType: 1,
       creator: 1,
       nvitationodeICRevise:1,
+      tranTypeList:[],
+      tranTypeBox:false,
       water: {
         nvitationodeIC:"",
         company: "",
+        tranType:"",
+        tranTypeNumber:"",
         bank: "",
         bankNumber: "",
         creditCode:"",
@@ -464,6 +488,77 @@ export default {
           });
       });
     },
+    tranTypeLook:function () {
+      var _this = this;
+      _this.tranTypeBox = true;
+      if(_this.tranTypeList == 0){
+        $.ajax({
+          type: "GET",
+          url: androidIos.ajaxHttp() + "/settings/getSysConfigList",
+          data: {
+            str: "trans_type",
+            userCode: sessionStorage.getItem("token"),
+            source: sessionStorage.getItem("source")
+          },
+          dataType: "json",
+          timeout: 30000,
+          success: function (getSysConfigList) {
+            for(var i = 0 ;i < getSysConfigList.length ; i++){
+              getSysConfigList[i].choose = false;
+            }
+            _this.tranTypeList = getSysConfigList;
+            var list = _this.water.tranTypeNumber.split(",");
+            for(var x = 0 ; x < _this.tranTypeList.length ; x++){
+              _this.tranTypeList[x].choose = false;
+              for(var i = 0; i < list.length ; i++){
+                if(_this.tranTypeList[x].value - list[i] == 0){
+                  _this.tranTypeList[x].choose = true;
+                }
+              }
+            }
+          },
+          complete: function (XMLHttpRequest, status) { //请求完成后最终执行参数
+            if (status == 'timeout') {//超时,status还有success,error等值的情况
+              androidIos.second("网络请求超时");
+            } else if (status == 'error') {
+              androidIos.errorwife();
+            }
+          }
+        })
+      }else{
+          var list = _this.water.tranTypeNumber.split(",");
+          for(var x = 0 ; x < _this.tranTypeList.length ; x++){
+              _this.tranTypeList[x].choose = false;
+              for(var i = 0; i < list.length ; i++){
+                if(_this.tranTypeList[x].value - list[i] == 0){
+                  _this.tranTypeList[x].choose = true;
+                }
+              }
+          }
+      }
+    },
+    choosetranType:function (number) {
+      var _this = this;
+      _this.tranTypeList[number].choose = !_this.tranTypeList[number].choose;
+    },
+    tranTypeClosed:function () {
+      var _this = this;
+      _this.tranTypeBox = false;
+    },
+    tranTypeSure:function () {
+      var _this = this;
+      var list = [];
+      var list2 = [];
+      for(var x = 0 ; x < _this.tranTypeList.length ; x++){
+       if(_this.tranTypeList[x].choose){
+         list.push(_this.tranTypeList[x].value);
+         list2.push(_this.tranTypeList[x].displayName);
+       }
+      }
+      _this.water.tranType = list2.join(",");
+      _this.water.tranTypeNumber = list.join(",");
+      _this.tranTypeBox = false;
+    },
     cleanIDcode:function () {
       var _this = this;
       androidIos.first("确定删除吗？");
@@ -492,10 +587,14 @@ export default {
         if(_this.$route.query.type == 1){
           if(localStorage.getItem("UPMESSA") !=  undefined){
             water = JSON.parse(localStorage.getItem("UPMESSA"));
+          }else{
+            water = _this.water;
           }
         }else if(_this.$route.query.type == 2){
           if(localStorage.getItem("DRIVERMESSA") !=  undefined){
             water = JSON.parse(localStorage.getItem("DRIVERMESSA"));
+          }else{
+            water = _this.water;
           }
         }else{
           water = _this.water;
@@ -521,6 +620,10 @@ export default {
               return false;
             }
           } else if (_this.letterType == "2") {
+            if(water.tranType == ''){
+              bomb.first("请选择运输类别！");
+              return false;
+            }
             if( _this.creator == '0' && water.creditCode.length <18 ){
               bomb.first("请输入统一社会信用代码！");
               return false;
@@ -597,6 +700,7 @@ export default {
           userName : water.name,
           idCardPos :water.IDpic,
           socialCreditCode:(water.creditCode).toUpperCase(),
+          tranType:_this.type == 1 && _this.letterType == 1 ? undefined :water.tranTypeNumber,
           businessLicense : _this.type == 1 && _this.letterType == 1 ? undefined : water.Licensepic,
           roadTransLicense : _this.type == 1 && _this.letterType == 1 ? undefined : $("#box1 .h5u_options_hiddenP").text(),
           driverLicense : !(this.type == 1 && _this.letterType == 1) ? undefined:$("#box4 .h5u_options_hiddenP").text(),
@@ -695,11 +799,11 @@ a {
 .labelBox {
   width: 100%;
 }
-#companyNameBigBox{
+#companyNameBigBox,#tranTypeBigBox{
   line-height: 1rem;
   float: right;
   text-align: right;
-  width: 7.7rem;
+  width: 7rem;
   font-size: 0.375rem;
   color: #333;
   overflow: hidden;
@@ -854,4 +958,85 @@ a {
     width:4rem;
     height: 2.6rem;
   }
+  .tranTypeSize{
+    color: #BCBCBC!important;
+  }
+#tranTypeBox{
+  position: fixed;
+  width:100%;
+  top:0;
+  bottom:0;
+  height: auto;
+  z-index: 44;
+  background: rgba(0,0,0,0.3);
+}
+#tranType{
+  width: 100%;
+  background: white;
+  position: absolute;
+  bottom:0;
+}
+#tranType button{
+  width:90%;
+  line-height: 1rem;
+  background: #2c9cff;
+  color:white;
+  display: block;
+  margin: 0.8rem auto 0.3rem auto;
+  font-size: 0.375rem;
+  border-radius: 0.2rem;
+}
+#tranType p{
+  text-align: center;
+  font-size: 0.375rem;
+  color:#333;
+  line-height: 1rem;
+  border-bottom: 1px solid #e6e6e6;
+}
+.tranTypeBox{
+  width:93%;
+  margin: 0 auto;
+  max-height: 10rem;
+}
+.tranType{
+  margin-top: 0.3rem;
+}
+.chooseTrue{
+  background:#2C9CFF!important;
+  color:white!important;
+}
+.tranTypeBox h6{
+  font-size: 0.375rem;
+  color:#333;
+}
+.tranTypeBox h6 span{
+  color:#999;
+  font-size: 0.35rem;
+}
+.tranType li{
+  float: left;
+  display: block;
+  width: 18.5%;
+  padding:0 1.375% ;
+  text-align: center;
+  line-height: 0.8rem;
+  font-size: 0.35rem;
+  background-color: #f3f3f3;
+  color:#666;
+  border-radius: 0.2rem;
+  margin-top: 0.4rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-left: 3%;
+}
+.chooseTrue{
+  background-color: #2c9cff!important;
+  color:white!important;
+}
+#tranType img{
+  position: absolute;
+  width:1rem;
+  z-index: 1;
+}
 </style>
