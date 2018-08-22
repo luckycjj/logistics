@@ -24,7 +24,7 @@
         <p>承运商</p>
         <div style="border-top: 1px solid #dcdcdc;border-bottom: 1px solid #dcdcdc;">
           <div class="label" style="border:none;">
-            <span style="float: left;">邀请码</span>
+            <span style="float: left;"><span style="font-size: 0.375rem;color:#ff803c;">*</span>邀请码</span>
             <div v-if="nvitationodeICRevise == 2"  id="nvitationodeIC">{{water.nvitationodeIC}}</div>
             <input v-else type="text" placeholder="请输入邀请码"  v-model="water.nvitationodeIC" maxlength="6">
           </div>
