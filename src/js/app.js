@@ -10,21 +10,29 @@ var androidIos = {
       if(http.indexOf("/uploadData/uploadDataT") != -1){
        var message = sessionStorage.getItem("source") == "2" ? JSON.parse(localStorage.getItem("UPMESSA")) :  JSON.parse(localStorage.getItem("DRIVERMESSA"));
        var type = androidIos.GetQueryString("type");
-       if(type != null && message != null && (message.Drivepic != "" || message.IDpic != "" || message.Licensepic != "" || message.Roadpic != "" || message.Travelpic != "" || message.bank != "" || message.bankNumber != "" || message.company != "" || message.name != "" || (message.nvitationodeIC != null &&  message.nvitationodeIC != "" )|| message.peopleNumber != "" )){
-         androidIos.first("信息尚未上传，需要保存吗？");
-         $(".tanBox-close").unbind('click').click(function(){
-           $(".tanBox-bigBox").remove();
+       if(message != null && (message.Drivepic != "" || message.IDpic != "" || message.Licensepic != "" || message.Roadpic != "" || message.Travelpic != "" || message.bank != "" || message.bankNumber != "" || message.company != "" || message.name != "" || (message.nvitationodeIC != null &&  message.nvitationodeIC != "" )|| message.peopleNumber != "" )){
+         if(type != null){
+           androidIos.first("信息尚未上传，需要保存吗？");
+           $(".tanBox-close").unbind('click').click(function(){
+             $(".tanBox-bigBox").remove();
+             if(sessionStorage.getItem("source") == 2){
+               localStorage.removeItem("UPMESSA");
+             }else if(sessionStorage.getItem("source") == 3){
+               localStorage.removeItem("DRIVERMESSA");
+             }
+             androidIos.gogogogo();
+           });
+           $(".tanBox-yes").unbind('click').click(function(){
+             $(".tanBox-bigBox").remove();
+             androidIos.gogogogo();
+           });
+         }else{
            if(sessionStorage.getItem("source") == 2){
              localStorage.removeItem("UPMESSA");
            }else if(sessionStorage.getItem("source") == 3){
              localStorage.removeItem("DRIVERMESSA");
            }
-           androidIos.gogogogo();
-         });
-         $(".tanBox-yes").unbind('click').click(function(){
-           $(".tanBox-bigBox").remove();
-           androidIos.gogogogo();
-         });
+         }
        }else{
          androidIos.gogogogo();
        }
@@ -267,6 +275,43 @@ var androidIos = {
     if (r != null) return unescape(r[2]);
     return null;
   },
+  CheckSocialCreditCode:function (Code) {
+  var patrn = /^[0-9A-Z]+$/;
+  //18位校验及大写校验
+  if ((Code.length != 18) || (patrn.test(Code) == false)) {
+    bomb.first("不是有效的统一社会信用编码！");
+    return false;
+  }
+  else {
+    var Ancode;//统一社会信用代码的每一个值
+    var Ancodevalue;//统一社会信用代码每一个值的权重
+    var total = 0;
+    var weightedfactors = [1, 3, 9, 27, 19, 26, 16, 17, 20, 29, 25, 13, 8, 24, 10, 30, 28];//加权因子
+    var str = '0123456789ABCDEFGHJKLMNPQRTUWXY';
+    //不用I、O、S、V、Z
+    for (var i = 0; i < Code.length - 1; i++) {
+      Ancode = Code.substring(i, i + 1);
+      Ancodevalue = str.indexOf(Ancode);
+      total = total + Ancodevalue * weightedfactors[i];
+      //权重与加权因子相乘之和
+    }
+    var logiccheckcode = 31 - total % 31;
+    if (logiccheckcode == 31) {
+      logiccheckcode = 0;
+    }
+    var Str = "0,1,2,3,4,5,6,7,8,9,A,B,C,D,E,F,G,H,J,K,L,M,N,P,Q,R,T,U,W,X,Y";
+    var Array_Str = Str.split(',');
+    logiccheckcode = Array_Str[logiccheckcode];
+
+
+    var checkcode = Code.substring(17, 18);
+    if (logiccheckcode != checkcode) {
+      bomb.first("不是有效的统一社会信用编码！");
+      return false;
+    }
+    return true;
+  }
+},
   idCardCheck:function (id) {
     // 1 "验证通过!", 0 //校验不通过
     var format = /^(([1][1-5])|([2][1-3])|([3][1-7])|([4][1-6])|([5][0-4])|([6][1-5])|([7][1])|([8][1-2]))\d{4}(([1][9]\d{2})|([2]\d{3}))(([0][1-9])|([1][0-2]))(([0][1-9])|([1-2][0-9])|([3][0-1]))\d{3}[0-9xX]$/;

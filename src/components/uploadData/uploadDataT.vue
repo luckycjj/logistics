@@ -284,8 +284,8 @@ export default {
                   water.Roadpic = getCarrAndCompanyInfo.roadTransLicense;
                   water.Drivepic = getCarrAndCompanyInfo.drivingLicence;
                   water.Travelpic = getCarrAndCompanyInfo.driverLicense;
-                  water.peopleNumber = getCarrAndCompanyInfo.idCardNum == null ? "123" :getCarrAndCompanyInfo.idCardNum ;
-                  water.creditCode = getCarrAndCompanyInfo.socialCreditCode == null ? "132" :getCarrAndCompanyInfo.socialCreditCode ;
+                  water.peopleNumber = getCarrAndCompanyInfo.idCardNum == null ? "" :getCarrAndCompanyInfo.idCardNum ;
+                  water.creditCode = getCarrAndCompanyInfo.socialCreditCode == null ? "" :getCarrAndCompanyInfo.socialCreditCode ;
                 }else{
                   _this.type = 2;
                   _this.httpurl = getCarrAndCompanyInfo.ftpUrl;
@@ -534,6 +534,10 @@ export default {
           bomb.first("请输入正确的开户行");
           return false;
         }
+        if(water.creditCode != "" && water.creditCode != null && !androidIos.CheckSocialCreditCode(water.creditCode)){
+          bomb.first("信用代码格式不正确");
+          return false;
+        }
         if(water.nvitationodeIC != "" && water.nvitationodeIC != null && !/^[\a-z\A-Z\0-9]+$/.test(water.nvitationodeIC)){
           bomb.first("请输入正确的邀请码");
           return false;
@@ -542,7 +546,7 @@ export default {
           bomb.first("请输入身份证号码！");
           return false;
         }
-        if(water.peopleNumber != "" && water.peopleNumber != null && !androidIos.idCardCheck(water.peopleNumber )){
+        if(water.peopleNumber != "" && water.peopleNumber != null && !androidIos.idCardCheck((water.peopleNumber).toUpperCase())){
           bomb.first("身份证号码格式不对");
           return false;
         }
@@ -566,7 +570,7 @@ export default {
           bankAccount :  _this.type == 1 && _this.letterType == 1 ? undefined  : water.bankNumber,
           userName : water.name,
           idCardPos :"/image/Temp//15001962931YS-20180822103887859.jpg",
-          socialCreditCode:water.creditCode,
+          socialCreditCode:(water.creditCode).toUpperCase(),
           businessLicense : _this.type == 1 && _this.letterType == 1 ? undefined : "/image/Temp//15001962931YS-20180822103887859.jpg",
           roadTransLicense : _this.type == 1 && _this.letterType == 1 ? undefined : $("#box1 .h5u_options_hiddenP").text(),
           driverLicense : !(this.type == 1 && _this.letterType == 1) ? undefined:$("#box4 .h5u_options_hiddenP").text(),
@@ -579,7 +583,7 @@ export default {
           userCode:sessionStorage.getItem("token")
         };
         var data = {
-          inviteCode:(_this.water.nvitationodeIC).toUpperCase(),
+          inviteCode:(water.nvitationodeIC).toUpperCase(),
           driverName:water.name,
           idCardNum:water.peopleNumber,
           driverLic:$("#box3 .h5u_options_hiddenP").text(),
@@ -717,8 +721,8 @@ a {
   color: #666;
 }
 .labelBox .label input {
-  height: 0.4rem;
-  margin-top: 0.3rem;
+  height: 0.45rem;
+  margin-top: 0.29rem;
   margin-left: 0.3rem;
   font-size: 0.375rem;
   float: right;

@@ -25,7 +25,7 @@
     <div class="box" style="margin-top: 0px;"  v-show="message.carmodelNumber == '5de1912471af4c2d839a27f268cd8ca7' || message.carmodelNumber == '41efd612fc2e4067a1debc30a1c36383' || message.carmodelNumber == ''">
       <span>载&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量</span>
       <p style="width:auto">吨</p>
-      <input type="number" maxlength="10" @keyup="weightKey()" v-model="message.weight" placeholder="请输入载量" />
+      <input type="tel" maxlength="10" @keyup="weightKey()" v-model="message.weight" placeholder="请输入载量" />
       <div class="clearBoth"></div>
     </div>
     <div class="box" style="margin-top: 0px;">
@@ -113,7 +113,7 @@
       message:{
         handler:function(val,oldval){
           var _this = this;
-          _this.message.weight=(_this.message.weight.match(/\d+(\.\d{0,2})?/)||[''])[0];
+          _this.message.weight=(_this.message.weight.match(/\d+(\.\d{0,0})?/)||[''])[0];
         },
         deep:true
       }

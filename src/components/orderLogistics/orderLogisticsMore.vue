@@ -126,7 +126,8 @@
           </div>
           <div id="sure">
             <div class="go" v-if="(type=='10000' && orderSource == 2 ) || (type == 0  && orderSource == 1 && payStatus != 30 && pdlist[0].pickPay.type != '月结')">
-              <button style="width:94%;margin:0 3%;display: block;" @click="payOrder()">支付</button>
+              <button style="background: transparent;color:#3492ff;" @click="closedOrder()" v-if="type == 0  && orderSource == 1 && payStatus != 30 && pdlist[0].pickPay.type != '月结'">关闭</button>
+              <button :class="type=='10000' && orderSource == 2 ? 'zhifu' : '' " @click="payOrder()">支付</button>
               <div class="clearBoth"></div>
             </div>
             <div class="go" v-else-if="(type == '10') && orderSource == 1">
@@ -135,7 +136,6 @@
               <div class="clearBoth"></div>
             </div>
             <div class="go" v-else-if=" type == '0' && orderSource == 1 &&  (pdlist[0].pickPay.type == '月结' || (payStatus == 30 && pdlist[0].pickPay.type != '月结'))">
-              <button style="background: transparent;color:#3492ff;" @click="closedOrder()">关闭</button>
               <button @click="shenhe()">发布</button>
               <div class="clearBoth"></div>
             </div>
@@ -1380,5 +1380,10 @@
   .carPeopleMessageTitle{
      margin-top: 0.4rem!important;
     border-radius: 0.2rem;
+  }
+  .zhifu{
+    width: 94%!important;
+    margin:0 3%!important;
+    display: block!important;
   }
 </style>
