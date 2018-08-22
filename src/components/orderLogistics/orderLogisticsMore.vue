@@ -125,9 +125,8 @@
             下单时间：{{item.time}}
           </div>
           <div id="sure">
-            <div class="go" v-if="(type=='10000' && orderSource == 2 ) || (type == 0  && orderSource == 1 && payStatus != 30 && pdlist[0].pickPay.type != '月结')">
-              <button style="background: transparent;color:#3492ff;" @click="closedOrder()" v-if="type == 0  && orderSource == 1 && payStatus != 30 && pdlist[0].pickPay.type != '月结'">关闭</button>
-              <button :class="type=='10000' && orderSource == 2 ? 'zhifu' : '' " @click="payOrder()">支付</button>
+            <div class="go" v-if="(type=='10000' && orderSource == 2 )" >
+              <button  @click="payOrder()" class="zhifu">支付</button>
               <div class="clearBoth"></div>
             </div>
             <div class="go" v-else-if="(type == '10') && orderSource == 1">
@@ -135,12 +134,13 @@
               <button @click="changeOrder()">修改订单</button>
               <div class="clearBoth"></div>
             </div>
-            <div class="go" v-else-if=" type == '0' && orderSource == 1 &&  (pdlist[0].pickPay.type == '月结' || (payStatus == 30 && pdlist[0].pickPay.type != '月结'))">
-              <button @click="shenhe()">发布</button>
+            <div class="go" v-else-if=" type == '0' && orderSource == 1">
+              <button style="background: transparent;color:#3492ff;" @click="closedOrder()">关闭</button>
+              <button @click="shenhe()">确认</button>
               <div class="clearBoth"></div>
             </div>
             <div class="go" v-else-if="(type == '60' || type == '70') && orderSource == 3">
-              <button style="width:94%;margin:0 3%;display: block;" @click="scoreYes(3)">签收</button>
+              <button  class="zhifu" @click="scoreYes(3)">签收</button>
               <div class="clearBoth"></div>
             </div>
             <div class="go" v-else-if="type=='1000' && orderSource == 1">
@@ -149,7 +149,7 @@
               <div class="clearBoth"></div>
             </div>
             <div class="go" v-else-if="type=='1001' && orderSource == 1">
-              <button style="width:94%;margin:0 3%;display: block;" @click="orderAgain()">再下一单</button>
+              <button class="zhifu" @click="orderAgain()">再下一单</button>
               <div class="clearBoth"></div>
             </div>
           </div>
@@ -400,48 +400,50 @@
       },
       errorAbnormalChangeImg:function () {
         if(bomb.hasClass("errorAbnormalChangeImg","gray")){
-
-          bomb.removeClass("errorAbnormalChangeImg","gray");
-
+           bomb.removeClass("errorAbnormalChangeImg","gray");
         }else{
-
-          bomb.addClass("errorAbnormalChangeImg","gray");
+           bomb.addClass("errorAbnormalChangeImg","gray");
         }
       },
       shenhe:function () {
         var _this = this;
-        androidIos.loading("正在发布");
-        $.ajax({
-          type: "POST",
-          url: androidIos.ajaxHttp()+"/order/orderConfirm",
-          data:JSON.stringify({
-            pk:_this.$route.query.pk,
-            userCode:sessionStorage.getItem("token"),
-            source:sessionStorage.getItem("source")
-          }),
-          contentType: "application/json;charset=utf-8",
-          dataType: "json",
-          timeout: 10000,
-          async:false,
-          success: function (orderConfirm) {
-            if(orderConfirm.success == "1"){
-              _this.$cjj("发布成功");
-              setTimeout(function () {
-                 bridge.gobackFrom(_this);
-              },500)
-            }else{
-              androidIos.second(orderConfirm.message);
+        if(_this.payStatus != 30 && _this.pdlist[0].pickPay.type == '现结'){
+          _this.payOrder();
+        }else{
+          androidIos.loading("正在发布");
+          $.ajax({
+            type: "POST",
+            url: androidIos.ajaxHttp()+"/order/orderConfirm",
+            data:JSON.stringify({
+              pk:_this.$route.query.pk,
+              userCode:sessionStorage.getItem("token"),
+              source:sessionStorage.getItem("source")
+            }),
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            timeout: 10000,
+            async:false,
+            success: function (orderConfirm) {
+              if(orderConfirm.success == "1"){
+                _this.$cjj("发布成功");
+                setTimeout(function () {
+                  bridge.gobackFrom(_this);
+                },500)
+              }else{
+                androidIos.second(orderConfirm.message);
+              }
+            },
+            complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+              $("#common-blackBox").remove();
+              if(status=='timeout'){//超时,status还有success,error等值的情况
+                androidIos.second("网络请求超时");
+              }else if(status=='error'){
+                androidIos.errorwife();
+              }
             }
-          },
-          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-            $("#common-blackBox").remove();
-            if(status=='timeout'){//超时,status还有success,error等值的情况
-              androidIos.second("网络请求超时");
-            }else if(status=='error'){
-              androidIos.errorwife();
-            }
-          }
-        })
+          })
+        }
+
       },
       cancelReasonClosed:function(){
         var _this = this;
