@@ -112,7 +112,7 @@
             var length = pd.length == "" ? "" : pd.length+ "米" ;
             var img = _this.orderPk =="" && pd.carType == '0' && (pd.now == '0' || pd.now == '1' || pd.now == '2')?"<div class='clearImg' style='display: "+display+"'></div><div class='reaseImg' style='display: "+display+"'></div>":_this.orderPk =="" && pd.carType == '0' && pd.now == '3'  ? "<div class='clearImg' style='right:0.6rem;display: " + display + "'></div>" : "";
             var str = '<div class="top" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
-              '<span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span>'+type+'<div class="clearBoth"></div>'+
+              '<span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span>'+type+'<div class="clearBoth"></div>'+
               '<span class="weight">满载：<span style="font-size: 0.3125rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span>'+
               img +
               '</div>';
@@ -216,6 +216,8 @@
               event.stopPropagation();
               var that = $(this).parents("li");
               var json = {
+                cartrantype:that.find(".transtype").text(),
+                carmodelNumber:that.find(".transtype").text(),
                 carmodel:that.find(".cartype").text(),
                 type:that.find(".carModel").text(),
                 carCode:that.find(".carModel").text(),
@@ -311,6 +313,7 @@
                           nowweight:tt.weight*1,
                           type:tt.weight*1 > 0 ? 2 :1,
                           carType:pdType,
+                          transType:tt.transType,
                           now:pdType == 0  && tt.checkStatus == '1' ? 0 : pdType == 0  && tt.checkStatus == '3' ? 2 : pdType == 0 && tt.checkStatus == '4' ? 3 : 1 ,
                         }
                         listData.push(json);
@@ -411,6 +414,7 @@
                       nowweight:tt.weight*1,
                       type:tt.weight*1 > 0 ? 2 :1,
                       carType:pdType,
+                      transType:tt.transType,
                       now:pdType == 0  && tt.checkStatus == '1' ? 0 : pdType == 0  && tt.checkStatus == '3' ? 2 : pdType == 0 && tt.checkStatus == '4' ? 3 : 1 ,
                     }
                     listData.push(json);
@@ -576,7 +580,7 @@
     margin-right:0.2rem;
     color:#999999;
   }
-  #car li .top .carlength,#car li .top .carModel{
+  #car li .top .carlength,#car li .top .carModel,#car li .top .transtype{
     font-size: 0.3125rem;
     line-height: 1rem;
     margin-right:0.2rem;
@@ -588,7 +592,8 @@
     color:#999999;
   }
   #car li .top .nowtype{
-    float: right;
+    position: absolute;
+    right: 0;
     font-size: 0.4rem;
     line-height: 1rem;
     margin-right: 5%;

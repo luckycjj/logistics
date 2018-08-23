@@ -340,6 +340,10 @@
               self.price = _this.price;
             }
             if(_this.pk == ""){
+              var weightBoth = 0;
+              for(var i = 0;i<self.productList.length;i++) {
+                weightBoth =  weightBoth + self.productList[i].wight * self.productList[i].wightTen;
+              }
               if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&((self.tranType != ""&& weightBoth <= 40) || weightBoth > 40) ){
                 for(var i = 0;i<self.productList.length;i++) {
                   if(_this.price!=""){
@@ -453,6 +457,7 @@
                     pk_carrier:invoiceDetail.carrierDto.pkCarrier,
                     driver_name:"",
                     insurance:"",
+                    remark:"",
                     pay:0,
                     read:true,
                     scrollTop:0,
@@ -858,6 +863,14 @@
           if(_this.pk == ""){
             if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read &&((self.tranType != self.tranTypeValue && weight <= 40) ||  weight > 40)){
               if(( weight*1 > 0 || volumn*1 > 0) && _this.both.price == ""){
+                var carListSureValueList = self.carListSureValue.split(",");
+                var carListSureValue = "";
+                for(var i = 0 ; i < carListSureValueList.length ;i ++){
+                  if(carListSureValueList[i] == ""){
+                    carListSureValueList.splice(i,1)
+                  }
+                }
+                carListSureValue = carListSureValueList.join(",");
                 var carWidthListSureValueList = (self.carWidthListSure + self.cartypeOtherSure).split(",");
                 var carWidthListSureValue = "";
                 for(var i = 0 ; i < carWidthListSureValueList.length ;i ++){
@@ -892,7 +905,7 @@
                 var json = {
                   startCity:_this.both.startAddress.city.split("-")[1].replace("市",""),
                   endCity:_this.both.endAddress.city.split("-")[1].replace("市",""),
-                  carLength:weight <= 40 ? carWidthListSureValue : "",
+                  carLength:weight <= 40 && carListSureValue == "5fda0edc8df34b4d8c1ed44a6f1f866e" ? carWidthListSureValue : "",
                   weight:weight,
                   volume:volumn,
                   userCode:sessionStorage.getItem("token"),
@@ -1581,7 +1594,7 @@
                   _this.newOrderMessageBox = false;
                   _this.$cjj("提交成功");
                   setTimeout(function () {
-                    androidIos.gobackFrom(_this);
+                    bridge.invoke('gobackfrom');
                   },1000)
                 }else if(createOrder.success=="-1"){
                   androidIos.second(createOrder.message)

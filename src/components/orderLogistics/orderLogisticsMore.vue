@@ -8,7 +8,7 @@
     <div id="mescroll" class="mescroll">
       <ul id="dataList" class="data-list">
         <li v-for="item in pdlist">
-          <div class="top" v-if="type != '10000' &&  orderSource == 1">
+          <div class="top" v-if="type != '10000'">
             <div style="width:100%;position: relative;top:0;left:0;">
               <span v-html="item.orderTypeName"></span>
               <img src="../../images/order2.png" style="height: 1.64rem;">
@@ -28,14 +28,14 @@
               </li>
             </ul>
           </div>
-          <div id="evaluate" v-if="type == '1001' && orderSource == 1">
+          <div id="evaluate" v-if="type == '1001'">
             <span>评价</span>
             <div id="star_gradeS" class="star_grade"></div>
             <span style="font-size: 0.4rem">{{item.evaluate.grade}}分</span>
             <!--<img src="../../images/lookMore.png" @click="lookScore()">-->
             <div class="clearBoth"></div>
           </div>
-          <div style="width:94%;background: white;height:3rem;box-shadow: 0 0.1rem 10px #d8d8d8;overflow:hidden;position: relative;margin:0.4rem auto 0 auto;border-top-left-radius: 0.2rem;border-top-right-radius: 0.2rem;"  v-if="(type == '20' || type == '40')  && orderSource == 1 ">
+          <div style="width:94%;background: white;height:3rem;box-shadow: 0 0.1rem 10px #d8d8d8;overflow:hidden;position: relative;margin:0.4rem auto 0 auto;border-top-left-radius: 0.2rem;border-top-right-radius: 0.2rem;"  v-if="(type == '20' || type == '40') ">
             <router-view/>
             <div style="width:100%;height:3rem;position: absolute;top:0;left:0;background: transparent;z-index:180;border-top-left-radius: 0.2rem;border-top-right-radius: 0.2rem;" @click="mapSClick()">
             </div>
@@ -56,9 +56,9 @@
           </div>
           <div class="message">
             <div class="goodsmessage">
-              <p  v-if="orderSource == 1" :data-start="item.pickMessage.address" :data-end="item.endMessage.address" class="startEnd"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.startAddress}}</span><img style="float: left;margin:0.3rem 0.3rem;width:0.41rem;" src="../../images/addressImg.png"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.endAddress}}</span><span  v-if="type == '20' || type == '40' " class="distance">{{item.goodsmessage.distance}}km</span><div class="clearBoth"></div></p>
-              <h1 v-if="orderSource == 1">{{item.goodsmessage.tranType}}</h1>
-              <h4 v-if="orderSource == 1">{{item.goodsmessage.money}}元</h4>
+              <p  :data-start="item.pickMessage.address" :data-end="item.endMessage.address" class="startEnd"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.startAddress}}</span><img style="float: left;margin:0.3rem 0.3rem;width:0.41rem;" src="../../images/addressImg.png"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.endAddress}}</span><span  v-if="type == '20' || type == '40' " class="distance">{{item.goodsmessage.distance}}km</span><div class="clearBoth"></div></p>
+              <h1 >{{item.goodsmessage.tranType}}</h1>
+              <h4>{{item.goodsmessage.money}}元</h4>
               <div class="clearBoth"></div>
               <div v-for="itemS in item.goodsmessage.productList ">
                 <h2>{{itemS.goods}}</h2>
@@ -66,9 +66,9 @@
                 <div class="clearBoth"></div>
               </div>
               <div class="clearBoth"></div>
-              <h5 v-if="orderSource == 1">{{item.goodsmessage.startTime}} - {{item.goodsmessage.endTime}}</h5>
+              <h5>{{item.goodsmessage.startTime}} - {{item.goodsmessage.endTime}}</h5>
             </div>
-            <div class="peoplemessage" v-if="orderSource == 1">
+            <div class="peoplemessage">
               <p><span :class="pick?'colorFull':''" @click="pickMessage('true')">发货方</span><span :class="!pick?'colorFull':''" @click="pickMessage('false')">收货方</span></p>
               <div style="background: white;box-shadow: 0 0.1rem 10px #d8d8d8;position: relative;margin:0.1rem auto 0 auto;border-radius: 0.2rem;">
                 <div class="messageBox" v-if="pick">
@@ -120,7 +120,7 @@
             </div>
             <div class="clearBoth"></div>
           </div>
-          <div class="number" v-if="orderSource == 1">
+          <div class="number">
             订单编号：{{item.number}}<br>
             下单时间：{{item.time}}
           </div>
@@ -277,7 +277,7 @@
           sessionStorage.setItem("orderType",self.pdlist[0].orderType);
           sessionStorage.setItem("orderPk",self.$route.query.pk);
           self.$nextTick(function () {
-            if(curPageData[0].orderType>3){
+            if(curPageData[0].orderType>3 && self.orderSource != 3){
               $("#star_grade").html("");
               $("#star_grade").markingSystem({
                 num: 5,
@@ -291,7 +291,7 @@
                 width: 0.4* $("html").css("font-size").replace("px", ""),
               });
             }
-            if(curPageData[0].orderType == 10){
+            if(curPageData[0].orderType == 10 && self.orderSource != 3){
               $("#star_gradeS").html("");
               $("#star_gradeS").markingSystem({
                 num: 5,
@@ -306,7 +306,7 @@
               });
               $("#star_gradeS .grade").remove();
             }
-            if(curPageData[0].orderType >2){
+            if(curPageData[0].orderType >2 && self.orderSource != 3){
               $("#star_gradeF").html("");
               $("#star_gradeF").markingSystem({
                 num: 5,
@@ -834,63 +834,74 @@
       }else{
         $.ajax({
           type: "POST",
-          url: androidIos.ajaxHttp()+"/order/getGoodsDetail",
+          url: androidIos.ajaxHttp()+"/order/loadEntrustDetail",
           data:JSON.stringify({pk:thisThat.$route.query.pk,userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")}),
-          dataType: "json",
           contentType: "application/json;charset=utf-8",
-          timeout: 30000,
-          success: function (invoiceDetail) {
+          dataType: "json",
+          timeout: 20000,
+          success: function (loadSegmentDetail) {
             thisThat.carloading = false;
-            if(invoiceDetail.success == "" || invoiceDetail.success == "1"){
+            if (loadSegmentDetail.success == "" || loadSegmentDetail.success == "1") {
               var list=[];
-              for(var i =0;i<invoiceDetail.list.length;i++){
-                var weight = invoiceDetail.list[i].weight;
+              for(var i =0;i<loadSegmentDetail.invPackDao.length;i++){
+                var weight = loadSegmentDetail.invPackDao[i].weigthUnit==3?loadSegmentDetail.invPackDao[i].weight*1000:loadSegmentDetail.invPackDao[i].weight*1;
                 var listJson = {
-                  goods:invoiceDetail.list[i].goodsCode+"-"+invoiceDetail.list[i].goodsName,
-                  number:invoiceDetail.list[i].num,
+                  goods:loadSegmentDetail.invPackDao[i].goodsName+"-"+loadSegmentDetail.invPackDao[i].goodsTypeName,
+                  number:loadSegmentDetail.invPackDao[i].num,
                   weight : weight/1000 - 1 <0 ? weight + "千克" : weight/1000 + "吨",
-                  volume:invoiceDetail.list[i].volume*1 - 1 < 0 ? invoiceDetail.list[i].volume*1000 + "升" : invoiceDetail.list[i].volume*1 + "立方米",
+                  volume:loadSegmentDetail.invPackDao[i].volume*1 - 1 < 0 ? loadSegmentDetail.invPackDao[i].volume*1000 + "升" : loadSegmentDetail.invPackDao[i].volume*1 + "立方米",
                 }
                 list.push(listJson);
               }
               var tracking=[];
+              for(var i =0 ;i<loadSegmentDetail.tracking.length;i++){
+                var trackingJson = {
+                  type:loadSegmentDetail.tracking[i].tackingStatus,
+                  time:loadSegmentDetail.tracking[i].tackingTime,
+                }
+                tracking.push(trackingJson);
+              }
+              // 新建=0 已确认=10 司机发车=20 部分提货=30 已提货=40 部分到货=50 已到货=60 部分签收=70 已签收=80 已回单=90 关闭=100
+              // thisThat.$route.query.type 1发货方2付款3收货方
+              var trackingStatusValue = 340000;
+              thisThat.payStatus = loadSegmentDetail.payStatus;
               var pdlist = [{
-                orderType:"",
-                orderTypeName:"",
-                logistics:"",
+                orderType:loadSegmentDetail.trackingStatusValue,
+                orderTypeName:loadSegmentDetail.trackingStatus == null ? "已确认" : loadSegmentDetail.trackingStatus,
+                logistics:tracking,
                 evaluate:{
-                  grade:"",
+                  grade:0,
                 },
                 goodsmessage:{
-                  startAddress:"",
-                  endAddress:"",
+                  startAddress:loadSegmentDetail.delivery != null ? ( loadSegmentDetail.delivery.province /*+ loadSegmentDetail.delivery.city */+ loadSegmentDetail.delivery.area ) : "" ,
+                  endAddress:loadSegmentDetail.arrival!=null?(loadSegmentDetail.arrival.province/*+loadSegmentDetail.arrival.city*/+loadSegmentDetail.arrival.area):"",
                   distance:"0",
-                  tranType:"",
+                  tranType:loadSegmentDetail.transType,
                   productList:list,
-                  money:"",
-                  startTime:"",
-                  endTime:""
+                  money:loadSegmentDetail.price*1,
+                  startTime:loadSegmentDetail.deliDate,
+                  endTime:loadSegmentDetail.arriDate
                 },
                 pickMessage:{
-                  name:"",
-                  tel:"",
-                  company:"",
-                  address:"",
+                  name:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.contact:"",
+                  tel:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.mobile:"",
+                  company:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.addrName:"",
+                  address:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.province/*+loadSegmentDetail.delivery.city*/+loadSegmentDetail.delivery.area+loadSegmentDetail.delivery.detailAddr:"",
                 },
                 endMessage:{
-                  name:"",
-                  tel:"",
-                  company:"",
-                  address:"",
+                  name:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.contact:"",
+                  tel:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.mobile:"",
+                  company:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.addrName:"",
+                  address:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.province/*+loadSegmentDetail.arrival.city*/+loadSegmentDetail.arrival.area+loadSegmentDetail.arrival.detailAddr:"",
                 },
                 insurance:{
                   name:"",
-                  price:"",
+                  price:"200"
                 },
                 pickPay:{
-                  people:"",
+                  people:"发货方",
                   type:"",
-                  remark:"",
+                  remark:loadSegmentDetail.remark
                 },
                 carPeople:{
                   logo:"",
@@ -898,38 +909,48 @@
                   grade:"",
                   name:"",
                   tel:"",
-                  yes:"",
+                  yes:false,
                 },
                 carrier:{
-                  logo:"",
-                  company:"",
-                  tranType: "",
-                  year:"",
-                  grade:"",
-                  phone:"",
+                  logo:loadSegmentDetail.customerDto!=null?loadSegmentDetail.customerDto.customerImg:"",
+                  company:loadSegmentDetail.customerDto!=null?loadSegmentDetail.customerDto.customerName:"",
+                  year:loadSegmentDetail.customerDto!=null?((((new Date()).getTime()-(new Date(loadSegmentDetail.customerDto.createDate.replace('-','/').replace('-','/'))).getTime())/1000/60/60/24/365 -0.5)<0?"不到半年":androidIos.fixed(((new Date()).getTime()-(new Date(invoiceDetail.customerDto.createDate.replace('-','/').replace('-','/'))).getTime())/1000/60/60/24/365 ,1)+"年"):"",
+                  phone:loadSegmentDetail.customerDto!=null?loadSegmentDetail.customerDto.mobile:"",
+                  tranType:"",
+                  grade:"0",
                   pkCarrier:"",
                 },
-                tranNumber:"",
-                number:"",
-                time:"",
+                tranNumber:"123321334343",
+                number:loadSegmentDetail.entrustNo,
+                time:loadSegmentDetail.createTime,
               }]
               var data=pdlist;
               var listData=data;//模拟分页数据
               successCallback&&successCallback(listData);//成功回调
             }else{
-              androidIos.second(invoiceDetail.message);
-              successCallback&&successCallback(thisThat.pdlist);//成功回调
+              if(thisThat.pdlist.length ==0){
+                androidIos.second(loadSegmentDetail.message);
+              }else{
+                successCallback&&successCallback(thisThat.pdlist);
+              }
+
             }
 
           },
           complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
             thisThat.carloading = false;
             if(status=='timeout'){//超时,status还有success,error等值的情况
-              successCallback&&successCallback(thisThat.pdlist);
-              androidIos.second("网络请求超时");
+              if(thisThat.pdlist.length ==0){
+                androidIos.second("网络请求超时");
+              }else{
+                successCallback&&successCallback(thisThat.pdlist);
+              }
             }else if(status=='error'){
-              successCallback&&successCallback(thisThat.pdlist);
-              androidIos.errorwife();
+              if(thisThat.pdlist.length ==0){
+                androidIos.errorwife();
+              }else{
+                successCallback&&successCallback(thisThat.pdlist);
+              }
             }
           }
         })

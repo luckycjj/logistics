@@ -69,7 +69,7 @@
             }
           }
         });
-        if(ordertype ==  "20" || ordertype == "31" || ordertype =="32" || ordertype=="33" || ordertype == '41'){
+        if(ordertype ==  "20" || ordertype == "31" || ordertype =="32" || ordertype=="33" || ordertype == '41'|| ordertype == '42'){
           var map = new AMap.Map("container", {
             resizeEnable: true,
             center: [_this.carList.startJ, _this.carList.startW],//地图中心点
@@ -87,7 +87,7 @@
           });
           var marker;
           var ordertyper = _this.carList.ordertype;
-          if(ordertyper ==  "33"   || ordertype == '41'){
+          if(ordertyper ==  "33"   || ordertype == '41'  || ordertype == '42'){
             driving.search([_this.carList.startJ, _this.carList.startW], [_this.carList.endJ, _this.carList.endW], function(status, result) {
               var sss = setInterval(function () {
                 if($(".amap-lib-marker-to").length>0){

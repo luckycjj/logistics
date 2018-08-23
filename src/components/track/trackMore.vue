@@ -45,7 +45,7 @@
             <ul class="sw-slides">
               <li class="sw-slide" v-for="(car,index) in carList">
                 <div style="width:100%;background: white;height:3rem;box-shadow: 0 0.1rem 10px #d8d8d8;overflow:hidden;position: relative;margin:0.4rem auto 0 auto;border-top-left-radius: 0.2rem;border-top-right-radius: 0.2rem;" v-if="type > 1">
-                  <div   v-if="(car.ordertype == '20' || car.ordertype == '31' || car.ordertype == '32' || car.ordertype == '33' || car.ordertype == '41' ) && car.peopleJ != '' && car.peopleW != ''" @click="mapGo(car)">
+                  <div   v-if="(car.ordertype == '20' || car.ordertype == '31' || car.ordertype == '32' || car.ordertype == '33' || car.ordertype == '41' || car.ordertype == '42' ) && car.peopleJ != '' && car.peopleW != ''" @click="mapGo(car)">
                     <div :id="'container'+index" class="containerImport"></div>
                     <div :id="'panel'+index" class="panelImport"></div>
                     <div style="width:100%;height:3rem;position: absolute;top:0;left:0;background: transparent;z-index:180;border-top-left-radius: 0.2rem;border-top-right-radius: 0.2rem;"></div>
@@ -252,33 +252,6 @@
     mounted:function () {
       var _this = this;
       androidIos.bridge(_this);
-      var sss = setInterval(function () {
-        if((_this.carList.length == 1 && $(".amap-lib-marker-to").length == _this.carList.length) || (_this.carList.length>1&&$(".amap-lib-marker-to").length - 2  == _this.carList.length) ){
-          clearInterval(sss);
-          for(var i = 0 ;i < $(".amap-lib-marker-to").length ;i++){
-            var dd = 0;
-            if( _this.carList.length > 1 ){
-              if(i == 0){
-                dd = _this.carList.length - 1;
-              }else if(i == ($(".sw-slides li").length -1)){
-                dd = 0 ;
-              }else{
-                dd = i -1;
-              }
-            }else{
-              dd = i ;
-            }
-            var ordertype = _this.carList[dd].ordertype;
-            if(ordertype == '20' || ordertype == '31' || ordertype == '32'){
-              $(".amap-lib-marker-to").eq(i).addClass("amaplibmarkertos");
-              $(".amap-lib-marker-from").eq(i).addClass("amaplibmarkerfroms");
-            }else{
-              $(".amap-lib-marker-to").eq(i).addClass("amaplibmarkerto");
-              $(".amap-lib-marker-from").eq(i).addClass("amaplibmarkerfrom");
-            }
-          }
-        }
-      },100);
     },
     methods:{
       go:function () {
@@ -315,6 +288,35 @@
           sessionStorage.setItem("orderPk",self.$route.query.pk);
           sessionStorage.setItem("dispatchPK",self.$route.query.pk);
           self.$nextTick(function () {
+            if(self.type < 8 ){
+              var sss = setInterval(function () {
+                if((_this.carList.length == 1 && $(".amap-lib-marker-to").length == _this.carList.length) || (_this.carList.length>1&&$(".amap-lib-marker-to").length - 2  == _this.carList.length) ){
+                  clearInterval(sss);
+                  for(var i = 0 ;i < $(".amap-lib-marker-to").length ;i++){
+                    var dd = 0;
+                    if( _this.carList.length > 1 ){
+                      if(i == 0){
+                        dd = _this.carList.length - 1;
+                      }else if(i == ($(".sw-slides li").length -1)){
+                        dd = 0 ;
+                      }else{
+                        dd = i -1;
+                      }
+                    }else{
+                      dd = i ;
+                    }
+                    var ordertype = _this.carList[dd].ordertype;
+                    if(ordertype == '20' || ordertype == '31' || ordertype == '32'){
+                      $(".amap-lib-marker-to").eq(i).addClass("amaplibmarkertos");
+                      $(".amap-lib-marker-from").eq(i).addClass("amaplibmarkerfroms");
+                    }else{
+                      $(".amap-lib-marker-to").eq(i).addClass("amaplibmarkerto");
+                      $(".amap-lib-marker-from").eq(i).addClass("amaplibmarkerfrom");
+                    }
+                  }
+                }
+              },100);
+            }
             if ((self.type == 1) && self.peopleType == 2) {
               $("#erweimaLook").hide();
             } else if (self.peopleType == 1) {
@@ -367,7 +369,7 @@
                 }
                 var ee = i;
                 var ordertype = _this.carList[dd].ordertype;
-                if(ordertype == '20' || ordertype == '31' || ordertype == '32' || ordertype == '33' || ordertype == '41' ){
+                if(ordertype == '20' || ordertype == '31' || ordertype == '32' || ordertype == '33' || ordertype == '41'|| ordertype == '42' ){
                   var map = new AMap.Map("container"+cc, {
                     resizeEnable: true,
                     center: [_this.carList[dd].startJ, _this.carList[dd].startW],//地图中心点
@@ -385,7 +387,7 @@
                   });
                   var marker;
                   var ordertyper = _this.carList[dd].ordertype;
-                  if(ordertyper ==  "33"  || ordertyper == '41'){
+                  if(ordertyper ==  "33"  || ordertyper == '41'|| ordertype == '42' ){
                     var lnglat = new AMap.LngLat(_this.carList[dd].endJ, _this.carList[dd].endW);
                     _this.compareDistanc(lnglat,dd);
                     driving.search([_this.carList[dd].startJ, _this.carList[dd].startW], [_this.carList[dd].endJ, _this.carList[dd].endW], function(status, result) {});
@@ -831,10 +833,10 @@
                 weight: weight/1000 - 1 <0 ? weight + "千克" : weight/1000 + "吨",
                 volume:loadSegmentDetail.invPackDao[i].volume*1 - 1 < 0 ? loadSegmentDetail.invPackDao[i].volume*1000 + "升" : loadSegmentDetail.invPackDao[i].volume*1 + "立方米",
               }
-              weh += listJson.weight*1 + weh ;
+              weh += weight/1000 + weh ;
               list.push(listJson);
             }
-            sessionStorage.setItem("weh",weh/1000);
+            sessionStorage.setItem("weh",weh);
             var tracking=[];
             for(var i =0 ;i<loadSegmentDetail.tracking.length;i++){
               var trackingJson = {

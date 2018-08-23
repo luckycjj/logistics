@@ -584,7 +584,7 @@
             pkCar:_this.message.carpk,
             drivingLicense:_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "2ba6da2fd9cd4689965afe5abc8f9df4" ? _this.message.Travelpic : "",
             length :_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383" ? _this.message.carlengthCode : "",
-            tranType :_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383" ? _this.message.cartrantypeCode : "",
+            transType :_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383" ? _this.message.cartrantypeCode : "",
           }
           bomb.removeClass("ok","okgo");
           var messageNow = _this.message.carpk == "" ? "正在新增" : "正在修改";
