@@ -97,6 +97,13 @@
             <h5 style="font-size: 0.3125rem;text-align: center;width:4rem;"><span style="font-size: 0.3125rem;color:#ff803c;">*</span>行驶证</h5>
           </div>
           <div class="clearBoth"></div>
+          <div class="imgBoxBig"  v-if=" type == 1 && letterType == 1 ">
+            <div class="imgBox">
+              <div id="box1" class="imgUpload"></div>
+            </div>
+            <h4><span style="font-size: 0.3125rem;color:#ff803c;">*</span>道路运输许可证</h4>
+          </div>
+          <div class="clearBoth"></div>
         </div>
       </div>
     </div>
@@ -392,6 +399,22 @@ export default {
             );
           }
         }
+        if(_this.type == 1 && _this.letterType == 1){
+          $("#box1").aiiUpload({
+            action: androidIos.ajaxHttp() + "/uploadFile",
+            max_w: 1000,
+            max_h: 1000
+          });
+          if (_this.water.Roadpic != null && _this.water.Roadpic != "") {
+            $("#box1 img").attr("src", _this.httpurl + _this.water.Roadpic);
+            $("#box1 img").show();
+            $("#box1 .closed").show();
+            $("#box1 .cjjimgbox").css("display", "none");
+            $("#box1 .cjjimgbox").html(
+              "<p class='h5u_options_hiddenP'>" + _this.water.Roadpic + "</p>"
+            );
+          }
+        }
         $("#box2").aiiUpload({
           action: androidIos.ajaxHttp() + "/uploadFile",
           max_w: 1000,
@@ -630,6 +653,10 @@ export default {
               bomb.first("请上传行驶证！");
               return false;
             }
+            if (water.Roadpic == "") {
+              bomb.first("请上传道路运输许可证！");
+              return false;
+            }
           } else if (_this.letterType == "2") {
             if(water.tranType == ''){
               bomb.first("请选择运输类别！");
@@ -713,7 +740,7 @@ export default {
           socialCreditCode:(water.creditCode).toUpperCase(),
           transType:_this.type == 1 && _this.letterType == 1 ? undefined :water.tranTypeNumber,
           businessLicense : _this.type == 1 && _this.letterType == 1 ? undefined : water.Licensepic,
-          roadTransLicense : _this.type == 1 && _this.letterType == 1 ? undefined : $("#box1 .h5u_options_hiddenP").text(),
+          roadTransLicense : $("#box1 .h5u_options_hiddenP").text(),
           driverLicense : !(this.type == 1 && _this.letterType == 1) ? undefined:$("#box4 .h5u_options_hiddenP").text(),
           drivingLicence :  !( _this.type == 1 && _this.letterType == 1) ? undefined : $("#box3 .h5u_options_hiddenP").text(),
           type : _this.type == 1 && _this.letterType == 1? 3 : _this.type == 1 && _this.letterType == 2 ? 2:1,
