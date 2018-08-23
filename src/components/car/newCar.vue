@@ -711,6 +711,7 @@
     top:0;
     height:auto;
     background: rgba(0,0,0,0);
+    z-index: 10;
   }
   #carList,#keyboard{
     position: fixed;

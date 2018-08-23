@@ -424,7 +424,7 @@
                   for(var i =0;i<invoiceDetail.invPackDao.length;i++){
                     _this.both.initialWeight = _this.both.initialWeight*1 + invoiceDetail.invPackDao[i].weight/1000*1;
                     var listJson = {
-                      tranpk:invoiceDetail.invPackDao[i].tranpk == undefined ? 2 : invoiceDetail.invPackDao[i].tranpk,
+                      tranpk:invoiceDetail.category,
                       pkInvPackB:invoiceDetail.invPackDao[i].pkInvPackB,
                       goodsType:invoiceDetail.invPackDao[i].goodsName+"-"+invoiceDetail.invPackDao[i].goodsTypeName,
                       goodstypenumber:invoiceDetail.invPackDao[i].goodsCode+"-"+invoiceDetail.invPackDao[i].goodsType,

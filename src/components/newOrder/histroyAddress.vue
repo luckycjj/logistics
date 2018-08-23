@@ -128,6 +128,7 @@
                 var listJson = {
                   pkInvPackB:invoiceDetail.invPackDao[i].pkInvPackB,
                   goodsType:invoiceDetail.invPackDao[i].goodsName+"-"+invoiceDetail.invPackDao[i].goodsTypeName,
+                  protype:protype,
                   goodstypenumber:invoiceDetail.invPackDao[i].goodsCode+"-"+invoiceDetail.invPackDao[i].goodsType,
                   number:invoiceDetail.invPackDao[i].num,
                   unitWight:"吨",
@@ -136,7 +137,7 @@
                   unitWeight:"立方米",
                   weight:invoiceDetail.invPackDao[i].volume*1,
                   weightTen:"1",
-                  protype:protype,
+                  tranpk:invoiceDetail.category,
                 }
                 list.push(listJson);
               }

@@ -135,8 +135,8 @@
               <div class="clearBoth"></div>
             </div>
             <div class="go" v-else-if=" type == '0' && orderSource == 1">
-              <button style="background: transparent;color:#3492ff;" @click="closedOrder()">关闭</button>
-              <button @click="shenhe()">确认</button>
+              <button :class="pdlist[0].fabu == '0' ? 'zhifu': ''" style="background: transparent;color:#3492ff;" @click="closedOrder()">关闭</button>
+              <button v-if="pdlist[0].fabu == '1'" @click="shenhe()">确认</button>
               <div class="clearBoth"></div>
             </div>
             <div class="go" v-else-if="orderSource == 3">
@@ -840,8 +840,9 @@
                   pkCarrier:invoiceDetail.carrierDto!=null?invoiceDetail.carrierDto.pkCarrier:"",
                 },
                 tranNumber:"123321334343",
+                fabu:invoiceDetail.userRole,
                 number:invoiceDetail.orderNo,
-                time:invoiceDetail.createTime
+                time:invoiceDetail.createTime,
               }]
               if(invoiceDetail.driverDto != null && invoiceDetail.driverDto.length != 0){
                 sessionStorage.setItem("driverPk",invoiceDetail.driverDto[0].pkDriver);
@@ -1547,5 +1548,7 @@
     width: 94%!important;
     margin:0 3%!important;
     display: block!important;
+    background: #2c9cff!important;
+    color:white!important;
   }
 </style>
