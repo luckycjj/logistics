@@ -777,12 +777,12 @@
               sessionStorage.setItem("dataStart",invoiceDetail.delivery.addressLatAndLon);
               sessionStorage.setItem("dataEnd",invoiceDetail.arrival.addressLatAndLon);
               thisThat.payStatus = invoiceDetail.payStatus;
-              var tranTypeBoth = loadSegmentDetail.transType;
-              if(loadSegmentDetail.carLength !=  ""){
-                tranTypeBoth = tranTypeBoth + "(" + loadSegmentDetail.carLength + "米)";
+              var tranTypeBoth = invoiceDetail.transType;
+              if(invoiceDetail.carLength !=  ""){
+                tranTypeBoth = tranTypeBoth + "(" + invoiceDetail.carLength + "米)";
               }
-              if(loadSegmentDetail.carModel != ""){
-                tranTypeBoth = tranTypeBoth + "(" + loadSegmentDetail.carModel + ")";
+              if(invoiceDetail.carModel != ""){
+                tranTypeBoth = tranTypeBoth + "(" + invoiceDetail.carModel + ")";
               }
               var pdlist = [{
                 orderType:trackingStatusValue,
