@@ -1,6 +1,10 @@
 <template>
   <div id="goods">
-    <div id="title" v-title data-title="货物类别"></div>
+    <div id="title" v-if="newordertrantype == '0'" v-title data-title="全部货物类别"></div>
+    <div id="title" v-if="newordertrantype == '1'" v-title data-title="冷链池货物类别"></div>
+    <div id="title" v-if="newordertrantype == '2'" v-title data-title="普货池货物类别"></div>
+    <div id="title" v-if="newordertrantype == '3'" v-title data-title="危险品池货物类别"></div>
+    <div id="title" v-if="newordertrantype == '4'" v-title data-title="集装箱池货物类别"></div>
     <ul v-if="list.length > 0 && listSure">
       <li v-for="(item,index) in list" @click="choose(item)">
         {{item.text}}
@@ -25,6 +29,15 @@
         list:[],
         tranType:"",
         listSure:false,
+        newordertrantype:0,
+      }
+    },
+    beforeMount:function () {
+      var _this = this;
+      if(sessionStorage.getItem("NEWORDERTRANTYPE") != undefined){
+        _this.newordertrantype = sessionStorage.getItem("NEWORDERTRANTYPE");
+      }else{
+        _this.newordertrantype = 0;
       }
     },
     mounted:function(){

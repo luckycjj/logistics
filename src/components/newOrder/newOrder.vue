@@ -1,6 +1,10 @@
 <template>
     <div id="newOrder">
-      <div id="title" v-title data-title="发布货源"></div>
+      <div id="title" v-if="newordertrantype == '0'" v-title data-title="发布全部货源"></div>
+      <div id="title" v-if="newordertrantype == '1'" v-title data-title="发布冷链池货源"></div>
+      <div id="title" v-if="newordertrantype == '2'" v-title data-title="发布普货池货源"></div>
+      <div id="title" v-if="newordertrantype == '3'" v-title data-title="发布危险品池货源"></div>
+      <div id="title" v-if="newordertrantype == '4'" v-title data-title="发布集装箱池货源"></div>
       <div id="peopleAddress">
           <div id="histroyAddress" @click="histroyAddress()"  v-if="pk==''&& both.histroyAddressLength">
             常用路线
@@ -251,6 +255,7 @@
             price123:false,
             newOrderMessageBox:false,
             vehicleBox:false,
+            newordertrantype:"",
             suremend: new Debounce(this.ajaxPost, 1000)
           }
        },
@@ -323,13 +328,18 @@
          deep:true
        }
      },
+     beforeMount:function () {
+       var _this = this;
+       if(_this.$route.query.newordertrantype != undefined){
+         _this.newordertrantype = _this.$route.query.newordertrantype;
+         sessionStorage.setItem("NEWORDERTRANTYPE",_this.$route.query.newordertrantype)
+       }else{
+         _this.newordertrantype = 0;
+         sessionStorage.setItem("NEWORDERTRANTYPE",0)
+       }
+     },
       mounted:function(){
           var _this = this;
-          if(_this.$route.query.newordertrantype != undefined){
-             sessionStorage.setItem("NEWORDERTRANTYPE",_this.$route.query.newordertrantype)
-          }else{
-            sessionStorage.setItem("NEWORDERTRANTYPE",0)
-          }
           androidIos.bridge(_this);
       },
       methods:{
@@ -1229,11 +1239,11 @@
                bomb.first("请选择用车类型");
                return false;
           }
-          if(y.length == 0){
+          if(y.length == 0 && x[0].value == "5fda0edc8df34b4d8c1ed44a6f1f866e"){
             bomb.first("请选择车长");
             return false;
           }
-          if(z.length == 0){
+          if(z.length == 0 && x[0].value == "5fda0edc8df34b4d8c1ed44a6f1f866e"){
             bomb.first("请选择车型");
             return false;
           }
@@ -1568,8 +1578,8 @@
               act_arri_date:self.timeAfterS +" " + self.timeAfterF,
               goodspack:list,
               vehicleType:weightBoth <= 40 ? carListSureValue : "",
-              carLength:weightBoth <= 40 ? carWidthListSureValue : "",
-              carModel:weightBoth <= 40 ? carTypeListSureValue : "",
+              carLength:weightBoth <= 40 && carListSureValue == "5fda0edc8df34b4d8c1ed44a6f1f866e" ? carWidthListSureValue : "",
+              carModel:weightBoth <= 40 && carListSureValue == "5fda0edc8df34b4d8c1ed44a6f1f866e" ? carTypeListSureValue : "",
               pk_carrier:self.pk_carrier,
               driver_name:self.driver_name,
               if_insurance:self.insurance,
