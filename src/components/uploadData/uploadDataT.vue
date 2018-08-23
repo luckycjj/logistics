@@ -318,8 +318,8 @@ export default {
                     getCarrAndCompanyInfo.transType = [];
                   }
                   for(var i = 0; i < getCarrAndCompanyInfo.transType.length ; i++){
-                    tranType.push(getCarrAndCompanyInfo.transType[i].transType);
-                    tranTypeNumber.push(getCarrAndCompanyInfo.transType[i].typeNum);
+                    tranType.push(getCarrAndCompanyInfo.transType[i].displayName);
+                    tranTypeNumber.push(getCarrAndCompanyInfo.transType[i].value);
                   }
                   water.tranType = tranType.join(",");
                   water.tranTypeNumber = tranTypeNumber.join(",");

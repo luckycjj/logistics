@@ -1576,7 +1576,8 @@
               pay:self.pay==1?"收货方":"发货方",
               est_amount:_this.price*1,
               remark:self.remark,
-              pk:_this.pk
+              pk:_this.pk,
+              weightBoth:weightBoth,
             };
             androidIos.loading("正在提交");
             bomb.removeClass("submit","gogogo");
