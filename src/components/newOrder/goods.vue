@@ -8,7 +8,7 @@
     </ul>
     <div id="nogoods" v-if="list.length == 0 && listSure">
       <img src="../../images/nojilu.png">
-      <p>已选中所有类别</p>
+      <p>暂无货物</p>
     </div>
   </div>
 </template>

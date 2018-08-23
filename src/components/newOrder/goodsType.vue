@@ -1,11 +1,15 @@
 <template>
   <div id="goodsType">
     <div id="title" v-title data-title="货物类别"></div>
-    <ul>
+    <ul v-if="list.length > 0 && listSure">
       <li v-for="item in list" @click="choose(item)">
         {{item.displayName}}
       </li>
     </ul>
+    <div id="nogoods" v-if="list.length == 0 && listSure">
+      <img src="../../images/nojilu.png">
+      <p>暂无货物</p>
+    </div>
   </div>
 </template>
 
@@ -16,7 +20,8 @@
       data(){
         return{
           list:[],
-          nowId:""
+          nowId:"",
+          listSure:false,
         }
       },
       mounted:function(){
@@ -48,6 +53,7 @@
               dataType: "json",
               timeout: 10000,
               success: function (getGoodsClass) {
+                _this.listSure = true;
                 if(getGoodsClass.success || getGoodsClass.success == "1"){
                   if(_this.nowId == ""||(list.length == 1 && productList[_this.$route.query.index].goodsType!="")){
                     _this.list = getGoodsClass.list;
@@ -97,6 +103,21 @@
     width:90%;
     padding: 0 5%;
     border-bottom: 1px solid #dbdbdb;
+  }
+  #nogoods{
+    width:40%;
+    margin: 1rem auto;
+  }
+  #nogoods img{
+    display: block;
+    width:100%;
+  }
+  #nogoods p{
+    font-size: 0.375rem;
+    text-align: center;
+    color:#333;
+    margin-top:0.3rem;
+    letter-spacing: 2px;
   }
 </style>
 

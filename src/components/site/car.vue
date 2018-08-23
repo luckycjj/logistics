@@ -54,6 +54,7 @@
         pageSize:"",
         pageNum:"",
         orderPk:"",
+        totle:0,
         show:false,
         pdType:0,
       }
@@ -154,10 +155,10 @@
                   bomb.first( that.find(".carnumber").text() + "已被禁用，请修改信息");
                   return false;
                 }
-                /*if(sessionStorage.getItem("weh") != undefined && sessionStorage.getItem("weh")*1 > that.find(".weight span").text()*1){
+                if((sessionStorage.getItem("weh") != undefined && sessionStorage.getItem("weh")*1 > that.find(".weight span").text()*1) && _this.totle == 1){
                   bomb.first( that.find(".carnumber").text() + "载重量不足,请选择其他车辆");
                   return false;
-                }*/
+                }
                 androidIos.addPageList();
                 _this.$router.push({ path: '/car',query:{title: carNumber,pkCar:pkcar,carType:cartype}});
               }
@@ -396,6 +397,7 @@
                   _this.listType = pdType;
                   _this.pageNum = pageNum;
                   _this.pageSize = pageSize;
+                  _this.totle = getCarList.total;
                   for(var i =0; i< getCarList.list.length;i++){
                     var tt = getCarList.list[i];
                     var json = {

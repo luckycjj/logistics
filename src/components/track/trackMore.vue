@@ -130,7 +130,7 @@
           </div>
           <div class="company">
             <div class="firstBox">
-              <img :src="item.owner.logo"  :onerror="errorlogo" class="companyImg">
+              <img :src="httpurl + item.owner.logo"  :onerror="errorlogo" class="companyImg">
             </div>
             <div class="secondBox">
               <p><span>{{item.owner.company}}</span></p>
@@ -236,6 +236,7 @@
         mescroll:"",
         endtype:0,
         carList:[],
+        httpurl:"",
         carpeoList:[],
         errorlogo: 'this.src="' + require('../../images/carpeople.png') + '"'
       }
@@ -257,6 +258,33 @@
       go:function () {
         var self = this;
         thisThat = self;
+        $.ajax({
+          type: "POST",
+          url: androidIos.ajaxHttp() + "/settings/findParamValueByName ",
+          data: JSON.stringify({
+            userCode:sessionStorage.getItem("token"),
+            source:sessionStorage.getItem("source"),
+            paramName:"resourcePath"
+          }),
+          contentType: "application/json;charset=utf-8",
+          dataType: "json",
+          async:false,
+          timeout:30000,
+          success: function(findParamValueByName){
+            if(findParamValueByName.success == "1"){
+              self.httpurl = findParamValueByName.paramValue;
+            }else{
+              androidIos.second(findParamValueByName.message);
+            }
+          },
+          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+            if(status=='timeout'){//超时,status还有success,error等值的情况
+              androidIos.second("当前状况下网络状态差，请检查网络！")
+            }else if(status=="error"){
+              androidIos.errorwife();
+            }
+          }
+        });
         sessionStorage.removeItem("changeCarpeople");
         sessionStorage.removeItem("changeCarFupeople");
         self.peopleType = self.$route.query.pt == undefined ? 0 :self.$route.query.pt;

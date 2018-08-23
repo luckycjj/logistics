@@ -108,7 +108,7 @@
           </div>
           <div class="carrier" v-if="item.carrier.pkCarrier!=''">
             <div class="firstBox">
-              <img :src="item.carrier.logo" :onerror="errorlogo" class="companyImg">
+              <img :src="httpurl + item.carrier.logo" :onerror="errorlogo" class="companyImg">
             </div>
             <div class="secondBox">
               <p><span>{{item.carrier.company}}</span></p>
@@ -217,6 +217,7 @@
         scoreList:"",
         scorereason:"",
         cancelreason:"",
+        httpurl:"",
         errorlogo: 'this.src="' + require('../../images/chengyunshang.png') + '"',
         errorlogo2: 'this.src="' + require('../../images/carpeople.png') + '"',
       }
@@ -229,6 +230,33 @@
       go:function () {
         var self = this;
         thisThat = this;
+        $.ajax({
+          type: "POST",
+          url: androidIos.ajaxHttp() + "/settings/findParamValueByName ",
+          data: JSON.stringify({
+            userCode:sessionStorage.getItem("token"),
+            source:sessionStorage.getItem("source"),
+            paramName:"resourcePath"
+          }),
+          contentType: "application/json;charset=utf-8",
+          dataType: "json",
+          async:false,
+          timeout:30000,
+          success: function(findParamValueByName){
+            if(findParamValueByName.success == "1"){
+              self.httpurl = findParamValueByName.paramValue;
+            }else{
+              androidIos.second(findParamValueByName.message);
+            }
+          },
+          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+            if(status=='timeout'){//超时,status还有success,error等值的情况
+              androidIos.second("当前状况下网络状态差，请检查网络！")
+            }else if(status=="error"){
+              androidIos.errorwife();
+            }
+          }
+        });
         self.orderSource = self.$route.query.type;
         self.mescroll = new MeScroll("mescroll", { //请至少在vue的mounted生命周期初始化mescroll,以确保您配置的id能够被找到
           up: {
@@ -749,6 +777,13 @@
               sessionStorage.setItem("dataStart",invoiceDetail.delivery.addressLatAndLon);
               sessionStorage.setItem("dataEnd",invoiceDetail.arrival.addressLatAndLon);
               thisThat.payStatus = invoiceDetail.payStatus;
+              var tranTypeBoth = loadSegmentDetail.transType;
+              if(loadSegmentDetail.carLength !=  ""){
+                tranTypeBoth = tranTypeBoth + "(" + loadSegmentDetail.carLength + "米)";
+              }
+              if(loadSegmentDetail.carModel != ""){
+                tranTypeBoth = tranTypeBoth + "(" + loadSegmentDetail.carModel + ")";
+              }
               var pdlist = [{
                 orderType:trackingStatusValue,
                 orderTypeName:invoiceDetail.trackingStatus,
@@ -760,7 +795,7 @@
                   startAddress:invoiceDetail.delivery!=null?(invoiceDetail.delivery.province+invoiceDetail.delivery.area):"",
                   endAddress:invoiceDetail.arrival!=null?(invoiceDetail.arrival.province+invoiceDetail.arrival.area):"",
                   distance:"0",
-                  tranType:invoiceDetail.transType + "(" + invoiceDetail.carLength + "米)(" + invoiceDetail.carModel + ")",
+                  tranType:tranTypeBoth,
                   productList:list,
                   money:invoiceDetail.price*1,
                   startTime:invoiceDetail.deliDate,
