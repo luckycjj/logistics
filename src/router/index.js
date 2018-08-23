@@ -41,6 +41,7 @@ import  carS from '@/components/car/map'
 import  carT from '@/components/car/changeCarpeople'
 import  carFo from '@/components/car/newdriver'
 import  carFi from '@/components/car/newCar'
+import uploadDataF from '@/components/uploadData/pdf'
 import uploadDataS from '@/components/uploadData/uploadDataS'
 import uploadDataT from '@/components/uploadData/uploadDataT'
 import uploadDataFo from '@/components/uploadData/uploadDataFo'
@@ -127,6 +128,7 @@ export default new Router({
       name: 'uploadData',
       component: uploadData,
       children: [
+        {path: 'pdf',component:uploadDataF},
         {path: 'uploadDataS', component: uploadDataS},
         {path: 'uploadDataT', component: uploadDataT},
         {path: 'uploadDataFo', component: uploadDataFo}

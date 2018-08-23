@@ -312,6 +312,17 @@ export default {
                   water.Travelpic = getCarrAndCompanyInfo.driverLicense;
                   water.peopleNumber = getCarrAndCompanyInfo.idCardNum == null ? "" :getCarrAndCompanyInfo.idCardNum ;
                   water.creditCode = getCarrAndCompanyInfo.socialCreditCode == null ? "" :getCarrAndCompanyInfo.socialCreditCode ;
+                  var tranType = [];
+                  var tranTypeNumber = [];
+                  if(getCarrAndCompanyInfo.transType == null){
+                    getCarrAndCompanyInfo.transType = [];
+                  }
+                  for(var i = 0; i < getCarrAndCompanyInfo.transType.length ; i++){
+                    tranType.push(getCarrAndCompanyInfo.transType[i].transType);
+                    tranTypeNumber.push(getCarrAndCompanyInfo.transType[i].typeNum);
+                  }
+                  water.tranType = tranType.join(",");
+                  water.tranTypeNumber = tranTypeNumber.join(",");
                 }else{
                   _this.type = 2;
                   _this.httpurl = getCarrAndCompanyInfo.ftpUrl;
@@ -700,7 +711,7 @@ export default {
           userName : water.name,
           idCardPos :water.IDpic,
           socialCreditCode:(water.creditCode).toUpperCase(),
-          tranType:_this.type == 1 && _this.letterType == 1 ? undefined :water.tranTypeNumber,
+          transType:_this.type == 1 && _this.letterType == 1 ? undefined :water.tranTypeNumber,
           businessLicense : _this.type == 1 && _this.letterType == 1 ? undefined : water.Licensepic,
           roadTransLicense : _this.type == 1 && _this.letterType == 1 ? undefined : $("#box1 .h5u_options_hiddenP").text(),
           driverLicense : !(this.type == 1 && _this.letterType == 1) ? undefined:$("#box4 .h5u_options_hiddenP").text(),
