@@ -638,10 +638,10 @@
                 weight: weight/1000 - 1 <0 ? weight + "千克" : weight/1000 + "吨",
                 volume:loadSegmentDetail.invPackDao[i].volume*1 - 1 < 0 ? loadSegmentDetail.invPackDao[i].volume*1000 + "升" : loadSegmentDetail.invPackDao[i].volume*1 + "立方米",
               }
-              weh += listJson.weight*1 + weh ;
+              weh += weight/1000 + weh ;
               list.push(listJson);
             }
-            sessionStorage.setItem("weh",weh/1000);
+            sessionStorage.setItem("weh",weh);
             sessionStorage.setItem("dataStart",loadSegmentDetail.delivery.addressLatAndLon);
             sessionStorage.setItem("dataEnd",loadSegmentDetail.arrival.addressLatAndLon);
             var pdlist = [{
