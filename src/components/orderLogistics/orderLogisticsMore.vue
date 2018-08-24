@@ -215,6 +215,7 @@
         scoreBox:false,
         cancelReason:[],
         scoreList:"",
+        mescroll:"",
         scorereason:"",
         cancelreason:"",
         httpurl:"",
@@ -438,7 +439,7 @@
         if(_this.payStatus != 30 && _this.pdlist[0].pickPay.type == '现结'){
           _this.payOrder();
         }else{
-          androidIos.loading("正在发布");
+          androidIos.loading("正在确认");
           $.ajax({
             type: "POST",
             url: androidIos.ajaxHttp()+"/order/orderConfirm",
@@ -453,9 +454,9 @@
             async:false,
             success: function (orderConfirm) {
               if(orderConfirm.success == "1"){
-                _this.$cjj("发布成功");
+                _this.$cjj("确认成功");
                 setTimeout(function () {
-                  androidIos.gobackFrom(_this);
+                  _this.mescroll.resetUpScroll();
                 },500)
               }else{
                 androidIos.second(orderConfirm.message);
@@ -654,10 +655,9 @@
                 bomb.addClass("gogogo","gogogo");
                 if(clientAppraisal.success == "1"){
                   _this.scoreBox = false;
-                  androidIos.gobackFrom(_this);
+                  _this.mescroll.resetUpScroll();
                 }else{
                   androidIos.second(clientAppraisal.message);
-                  _this.mescroll.resetUpScroll();
                 }
               },
               complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数

@@ -734,7 +734,8 @@
               if(driverOut.success=="1" ||driverOut.success == ""){
                 _this.$cjj("出发成功");
                 setTimeout(function () {
-                  bridge.invoke('gobackfrom');
+                  /*bridge.invoke('gobackfrom');*/
+                  _this.mescroll.resetUpScroll();
                 },500)
               }else{
                 androidIos.second(driverOut.message);
@@ -792,7 +793,8 @@
               if(arriveOrDelivery.success=="1" ||arriveOrDelivery.success == ""){
                 _this.$cjj(message);
                 setTimeout(function () {
-                  bridge.invoke('gobackfrom');
+                  /*bridge.invoke('gobackfrom');*/
+                  _this.mescroll.resetUpScroll();
                 },500)
               }else{
                 androidIos.second(arriveOrDelivery.message);
