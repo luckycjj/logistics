@@ -56,7 +56,7 @@
         </h1>
         <div class="label" v-if="creator == 0 && companyType != 2" style="border-bottom: none;">
           <span><span style="font-size: 0.3125rem;color:#ff803c;">*</span>信用代码</span>
-          <input type="tel" placeholder="输入统一社会信用代码" v-model="water.creditCode" maxlength="18">
+          <input type="text" placeholder="输入统一社会信用代码" v-model="water.creditCode" maxlength="18">
         </div>
       </div>
       <div class="labelBox">
