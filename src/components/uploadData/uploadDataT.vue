@@ -658,7 +658,7 @@ export default {
               return false;
             }
           } else if (_this.letterType == "2") {
-            if(water.tranType == ''){
+            if(water.tranType == '' && _this.creator == '0'){
               bomb.first("请选择运输类别！");
               return false;
             }
