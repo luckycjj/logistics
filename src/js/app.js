@@ -78,7 +78,7 @@ var androidIos = {
   },
   ajaxHttp: function () {
    // var http = 'http://10.10.10.187:8085';
-    //var http = 'http://10.10.10.206:8085';
+   // var http = 'http://10.10.10.224:8085';
     var http = 'http://222.73.159.76:8085';
     return http;
   },
@@ -186,11 +186,11 @@ var androidIos = {
   },
   bridge:function (that) {
     new Promise(function (resolve,reject) {
-     /* if(bridge.invoke('token') != undefined){*/
+      /*if(bridge.invoke('token') != undefined){*/
         bridge.invoke('token','',function(response) {
           resolve(response);
         })
-     /* }else{
+      /*}else{
         reject(2)
       }*/
     }).then(function (data) {

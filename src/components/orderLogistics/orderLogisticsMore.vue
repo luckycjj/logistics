@@ -728,6 +728,8 @@
   function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
     //延时一秒,模拟联网
     setTimeout(function () {
+      thisThat.pdlist = [];
+      thisThat.carloading = true;
       if(thisThat.$route.query.type == 1 || thisThat.$route.query.type == 2){
         $.ajax({
           type: "POST",
