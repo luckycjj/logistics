@@ -842,7 +842,6 @@
     //延时一秒,模拟联网
     setTimeout(function () {
       thisThat.pdlist = [];
-      thisThat.carloading = true;
       $.ajax({
         type: "POST",
         url: androidIos.ajaxHttp()+"/order/loadEntrustDetail",

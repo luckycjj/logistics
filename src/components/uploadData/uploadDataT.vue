@@ -7,8 +7,7 @@
         <div style="border-top: 1px solid #dcdcdc;border-bottom: 1px solid #dcdcdc;">
           <div class="label" style="border:none;">
             <span style="float: left;">公司名称</span>
-            <div v-if="water.company!=''" id="companyNameBigBox">{{water.company}}</div>
-            <input v-else type="text" placeholder="请输入公司名称"  v-model="water.company" maxlength="20">
+            <div id="companyNameBigBox">{{water.company}}</div>
           </div>
           <div class="label" v-if="creator == 0 && companyType != 2 "  style="border-bottom: none; border-top: 0.03125rem solid #dcdcdc;">
             <span><span style="font-size: 0.375rem;color:#ff803c;">*</span>运输类型</span>
@@ -70,9 +69,9 @@
           <div style="margin-left: 0.18rem;margin-top: 0.3rem;">
             <div class="imgBox">
               <div id="box2" class="imgUpload"></div>
-              <!--<div @click="cleanIDcode()" v-if="water.IDpic != ''" style="position:absolute;right:0rem;top:0rem;font-size: 0.3125rem;border-radius: 50%;color:white;width:0.5rem;height: 0.5rem;text-align: center;line-height: 0.45rem;z-index: 3;background: rgba(0,0,0,0.5);">x</div>-->
-              <!--<div id="box2"  @click="(1)" class="imgUpload" v-if="water.IDpic == ''"></div>-->
-             <!-- <img id="IDCODEIMG" :src="httpurl + water.IDpic"  :onerror="errorlogo"  v-else>-->
+            <!--  <div @click="cleanIDcode()" v-if="water.IDpic != ''" style="position:absolute;right:0rem;top:0rem;font-size: 0.3125rem;border-radius: 50%;color:white;width:0.5rem;height: 0.5rem;text-align: center;line-height: 0.45rem;z-index: 3;background: rgba(0,0,0,0.5);">x</div>
+              <img id="IDCODEIMG" :src="httpurl + water.IDpic"  :onerror="errorlogo"  v-if="water.IDpic != ''">
+              <div id="box2"  @click="recognition(1)" style=" width: 4rem; height: 2.6rem; " class="imgUpload" v-if="water.IDpic == ''"></div>-->
             </div>
             <h5 style="font-size: 0.3125rem;text-align: center;width:4rem;"><span style="font-size: 0.3125rem;color:#ff803c;">*</span>正面</h5>
           </div>
@@ -369,7 +368,7 @@ export default {
         }
       }
       _this.$nextTick(function() {
-        if(!(( _this.type == 1 && _this.letterType == 1 )|| _this.type==2) && ( _this.companyType == 0 || _this.creator == 0 )){
+        if(_this.type == 1 && _this.letterType == 2  && _this.companyType != 2 && _this.creator == 0 ){
           $("#box").aiiUpload({
             action: androidIos.ajaxHttp() + "/uploadFile",
             max_w: 1000,
@@ -603,15 +602,10 @@ export default {
     },
     recognition:function (type) {
       var _this = this;
-      bridge.invoke("recognition",type,function (data) {
-         data = JSON.parse(data);
-         if(type == 0){
-             _this.water.IDpic = data.imgUrl;
-             _this.water.peopleNumber = data.number;
-         }else if(type == 1){
-           _this.water.Licensepic = data.imgUrl;
-           _this.water.creditCode = data.number;
-         }
+      bridge.invoke("recognition",type,function () {
+        bridge.invoke("recognitioncallback",function (data) {
+          alert(data)
+        })
       })
     },
     submit: function() {
@@ -658,19 +652,19 @@ export default {
               return false;
             }
           } else if (_this.letterType == "2") {
-            if(water.tranType == '' && _this.creator == '0'){
+            if(water.tranType == '' && _this.creator == '0' &&  _this.companyType != 2){
               bomb.first("请选择运输类别！");
               return false;
             }
-            if( _this.creator == '0' && water.creditCode.length <18 ){
+            if( _this.creator == '0' && water.creditCode.length <18  &&  _this.companyType != 2){
               bomb.first("请输入统一社会信用代码！");
               return false;
             }
-            if (water.Licensepic == "" && _this.creator == '0') {
+            if (water.Licensepic == "" && _this.creator == '0' &&  _this.companyType != 2) {
               bomb.first("请上传营业执照！");
               return false;
             }
-            if (water.Roadpic == "" && _this.creator == '0') {
+            if (water.Roadpic == "" && _this.creator == '0' &&  _this.companyType != 2) {
               bomb.first("请上传道路运输许可证！");
               return false;
             }
@@ -732,19 +726,19 @@ export default {
           return false;
         }
         var json = {
-          companyName : _this.type == 1 && _this.letterType == 1 ? undefined  : water.company,
-          bank :  _this.type == 1 && _this.letterType == 1 ? undefined : water.bank,
-          bankAccount :  _this.type == 1 && _this.letterType == 1 ? undefined  : water.bankNumber,
+          companyName : _this.type == 1 && _this.letterType == 2 ? water.company  : "",
+          bank :  _this.type == 1 && _this.letterType == 2 && _this.creator == 0  &&  _this.companyType != 2  ? water.bank : "",
+          bankAccount :  _this.type == 1 && _this.letterType == 2 && _this.creator == 0  &&  _this.companyType != 2 ? water.bankNumber  : "",
           userName : water.name,
           idCardPos :water.IDpic,
-          socialCreditCode:(water.creditCode).toUpperCase(),
-          transType:_this.type == 1 && _this.letterType == 1 ? undefined :water.tranTypeNumber,
-          businessLicense : _this.type == 1 && _this.letterType == 1 ? undefined : water.Licensepic,
-          roadTransLicense : $("#box1 .h5u_options_hiddenP").text(),
-          driverLicense : !(this.type == 1 && _this.letterType == 1) ? undefined:$("#box4 .h5u_options_hiddenP").text(),
-          drivingLicence :  !( _this.type == 1 && _this.letterType == 1) ? undefined : $("#box3 .h5u_options_hiddenP").text(),
+          socialCreditCode:_this.type == 1 && _this.letterType == 2 && _this.creator == 0  &&  _this.companyType != 2 ? (water.creditCode).toUpperCase() : "",
+          transType:_this.type == 1 && _this.letterType == 2 && _this.creator == 0  &&  _this.companyType != 2 ? water.tranTypeNumber : "",
+          businessLicense : _this.type == 1 && _this.letterType == 2  && _this.creator == 0  &&  _this.companyType != 2 ?  water.Licensepic : "",
+          roadTransLicense :  (_this.type == 1 && _this.letterType == 2  && _this.creator == 0  &&  _this.companyType != 2) || (_this.type == 1 && _this.letterType == 1) ? water.Roadpic : "",
+          driverLicense : _this.type == 1 && _this.letterType == 1 ? water.Travelpic : "" ,
+          drivingLicence : _this.type == 1 && _this.letterType == 1 ? water.Drivepic : "",
           type : _this.type == 1 && _this.letterType == 1? 3 : _this.type == 1 && _this.letterType == 2 ? 2:1,
-          companyStatus: _this.type == 1 && _this.letterType == 1 ? undefined : _this.companyType,
+          companyStatus: _this.type == 1 && _this.letterType == 1 ? "" : _this.companyType,
           isYourSelf:_this.creator == 0 ? 1 : 0 ,
           idCardNum:water.peopleNumber,
           source :sessionStorage.getItem("source"),

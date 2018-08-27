@@ -20,6 +20,39 @@ export default {
       companyName:''
     }
   },
+  watch:{
+    companyName:{
+      handler:function(val,oldval){
+        var _this = this;
+        if(sessionStorage.getItem("source") == 2){
+          var UPMESSA = localStorage.getItem("UPMESSA");
+          if(UPMESSA != undefined || UPMESSA != null){
+            UPMESSA = JSON.parse(UPMESSA);
+            UPMESSA.company = _this.companyName
+          }else{
+            UPMESSA = {
+              nvitationodeIC:"",
+              company:_this.companyName,
+              tranType:"",
+              tranTypeNumber:"",
+              bank: "",
+              bankNumber: "",
+              creditCode:"",
+              name: "",
+              IDpic: "",
+              Licensepic: "",
+              Roadpic: "",
+              Travelpic: "",
+              Drivepic: "",
+              peopleNumber:""
+            }
+          }
+          localStorage.setItem("UPMESSA",JSON.stringify(UPMESSA));
+        }
+      },
+      deep:true
+    }
+  },
   mounted: function() {
     var _this = this;
     androidIos.bridge(_this);
@@ -29,6 +62,10 @@ export default {
       var _this =this;
       _this.type =_this.$route.query.type;
       _this.letterType = _this.$route.query.letterType;
+      var UPMESSA = localStorage.getItem("UPMESSA");
+      if(UPMESSA != undefined){
+        _this.companyName = JSON.parse(UPMESSA).company;
+      }
     },
     letGo:function () {
         var _this = this;

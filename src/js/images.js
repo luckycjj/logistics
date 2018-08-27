@@ -81,25 +81,27 @@ import  {androidIos} from './app';
       $(".upbox .closed").unbind("click").click(function () {
         androidIos.first("确定删除吗？");
         var thisclose = $(this);
+        var parentsId = thisclose.parents(".imgUpload").attr("id");
         $(".tanBox-yes").unbind('click').click(function () {
           $(".tanBox-bigBox").remove();
-          var parentsId = thisclose.parents(".imgUpload").attr("id");
-          var message = sessionStorage.getItem("source") == "2" ?JSON.parse(localStorage.getItem("UPMESSA")):JSON.parse(localStorage.getItem("DRIVERMESSA")) ;
-          if(parentsId == "box"){
-            message.Licensepic = "";
-          }else if(parentsId == "box1"){
-            message.Roadpic = "";
-          }else if(parentsId == "box2"){
-            message.IDpic = "";
-          }else if(parentsId == "box3"){
-            message.Drivepic = "";
-          }else if(parentsId == "box4"){
-            message.Travelpic = "";
-          }
-          if(sessionStorage.getItem("source") == "2"){
-            localStorage.setItem("UPMESSA",JSON.stringify(message));
-          }else if(sessionStorage.getItem("source") == "3"){
-            localStorage.setItem("DRIVERMESSA",JSON.stringify(message));
+          if(localStorage.getItem("UPMESSA")!= null){
+            var message = sessionStorage.getItem("source") == "2" ?JSON.parse(localStorage.getItem("UPMESSA")):JSON.parse(localStorage.getItem("DRIVERMESSA")) ;
+            if(parentsId == "box"){
+              message.Licensepic = "";
+            }else if(parentsId == "box1"){
+              message.Roadpic = "";
+            }else if(parentsId == "box2"){
+              message.IDpic = "";
+            }else if(parentsId == "box3"){
+              message.Drivepic = "";
+            }else if(parentsId == "box4"){
+              message.Travelpic = "";
+            }
+            if(sessionStorage.getItem("source") == "2"){
+              localStorage.setItem("UPMESSA",JSON.stringify(message));
+            }else if(sessionStorage.getItem("source") == "3"){
+              localStorage.setItem("DRIVERMESSA",JSON.stringify(message));
+            }
           }
           thisclose.parents(".upbox").find(".cjjimgbox").html("");
           thisclose.parents(".upbox").find("img").hide();
@@ -206,7 +208,6 @@ import  {androidIos} from './app';
       dataType: "json",
       timeout: 30000,
       success: function (json) {
-        $("#common-blackBox").remove();
         if (json.success == "1") {
           $("#h5u_options_" + rand_id).css("display", "none");
           $("#h5u_preview_" + rand_id).show();
@@ -268,11 +269,12 @@ import  {androidIos} from './app';
           }else if(sessionStorage.getItem("source") == "3" && http.indexOf("/uploadData/uploadDataT") != -1){
             localStorage.setItem("DRIVERMESSA",JSON.stringify(message));
           }
-        } else if (json.success == "-1") {
+        } else{
           androidIos.second(json.message);
         }
       },
       complete: function (XMLHttpRequest, status) { //请求完成后最终执行参数
+        $("#" + parentsId + " input").val("");
         $("#common-blackBox").remove();
         if (status == 'timeout') { //超时,status还有success,error等值的情况
           androidIos.second("当前状况下网络状态差，请检查网络！")

@@ -534,8 +534,8 @@
             bomb.first("请选择车辆类型");
             return false;
           }
-          if(_this.message.carlength == "请选择运输类型" && (_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383")){
-            bomb.first("请选择车长");
+          if(_this.message.cartrantype == "请选择运输类型" && (_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383")){
+            bomb.first("请选择运输类型");
             return false;
           }
           if(_this.message.type == "请选择车型" && _this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7"){
