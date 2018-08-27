@@ -286,7 +286,7 @@
                   }
                 }
               }
-              if( weightBoth > 40){
+              if( weightBoth > 30){
                 self.carTypeLook = false;
               }else{
                 self.carTypeLook = true;
@@ -294,7 +294,7 @@
               _this.price=(_this.price.toString().match(/\d+(\.\d{0,2})?/)||[''])[0];
               _this.both.cartypeOther = (_this.both.cartypeOther.toString().match(/\d+(\.\d{0,1})?/)||[''])[0];
               if(_this.pk == ""){
-                if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&((self.tranType != ""&& weightBoth <= 40) || weightBoth > 40)){
+                if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&((self.tranType != ""&& weightBoth <= 30) || weightBoth > 30)){
                   for(var i = 0;i<self.productList.length;i++) {
                     if(_this.price!=""){
                       if (self.productList[i].goodsType == "" || (self.productList[i].wight*1 == "0" && self.productList[i].weight*1 == "0"  ) ) {
@@ -354,7 +354,7 @@
               for(var i = 0;i<self.productList.length;i++) {
                 weightBoth =  weightBoth + self.productList[i].wight * self.productList[i].wightTen;
               }
-              if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&((self.tranType != ""&& weightBoth <= 40) || weightBoth > 40) ){
+              if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&((self.tranType != ""&& weightBoth <= 30) || weightBoth > 30) ){
                 for(var i = 0;i<self.productList.length;i++) {
                   if(_this.price!=""){
                     if (self.productList[i].goodsType == ""  ||(self.productList[i].wight*1 == "0" && self.productList[i].weight*1 == "0"  ) ) {
@@ -871,7 +871,7 @@
             volumn = volumn*1 + _this.both.productList[x].weight * _this.both.productList[x].weightTen;
           }
           if(_this.pk == ""){
-            if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read &&((self.tranType != self.tranTypeValue && weight <= 40) ||  weight > 40)){
+            if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read &&((self.tranType != self.tranTypeValue && weight <= 30) ||  weight > 30)){
               if(( weight*1 > 0 || volumn*1 > 0) && _this.both.price == ""){
                 var carListSureValueList = self.carListSureValue.split(",");
                 var carListSureValue = "";
@@ -915,7 +915,7 @@
                 var json = {
                   startCity:_this.both.startAddress.city.split("-")[1].replace("市",""),
                   endCity:_this.both.endAddress.city.split("-")[1].replace("市",""),
-                  carLength:weight <= 40 && carListSureValue == "5fda0edc8df34b4d8c1ed44a6f1f866e" ? carWidthListSureValue : "",
+                  carLength:weight <= 30 && carListSureValue == "5fda0edc8df34b4d8c1ed44a6f1f866e" ? carWidthListSureValue : "",
                   weight:weight,
                   volume:volumn,
                   userCode:sessionStorage.getItem("token"),
@@ -951,7 +951,7 @@
           }
           var self = _this.both;
           if(_this.pk == ""){
-            if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&((self.tranType != ""&& weight <= 40) ||  weight > 40)){
+            if(self.startAddress.people!=""&&self.timeBeforeF!=""&&self.timeBeforeS!=""&&self.timeAfterF!=""&&self.timeAfterS!=""&&self.endAddress.people!=""&&self.read&&((self.tranType != ""&& weight <= 30) ||  weight > 30)){
               for(var i = 0;i<self.productList.length;i++) {
                 if(_this.price!=""){
                   if (self.productList[i].goodsType == "") {
@@ -1502,7 +1502,7 @@
                   }
 
                 }
-                if(self.tranType == "" && weightBoth <= 40){
+                if(self.tranType == "" && weightBoth <= 30){
                   bomb.first("请选择运输类别");
                   return false;
                 }
@@ -1577,9 +1577,9 @@
               act_leav_date:self.timeBeforeS + " " + self.timeBeforeF,
               act_arri_date:self.timeAfterS +" " + self.timeAfterF,
               goodspack:list,
-              vehicleType:weightBoth <= 40 ? carListSureValue : "",
-              carLength:weightBoth <= 40 && carListSureValue == "5fda0edc8df34b4d8c1ed44a6f1f866e" ? carWidthListSureValue : "",
-              carModel:weightBoth <= 40 && carListSureValue == "5fda0edc8df34b4d8c1ed44a6f1f866e" ? carTypeListSureValue : "",
+              vehicleType:weightBoth <= 30 ? carListSureValue : "",
+              carLength:weightBoth <= 30 && carListSureValue == "5fda0edc8df34b4d8c1ed44a6f1f866e" ? carWidthListSureValue : "",
+              carModel:weightBoth <= 30 && carListSureValue == "5fda0edc8df34b4d8c1ed44a6f1f866e" ? carTypeListSureValue : "",
               pk_carrier:self.pk_carrier,
               driver_name:self.driver_name,
               if_insurance:self.insurance,
