@@ -8,6 +8,10 @@
       <div class="company inputUp">
         <input type="tel" maxlength="11" placeholder="请输入手机号码" v-model="start.phone"/>
       </div>
+      <div class="company inputUp" v-if="start.driverPk == ''">
+        <input :type="lookPassWord ? 'text' : 'password' " maxlength="40"  placeholder="请输入司机密码" v-model="start.password"/>
+        <div id="lookPassWord" :class="lookPassWord ? 'lookPassWord' : '' " @click="lookpass()"></div>
+      </div>
       <div class="company inputUp">
         <p id="Z00" :class="start.time!=''?'blackColor':''" v-html="start.time==''?'选择驾龄':start.time"></p>
       </div>
@@ -27,10 +31,12 @@
         start:{
           name:"",
           phone:"",
+          password:"",
           time:"",
           driverPk:"",
           timeValue:"",
-        }
+        },
+        lookPassWord:false,
 
       }
     },
@@ -143,7 +149,7 @@
           _this.start.timeValue = driver.year=='小于1'?'0':driver.year;
           sessionStorage.removeItem("driver");
           for(var i = 0; i< driverAge.length;i++){
-            if(driverAge[i].code == _this.start.time){
+            if(driverAge[i].region == _this.start.time){
               x = i;
             }
           }
@@ -166,6 +172,10 @@
           _this.start.timeValue = name.firstCode;
         }
       },
+      lookpass:function () {
+        var _this = this;
+        _this.lookPassWord = !_this.lookPassWord;
+      },
       save:function () {
         var _this = this;
         if(_this.start.name == ""){
@@ -181,6 +191,10 @@
           bomb.first("手机号码格式不对");
           return false;
         }
+        if(_this.start.password == "" && _this.start.driverPk == ''){
+          bomb.first("请输入司机密码");
+          return false;
+        }
         if(_this.start.timeValue == ""){
           bomb.first("请选择司机驾龄");
           return false;
@@ -190,6 +204,7 @@
               pk: _this.start.driverPk == ""? undefined: _this.start.driverPk,
               driverName  : _this.start.name,
               mobile : _this.start.phone,
+              password : _this.start.password,
               driverAge: _this.start.timeValue,
               userCode:sessionStorage.getItem("token"),
               source:sessionStorage.getItem("source")
@@ -263,6 +278,7 @@
     width:94%;
     padding: 0 3%;
     border-bottom:1px solid #dadada;
+    position: relative;
   }
   .name input{
     width:48%;
@@ -273,13 +289,13 @@
     color:#333;
   }
   .inputUp input{
-    width:100%;
+    width:90%;
     padding: 0.325rem 0;
     font-size: 0.3125rem;
     color:#333;
   }
   #Z00{
-    width:100%;
+    width:90%;
     height: 0.35rem;
     padding: 0.325rem 0;
     font-size: 0.3125rem;
@@ -287,6 +303,20 @@
   }
   .blackColor{
     color:#333!important;
+  }
+  #lookPassWord{
+     width: 10%;
+    position: absolute;
+    right: 3%;
+    top:0;
+     height: 100%;
+    background-image: url("../../images/passwordLock.png");
+    background-repeat: no-repeat;
+    background-size: 0.6rem;
+    background-position: 50% 50%;
+  }
+  .lookPassWord{
+    background-image: url("../../images/passwordNolock.png")!important;
   }
   button{
     width:96%;

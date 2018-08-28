@@ -547,7 +547,7 @@
             return false;
           }
           if(_this.message.carNumber == "请输入车牌号" || _this.message.carNumber.length < 6 ){
-            bomb.first("请输入车牌号");
+            bomb.first("请输入正确的车牌号");
             return false;
           }
           if(_this.message.carNumber.length==6){
