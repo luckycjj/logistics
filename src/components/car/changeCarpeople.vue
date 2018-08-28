@@ -39,7 +39,7 @@
         </li>
       </ul>
     </div>
-    <button v-if="manage && productPk == ''" id="newCar" @click="newdriver()">新增司机</button>
+    <button v-if="productPk == ''" id="newCar" @click="newdriver()">新增司机</button>
   </div>
 </template>
 
