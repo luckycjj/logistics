@@ -246,10 +246,15 @@
     line-height: 1.25rem;
     color:#333;
     position: absolute;
-    right:0.3rem;
+    right: 0.3rem;
     top:0;
   }
-  .asd span,.asd h5{
+  .asd span{
+    font-size: 0.375rem;
+    color:#333;
+    padding:0.5rem 0rem 0.5rem 0.3rem;
+  }
+  .asd h5{
     font-size: 0.375rem;
     color:#333;
   }

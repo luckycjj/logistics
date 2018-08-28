@@ -310,13 +310,13 @@
     right: 3%;
     top:0;
      height: 100%;
-    background-image: url("../../images/passwordLock.png");
+    background-image: url("../../images/passwordNolock.png");
     background-repeat: no-repeat;
     background-size: 0.6rem;
     background-position: 50% 50%;
   }
   .lookPassWord{
-    background-image: url("../../images/passwordNolock.png")!important;
+    background-image: url("../../images/passwordLock.png")!important;
   }
   button{
     width:96%;

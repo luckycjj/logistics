@@ -120,17 +120,19 @@
           if(_this.start.addresspk == ""){
             $.ajax({
               type: "POST",
-              url: androidIos.ajaxHttp() + "/addAddress",
+              url: androidIos.ajaxHttp() + "/address/addAddres",
               data:JSON.stringify({
-                addr_name:_this.start.company,
-                phone:_this.start.phone,
-                detail_addr:_this.start.address,
+                addrName:_this.start.company,
+                mobile:_this.start.phone,
+                detailAddr:_this.start.address,
                 userCode:sessionStorage.getItem("token"),
-                pk_province:_this.start.province,
-                pk_city:_this.start.city,
-                pk_area:_this.start.area,
+                province:_this.start.province,
+                city:_this.start.city,
+                area:_this.start.area,
                 contact:_this.start.name,
-                source:sessionStorage.getItem("source")
+                source:sessionStorage.getItem("source"),
+                addrType:2,
+                ifDefault:0,
               }),
               dataType: "json",
               contentType: "application/json;charset=utf-8",
