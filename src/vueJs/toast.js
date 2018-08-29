@@ -2,7 +2,7 @@ var Toast = {};
 Toast.install = function (Vue,options) {
     Vue.prototype.$cjj = (tips) => {
       let opt = {
-        duration:'300'         // 持续时间
+        duration:'200'         // 持续时间
       }
       for(let property in options){
         opt[property] = options[property];  // 使用 options 的配置
@@ -41,21 +41,16 @@ Toast.install = function (Vue,options) {
       loadingImg.style.width = "1rem";
       loadingImg.style.display = "block";
       loadingImg.style.margin = "10% auto 0 auto";
-      let timeout =1;
-      let timeStart = setInterval(function () {
-        timeout--;
-        if(timeout<0){
-          clearInterval(timeStart);
-          let opacity = 1;
-          let time = setInterval(function () {
-            opacity = opacity-0.005;
-            loadingyes.style.opacity =opacity ;
-            if(opacity<0.005){
-              clearInterval(time);
-              document.body.removeChild(tpl);
-            }
-          },1)
-        }
+      setTimeout(function () {
+        let opacity = 1;
+        let time = setInterval(function () {
+          opacity = opacity-0.1;
+          loadingyes.style.opacity =opacity ;
+          if(opacity<0.1){
+            clearInterval(time);
+            document.body.removeChild(tpl);
+          }
+        },10)
       },opt.duration);
     }
 }

@@ -28,9 +28,10 @@ export default {
           var UPMESSA = localStorage.getItem("UPMESSA");
           if(UPMESSA != undefined || UPMESSA != null){
             UPMESSA = JSON.parse(UPMESSA);
-            UPMESSA.company = _this.companyName
+            UPMESSA.company = _this.companyName;
           }else{
             UPMESSA = {
+              userCode : sessionStorage.getItem("token"),
               nvitationodeIC:"",
               company:_this.companyName,
               tranType:"",
@@ -62,6 +63,12 @@ export default {
       var _this =this;
       _this.type =_this.$route.query.type;
       _this.letterType = _this.$route.query.letterType;
+      if(localStorage.getItem("UPMESSA") != null && _this.$route.query.type == 1){
+        var user = JSON.parse(localStorage.getItem("UPMESSA")).userCode;
+        if(user != sessionStorage.getItem("token")){
+          localStorage.removeItem("UPMESSA");
+        }
+      }
       var UPMESSA = localStorage.getItem("UPMESSA");
       if(UPMESSA != undefined){
         _this.companyName = JSON.parse(UPMESSA).company;

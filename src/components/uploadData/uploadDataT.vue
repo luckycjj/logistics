@@ -160,6 +160,7 @@ export default {
       tranTypeList:[],
       tranTypeBox:false,
       water: {
+        userCode:"",
         nvitationodeIC:"",
         company: "",
         tranType:"",
@@ -215,6 +216,18 @@ export default {
   methods: {
     go: function() {
       var _this = this;
+      if(localStorage.getItem("UPMESSA") != null && _this.$route.query.type == 1){
+        var user = JSON.parse(localStorage.getItem("UPMESSA")).userCode;
+        if(user != sessionStorage.getItem("token")){
+          localStorage.removeItem("UPMESSA");
+        }
+      }else if(localStorage.getItem("DRIVERMESSA") != null && _this.$route.query.type == 2){
+        var user = JSON.parse(localStorage.getItem("DRIVERMESSA")).userCode;
+        if(user != sessionStorage.getItem("token")){
+          localStorage.removeItem("DRIVERMESSA");
+        }
+      }
+      _this.water.userCode = sessionStorage.getItem("token");
       $.ajax({
         type: "POST",
         url: androidIos.ajaxHttp() + "/settings/findParamValueByName ",
@@ -704,18 +717,18 @@ export default {
           }
         }
         if (
-          water.bank != "" &&
+          _this.type == 1 && _this.letterType == 2 && _this.creator == 0 && water.bank != "" &&
           water.bank != null &&
           !/^[\u4e00-\u9fa5]+$/.test(water.bank)
         ) {
           bomb.first("请输入正确的开户行");
           return false;
         }
-        if(water.creditCode != "" && water.creditCode != null && !androidIos.CheckSocialCreditCode(water.creditCode)){
+        if(_this.type == 1 && _this.letterType == 2 && _this.creator == 0 && water.creditCode != "" && water.creditCode != null && !androidIos.CheckSocialCreditCode(water.creditCode)){
           bomb.first("信用代码格式不正确");
           return false;
         }
-        if(water.nvitationodeIC != "" && water.nvitationodeIC != null && !/^[\a-z\A-Z\0-9]+$/.test(water.nvitationodeIC)){
+        if(_this.type == 2 && water.nvitationodeIC != "" && water.nvitationodeIC != null && !/^[\a-z\A-Z\0-9]+$/.test(water.nvitationodeIC)){
           bomb.first("请输入正确的邀请码");
           return false;
         }
@@ -731,7 +744,7 @@ export default {
           bomb.first("身份证号码格式不对");
           return false;
         }
-        if (water.bankNumber != "" && water.bankNumber != null) {
+        if (_this.type == 1 && _this.letterType == 2 && _this.creator == 0 && water.bankNumber != "" && water.bankNumber != null) {
           var regu = /^[1-9]\d*$/;
           if (water.bankNumber.length < 16 || !regu.test(water.bankNumber)) {
             bomb.first("请输入正确的开户行账号");
