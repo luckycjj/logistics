@@ -216,28 +216,30 @@ export default {
     water:{
       handler:function(val,oldval){
         var _this = this;
-        if(sessionStorage.getItem("source") == 2){
-          var UPMESSA = localStorage.getItem("UPMESSA");
-          if(UPMESSA != undefined || UPMESSA != null){
-            UPMESSA = JSON.parse(UPMESSA);
-            _this.water.IDpicfan = UPMESSA.IDpicfan;
-            _this.water.authorization = UPMESSA.authorization;
-            _this.water.Drivepic = UPMESSA.Drivepic;
-            _this.water.Roadpic = UPMESSA.Roadpic;
-            _this.water.Travelpic = UPMESSA.Travelpic;
+        if(_this.$route.query.type != undefined){
+          if(sessionStorage.getItem("source") == 2){
+            var UPMESSA = localStorage.getItem("UPMESSA");
+            if(UPMESSA != undefined || UPMESSA != null){
+              UPMESSA = JSON.parse(UPMESSA);
+              _this.water.IDpicfan = UPMESSA.IDpicfan;
+              _this.water.authorization = UPMESSA.authorization;
+              _this.water.Drivepic = UPMESSA.Drivepic;
+              _this.water.Roadpic = UPMESSA.Roadpic;
+              _this.water.Travelpic = UPMESSA.Travelpic;
+            }
+            localStorage.setItem("UPMESSA",JSON.stringify(_this.water));
+          }else if(sessionStorage.getItem("source") == 3){
+            var DRIVERMESSA = localStorage.getItem("DRIVERMESSA");
+            if(DRIVERMESSA != undefined || DRIVERMESSA != null){
+              DRIVERMESSA = JSON.parse(DRIVERMESSA);
+              _this.water.IDpicfan = DRIVERMESSA.IDpicfan;
+              _this.water.authorization = DRIVERMESSA.authorization;
+              _this.water.Drivepic = DRIVERMESSA.Drivepic;
+              _this.water.Roadpic = DRIVERMESSA.Roadpic;
+              _this.water.Travelpic = DRIVERMESSA.Travelpic;
+            }
+            localStorage.setItem("DRIVERMESSA",JSON.stringify(_this.water));
           }
-          localStorage.setItem("UPMESSA",JSON.stringify(_this.water));
-        }else if(sessionStorage.getItem("source") == 3){
-          var DRIVERMESSA = localStorage.getItem("DRIVERMESSA");
-          if(DRIVERMESSA != undefined || DRIVERMESSA != null){
-            DRIVERMESSA = JSON.parse(DRIVERMESSA);
-            _this.water.IDpicfan = DRIVERMESSA.IDpicfan;
-            _this.water.authorization = DRIVERMESSA.authorization;
-            _this.water.Drivepic = DRIVERMESSA.Drivepic;
-            _this.water.Roadpic = DRIVERMESSA.Roadpic;
-            _this.water.Travelpic = DRIVERMESSA.Travelpic;
-          }
-          localStorage.setItem("DRIVERMESSA",JSON.stringify(_this.water));
         }
       },
       deep:true
@@ -291,8 +293,7 @@ export default {
       });
       //revise 1修改 2不修改
       _this.nvitationodeICRevise = _this.$route.query.revise == undefined ? 1 : _this.$route.query.revise ;
-
-        if (_this.$route.query.type != undefined) {
+      if (_this.$route.query.type != undefined) {
           _this.type = _this.$route.query.type;
           if(_this.$route.query.type == "2"){
             $.ajax({
@@ -318,54 +319,6 @@ export default {
                 if(status=='timeout'){//超时,status还有success,error等值的情况
                   androidIos.second("当前状况下网络状态差，请检查网络！")
                 }else if(status=="error"){
-                  androidIos.errorwife();
-                }
-              }
-            });
-            $.ajax({
-              type: "GET",
-              url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
-              data:{str:"lic_type",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
-              dataType: "json",
-              timeout: 10000,
-              success: function (getCarType) {
-                var list = [];
-                for(var i = 0; i<getCarType.length;i++){
-                  var json = {
-                    "code":getCarType[i].displayName,
-                    "region":getCarType[i].value,
-                  }
-                  list.push(json)
-                }
-                var x = 0;
-                for(var i = 0;i<list.length;i++){
-                  if(list[i].region == _this.water.licType){
-                    _this.water.licTypeCode = list[i].code;
-                    x = i;
-                  }
-                }
-                var area = new LArea();
-                area.init({
-                  'trigger': '#Z02',
-                  'valueTo': '#Z02',
-                  'keys': {
-                    id: 'id',
-                    name: 'name'
-                  },
-                  'type': 1,
-                  'data': list
-                });
-                area.value = [x];
-                area.addPointer = function (name) {
-                  name = JSON.parse(name);
-                  _this.water.licType =  name.firstVal;
-                  _this.water.licTypeCode = name.firstCode;
-                }
-              },
-              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                if(status=='timeout'){//超时,status还有success,error等值的情况
-                  androidIos.second("网络请求超时");
-                }else if(status=='error'){
                   androidIos.errorwife();
                 }
               }
@@ -451,6 +404,8 @@ export default {
               }
             }
           });
+        }
+      if(_this.type == 2){
           $.ajax({
             type: "GET",
             url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
