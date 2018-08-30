@@ -11,7 +11,7 @@
       <p id="Z04" :class="message.cartrantype=='请选择运输类型'?'carnumber':''">{{message.cartrantype}}</p>
       <div class="clearBoth"></div>
     </div>
-    <div class="box" style="margin-top: 0px;" v-show="message.carmodelNumber == '5de1912471af4c2d839a27f268cd8ca7' || message.carmodelNumber == ''">
+    <div class="box" style="margin-top: 0px;"  v-show="message.carmodelNumber == '5de1912471af4c2d839a27f268cd8ca7' || message.carmodelNumber == '41efd612fc2e4067a1debc30a1c36383' || message.carmodelNumber == ''">
       <span>车&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;型</span>
       <p id="Z00":class="message.type=='请选择车型'?'carnumber':''">{{message.type}}</p>
       <div class="clearBoth"></div>
@@ -33,11 +33,11 @@
       <input type="tel" maxlength="10" @keyup="weightKey()" v-model="message.weight" placeholder="请输入载量" />
       <div class="clearBoth"></div>
     </div>
-    <div class="box" style="margin-top: 0px;">
+    <!--<div class="box" style="margin-top: 0px;">
       <span>司 机</span>
       <p id="Z01" :class="message.driver=='请选择司机'?'carnumber':''">{{message.driver}}</p>
       <div class="clearBoth"></div>
-    </div>
+    </div>-->
     <div class="box" style="margin-top: 0px;height: auto"  v-show="message.carmodelNumber == '5de1912471af4c2d839a27f268cd8ca7' || message.carmodelNumber == '2ba6da2fd9cd4689965afe5abc8f9df4' || message.carmodelNumber == ''">
       <span>行驶证</span>
       <div class="clearBoth"></div>
@@ -96,8 +96,8 @@
           carNumber:"请输入车牌号",
           plateName:"沪",
           weight:"",
-          driver:"请选择司机",
-          driverPk:"",
+          /*driver:"请选择司机",
+          driverPk:"",*/
           carpk:"",
           Travelpic:"",
         },
@@ -113,6 +113,7 @@
         carList:false,
         keyboard:false,
         httpurl:"",
+        areaList:"",
         suremend: new Debounce(this.ajaxWeight, 1000),
       }
     },
@@ -181,7 +182,6 @@
         var carchange = sessionStorage.getItem("carchange");
         if(carchange != undefined){
           carchange = JSON.parse(carchange);
-          carchange.driver = carchange.driver == "" ? "请选择司机" : carchange.driver;
           carchange.carmodel = carchange.carmodel == "" ? "请选择车辆类型" : carchange.carmodel;
           carchange.type = carchange.type == "" ? "请选择车型" : carchange.type;
           carchange.carlength = carchange.carlength == "" ? "请选择车长" : carchange.carlength;
@@ -211,54 +211,6 @@
         $.ajax({
           type: "GET",
           url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
-          data:{str:"car_type",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
-          dataType: "json",
-          timeout: 10000,
-          success: function (getCarType) {
-            var list = [];
-            for(var i = 0; i<getCarType.length;i++){
-              var json = {
-                "code":getCarType[i].value,
-                "region":getCarType[i].displayName,
-              }
-              list.push(json)
-            }
-            var x = 0;
-            for(var i = 0;i<list.length;i++){
-              if(list[i].region == _this.message.type){
-                _this.message.carCode = list[i].code;
-                x = i;
-              }
-            }
-            var area = new LArea();
-            area.init({
-              'trigger': '#Z00',
-              'valueTo': '#Z00',
-              'keys': {
-                id: 'id',
-                name: 'name'
-              },
-              'type': 1,
-              'data': list
-            });
-            area.value = [x];
-            area.addPointer = function (name) {
-              name = JSON.parse(name);
-              _this.message.type =  name.firstVal;
-              _this.message.carCode = name.firstCode;
-            }
-          },
-          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-            if(status=='timeout'){//超时,status还有success,error等值的情况
-              androidIos.second("网络请求超时");
-            }else if(status=='error'){
-              androidIos.errorwife();
-            }
-          }
-        });
-        $.ajax({
-          type: "GET",
-          url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
           data:{str:"car_length",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
           dataType: "json",
           timeout: 10000,
@@ -274,7 +226,7 @@
             var x = 0;
             for(var i = 0;i<list.length;i++){
               if(list[i].region == _this.message.carlength){
-                _this.message.carCode = list[i].code;
+                _this.message.carlengthCode = list[i].code;
                 if(list[i].code.indexOf("-") == -1){
                   _this.minWeight = list[i].code;
                   _this.maxWeight = list[i].code;
@@ -322,11 +274,64 @@
           }
         });
         $.ajax({
+          type: "GET",
+          url: androidIos.ajaxHttp() + "/settings/getSysConfigList",
+          data: {
+            str: "trans_type",
+            userCode: sessionStorage.getItem("token"),
+            source: sessionStorage.getItem("source")
+          },
+          dataType: "json",
+          timeout: 30000,
+          success: function (getCarType) {
+            var list = [];
+            for(var i = 0; i<getCarType.length;i++){
+              var json = {
+                "code":getCarType[i].value,
+                "region":getCarType[i].displayName,
+              }
+              list.push(json)
+            }
+            var x = 0;
+            for(var i = 0;i<list.length;i++){
+              if(list[i].region == _this.message.cartrantype){
+                _this.message.cartrantypeCode = list[i].code;
+                x = i;
+              }
+            }
+            var area = new LArea();
+            area.init({
+              'trigger': '#Z04',
+              'valueTo': '#Z04',
+              'keys': {
+                id: 'id',
+                name: 'name'
+              },
+              'type': 1,
+              'data': list
+            });
+            area.value = [x];
+            area.addPointer = function (name) {
+              name = JSON.parse(name);
+              _this.message.cartrantype =  name.firstVal;
+              _this.message.cartrantypeCode = name.firstCode;
+            }
+          },
+          complete: function (XMLHttpRequest, status) { //请求完成后最终执行参数
+            if (status == 'timeout') {//超时,status还有success,error等值的情况
+              androidIos.second("网络请求超时");
+            } else if (status == 'error') {
+              androidIos.errorwife();
+            }
+          }
+        });
+        $.ajax({
           type: "POST",
           url: androidIos.ajaxHttp()+"/settings/getCarType",
           contentType: "application/json;charset=utf-8",
           dataType: "json",
           timeout: 30000,
+          async:false,
           success: function (getCarType) {
             var list = [];
             for(var i = 0; i<getCarType.length;i++){
@@ -359,67 +364,41 @@
               name = JSON.parse(name);
               _this.message.carmodel =  name.firstVal;
               _this.message.carmodelNumber = name.firstCode;
-            }
-          },
-          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-            if(status=='timeout'){//超时,status还有success,error等值的情况
-              androidIos.second("网络请求超时");
-            }else if(status=='error'){
-              androidIos.errorwife();
-            }
-          }
-        });
-        $.ajax({
-          type: "POST",
-          url: androidIos.ajaxHttp()+"/driver/getDriverPage",
-          data: JSON.stringify({
-            pk:"",
-            page:1,
-            size:10000,
-            userCode: sessionStorage.getItem("token"),
-            source:sessionStorage.getItem("source")
-          }),
-          contentType: "application/json;charset=utf-8",
-          dataType: "json",
-          timeout: 30000,
-          success: function (getCarType) {
-            if(getCarType.success == "1" || getCarType.success == ""){
-              var list = [{
-                "code":"",
-                "region":"请选择司机"
-              }];
-              for(var i = 0; i<getCarType.list.length;i++){
-                var json = {
-                  "code":getCarType.list[i].pkDriver,
-                  "region":getCarType.list[i].driverName+' '+getCarType.list[i].mobile,
-                }
-                list.push(json)
+              var ajaxName = "";
+              if(name.firstCode == "41efd612fc2e4067a1debc30a1c36383"){
+                ajaxName = "headstock";
+              }else{
+                ajaxName = "car_type";
               }
-              var x = 0;
-              for(var i = 0;i<list.length;i++){
-                if(list[i].code == _this.message.driverPk){
-                  x = i;
-                }
-              }
-              var area = new LArea();
-              area.init({
-                'trigger': '#Z01',
-                'valueTo': '#Z01',
-                'keys': {
-                  id: 'id',
-                  name: 'name'
+              _this.message.type = "请选择车型";
+              _this.message.carCode = "";
+              _this.areaList.data = [];
+              _this.areaList.value[0] = 0 ;
+              $.ajax({
+                type: "GET",
+                url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
+                data:{str:ajaxName,userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
+                dataType: "json",
+                timeout: 10000,
+                success: function (getCarType) {
+                  var list = [];
+                  for(var i = 0; i<getCarType.length;i++){
+                    var json = {
+                      "code":getCarType[i].value,
+                      "region":getCarType[i].displayName,
+                    }
+                    list.push(json);
+                  }
+                  _this.areaList.data = list;
                 },
-                'type': 1,
-                'data': list
+                complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                  if(status=='timeout'){//超时,status还有success,error等值的情况
+                    androidIos.second("网络请求超时");
+                  }else if(status=='error'){
+                    androidIos.errorwife();
+                  }
+                }
               });
-              area.value = [x];
-              area.addPointer = function (name) {
-                name = JSON.parse(name);
-                _this.message.driver =  name.firstVal.split(" ")[0];
-                _this.message.driverPk = name.firstCode;
-              }
-            }else{
-              androidIos.second(getCarType.message)
             }
           },
           complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
@@ -430,16 +409,18 @@
             }
           }
         });
+        var ajaxBothHtml = "";
+        if(_this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383"){
+          ajaxBothHtml = "headstock";
+        }else{
+          ajaxBothHtml = "car_type";
+        }
         $.ajax({
           type: "GET",
-          url: androidIos.ajaxHttp() + "/settings/getSysConfigList",
-          data: {
-            str: "trans_type",
-            userCode: sessionStorage.getItem("token"),
-            source: sessionStorage.getItem("source")
-          },
+          url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
+          data:{str:ajaxBothHtml,userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
           dataType: "json",
-          timeout: 30000,
+          timeout: 10000,
           success: function (getCarType) {
             var list = [];
             for(var i = 0; i<getCarType.length;i++){
@@ -457,9 +438,10 @@
               }
             }
             var area = new LArea();
+            _this.areaList = area;
             area.init({
-              'trigger': '#Z04',
-              'valueTo': '#Z04',
+              'trigger': '#Z00',
+              'valueTo': '#Z00',
               'keys': {
                 id: 'id',
                 name: 'name'
@@ -470,18 +452,18 @@
             area.value = [x];
             area.addPointer = function (name) {
               name = JSON.parse(name);
-              _this.message.cartrantype =  name.firstVal;
-              _this.message.cartrantypeCode = name.firstCode;
+              _this.message.type =  name.firstVal;
+              _this.message.carCode = name.firstCode;
             }
           },
-          complete: function (XMLHttpRequest, status) { //请求完成后最终执行参数
-            if (status == 'timeout') {//超时,status还有success,error等值的情况
+          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+            if(status=='timeout'){//超时,status还有success,error等值的情况
               androidIos.second("网络请求超时");
-            } else if (status == 'error') {
+            }else if(status=='error'){
               androidIos.errorwife();
             }
           }
-        })
+        });
         $(document).unbind("touchstart").on("touchstart","#keyboardBox p",function () {
           $(this).css("background","#abb4bd");
           $(this).css("color","white");
@@ -538,7 +520,7 @@
             bomb.first("请选择运输类型");
             return false;
           }
-          if(_this.message.type == "请选择车型" && _this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7"){
+          if(_this.message.type == "请选择车型" && (_this.message.carmodelNumber == '5de1912471af4c2d839a27f268cd8ca7' || _this.message.carmodelNumber == '41efd612fc2e4067a1debc30a1c36383') ){
             bomb.first("请选择车型");
             return false;
           }
@@ -577,7 +559,7 @@
             userCode:sessionStorage.getItem("token"),
             source:sessionStorage.getItem("source"),
             carNo:_this.message.plateName + _this.message.carNumber,
-            carModel:_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" ? _this.message.carCode : "",
+            carModel:_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383" ?_this.message.carCode : "" ,
             carType:_this.message.carmodelNumber ,
             loadWeight:_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383" ? _this.message.weight : "",
             pkDriver:_this.message.driverPk,

@@ -673,10 +673,10 @@
             sessionStorage.setItem("dataStart",loadSegmentDetail.delivery.addressLatAndLon);
             sessionStorage.setItem("dataEnd",loadSegmentDetail.arrival.addressLatAndLon);
             var tranTypeBoth = loadSegmentDetail.transType;
-            if(loadSegmentDetail.carLength !=  ""){
+            if(loadSegmentDetail.carLength !=  "" && loadSegmentDetail.carLength != null){
               tranTypeBoth = tranTypeBoth + "(" + loadSegmentDetail.carLength + "米)";
             }
-            if(loadSegmentDetail.carModel != ""){
+            if(loadSegmentDetail.carModel != "" && loadSegmentDetail.carModel != null){
               tranTypeBoth = tranTypeBoth + "(" + loadSegmentDetail.carModel + ")";
             }
             var pdlist = [{

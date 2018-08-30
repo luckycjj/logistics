@@ -87,7 +87,7 @@
           driving.search([_this.peopleJ, _this.peopleW],[_this.startJ, _this.startW], function(status, result) {
             var lnglat = new AMap.LngLat(_this.peopleJ, _this.peopleW);
             _this.lnglat(lnglat);
-            $("#carMessageBox .km").text("相距"+_this.lnglat(lnglat));
+            $("#carMessageBox .km").text("司机距离起点  "+_this.lnglat(lnglat));
             var sss = setInterval(function () {
               if($(".amap-lib-marker-to").length>0){
                 clearInterval(sss);
@@ -131,7 +131,7 @@
               driving.search([_this.peopleJ,_this.peopleW],[_this.startJ, _this.startW], function(status, result) {
                 var lnglat = new AMap.LngLat(_this.peopleJ, _this.peopleW);
                 _this.lnglat(lnglat);
-                $("#carMessageBox .km").text("相距"+_this.lnglat(lnglat));
+                $("#carMessageBox .km").text("司机距离起点  "+_this.lnglat(lnglat));
                 var sss = setInterval(function () {
                   if($(".amap-lib-marker-to").length>0){
                     clearInterval(sss);

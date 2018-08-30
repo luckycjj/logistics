@@ -14,9 +14,9 @@
             <div style="width:100%;height:3rem;position: absolute;top:0;left:0;background: transparent;z-index:999;" @click="mapSClick()">
             </div>
           </div>
-          <div id="carMessageBox">
-            <p>{{item.carMessage.number}}<span>{{item.carMessage.tranType}}</span><span class="km"></span></p>
-            <h1>满载：{{item.carMessage.weight}}吨&nbsp;&nbsp;已承载：{{item.carMessage.nowWeight}}吨</h1>
+          <div id="carMessageBox" v-for="(items,indexs) in item.carMessage.list">
+            <p>{{items.number}}<span v-if="items.tranType != ''">{{items.tranType}}</span><span v-if="items.tranModel != ''">{{items.tranModel}}</span><span style="float: right" v-if="indexs == 0" class="km"></span></p>
+            <h1>满载：{{items.weight}}吨&nbsp;&nbsp;已承载：{{items.nowWeight}}吨</h1>
           </div>
           <div id="peopleMessage" v-if="type==1">
             <div class="imgBoxOverFllow">
@@ -115,6 +115,17 @@
     methods:{
       go:function () {
         var self = this;
+        var carsure = [];
+        for(var i = 0 ; i <(self.$route.query.pkCar.split(",")).length ; i++){
+          carsure.push({
+            pkcar:self.$route.query.pkCar.split(",")[i],
+            carModel:self.$route.query.title.split(",")[i],
+            cartype:self.$route.query.carType.split(",")[0],
+          })
+        }
+        if(carsure.length > 1){
+          sessionStorage.setItem("carsure",JSON.stringify(carsure));
+        }
         thisThat = self;
         self.carType = self.$route.query.carType;
         self.pkCar = self.$route.query.pkCar;
@@ -310,84 +321,98 @@
     //延时一秒,模拟联网
     setTimeout(function () {
       if(thisThat.$route.query.pkCar != undefined){
-        $.ajax({
-          type: "POST",
-          url: androidIos.ajaxHttp()+"/carrier/getCarDetail",
-          data:JSON.stringify({
-            pk:thisThat.$route.query.pkCar,
-            userCode:sessionStorage.getItem("token"),
-            source:sessionStorage.getItem("source")
-          }),
-          contentType: "application/json;charset=utf-8",
-          dataType: "json",
-          timeout: 30000,
-          success: function (getCarDetail) {
-            if(getCarDetail.success == "1"){
-              var list = [];
-              for(var i =0 ;i<getCarDetail.invoice.length;i++){
-                var invoice = getCarDetail.invoice[i];
-                var proList =[];
-                for(var x = 0; x<invoice.itemDaos.length;x++){
-                  var nomal = {
-                    tranType:invoice.transType,
-                    product:invoice.itemDaos[x].goodsCode + "-" + invoice.itemDaos[x].goodsName,
-                    proNumber:invoice.itemDaos[x].num,
-                    weight:invoice.itemDaos[x].weight/1000,
-                    volume:invoice.itemDaos[x].volume*1
+        var weightBoth = 0;
+        var data=[{
+          orderType:1,
+          carType:1,
+          carState:1,
+          carMessage:{
+            list:[],
+            carPeople:{
+              tel:"",
+              name:"",
+              year:"",
+              pic:"",
+              carPeoplePk:""
+            },
+            carPeopleFu:{
+              tel:"",
+              name:"",
+              year:"",
+              pic:"",
+              carPeoplePk:""
+            },
+          },
+          list:[]
+        }];
+        for(var z = 0 ; z < (thisThat.$route.query.pkCar.split(",")).length ; z++){
+          $.ajax({
+            type: "POST",
+            url: androidIos.ajaxHttp()+"/carrier/getCarDetail",
+            data:JSON.stringify({
+              pk:thisThat.$route.query.pkCar.split(",")[z],
+              userCode:sessionStorage.getItem("token"),
+              source:sessionStorage.getItem("source")
+            }),
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            timeout: 30000,
+            success: function (getCarDetail) {
+              if(getCarDetail.success == "1"){
+                for(var i =0 ;i<getCarDetail.invoice.length;i++){
+                  var invoice = getCarDetail.invoice[i];
+                  var proList =[];
+                  for(var x = 0; x<invoice.itemDaos.length;x++){
+                    var nomal = {
+                      tranType:invoice.transType,
+                      product:invoice.itemDaos[x].goodsCode + "-" + invoice.itemDaos[x].goodsName,
+                      proNumber:invoice.itemDaos[x].num,
+                      weight:invoice.itemDaos[x].weight/1000,
+                      volume:invoice.itemDaos[x].volume*1
+                    }
+                    proList.push(nomal);
                   }
-                  proList.push(nomal);
+                  var json = {
+                    number:invoice.vbillno,
+                    startAddress:invoice.deliAddr,
+                    endAddress:invoice.arriAddr,
+                    product:proList,
+                    startTime:invoice.deliDate,
+                    endTime:invoice.arriDate,
+                    type:invoice.status,
+                  }
+                  data[0].list.push(json);
                 }
-                var json = {
-                  number:invoice.vbillno,
-                  startAddress:invoice.deliAddr,
-                  endAddress:invoice.arriAddr,
-                  product:proList,
-                  startTime:invoice.deliDate,
-                  endTime:invoice.arriDate,
-                  type:invoice.status,
+                weightBoth += getCarDetail.weight*1 ;
+                data[0].carState = weightBoth > 0 ? 1 : 2 ;
+                var tranModel = "";
+                for(var i = 0 ; i < (thisThat.$route.query.pkCar.split(",")).length ; i++){
+                   if(thisThat.$route.query.pkCar.split(",")[i] == getCarDetail.pkCar){
+                     tranModel = thisThat.$route.query.title.split(",")[i];
+                   }
                 }
-                list.push(json);
-              }
-              var data=[{
-                orderType:1,
-                carType:1,
-                carState:getCarDetail.weight*1>0?1:2,
-                carMessage:{
+                data[0].carMessage.list.push({
                   number:getCarDetail.carNo,
                   tranType:getCarDetail.carType,
                   weight:getCarDetail.loadWeight*1,
                   nowWeight:getCarDetail.weight*1,
-                  carPeople:{
-                    tel:getCarDetail.driverDto.length==0?"":getCarDetail.driverDto[0].carrierName,
-                    name:getCarDetail.driverDto.length==0?"":getCarDetail.driverDto[0].driverName,
-                    year:getCarDetail.driverDto.length==0?"":(getCarDetail.driverDto[0].driverAge*1<1?"小于1":getCarDetail.driverDto[0].driverAge),
-                    pic:getCarDetail.driverDto.length==0?"":getCarDetail.driverDto[0].driverImg,
-                    carPeoplePk:getCarDetail.driverDto.length==0?"":getCarDetail.driverDto[0].pkDriver
-                  },
-                  carPeopleFu:{
-                    tel:"",
-                    name:"",
-                    year:"",
-                    pic:"",
-                    carPeoplePk:""
-                  },
-                },
-                list:list
-              }];
-              var listData=data;//模拟分页数据
-              successCallback&&successCallback(listData);//成功回调
-            }else{
-              androidIos.second(getCarDetail.message)
+                  tranModel:tranModel,
+                })
+                var listData=data;//模拟分页数据
+                successCallback&&successCallback(listData);
+              }else{
+                androidIos.second(getCarDetail.message)
+              }
+            },
+            complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+              if(status=='timeout'){//超时,status还有success,error等值的情况
+                androidIos.second("网络请求超时");
+              }else if(status=='error'){
+                androidIos.errorwife();
+              }
             }
-          },
-          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-            if(status=='timeout'){//超时,status还有success,error等值的情况
-              androidIos.second("网络请求超时");
-            }else if(status=='error'){
-              androidIos.errorwife();
-            }
-          }
-        })
+          })
+        }
       }
 
     },500)

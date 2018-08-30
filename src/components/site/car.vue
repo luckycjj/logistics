@@ -1,16 +1,17 @@
 <template>
   <div id="car">
     <div id="title" v-title data-title="车辆信息"></div>
-    <div class="nav" v-if="orderPk!=''">
+    <!--<div class="nav" v-if="orderPk!=''">
       <p class="active" i="0" @click="navClick(0)">自营车辆</p>
       <p i="1" @click="navClick(1)">社会车辆</p>
       <div class="clearBoth"></div>
-    </div>
-    <div id="mescroll" class="mescroll" :style="{ bottom : listType == 0  && orderPk == '' ? '1.2rem' : '0' }" :class="orderPk==''?'mesrollTop':''">
+    </div>-->
+    <div id="mescroll" class="mescroll mesrollTop" :style="{ bottom : (listType == 0  && orderPk == '') || ( carSure.length > 1 &&orderPk != '') ? '1.2rem' : '0' }">
       <ul id="dataList0" class="data-list">
       </ul>
     </div>
     <button id="newCar" @click="newCar()" v-if="listType == '0' && orderPk == ''">新增车辆</button>
+    <button id="yesGo" v-if="carSure.length > 1 && orderPk != ''" @click="carSureGo()">确定</button>
     <div id="filterBox" v-if="show" @click="filterBoxBlackFalse($event)">
       <div id="filter">
         <div style="position: absolute;top:0;bottom:1.2rem;width:100%;height: auto;overflow: scroll;">
@@ -49,6 +50,7 @@
           tranType:"",
           carType:""
         },
+        carSure:[],
         mescroll:"",
         listType:"",
         pageSize:"",
@@ -68,6 +70,11 @@
         var _this = this;
         sessionStorage.removeItem("changeCarpeople");
         sessionStorage.removeItem("changeCarFupeople");
+        var carsure = sessionStorage.getItem("carsure");
+        if(carsure != null){
+          _this.carSure = JSON.parse(carsure);
+          sessionStorage.removeItem("carsure");
+        }
         _this.orderPk = sessionStorage.getItem("dispatchPK") == undefined ? "" :sessionStorage.getItem("dispatchPK");
         var mescroll = new MeScroll("mescroll", { //id固定"body"
           //上拉加载的配置项
@@ -112,10 +119,16 @@
             var display = $("#search").find("h5").text() == "取消" ? "block":"none";
             var length = pd.length == "" ? "" : pd.length+ "米" ;
             var img = _this.orderPk =="" && pd.carType == '0' && (pd.now == '0' || pd.now == '1' || pd.now == '2')?"<div class='clearImg' style='display: "+display+"'></div><div class='reaseImg' style='display: "+display+"'></div>":_this.orderPk =="" && pd.carType == '0' && pd.now == '3'  ? "<div class='clearImg' style='right:0.6rem;display: " + display + "'></div>" : "";
+            for(var a = 0 ; a < _this.carSure.length ; a ++){
+               if(_this.carSure[a].pkcar == pd.pkCar){
+                 display = "block";
+               }
+            }
+            var img2 = _this.orderPk != "" ?"<div class='checkImg' style='display: "+display+"'></div>":"";
             var str = '<div class="top" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
-              '<span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span>'+type+'<div class="clearBoth"></div>'+
+              '<span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span>'+type+'<div class="clearBoth"></div>'+
               '<span class="weight">满载：<span style="font-size: 0.3125rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span>'+
-              img +
+              img + img2 +
               '</div>';
             if(pd.pkDriver!=""){
               nnnn ++;
@@ -140,27 +153,57 @@
             $("#car #dataList0 li .top").unbind('click').click(function () {
               var that = $(this);
               if($("#search").find("h5").text() != "取消"){
-                var carNumber = $(this).find(".carnumber").text();
-                var pkcar = $(this).attr("data-pkCar");
-                var cartype = $(this).attr("data-carType");
-                if(that.parents("li").attr("data-nowtype") == '0'){
-                  bomb.first( that.find(".carnumber").text() + "正在审核");
-                  return false;
+                var carNumber = that.find(".carnumber").text();
+                var pkcar = that.attr("data-pkCar");
+                var cartype = that.attr("data-carType");
+                var carModel = that.find(".cartype").text();
+                if(_this.orderPk != ""){
+                  if(_this.carSure.length == 0 && carModel == "整车"){
+                    androidIos.addPageList();
+                    _this.$router.push({ path: '/car',query:{title: carModel,pkCar:pkcar,carType:cartype}});
+                  }else{
+                    if(that.find(".checkImg").css("display") == "none"){
+                      if(_this.carSure.length < 2 ) {
+                        if(_this.carSure.length == 1){
+                           if((_this.carSure[0].carModel == carModel) || carModel == "整车" ){
+                             if(_this.carSure[0].carModel == "车头"){
+                                bomb.first("请选择车挂");
+                             }else{
+                               bomb.first("请选择车头");
+                             }
+                             return false;
+                           }
+                        }
+                        that.find(".checkImg").css("display","block");
+                        _this.carSure.push({
+                           pkcar:pkcar,
+                           carModel:carModel ,
+                           cartype:cartype,
+                        });
+                      }
+                    }else{
+                      for(var i = 0 ;i < _this.carSure.length ;i++ ){
+                        if(_this.carSure[i].pkcar == pkcar ){
+                          _this.carSure.splice(i,1);
+                          that.find(".checkImg").css("display","none");
+                        }
+                      }
+                    }
+                  }
+                }else{
+                  if(that.parents("li").attr("data-nowtype") == '0'){
+                    bomb.first( that.find(".carnumber").text() + "正在审核");
+                    return false;
+                  }
+                  if(that.parents("li").attr("data-nowtype") == '2'){
+                    bomb.first( that.find(".carnumber").text() + "已被驳回，请修改信息");
+                    return false;
+                  }
+                  if(that.parents("li").attr("data-nowtype") == '3'){
+                    bomb.first( that.find(".carnumber").text() + "已被禁用，请修改信息");
+                    return false;
+                  }
                 }
-                if(that.parents("li").attr("data-nowtype") == '2'){
-                  bomb.first( that.find(".carnumber").text() + "已被驳回，请修改信息");
-                  return false;
-                }
-                if(that.parents("li").attr("data-nowtype") == '3'){
-                  bomb.first( that.find(".carnumber").text() + "已被禁用，请修改信息");
-                  return false;
-                }
-                if((sessionStorage.getItem("weh") != undefined && sessionStorage.getItem("weh")*1 > that.find(".weight span").text()*1) && _this.totle == 1){
-                  bomb.first( that.find(".carnumber").text() + "载重量不足,请选择其他车辆");
-                  return false;
-                }
-                androidIos.addPageList();
-                _this.$router.push({ path: '/car',query:{title: carNumber,pkCar:pkcar,carType:cartype}});
               }
             })
             $("#car #dataList0 li .thirdBox").unbind('click').click(function () {
@@ -228,8 +271,6 @@
                 carNumber:that.find(".carnumber").text().substring(1),
                 plateName:that.find(".carnumber").text().substring(0,1),
                 weight:that.find(".weight span").text(),
-                driver:that.find(".secondBox p span").text(),
-                driverPk:that.find(".secondBox").attr("data-driverPk") == undefined ? "" : that.find(".secondBox").attr("data-driverPk"),
                 carpk:that.find(".top").attr("data-pkCar"),
                 Travelpic:that.find(".top").attr("data-driverLicense")
               }
@@ -440,6 +481,21 @@
           },500)
         }
       },
+      carSureGo:function () {
+        var _this = this;
+        var carModel = [];
+        var pkcar = [];
+        var cartype = "";
+        for(var i = 0 ; i < _this.carSure.length ; i++){
+          carModel.push(_this.carSure[i].carModel);
+           pkcar.push(_this.carSure[i].pkcar);
+           cartype = _this.carSure[i].cartype;
+        }
+        carModel = carModel.join(",");
+        pkcar = pkcar.join(",");
+        androidIos.addPageList();
+        _this.$router.push({ path: '/car',query:{title: carModel,pkCar:pkcar,carType:cartype}});
+      },
       navClick:function (number) {
         var _this = this;
         var i = number;
@@ -468,17 +524,23 @@
         }else if(number == 2){
           _this.tranType[index].choose = !_this.tranType[index].choose;
         }else if(number == 3){
-          _this.carType[index].choose = !_this.carType[index].choose;
+          for(var i = 0 ; i <  _this.carType.length ; i++){
+            if(i == index){
+              _this.carType[index].choose = !_this.carType[index].choose;
+            }else{
+              _this.carType[i].choose = false;
+            }
+          }
         }
       },
       resetFilter:function () {
         var _this = this;
-        for(var i = 0 ;i < _this.tranState.length;i ++){
+      /*  for(var i = 0 ;i < _this.tranState.length;i ++){
           _this.tranState[i].choose = false;
-        }
-        for(var i = 0 ;i < _this.tranType.length;i ++){
+        }*/
+       /* for(var i = 0 ;i < _this.tranType.length;i ++){
           _this.tranType[i].choose = false;
-        }
+        }*/
         for(var i = 0 ;i < _this.carType.length;i ++){
           _this.carType[i].choose = false;
         }
@@ -541,6 +603,19 @@
     width:0.6rem;
     height: 0.6rem;
     background-image: url("../../images/edit.png");
+    position: absolute;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size:cover;
+    right:0.6rem;
+    top:50%;
+    /*margin-top: -0.3rem;*/
+    display: none;
+  }
+  #car .checkImg{
+    width:0.6rem;
+    height: 0.6rem;
+    background-image: url("../../images/checked.png");
     position: absolute;
     background-position: 50% 50%;
     background-repeat: no-repeat;
@@ -733,7 +808,7 @@
   .filterYes{
     background: #3399FF!important;
   }
-  #newCar{
+  #newCar,#yesGo{
     width: 100%;
     position: fixed;
     height: 1.2rem;
