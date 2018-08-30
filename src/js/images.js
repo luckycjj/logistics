@@ -96,6 +96,10 @@ import  {androidIos} from './app';
               message.Drivepic = "";
             }else if(parentsId == "box4"){
               message.Travelpic = "";
+            }else if(parentsId == "box5"){
+              message.IDpicfan = "";
+            }else if(parentsId == "box6"){
+              message.authorization = "";
             }
             if(sessionStorage.getItem("source") == "2"){
               localStorage.setItem("UPMESSA",JSON.stringify(message));
@@ -193,7 +197,7 @@ import  {androidIos} from './app';
     //隐藏上传控件按钮
     var parentsId = $("#h5u_file_"+rand_id).parents(".imgUpload").attr("id");
     var imagesJson = {
-      type: parentsId == "box" ? "YY" : parentsId == "box1" ? "DL" : parentsId == "box2" ? "SFZ" : parentsId == "box3" ? "JS" : "YS" ,
+      type: parentsId == "box" ? "YY" : parentsId == "box1" ? "DL" : parentsId == "box2" ? "SFZ" : parentsId == "box3" ? "JS" : parentsId == "box4" ? "YS" : parentsId == "box5" ? "SEZF" : "SQH" ,
       name:"",
       file: base.substr(23),
       userCode:sessionStorage.getItem("token"),
@@ -226,10 +230,14 @@ import  {androidIos} from './app';
               creditCode:"",
               name: "",
               IDpic: "",
+              IDpicfan:"",
+              authorization:"",
               Licensepic: "",
               Roadpic: "",
               Travelpic: "",
               Drivepic: "",
+              licType:"",
+              licTypeCode:"",
               peopleNumber:""};
           }else if(sessionStorage.getItem("source") == "3"){
             message = localStorage.getItem("DRIVERMESSA") != null ? JSON.parse(localStorage.getItem("DRIVERMESSA")) : {
@@ -243,10 +251,14 @@ import  {androidIos} from './app';
               creditCode:"",
               name: "",
               IDpic: "",
+              IDpicfan:"",
+              authorization:"",
               Licensepic: "",
               Roadpic: "",
               Travelpic: "",
               Drivepic: "",
+              licType:"",
+              licTypeCode:"",
               peopleNumber:""};
           }
           if(parentsId == "box"){
@@ -264,6 +276,12 @@ import  {androidIos} from './app';
           }else if(parentsId == "box4"){
             var idFi = $("#box4 .cjjimgbox .h5u_options_hiddenP");
             message.Travelpic = idFi.text();
+          }else if(parentsId == "box5"){
+            var idFi = $("#box5 .cjjimgbox .h5u_options_hiddenP");
+            message.IDpicfan = idFi.text();
+          }else if(parentsId == "box6"){
+            var idFi = $("#box6 .cjjimgbox .h5u_options_hiddenP");
+            message.authorization = idFi.text();
           }
           var http = location.href;
           if(sessionStorage.getItem("source") == "2" && http.indexOf("/uploadData/uploadDataT") != -1 ){

@@ -41,10 +41,14 @@ export default {
               creditCode:"",
               name: "",
               IDpic: "",
+              IDpicfan:"",
+              authorization:"",
               Licensepic: "",
               Roadpic: "",
               Travelpic: "",
               Drivepic: "",
+              licType:"",
+              licTypeCode:"",
               peopleNumber:""
             }
           }
