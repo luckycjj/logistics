@@ -118,6 +118,9 @@
             type = '<span class="nowtype">'+type+'</span>';
             var display = $("#search").find("h5").text() == "取消" ? "block":"none";
             var length = pd.length == "" ? "" : pd.length+ "米" ;
+            var minheight = pd.zongweight == "0" ? "0.5rem" : "auto";
+            var display2 = pd.zongweight == "0" ? "none" : "inline";
+            var paddingBottom =  pd.zongweight == "0" ? "0rem" : "0.12rem";
             var img = _this.orderPk =="" && pd.carType == '0' && (pd.now == '0' || pd.now == '1' || pd.now == '2')?"<div class='clearImg' style='display: "+display+"'></div><div class='reaseImg' style='display: "+display+"'></div>":_this.orderPk =="" && pd.carType == '0' && pd.now == '3'  ? "<div class='clearImg' style='right:0.6rem;display: " + display + "'></div>" : "";
             for(var a = 0 ; a < _this.carSure.length ; a ++){
                if(_this.carSure[a].pkcar == pd.pkCar){
@@ -127,9 +130,9 @@
             var img2 = _this.orderPk != "" ?"<div class='checkImg' style='display: "+display+"'></div>":"";
             var str = '<div class="top" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
               '<span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span>'+type+'<div class="clearBoth"></div>'+
-              '<span class="weight">满载：<span style="font-size: 0.3125rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span>'+
+              '<p style="min-height: ' + minheight + ';" class="weight"><span style="display: ' + display2+ '">满载：<span style="font-size: 0.3125rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
               img + img2 +
-              '</div>';
+              '<div class="clearBoth"></div></div>';
             if(pd.pkDriver!=""){
               nnnn ++;
               str+='<div class="bottom">';
