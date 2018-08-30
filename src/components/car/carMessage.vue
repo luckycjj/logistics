@@ -214,12 +214,26 @@
             $(".tanBox-bigBox").remove();
             bomb.removeClass("gogogo","gogogo");
             androidIos.loading("正在派车");
+            var paCar = "";
+            var carHang = "";
+            if(_this.pkCar.split(",").length == 1){
+              paCar = _this.pkCar.split(",")[0]
+            }else{
+              if(_this.$route.query.title.split(",")[0] == "车头"){
+                paCar = _this.pkCar.split(",")[0];
+                carHang = _this.pkCar.split(",")[1];
+              }else if(_this.$route.query.title.split(",")[0] == "车挂"){
+                paCar = _this.pkCar.split(",")[1];
+                carHang = _this.pkCar.split(",")[0];
+              }
+            }
             $.ajax({
               type: "POST",
               url: androidIos.ajaxHttp()+"/order/arrangeVehicle",
               data:JSON.stringify({
                 userCode:sessionStorage.getItem("token") ,
-                pkCar:_this.pkCar,
+                pkCar:paCar,
+                carHang:carHang,
                 pkDriver2:_this.pdlist[0].carMessage.carPeopleFu.carPeoplePk,
                 pkDriver:_this.pdlist[0].carMessage.carPeople.carPeoplePk,
                 pk:sessionStorage.getItem("dispatchPK"),
