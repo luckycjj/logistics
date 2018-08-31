@@ -342,8 +342,57 @@ var androidIos = {
       return false
     }
     return true
-  }
-
+  },
+  chooseSite:function () {
+     var body = document.getElementsByTagName("body")[0];
+     var site = document.getElementById("siteLook");
+     if(site != null){
+       body.removeChild(site);
+     }
+     var listDom=document.createElement("ul");
+     listDom.id = "siteLook";
+     var listBox = "";
+     for(var i = 0 ; i < 2 ; i ++ ){
+        var id = i ==0 ? "sitechoosesite" : "sitedismantling";
+        var name = i ==0 ? "拆段" : "拆量";
+        var list = "<li class='sitechoose' id='" + id + "'>" + name + "</li>";
+        listBox += list;
+     }
+     listDom.innerHTML =  listBox ;
+     body.appendChild(listDom);
+     var style = listDom.style;
+     var styleClass = document.getElementsByClassName("sitechoose")[0].style;
+     var styleClass2 = document.getElementsByClassName("sitechoose")[1].style;
+     style.position = "fixed";
+     style.zIndex = "12";
+     style.width = "2rem";
+     style.background = "black";
+     style.padding = "0 0.3rem";
+     style.top = "0.85rem";
+     style.right = "0.3rem";
+     style.borderRadius = "0.1rem";
+     styleClass.color = "white";
+     styleClass.textAlign = "center";
+     styleClass.marginTop = "0.2rem";
+     styleClass.paddingBottom = "0.2rem";
+     styleClass.fontSize = "0.3125rem";
+     styleClass.borderBottom = "0.5px solid white";
+     styleClass2.color = "white";
+     styleClass2.textAlign = "center";
+     styleClass2.marginTop = "0.2rem";
+     styleClass2.paddingBottom = "0.2rem";
+     styleClass2.fontSize = "0.3125rem";
+    document.getElementsByTagName("body")[0].onclick = function (e) {
+      var id = e.target.id;
+      if( id != "siteLook" && id != "siteCar" ){
+        var body = document.getElementsByTagName("body")[0];
+        var listDom=document.getElementById("siteLook");
+        if(listDom != null){
+          body.removeChild(listDom);
+        }
+      }
+    }
+  },
 };
 export {
   androidIos

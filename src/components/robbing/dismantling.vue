@@ -6,25 +6,24 @@
         <h5 @click="remove(index)" v-if="productBox.productsList.length>1">删除</h5>
         <p>拆量{{index+1}}</p>
         <div class="clearBoth"></div>
-        <div v-for="(items) in item.list">
+        <div v-for="(items,indexs) in item.list">
           <p>{{items.products}}</p>
           <div class="clearBoth"></div>
           <div style="border-bottom: 1px solid #dbdbdb;" class="liDiv">
             <h1>货物件数</h1>
-            <h2>件</h2>
-            <input type="tel" maxlength="100" v-model="items.number" placeholder="请输入拆量件数"/>
+            <h2><span>{{items.number}}</span>件</h2>
             <div class="clearBoth"></div>
           </div>
-          <div style="border-bottom: 1px solid #dbdbdb;" class="liDiv">
+          <div style="border-bottom: 1px solid #dbdbdb;" class="liDiv" v-if="items.weightBoth*1 > 0 ">
             <h1>货物重量</h1>
-            <h2>吨</h2>
-            <input type="number" maxlength="100" v-model="items.weight" placeholder="请输入拆量吨位"/>
+            <h2><span v-if="productBox.productsList.length == 1">{{items.weight*1}}</span>{{items.weightUnit}}</h2>
+            <input v-if="productBox.productsList.length > 1" @keyup="weightKeyup(index,indexs)" type="number" maxlength="100" v-model="items.weight" placeholder="请输入拆量吨位"/>
             <div class="clearBoth"></div>
           </div>
-          <div class="liDiv">
+          <div class="liDiv"  v-if="items.volumeBoth*1 > 0 ">
             <h1>货物体积</h1>
-            <h2>立方米</h2>
-            <input type="number" v-model="items.volume" placeholder="请输入拆量体积"/>
+            <h2><span v-if="productBox.productsList.length == 1">{{items.volume*1}}</span>{{items.volumeUnit}}</h2>
+            <input v-if="productBox.productsList.length > 1" @keyup = "volumekeyup(index,indexs)" type="number" v-model="items.volume" placeholder="请输入拆量体积"/>
             <div class="clearBoth"></div>
           </div>
         </div>
@@ -39,6 +38,7 @@
 <script>
   import {bomb} from "../../js/zujian";
   import  {androidIos} from "../../js/app";
+  import Debounce from '../../js/Debounce.js';
   export default {
         name: "dismantling",
        data(){
@@ -50,9 +50,13 @@
                type:1,
                address:"",
                trantype:"",
-                pickTime:"",
+               pickTime:"",
                arrivTime:"",
-             }
+               orderList:[{
+                 list:[]
+               }]
+             },
+             suremend: new Debounce(this.matchWeightVolume, 500),
            }
        },
       watch:{
@@ -62,8 +66,12 @@
              for(var x = 0;x<_this.productBox.productsList.length;x++){
                for(var i=0;i<_this.productBox.productsList[x].list.length;i++){
                  _this.productBox.productsList[x].list[i].number=(_this.productBox.productsList[x].list[i].number.toString().match(/\d+(\d{0,0})?/)||[''])[0];
-                 _this.productBox.productsList[x].list[i].weight=(_this.productBox.productsList[x].list[i].weight.toString().match(/\d+(\.\d{0,4})?/)||[''])[0];
-                 _this.productBox.productsList[x].list[i].volume=(_this.productBox.productsList[x].list[i].volume.toString().match(/\d+(\.\d{0,4})?/)||[''])[0];
+                 if(_this.productBox.productsList[x].list[i].weight*1 != 0){
+                   _this.productBox.productsList[x].list[i].weight=(_this.productBox.productsList[x].list[i].weight.toString().match(/\d+(\.\d{0,4})?/)||[''])[0];
+                 }
+                 if(_this.productBox.productsList[x].list[i].volume*1 != 0){
+                   _this.productBox.productsList[x].list[i].volume=(_this.productBox.productsList[x].list[i].volume.toString().match(/\d+(\.\d{0,4})?/)||[''])[0];
+                 }
                }
              }
           },
@@ -75,7 +83,8 @@
           androidIos.bridge(_this);
      },
       methods:{
-          go:function () {
+        go:function () {
+            var _this = this;
             var dismantling =   sessionStorage.getItem("dismantling");
             var Sitedismantling = sessionStorage.getItem("Sitedismantling");
             if(Sitedismantling!=undefined){
@@ -87,18 +96,22 @@
               var list =[];
               for(var i = 0 ; i < Sitedismantling.product.length; i++){
                 var json ={
+                  productPk:Sitedismantling.product[i].goodPk,
                   products:Sitedismantling.product[i].goods,
                   productsCode:Sitedismantling.product[i].goodsCode,
                   number:Sitedismantling.product[i].number,
-                  weight:Sitedismantling.product[i].weight,
-                  volume:Sitedismantling.product[i].volume,
+                  weight:Sitedismantling.product[i].weight.indexOf("吨") !=  -1 ? Sitedismantling.product[i].weight.split("吨")[0] : Sitedismantling.product[i].weight.split("千克")[0] ,
+                  weightUnit:Sitedismantling.product[i].weight.indexOf("吨") !=  -1 ? "吨" : "千克",
+                  volume:Sitedismantling.product[i].volume.indexOf("升") !=  -1 ? Sitedismantling.product[i].volume.split("升")[0] : Sitedismantling.product[i].volume.split("立方米")[0] ,
+                  volumeUnit:Sitedismantling.product[i].volume.indexOf("升") !=  -1 ? "升" : "立方米",
                   numberBoth:Sitedismantling.product[i].number,
-                  weightBoth:Sitedismantling.product[i].weight,
-                  volumeBoth:Sitedismantling.product[i].volume,
+                  weightBoth:Sitedismantling.product[i].weightBoth,
+                  volumeBoth:Sitedismantling.product[i].volumeBoth,
                 }
                 list.push(json);
               }
               _this.productBox.productsList[0].list = list;
+              _this.productBox.orderList[0].list = list;
             }
             if(dismantling!=undefined){
               dismantling = JSON.parse(dismantling);
@@ -115,14 +128,17 @@
            var list =[];
            for(var i = 0;i< _this.productBox.productsList[0].list.length;i++){
               var json ={
+                productPk:_this.productBox.productsList[0].list[i].goodPk,
                 products:_this.productBox.productsList[0].list[i].products,
                 productsCode:_this.productBox.productsList[0].list[i].productsCode,
-                number:"",
-                weight:"",
-                volume:"",
+                number:1,
+                weight:_this.productBox.productsList[0].list[i].weightBoth - _this.productBox.productsList[0].list[i].weight,
+                weightUnit:_this.productBox.productsList[0].list[i].weightUnit,
+                volume:_this.productBox.productsList[0].list[i].volumeBoth - _this.productBox.productsList[0].list[i].volume,
+                volumeUnit:_this.productBox.productsList[0].list[i].volumeUnit,
                 numberBoth:_this.productBox.productsList[0].list[i].number,
-                weightBoth:_this.productBox.productsList[0].list[i].weight,
-                volumeBoth:_this.productBox.productsList[0].list[i].volume,
+                weightBoth:_this.productBox.productsList[0].list[i].weightBoth,
+                volumeBoth:_this.productBox.productsList[0].list[i].volumeBoth,
               }
               list.push(json)
            }
@@ -135,7 +151,6 @@
         push:function () {
            var _this = this;
            if(bomb.hasClass("push","colorfull")){
-             var number = [];
              var weight = [];
              var volume = [];
              if(_this.productBox.productsList.length == 1){
@@ -146,24 +161,18 @@
                var productsList = _this.productBox.productsList[i];
                for(var x = 0; x<productsList.list.length;x++){
                  if(i == 0){
-                   var n = productsList.list[x].number*1;
                    var w = productsList.list[x].weight*1;
                    var v = productsList.list[x].volume*1;
-                   number.push(n);
                    weight.push(w);
                    volume.push(v);
                  }else{
-                    number[x] = number[x]*1 + productsList.list[x].number*1;
                    weight[x] = weight[x]*1 + productsList.list[x].weight*1;
                    volume[x] = volume[x]*1 + productsList.list[x].volume*1;
                  }
                }
              }
-             for(var i =0;i<number.length;i++){
-               if(_this.productBox.productsList[0].list[i].numberBoth - number[i] != 0 ){
-                 bomb.first(_this.productBox.productsList[0].list[i].products +"件数拆分有误！");
-                 return false;
-               }else if(_this.productBox.productsList[0].list[i].weightBoth - weight[i] != 0 ){
+             for(var i =0;i<weight.length;i++){
+               if(_this.productBox.productsList[0].list[i].weightBoth - weight[i] != 0 ){
                  bomb.first(_this.productBox.productsList[0].list[i].products +"重量拆分有误！");
                  return false;
                }else if(_this.productBox.productsList[0].list[i].volumeBoth - volume[i] != 0){
@@ -175,7 +184,29 @@
              androidIos.addPageList();
              _this.$router.push({ path: '/robbing/dismantlingTrue'});
            }
-        }
+        },
+        weightKeyup:function (item,items) {
+          var _this = this;
+          _this.suremend(item,items,"w");
+        },
+        volumekeyup:function (item,items) {
+          var _this = this;
+          _this.suremend(item,items,"v");
+        },
+        matchWeightVolume:function (item,items,type) {
+          var _this = this;
+          if(_this.productBox.productsList.length > 1){
+              if(type == "w"){
+                _this.productBox.productsList[item].list[items].weight = _this.productBox.productsList[0].list[items].weightBoth - _this.productBox.productsList[item].list[items].weight > 0 ?  _this.productBox.productsList[item].list[items].weight : _this.productBox.productsList[0].list[items].weightBoth;
+                _this.productBox.productsList[1-item].list[items].weight = _this.productBox.productsList[0].list[items].weightBoth - _this.productBox.productsList[item].list[items].weight;
+              }else if(type == "v"){
+                _this.productBox.productsList[item].list[items].volume = _this.productBox.productsList[0].list[items].volumeBoth - _this.productBox.productsList[item].list[items].volume > 0 ?  _this.productBox.productsList[item].list[items].volume : _this.productBox.productsList[0].list[items].volumeBoth;
+                _this.productBox.productsList[1-item].list[items].volume = _this.productBox.productsList[0].list[items].volumeBoth - _this.productBox.productsList[item].list[items].volume;
+              }
+          }else{
+             console.log("无法拆量")
+          }
+        },
       }
     }
 </script>
@@ -215,6 +246,11 @@
     font-size: 0.3125rem;
     color:#333;
     line-height: 1rem;
+  }
+  .liDiv h2 span{
+    font-size: 0.3125rem;
+    color:#333;
+    margin-right: 0.2rem;
   }
   .liDiv input{
      float: right;

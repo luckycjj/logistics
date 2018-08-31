@@ -311,7 +311,6 @@
               var logisticsBox = document.getElementById("logisticsBox");
               var logisticsBoxFont = logisticsBox.firstChild.offsetHeight / htmlFont[0].style.fontSize.replace("px","");
               logisticsBox.style.height = logisticsBoxFont + "rem";
-              console.log(logisticsBoxFont)
             }
             if(curPageData[0].orderType>3 && self.orderSource != 3){
               $("#star_grade").html("");

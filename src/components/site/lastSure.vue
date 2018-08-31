@@ -5,7 +5,7 @@
       <li v-for="(item,index) in list">
         <div class="firstBox">
           <p>{{item.address}}</p>
-          <h1 v-for="pro in item.productBox">{{pro.trantype}}/{{pro.product}}/{{pro.number}}件/{{pro.weight}}吨/{{pro.volume}}立方米</h1>
+          <h1 v-for="pro in item.productBox">{{pro.trantype}}/{{pro.product}}/{{pro.number}}件/{{pro.weight}}/{{pro.volume}}</h1>
           <h1>提货：{{item.pickTime}}</h1>
           <h1>到货：{{item.arrivalTime}}</h1>
         </div>
