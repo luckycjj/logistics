@@ -14,7 +14,7 @@
               <img src="../../images/order2.png" style="height: 1.64rem;">
             </div>
             <div class="clearBoth"></div>
-            <ul class="logisticsBox" :class="logisticsOk?'logisticsBoxDown':''"  v-if="item.logistics.length > 0">
+            <ul id="logisticsBox" class="logisticsBox" :class="logisticsOk?'logisticsBoxDown':''"  v-if="item.logistics.length > 0">
               <li v-for="(cjj,index) in item.logistics">
                  <div class="logisticsL">
                    <div class="logisticsCircle" :class="index==0?'logisticsCircleFull':''"></div>
@@ -306,6 +306,13 @@
           sessionStorage.setItem("orderType",self.pdlist[0].orderType);
           sessionStorage.setItem("orderPk",self.$route.query.pk);
           self.$nextTick(function () {
+            if(self.pdlist[0].logistics.length > 0){
+              var htmlFont = document.getElementsByTagName("html");
+              var logisticsBox = document.getElementById("logisticsBox");
+              var logisticsBoxFont = logisticsBox.firstChild.offsetHeight / htmlFont[0].style.fontSize.replace("px","");
+              logisticsBox.style.height = logisticsBoxFont + "rem";
+              console.log(logisticsBoxFont)
+            }
             if(curPageData[0].orderType>3 && self.orderSource != 3){
               $("#star_grade").html("");
               $("#star_grade").markingSystem({
@@ -758,7 +765,7 @@
               var tracking=[];
               for(var i =0 ;i<invoiceDetail.tracking.length;i++){
                 var trackingJson = {
-                  type:invoiceDetail.tracking[i].tackingStatus,
+                  type:invoiceDetail.tracking[i].tackingStatus == invoiceDetail.tracking[i].tackingMemo ? invoiceDetail.tracking[i].tackingStatus : invoiceDetail.tracking[i].tackingStatus + ":" +invoiceDetail.tracking[i].tackingMemo,
                   time:invoiceDetail.tracking[i].tackingTime,
                 }
                 tracking.push(trackingJson);
@@ -1210,10 +1217,6 @@
     background: #3492ff;
     border:1px solid #3492ff;
     margin-left: 0.53333rem;
-    /*background: -webkit-linear-gradient(left,#3da4ff, #3492ff); !* Safari 5.1 - 6.0 *!
-    background: -o-linear-gradient(left,#3da4ff, #3492ff); !* Opera 11.1 - 12.0 *!
-    background: -moz-linear-gradient(left,#3da4ff, #3492ff); !* Firefox 3.6 - 15 *!
-    background: linear-gradient(left,#3da4ff, #3492ff); !* 标准的语法 *!*/
     color:white;
     font-size: 0.4rem;
     letter-spacing: 0.0625rem;
@@ -1240,19 +1243,26 @@
     box-shadow: 0 0.1rem 10px #d8d8d8;
   }
   .logisticsBoxDown{
-    height: auto;
+    height: auto!important;
+    max-height: none!important;
   }
   .logisticsBox li{
     width: 97%;
     margin-left: 3%;
+    position: relative;
+    min-height: 0.7rem;
   }
   .logisticsBox li .logisticsL{
      float: left;
      width:10%;
+    position: absolute;
+    height: 100%;
   }
   .logisticsR{
     float: left;
     min-width:44%;
+    max-width: 80%;
+    margin-left: 10%;
     font-size: 0.3125rem;
     color:#666;
     line-height: 0.35rem;
@@ -1271,8 +1281,14 @@
   }
   .logisticsShuxian{
     width:1px;
-    height:0.4rem;
+    min-height:0.4rem;
     margin:0 auto;
+    position: absolute;
+    top:0.3rem;
+    bottom: 0;
+    height: auto;
+    left: 50%;
+    margin-left: -0.5px;
     background: rgba(228, 228, 228, 1);
   }
   .logisticsCircleFull{

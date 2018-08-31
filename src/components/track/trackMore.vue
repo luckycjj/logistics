@@ -14,20 +14,7 @@
               <img src="../../images/order2.png" style="height: 1.64rem;">
             </div>
             <div class="clearBoth"></div>
-            <ul class="logisticsBox" :class="logisticsOk?'logisticsBoxDown':''"  v-if="item.logistics.length > 0">
-              <li v-for="(cjj,index) in item.logistics">
-                 <div class="logisticsL">
-                   <div class="logisticsCircle" :class="index==0?'logisticsCircleFull':''"></div>
-                   <div class="logisticsShuxian"></div>
-                 </div>
-                <div class="logisticsR">
-                    {{cjj.type}}&nbsp;&nbsp;{{cjj.time}}
-                </div>
-                <img src="../../images/downJian.png"  :class="logisticsOk?'logisticsImg':''" v-if="index==0 && item.logistics.length > 1" @click="logisticsBoxDown()">
-                <div class="clearBoth"></div>
-              </li>
-            </ul>
-            <ul class="logisticsBox" :class="errorBiglistOk?'logisticsBoxDown':''"  v-if="item.errorBiglist.length > 0">
+            <ul id="errorBiglist" class="logisticsBox" :class="errorBiglistOk ? 'logisticsBoxDown' : '' "  v-if="item.errorBiglist.length > 0">
               <li v-for="(cjj,index) in item.errorBiglist">
                 <div class="logisticsL">
                   <div class="logisticsCircle" :class="index==0?'logisticsCircleFull':''"></div>
@@ -316,6 +303,13 @@
           sessionStorage.setItem("orderPk",self.$route.query.pk);
           sessionStorage.setItem("dispatchPK",self.$route.query.pk);
           self.$nextTick(function () {
+            if(self.pdlist[0].errorBiglist.length > 0){
+              var htmlFont = document.getElementsByTagName("html");
+              var errorBiglist = document.getElementById("errorBiglist");
+              var errorBiglistFont = errorBiglist.firstChild.offsetHeight / htmlFont[0].style.fontSize.replace("px","");
+              errorBiglist.style.height = errorBiglistFont + "rem";
+              console.log(errorBiglistFont)
+            }
             if(self.type < 8 ){
               var sss = setInterval(function () {
                 if((_this.carList.length == 1 && $(".amap-lib-marker-to").length == _this.carList.length) || (_this.carList.length>1&&$(".amap-lib-marker-to").length - 2  == _this.carList.length) ){
@@ -683,6 +677,7 @@
         var _this = this;
         _this.errorPriceBox = false;
         _this.errorPricetype = "";
+        _this.errorPrice = "";
         $("#errorPriceBox .errorUl li").removeClass("errorPriceBoxLi");
       },
       errorPriceListListClick:function (e) {
@@ -1223,7 +1218,7 @@
     background: #88c4ff!important;
   }
   .logisticsBox{
-    height:0.7rem;
+    min-height:0.7rem;
     overflow: hidden;
     background: white;
     margin: 0.3rem auto 0 auto;
@@ -1233,19 +1228,26 @@
     box-shadow: 0 0.1rem 10px #d8d8d8;
   }
   .logisticsBoxDown{
-    height: auto;
+    height: auto!important;
+    max-height: none!important;
   }
   .logisticsBox li{
     width: 97%;
     margin-left: 3%;
+    position: relative;
+    min-height: 0.7rem;
   }
   .logisticsBox li .logisticsL{
     float: left;
     width:10%;
+    position: absolute;
+    height: 100%;
   }
   .logisticsR{
     float: left;
     min-width:44%;
+    max-width: 80%;
+    margin-left: 10%;
     font-size: 0.3125rem;
     color:#666;
     line-height: 0.35rem;
@@ -1264,8 +1266,14 @@
   }
   .logisticsShuxian{
     width:1px;
-    height:0.4rem;
+    min-height:0.4rem;
     margin:0 auto;
+    position: absolute;
+    top:0.3rem;
+    bottom: 0;
+    height: auto;
+    left: 50%;
+    margin-left: -0.5px;
     background: rgba(228, 228, 228, 1);
   }
   .logisticsCircleFull{
