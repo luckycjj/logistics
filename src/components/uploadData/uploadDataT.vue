@@ -863,10 +863,10 @@ export default {
           bomb.first("请输入正确的邀请码");
           return false;
         }
-        /*if (water.IDpic == "") {
+        if (water.IDpic == "") {
           bomb.first("请上传身份证正面照！");
           return false;
-        }*/
+        }
         if (water.IDpicfan == "") {
           bomb.first("请上传身份证反面照！");
           return false;
@@ -923,7 +923,7 @@ export default {
           driverName:water.name,
           idCardNum:water.peopleNumber,
           driverLic:$("#box3 .h5u_options_hiddenP").text(),
-          idCardPos:"/image/Temp//13162000000SEZF-20180830120015293.jpg",
+          idCardPos:water.IDpic,
           idCardNeg:water.IDpicfan,
           licType:water.licTypeCode,
           source :sessionStorage.getItem("source"),

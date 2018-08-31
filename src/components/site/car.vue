@@ -1,6 +1,9 @@
 <template>
   <div id="car">
-    <div id="title" v-title data-title="车辆信息"></div>
+    <div id="title" v-if="carSure.length == 0" v-title data-title="车辆信息"></div>
+    <div id="title" v-if="carSure.length == 1 && carSure[0].carModel == '车头'" v-title data-title="选择车挂"></div>
+    <div id="title" v-if="carSure.length == 1 && carSure[0].carModel == '车挂'" v-title data-title="选择车头"></div>
+    <div id="title" v-if="carSure.length == 2" v-title data-title="派车"></div>
     <!--<div class="nav" v-if="orderPk!=''">
       <p class="active" i="0" @click="navClick(0)">自营车辆</p>
       <p i="1" @click="navClick(1)">社会车辆</p>
@@ -59,6 +62,19 @@
         totle:0,
         show:false,
         pdType:0,
+      }
+    },
+    watch:{
+      carSure:{
+        handler:function(val,oldval){
+          var _this = this;
+          _this.$nextTick(function () {
+            document.title = (document.getElementById("title")).dataset.title;
+            document.getElementById("title").innerText = document.title;
+            document.getElementById("carTitleBox").children[0].children[1].innerText = document.getElementById("title").innerText;
+          })
+        },
+        deep:true
       }
     },
     mounted:function () {
@@ -183,6 +199,8 @@
                            carModel:carModel ,
                            cartype:cartype,
                         });
+                      }else{
+                        bomb.first("可以派车啦");
                       }
                     }else{
                       for(var i = 0 ;i < _this.carSure.length ;i++ ){

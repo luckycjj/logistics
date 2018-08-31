@@ -27,7 +27,7 @@
                 <div class="clearBoth"></div>
               </li>
             </ul>
-            <ul class="logisticsBox" :class="errorBiglistOk?'logisticsBoxDown':''"  v-if="item.errorBiglist.length > 0 && type>1 && type < 9 && peopleType==2">
+            <ul class="logisticsBox" :class="errorBiglistOk?'logisticsBoxDown':''"  v-if="item.errorBiglist.length > 0">
               <li v-for="(cjj,index) in item.errorBiglist">
                 <div class="logisticsL">
                   <div class="logisticsCircle" :class="index==0?'logisticsCircleFull':''"></div>
@@ -196,7 +196,7 @@
             {{item.displayName}}
           </li>
           <div class="clearBoth"></div>
-          <input type="text" placeholder="其他费用" maxlength="40" style="margin-bottom: 0;" v-model="errorPricetype"/>
+          <input type="text" placeholder="填写原因" maxlength="40" style="margin-bottom: 0;" v-model="errorPricetype"/>
           <input type="text" placeholder="金额" maxlength="40" v-model="errorPrice"/>
         </ul>
         <button @click="errorPriceChange()" id="gogogo4" class="gogogo">提交</button>
@@ -577,7 +577,7 @@
           var json = {
             userCode : sessionStorage.getItem("token"),
             source : sessionStorage.getItem("source"),
-            expType : list[0] == undefined ? "" : list[0].displayName,
+            expType : list[0] == undefined || (list[0] != undefined && list[0].displayName == "其他") ? "" : list[0].displayName,
             trackingMemo : _this.errorabnormal,
             entrustVbillno : _this.pdlist[0].number == undefined ? "" : _this.pdlist[0].number
           }
@@ -630,8 +630,8 @@
               list.push(_this.errorPriceList[i].value)
             }
           }
-          if(list.length == 0 && _this.errorPricetype == ''){
-            bomb.first("请选择或填写费用类型");
+          if(list.length == 0){
+            bomb.first("请选择费用类型");
             return false;
           }
           if( _this.errorPrice == ''){

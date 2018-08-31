@@ -10,7 +10,8 @@
             </div>
             <div class="peoplemessage">
               <p>{{item.name}}</p>
-              <h1>驾龄：{{item.year}}年</h1>
+              <h1>驾龄：{{item.year}}年 </h1>
+              <h1> 驾驶证等级：{{item.licType}}</h1>
             </div>
             <div v-if="!manage">
               <div class="tel replace" @click="change(item,1)" v-if="carPeoplePk!='' && !item.pkTrue">
@@ -319,6 +320,7 @@
                 carPeoplePk:list.pkDriver,
                 tel:list.mobile,
                 name:list.driverName,
+                licType:list.licType == "" || list.licType == undefined || list.licType == null ? "暂无" : list.licType + "级别",
                 year:list.driverAge*1<1?"小于1":list.driverAge*1,
                 pic:list.driverImg,
               }

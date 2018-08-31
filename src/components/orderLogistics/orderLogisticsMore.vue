@@ -130,8 +130,8 @@
               <div class="clearBoth"></div>
             </div>
             <div class="go" v-else-if="(type == '10') && orderSource == 1">
-              <button class="zhifu"  @click="closedOrder()">取消订单</button>
-             <!-- <button @click="changeOrder()">修改订单</button>-->
+              <button  style="background: transparent;color:#3492ff;"  @click="closedOrder()">取消订单</button>
+              <button @click="shengcheng()">生成委托</button>
               <div class="clearBoth"></div>
             </div>
             <div class="go" v-else-if=" type == '0' && orderSource == 1">
@@ -422,6 +422,10 @@
         if(m != (_this.pick).toString()){
           _this.pick = !_this.pick;
         }
+      },
+      shengcheng:function () {
+         var _this = this ;
+          androidIos.second("此功能正在开发,敬请期待");
       },
       logisticsBoxDown:function () {
         var _this = this;

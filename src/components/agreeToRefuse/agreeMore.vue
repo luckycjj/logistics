@@ -18,12 +18,17 @@
           </div>
         <div class="label" style="height: auto;border:none">
           <h1><h5 style="margin-left: 0;">身份证</h5></h1>
-          <div style="margin-left: 0.18rem;margin-top: 0.3rem;">
+          <div style="float:left;margin-left: 0.18rem;margin-top: 0.3rem;">
             <img :src="IDpic" :onerror="errorImg">
             <h5 style="font-size: 0.3125rem;text-align: center;width:4rem;">正面</h5>
           </div>
+          <div style="float:right;margin-right: 0.18rem;margin-top: 0.3rem;">
+            <img :src="IDpicfan" :onerror="errorImg">
+            <h5 style="font-size: 0.3125rem;text-align: center;width:4rem;">反面</h5>
+          </div>
+          <div class="clearBoth"></div>
         </div>
-        <div class="label" style="height: auto;border:none">
+        <div class="label" style="height: auto;">
           <span>证件</span>
           <div class="clearBoth"></div>
           <div class="imgBoxBigs" style="float: left;margin-left: 0.18rem; ">
@@ -31,7 +36,11 @@
             <h5 style="font-size: 0.3125rem;text-align: center;width:4rem;">驾驶证</h5>
           </div>
           <div class="clearBoth"></div>
-      </div>
+        </div>
+        <div class="label" style="border:none">
+          <span style="float: left;">驾驶证等级</span>
+          <div class="companyNameBox" >{{licType}}</div>
+        </div>
     </div>
     </div>
     <div id="bottomButton">
@@ -54,10 +63,12 @@
              name:"",
              phone:"",
              IDpic: "",
+             IDpicfan:"",
              Drivepic: "",
              ftpUrl:"",
              refuseResule:"",
              IDpicCode:"",
+             licType:"",
              errorImg: 'this.src="' + require('../../images/timg.jpg') + '"'
           }
       },
@@ -85,7 +96,9 @@
                 _this.name = findDriverInfo.driverName;
                 _this.Drivepic = findDriverInfo.ftpUrl + findDriverInfo.driverLic;
                 _this.IDpic = findDriverInfo.ftpUrl + findDriverInfo.idCardPos;
+                _this.IDpicfan =  findDriverInfo.ftpUrl + findDriverInfo.idCardNeg;
                 _this.IDpicCode = findDriverInfo.idCardNum;
+                _this.licType = findDriverInfo.licType;
               }else{
                 androidIos.second(findDriverInfo.message);
               }
