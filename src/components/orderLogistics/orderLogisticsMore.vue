@@ -125,18 +125,22 @@
             下单时间：{{item.time}}
           </div>
           <div id="sure">
-            <div class="go" v-if="(type=='10000' && orderSource == 2 )" >
+            <div class="go" v-if="(type=='10000' && orderSource == 2)" >
               <button  @click="payOrder()" class="zhifu">支付</button>
               <div class="clearBoth"></div>
             </div>
+            <div class="go" v-else-if="type*1 < 10 && type*1 > 0  && orderSource == 1 && ( pdlist[0].fabu == '1')">
+              <button @click="orderAgain(3)" class="zhifu">修改订单</button>
+              <div class="clearBoth"></div>
+            </div>
             <div class="go" v-else-if="(type == '10') && orderSource == 1">
-              <button  style="background: transparent;color:#3492ff;"  @click="closedOrder()">取消订单</button>
+              <button  style="background: transparent;color:#3492ff;"  @click="closedOrder(1)">取消订单</button>
               <button @click="shengcheng()">生成委托</button>
               <div class="clearBoth"></div>
             </div>
-            <div class="go" v-else-if=" type == '0' && orderSource == 1">
-              <button :class="pdlist[0].fabu == '0' ? 'zhifu': ''" style="background: transparent;color:#3492ff;" @click="closedOrder()">关闭</button>
-              <button v-if="pdlist[0].fabu == '1'" @click="shenhe()">确认</button>
+            <div class="go" v-else-if=" type == '0' && orderSource == 1  && (pdlist[0].fabu == '2')">
+              <button v-if="pdlist[0].fabu == '2'"  style="background: transparent;color:#3492ff;" @click="closedOrder(2)">驳回</button>
+              <button v-if="pdlist[0].fabu == '2'" @click="shenhe()">确认</button>
               <div class="clearBoth"></div>
             </div>
             <div class="go" v-else-if="orderSource == 3">
@@ -145,11 +149,11 @@
             </div>
             <div class="go" v-else-if="type=='1000' && orderSource == 1">
               <button style="background: transparent;color:#3492ff;" @click="scoreYes(1)">评价</button>
-              <button @click="orderAgain()">再下一单</button>
+              <button @click="orderAgain(2)">再下一单</button>
               <div class="clearBoth"></div>
             </div>
             <div class="go" v-else-if="type=='1001' && orderSource == 1">
-              <button class="zhifu" @click="orderAgain()">再下一单</button>
+              <button class="zhifu" @click="orderAgain(2)">再下一单</button>
               <div class="clearBoth"></div>
             </div>
           </div>
@@ -177,7 +181,7 @@
       <div id="cancelReason">
         <div id="cancelReasonTitle">
           <img src="../../images/closed.png" @click="cancelReasonClosed()">
-          <p>选择关闭订单的理由</p>
+          <p v-html="closedType ==  1 ? '选择关闭订单的理由': '选择驳回理由'"></p>
         </div>
         <ul class="errorUl">
           <li v-for="(item,index) in cancelReason" :class="index%2==0?'errorAbnormalLeft':'errorAbnormalRight'" @click="cancelReasonClick($event)">
@@ -219,6 +223,7 @@
         scorereason:"",
         cancelreason:"",
         httpurl:"",
+        closedType:1,
         errorlogo: 'this.src="' + require('../../images/chengyunshang.png') + '"',
         errorlogo2: 'this.src="' + require('../../images/carpeople.png') + '"',
       }
@@ -399,9 +404,10 @@
           self.mescroll.endErr();
         });
       },
-      closedOrder:function () {
+      closedOrder:function (type) {
         var self = this;
         self.cancelReasonBox = true;
+        self.closedType = type;
         if(self.cancelReason.length == 0){
           $.ajax({
             type: "GET",
@@ -582,7 +588,10 @@
           var list =[];
           for(var i =0;i<$("#cancelReasonBox .errorUl li").length;i++){
             if($("#cancelReasonBox .errorUl li").eq(i).hasClass("errorPriceBoxLi")){
-              list.push(_this.cancelReason[i].value);
+              list.push({
+                displayName:_this.cancelReason[i].displayName,
+                value:_this.cancelReason[i].value
+              });
             }
           }
           if(list.length == 0 && _this.cancelreason == ""){
@@ -590,16 +599,24 @@
             return false;
           }
           bomb.removeClass("gogogo","gogogo");
+          var closedtype = _this.closedType;
+          var httpajax = closedtype == 1 ? "/order/closeOrder" : "/order/orderTurnDown";
+          var json = closedtype == 1 ? {
+            reason:list[0].value,
+            cancelreason:_this.cancelreason,
+            pk:_this.$route.query.pk,
+            userCode:sessionStorage.getItem("token"),
+            source:sessionStorage.getItem("source")
+          }:{
+            mome:list[0].displayName + "," + _this.cancelreason,
+            pk:_this.$route.query.pk,
+            userCode:sessionStorage.getItem("token"),
+            source:sessionStorage.getItem("source")
+          };
           $.ajax({
             type: "POST",
-            url: androidIos.ajaxHttp()+"/order/closeOrder",
-            data:JSON.stringify({
-              reason:list[0],
-              cancelreason:_this.cancelreason,
-              pk:_this.$route.query.pk,
-              userCode:sessionStorage.getItem("token"),
-              source:sessionStorage.getItem("source")
-            }),
+            url: androidIos.ajaxHttp() + httpajax,
+            data:JSON.stringify(json),
             dataType: "json",
             contentType: "application/json;charset=utf-8",
             timeout: 10000,
@@ -609,9 +626,10 @@
                 _this.cancelReasonBox = false;
                 $("#cancelReasonBox .errorUl li").removeClass("errorPriceBoxLi");
                 _this.cancelreason = "";
-                _this.$cjj("关闭成功");
+                var orderMessage = _this.closedType == 1 ? "关闭成功" : "驳回成功";
+                _this.$cjj(orderMessage);
                 setTimeout(function () {
-                  bridge.invoke('gobackfrom');
+                  _this.mescroll.resetUpScroll();
                 },500);
               }else{
                 androidIos.second(closeOrder.message);
@@ -708,10 +726,10 @@
         androidIos.addPageList();
         _this.$router.push({ path: '/newOrder',query:{pk:_this.$route.query.pk,type:1}});
       },
-      orderAgain:function(){
+      orderAgain:function(type){
         var _this = this;
         androidIos.addPageList();
-        _this.$router.push({ path: '/newOrder',query:{pk:_this.$route.query.pk,type:2}});
+        _this.$router.push({ path: '/newOrder',query:{pk:_this.$route.query.pk,type:type}});
       },
       addClass:function(obj,cls){//增加class
         var idJson = obj.className.split(" ");
@@ -855,111 +873,10 @@
                 number:invoiceDetail.orderNo,
                 time:invoiceDetail.createTime,
               }]
+              // fabu 1业务员 2审核员 3管理员
               if(invoiceDetail.driverDto != null && invoiceDetail.driverDto.length != 0){
                 sessionStorage.setItem("driverPk",invoiceDetail.driverDto[0].pkDriver);
               }
-              var data=pdlist;
-              var listData=data;//模拟分页数据
-              successCallback&&successCallback(listData);//成功回调
-            }else{
-              androidIos.second(invoiceDetail.message);
-              successCallback&&successCallback(thisThat.pdlist);//成功回调
-            }
-
-          },
-          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-            thisThat.carloading = false;
-            if(status=='timeout'){//超时,status还有success,error等值的情况
-              successCallback&&successCallback(thisThat.pdlist);
-              androidIos.second("网络请求超时");
-            }else if(status=='error'){
-              successCallback&&successCallback(thisThat.pdlist);
-              androidIos.errorwife();
-            }
-          }
-        })
-      }else{
-        $.ajax({
-          type: "POST",
-          url: androidIos.ajaxHttp()+"/order/getGoodsDetail",
-          data:JSON.stringify({pk:thisThat.$route.query.pk,userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")}),
-          dataType: "json",
-          contentType: "application/json;charset=utf-8",
-          timeout: 30000,
-          success: function (invoiceDetail) {
-            thisThat.carloading = false;
-            if(invoiceDetail.success == "" || invoiceDetail.success == "1"){
-              var list=[];
-              for(var i =0;i<invoiceDetail.list.length;i++){
-                var weight = invoiceDetail.list[i].weight;
-                var listJson = {
-                  goods:invoiceDetail.list[i].goodsCode+"-"+invoiceDetail.list[i].goodsName,
-                  number:invoiceDetail.list[i].num,
-                  weight : weight/1000 - 1 <0 ? weight + "千克" : weight/1000 + "吨",
-                  volume:invoiceDetail.list[i].volume*1 - 1 < 0 ? invoiceDetail.list[i].volume*1000 + "升" : invoiceDetail.list[i].volume*1 + "立方米",
-                }
-                list.push(listJson);
-              }
-              var tracking=[];
-              var pdlist = [{
-                orderType:"",
-                orderTypeName:"",
-                logistics:"",
-                evaluate:{
-                  grade:"",
-                },
-                goodsmessage:{
-                  startAddress:"",
-                  endAddress:"",
-                  distance:"0",
-                  tranType:"",
-                  productList:list,
-                  money:"",
-                  startTime:"",
-                  endTime:""
-                },
-                pickMessage:{
-                  name:"",
-                  tel:"",
-                  company:"",
-                  address:"",
-                },
-                endMessage:{
-                  name:"",
-                  tel:"",
-                  company:"",
-                  address:"",
-                },
-                insurance:{
-                  name:"",
-                  price:"",
-                },
-                pickPay:{
-                  people:"",
-                  type:"",
-                  remark:"",
-                },
-                carPeople:{
-                  logo:"",
-                  year:"",
-                  grade:"",
-                  name:"",
-                  tel:"",
-                  yes:"",
-                },
-                carrier:{
-                  logo:"",
-                  company:"",
-                  tranType: "",
-                  year:"",
-                  grade:"",
-                  phone:"",
-                  pkCarrier:"",
-                },
-                tranNumber:"",
-                number:"",
-                time:"",
-              }]
               var data=pdlist;
               var listData=data;//模拟分页数据
               successCallback&&successCallback(listData);//成功回调

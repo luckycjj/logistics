@@ -385,117 +385,24 @@
           },
           go:function(){
             var _this = this;
-            var newTimeCjj = new Date();
-            var yearCjj = newTimeCjj.getFullYear();
-            var monthCjj = newTimeCjj.getMonth()+1;
-            var dateCjj = newTimeCjj.getDate();
-            var hourCjj = newTimeCjj.getHours();
-            var minCjj = newTimeCjj.getMinutes();
-            var secCjj = newTimeCjj.getSeconds();
-            var dateCjjS = dateCjj+1;
-            var hourCjjS = hourCjj+1;
-            var newDateCjj = new Date(yearCjj+"/"+monthCjj+"/"+dateCjj+" "+hourCjjS+":"+minCjj+":"+secCjj);
-            var newDataCjj = new Date((new Date()).getTime()+24*60*60*1000);
-            _this.both.timeBeforeS = _this.ten(newDateCjj.getFullYear())+"-"+ _this.ten((newDateCjj.getMonth()+1))+"-"+_this.ten(newDateCjj.getDate());
-            _this.both.timeBeforeF = _this.ten(newDateCjj.getHours())+":"+_this.ten(newDateCjj.getMinutes())+":"+_this.ten(newDateCjj.getSeconds());
-            _this.both.timeAfterS = _this.ten(newDataCjj.getFullYear())+"-"+ _this.ten((newDataCjj.getMonth()+1))+"-"+_this.ten(newDataCjj.getDate());
-            _this.both.timeAfterF = "08:00:00";
-            var newOrder = sessionStorage.getItem("newOrder");
-            var histroyAddress = sessionStorage.getItem("histroyAddress");
-            var startAddress = sessionStorage.getItem("startAddress");
-            var endAddress = sessionStorage.getItem("endAddress");
-            var goodsType =  sessionStorage.getItem("goodsType");
-            var appoint = sessionStorage.getItem("appoint");
-            var insurance =   sessionStorage.getItem("insurance");
-            var remark = sessionStorage.getItem("remark");
-            var pk = _this.$route.query.pk;
-            _this.pk = pk ==undefined || _this.$route.query.type == undefined || _this.$route.query.type == "2"?"":pk;
-            if(pk != undefined && newOrder == undefined){
-              $.ajax({
+            var ajax1 =   $.ajax({
                 type: "POST",
-                url: androidIos.ajaxHttp()+"/order/invoiceDetail",
-                data:JSON.stringify({pk:pk,source:sessionStorage.getItem("source"),userCode:sessionStorage.getItem("token")}),
+                url: androidIos.ajaxHttp()+"/settings/getTransType",
                 contentType: "application/json;charset=utf-8",
                 dataType: "json",
-                async:false,
-                timeout: 10000,
-                success: function (invoiceDetail) {
-                  var list=[];
-                  for(var i =0;i<invoiceDetail.invPackDao.length;i++){
-                    _this.both.initialWeight = _this.both.initialWeight*1 + invoiceDetail.invPackDao[i].weight/1000*1;
-                    var listJson = {
-                      tranpk:invoiceDetail.category,
-                      pkInvPackB:invoiceDetail.invPackDao[i].pkInvPackB,
-                      goodsType:invoiceDetail.invPackDao[i].goodsName+"-"+invoiceDetail.invPackDao[i].goodsTypeName,
-                      goodstypenumber:invoiceDetail.invPackDao[i].goodsCode+"-"+invoiceDetail.invPackDao[i].goodsType,
-                      number:invoiceDetail.invPackDao[i].num,
-                      unitWight:"吨",
-                      wight:invoiceDetail.invPackDao[i].weight/1000,
-                      wightTen:"1",
-                      unitWeight:"立方米",
-                      weight:invoiceDetail.invPackDao[i].volume*1,
-                      weightTen:"1",
-                      protype:invoiceDetail.invPackDao[i].weight*1 != 0 && invoiceDetail.invPackDao[i].volume*1 == 0 ? 0 :invoiceDetail.invPackDao[i].weight*1 == 0 && invoiceDetail.invPackDao[i].volume*1 != 0 ? 1 : 2,
-                    }
-                    list.push(listJson);
+                timeout: 30000,
+                success: function (getSysConfigList) {
+                  if(getSysConfigList.length > 2){
+                    _this.both.carListMore = true
                   }
-                  var pdlist = {
-                    startAddress:{
-                      people:invoiceDetail.delivery.contact,
-                      tel:invoiceDetail.delivery.mobile,
-                      city:invoiceDetail.delivery.province+"-"+invoiceDetail.delivery.city+"-"+invoiceDetail.delivery.area,
-                      address:invoiceDetail.delivery.detailAddr,
-                      company:invoiceDetail.delivery.addrName,
-                      pk:invoiceDetail.delivery.pkAddress,
-                    },
-                    endAddress:{
-                      people:invoiceDetail.arrival.contact,
-                      tel:invoiceDetail.arrival.mobile,
-                      city:invoiceDetail.arrival.province+"-"+invoiceDetail.arrival.city+"-"+invoiceDetail.arrival.area,
-                      address:invoiceDetail.arrival.detailAddr,
-                      company:invoiceDetail.arrival.addrName,
-                      pk:invoiceDetail.arrival.pkAddress,
-                    },
-                    timeBeforeF:invoiceDetail.deliDate.split(" ")[1],
-                    timeBeforeS:invoiceDetail.deliDate.split(" ")[0],
-                    timeAfterF:invoiceDetail.arriDate.split(" ")[1],
-                    timeAfterS:invoiceDetail.arriDate.split(" ")[0],
-                    productList:list,
-                    tranType:"",
-                    trantypenumber:"",
-                    appoint:invoiceDetail.carrierDto.carrierName,
-                    pk_carrier:invoiceDetail.carrierDto.pkCarrier,
-                    driver_name:"",
-                    insurance:"",
-                    remark:"",
-                    pay:0,
-                    read:true,
-                    scrollTop:0,
-                    initialWeight:_this.both.initialWeight,
-                    price:"",
-                    carList:[],
-                    carListSure:"",
-                    carListSureValue:"",
-                    carWidthList:[],
-                    carWidthListSure:"",
-                    carWidthListSureValue:"",
-                    cartypeOther:"",
-                    cartypeOtherSure:"",
-                    carTypeList:[],
-                    carTypeListSure:"",
-                    carTypeListSureValue:"",
-                    carListMore:false,
-                    carWidthListMore:false,
-                    carTypeListMore:false,
-                    carTypeLook:true,
-                  }
-                  _this.both = pdlist;
-                  _this.$nextTick(function () {
-                    $(".pickmessage h1,.arrmessage h1,#time .lablebox").addClass("imgno");
-                    for(var i = 0 ; i<$(".goodsTypeLabel").length;i++){
-                      $(".goodsTypeLabel").eq(i).addClass("imgno");
+                  for(var i = 0; i < getSysConfigList.length;i++){
+                    getSysConfigList[i].choose = false;
+                    getSysConfigList[i].look = false;
+                    if(i < 2){
+                      getSysConfigList[i].look = true;
                     }
-                  })
+                  }
+                  _this.both.carList = getSysConfigList;
                 },
                 complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
                   if(status=='timeout'){//超时,status还有success,error等值的情况
@@ -505,50 +412,24 @@
                   }
                 }
               })
-            }
-            if(histroyAddress!=undefined){
-              histroyAddress = JSON.parse(histroyAddress);
-              _this.both = histroyAddress;
-              sessionStorage.removeItem("histroyAddress");
-              sessionStorage.removeItem("newOrder");
-            }
-            if(newOrder!=undefined && sessionStorage.getItem("newOrder")!= undefined){
-              newOrder = JSON.parse(newOrder);
-              _this.both = newOrder;
-              _this.price = _this.both.price;
-              _this.$nextTick(function () {
-                $("#newOrderBox").animate({scrollTop: _this.both.scrollTop}, 0);
-              })
-              sessionStorage.removeItem("newOrder");
-            }else{
-              $.ajax({
-                type: "POST",
-                url: androidIos.ajaxHttp()+"/address/getAddres",
-                data:JSON.stringify({
-                  page:1,
-                  size:1,
-                  keyword:"",
-                  pk:"",
-                  userCode:sessionStorage.getItem("token"),
-                  source:sessionStorage.getItem("source"),
-                  type:1
-                }),
-                contentType: "application/json;charset=utf-8",
+            var ajax2 =   $.ajax({
+                type: "GET",
+                url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
+                data:{str:"car_type",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
                 dataType: "json",
                 timeout: 10000,
-                success: function (getAddres) {
-                  if(getAddres.success=="1"){
-                    _this.both.startAddress = {
-                      people:getAddres.list[0].contact,
-                      tel:getAddres.list[0].mobile,
-                      city:getAddres.list[0].province+"-"+getAddres.list[0].city+"-"+getAddres.list[0].area,
-                      address:getAddres.list[0].detailAddr,
-                      company:getAddres.list[0].addrName,
-                      pk:getAddres.list[0].pkAddress,
-                    }
-                  }else{
-                    androidIos.second(getAddres.message);
+                success: function (getSysConfigList) {
+                  if(getSysConfigList.length > 3){
+                    _this.both.carTypeListMore = true
                   }
+                  for(var i = 0; i < getSysConfigList.length;i++){
+                    getSysConfigList[i].choose = false;
+                    getSysConfigList[i].look = false;
+                    if(i < 3){
+                      getSysConfigList[i].look = true;
+                    }
+                  }
+                  _this.both.carTypeList = getSysConfigList;
                 },
                 complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
                   if(status=='timeout'){//超时,status还有success,error等值的情况
@@ -558,31 +439,234 @@
                   }
                 }
               })
-            }
-            if(_this.pk == ""){
-              if(!_this.both.histroyAddressLength){
-                var json = {
-                  page:1,
-                  size:1,
-                  keyword:"",
-                  userCode:sessionStorage.getItem("token"),
-                  source:sessionStorage.getItem("source"),
-                  type:sessionStorage.getItem("NEWORDERTRANTYPE") == '0' ? '' :sessionStorage.getItem("NEWORDERTRANTYPE"),
+            var ajax3 =  $.ajax({
+              type: "GET",
+              url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
+              data:{str:"car_length",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
+              dataType: "json",
+              timeout: 10000,
+              success: function (getSysConfigList) {
+                if(getSysConfigList.length > 5){
+                  _this.both.carWidthListMore = true;
                 }
+                for(var i = 0; i < getSysConfigList.length;i++){
+                  getSysConfigList[i].choose = false;
+                  getSysConfigList[i].look = false;
+                  if(i < 5){
+                    getSysConfigList[i].look = true;
+                  }
+                }
+                _this.both.carWidthList = getSysConfigList;
+              },
+              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                if(status=='timeout'){//超时,status还有success,error等值的情况
+                  androidIos.second("网络请求超时");
+                }else if(status=='error'){
+                  androidIos.errorwife();
+                }
+              }
+            })
+            Promise.all([ajax1, ajax2, ajax3]).then(function(values) {
+              var newTimeCjj = new Date();
+              var yearCjj = newTimeCjj.getFullYear();
+              var monthCjj = newTimeCjj.getMonth()+1;
+              var dateCjj = newTimeCjj.getDate();
+              var hourCjj = newTimeCjj.getHours();
+              var minCjj = newTimeCjj.getMinutes();
+              var secCjj = newTimeCjj.getSeconds();
+              var dateCjjS = dateCjj+1;
+              var hourCjjS = hourCjj+1;
+              var newDateCjj = new Date(yearCjj+"/"+monthCjj+"/"+dateCjj+" "+hourCjjS+":"+minCjj+":"+secCjj);
+              var newDataCjj = new Date((new Date()).getTime()+24*60*60*1000);
+              _this.both.timeBeforeS = _this.ten(newDateCjj.getFullYear())+"-"+ _this.ten((newDateCjj.getMonth()+1))+"-"+_this.ten(newDateCjj.getDate());
+              _this.both.timeBeforeF = _this.ten(newDateCjj.getHours())+":"+_this.ten(newDateCjj.getMinutes())+":"+_this.ten(newDateCjj.getSeconds());
+              _this.both.timeAfterS = _this.ten(newDataCjj.getFullYear())+"-"+ _this.ten((newDataCjj.getMonth()+1))+"-"+_this.ten(newDataCjj.getDate());
+              _this.both.timeAfterF = "08:00:00";
+              var newOrder = sessionStorage.getItem("newOrder");
+              var histroyAddress = sessionStorage.getItem("histroyAddress");
+              var startAddress = sessionStorage.getItem("startAddress");
+              var endAddress = sessionStorage.getItem("endAddress");
+              var goodsType =  sessionStorage.getItem("goodsType");
+              var appoint = sessionStorage.getItem("appoint");
+              var insurance =   sessionStorage.getItem("insurance");
+              var remark = sessionStorage.getItem("remark");
+              var pk = _this.$route.query.pk;
+              _this.pk = pk ==undefined || _this.$route.query.type == undefined || _this.$route.query.type == "2" || _this.$route.query.type == "3"?"":pk;
+              if(pk != undefined && newOrder == undefined){
                 $.ajax({
                   type: "POST",
-                  url: androidIos.ajaxHttp()+"/order/getHistoryOrder",
-                  data:JSON.stringify(json),
+                  url: androidIos.ajaxHttp()+"/order/invoiceDetail",
+                  data:JSON.stringify({pk:pk,source:sessionStorage.getItem("source"),userCode:sessionStorage.getItem("token")}),
+                  contentType: "application/json;charset=utf-8",
+                  dataType: "json",
+                  async:false,
+                  timeout: 10000,
+                  success: function (invoiceDetail) {
+                    var list=[];
+                    for(var i =0;i<invoiceDetail.invPackDao.length;i++){
+                      _this.both.initialWeight = _this.both.initialWeight*1 + invoiceDetail.invPackDao[i].weight/1000*1;
+                      var listJson = {
+                        tranpk:invoiceDetail.category,
+                        pkInvPackB:invoiceDetail.invPackDao[i].pkInvPackB,
+                        goodsType:invoiceDetail.invPackDao[i].goodsName+"-"+invoiceDetail.invPackDao[i].goodsTypeName,
+                        goodstypenumber:invoiceDetail.invPackDao[i].goodsCode+"-"+invoiceDetail.invPackDao[i].goodsType,
+                        number:invoiceDetail.invPackDao[i].num,
+                        unitWight:"吨",
+                        wight:invoiceDetail.invPackDao[i].weight/1000,
+                        wightTen:"1",
+                        unitWeight:"立方米",
+                        weight:invoiceDetail.invPackDao[i].volume*1,
+                        weightTen:"1",
+                        protype:invoiceDetail.invPackDao[i].weight*1 != 0 && invoiceDetail.invPackDao[i].volume*1 == 0 ? 0 :invoiceDetail.invPackDao[i].weight*1 == 0 && invoiceDetail.invPackDao[i].volume*1 != 0 ? 1 : 2,
+                      }
+                      list.push(listJson);
+                    }
+                    var transTypeName = invoiceDetail.transType != "" ? invoiceDetail.transType + "," : "";
+                    var carLengthName = invoiceDetail.carLength != "" ? invoiceDetail.carLength + "," : "";
+                    var carModelName = invoiceDetail.carModel != "" ? invoiceDetail.carModel + "," : "";
+                    var lengthOther = "";
+                    if(_this.konwList(invoiceDetail.carLength.split(",")) != undefined){
+                      lengthOther= _this.konwList(invoiceDetail.carLength.split(",")).yes;
+                    }
+                    var lengthOtherYes = "";
+                    if(lengthOther != ""){
+                      invoiceDetail.carLength = _this.konwList(invoiceDetail.carLength.split(",")).list.join(",");
+                      lengthOtherYes = lengthOther;
+                    }else{
+                        for(var i = 0 ; i <invoiceDetail.carLength.split(",").length; i++ ){
+                           var num = 0;
+                           for(var x = 0; x<_this.both.carWidthList.length ;x ++){
+                              if(invoiceDetail.carLength.split(",")[i] == _this.both.carWidthList[x].value){
+                                 break;
+                              }
+                              num ++ ;
+                           }
+                           if(num == _this.both.carWidthList.length){
+                             lengthOtherYes = invoiceDetail.carLength.split(",")[i];
+                             var listcarlength = invoiceDetail.carLength.split(",");
+                             listcarlength.splice(i,1);
+                              invoiceDetail.carLength = listcarlength.join(",");
+                           }
+                        }
+                    }
+                    if(lengthOtherYes != ""){
+                      _this.both.carWidthListMore = false;
+                      for(var i = 0; i < _this.both.carWidthList.length;i++){
+                        _this.both.carWidthList[i].look = true;
+                      }
+                    }
+                    var pdlist = {
+                      startAddress:{
+                        people:invoiceDetail.delivery.contact,
+                        tel:invoiceDetail.delivery.mobile,
+                        city:invoiceDetail.delivery.province+"-"+invoiceDetail.delivery.city+"-"+invoiceDetail.delivery.area,
+                        address:invoiceDetail.delivery.detailAddr,
+                        company:invoiceDetail.delivery.addrName,
+                        pk:invoiceDetail.delivery.pkAddress,
+                      },
+                      endAddress:{
+                        people:invoiceDetail.arrival.contact,
+                        tel:invoiceDetail.arrival.mobile,
+                        city:invoiceDetail.arrival.province+"-"+invoiceDetail.arrival.city+"-"+invoiceDetail.arrival.area,
+                        address:invoiceDetail.arrival.detailAddr,
+                        company:invoiceDetail.arrival.addrName,
+                        pk:invoiceDetail.arrival.pkAddress,
+                      },
+                      timeBeforeF:invoiceDetail.deliDate.split(" ")[1],
+                      timeBeforeS:invoiceDetail.deliDate.split(" ")[0],
+                      timeAfterF:invoiceDetail.arriDate.split(" ")[1],
+                      timeAfterS:invoiceDetail.arriDate.split(" ")[0],
+                      productList:list,
+                      tranType:transTypeName + carLengthName + carModelName ,
+                      trantypenumber:"",
+                      appoint:invoiceDetail.carrierDto.carrierName,
+                      pk_carrier:invoiceDetail.carrierDto.pkCarrier,
+                      driver_name:"",
+                      insurance:"",
+                      remark:invoiceDetail.remark,
+                      pay:0,
+                      read:true,
+                      scrollTop:0,
+                      initialWeight:_this.both.initialWeight,
+                      price:invoiceDetail.price,
+                      carList:_this.both.carList,
+                      carListSure:invoiceDetail.transType,
+                      carListSureValue:invoiceDetail.transType =="整车运输" ? "5fda0edc8df34b4d8c1ed44a6f1f866e" : "e5e602a22c5a4689b8d151c76a4d1179",
+                      carWidthList:_this.both.carWidthList,
+                      carWidthListSure:invoiceDetail.carLength,
+                      carWidthListSureValue:invoiceDetail.carLength,
+                      cartypeOther:lengthOtherYes,
+                      cartypeOtherSure:lengthOtherYes,
+                      carTypeList:_this.both.carTypeList,
+                      carTypeListSure:invoiceDetail.carModel,
+                      carTypeListSureValue:invoiceDetail.carModel,
+                      carListMore:_this.both.carListMore,
+                      carWidthListMore:_this.both.carWidthListMore,
+                      carTypeListMore:_this.both.carTypeListMore,
+                      carTypeLook:true,
+                    }
+                    _this.price = invoiceDetail.price*1;
+                    _this.both = pdlist;
+                    _this.$nextTick(function () {
+                      if(_this.pk != ""){
+                        $(".pickmessage h1,.arrmessage h1,#time .lablebox").addClass("imgno");
+                        for(var i = 0 ; i<$(".goodsTypeLabel").length;i++){
+                          $(".goodsTypeLabel").eq(i).addClass("imgno");
+                        }
+                      }
+                    })
+                  },
+                  complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                    if(status=='timeout'){//超时,status还有success,error等值的情况
+                      androidIos.second("网络请求超时");
+                    }else if(status=='error'){
+                      androidIos.errorwife();
+                    }
+                  }
+                })
+              }
+              if(histroyAddress!=undefined){
+                histroyAddress = JSON.parse(histroyAddress);
+                _this.both = histroyAddress;
+                sessionStorage.removeItem("histroyAddress");
+                sessionStorage.removeItem("newOrder");
+              }
+              if(newOrder!=undefined && sessionStorage.getItem("newOrder")!= undefined){
+                newOrder = JSON.parse(newOrder);
+                _this.both = newOrder;
+                _this.price = _this.both.price;
+                _this.$nextTick(function () {
+                  $("#newOrderBox").animate({scrollTop: _this.both.scrollTop}, 0);
+                })
+                sessionStorage.removeItem("newOrder");
+              }else{
+                $.ajax({
+                  type: "POST",
+                  url: androidIos.ajaxHttp()+"/address/getAddres",
+                  data:JSON.stringify({
+                    page:1,
+                    size:1,
+                    keyword:"",
+                    pk:"",
+                    userCode:sessionStorage.getItem("token"),
+                    source:sessionStorage.getItem("source"),
+                    type:1
+                  }),
                   contentType: "application/json;charset=utf-8",
                   dataType: "json",
                   timeout: 10000,
-                  success: function (getHistoryOrder) {
-                    if(getHistoryOrder.success="1"){
-                      if(getHistoryOrder.total-1>0){
-                        _this.both.histroyAddressLength = true;
+                  success: function (getAddres) {
+                    if(getAddres.success=="1"){
+                      _this.both.startAddress = {
+                        people:getAddres.list[0].contact,
+                        tel:getAddres.list[0].mobile,
+                        city:getAddres.list[0].province+"-"+getAddres.list[0].city+"-"+getAddres.list[0].area,
+                        address:getAddres.list[0].detailAddr,
+                        company:getAddres.list[0].addrName,
+                        pk:getAddres.list[0].pkAddress,
                       }
                     }else{
-                      androidIos.second(getHistoryOrder.message)
+                      androidIos.second(getAddres.message);
                     }
                   },
                   complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
@@ -594,240 +678,276 @@
                   }
                 })
               }
-            }
-            if(startAddress!=undefined){
-              startAddress = JSON.parse(startAddress);
-              _this.both.startAddress.people = startAddress.name;
-              _this.both.startAddress.tel = startAddress.phone;
-              _this.both.startAddress.city = startAddress.province + '-' + startAddress.city + '-'  + startAddress.area;
-              _this.both.startAddress.address = startAddress.address;
-              _this.both.startAddress.company = startAddress.company;
-              _this.both.startAddress.pk =  startAddress.pk;
-              _this.price = "";
-              _this.both.price = "";
-              sessionStorage.removeItem("startAddress");
-            }
-            if(endAddress!=undefined){
-              endAddress = JSON.parse(endAddress);
-              _this.both.endAddress.people = endAddress.name;
-              _this.both.endAddress.tel = endAddress.phone;
-              _this.both.endAddress.city = endAddress.province + '-' + endAddress.city + '-'  + endAddress.area;
-              _this.both.endAddress.address = endAddress.address;
-              _this.both.endAddress.company = endAddress.company;
-              _this.both.endAddress.pk =  endAddress.pk;
-              _this.price = "";
-              _this.both.price = "";
-              sessionStorage.removeItem("endAddress");
-            }
-            if(goodsType!=undefined){
-              goodsType = JSON.parse(goodsType);
-              _this.both.productList[goodsType.index].goodsType =goodsType.parentName + '-' +goodsType.name;
-              _this.both.productList[goodsType.index].goodstypenumber =goodsType.parentcode + '-' +goodsType.code;
-              _this.both.productList[goodsType.index].protype = goodsType.protype;
-              _this.both.productList[goodsType.index].number = 1;
-              _this.both.productList[goodsType.index].tranpk = goodsType.tranpk;
-              _this.both.productList[goodsType.index].wight = "";
-              _this.both.productList[goodsType.index].weight = "";
-              _this.price = "";
-              _this.both.price = "";
-              sessionStorage.removeItem("goodsType");
-            }
-            if(appoint!=undefined){
-              appoint = JSON.parse(appoint);
-              _this.both.appoint =appoint.name;
-              _this.both.pk_carrier = appoint.pk_carrier;
-              _this.both.driver_name = appoint.driver_name;
-              sessionStorage.removeItem("appoint");
-            }
-            if(insurance!=undefined){
-              insurance = JSON.parse(insurance);
-              _this.both.insurance =insurance.name+" ¥"+insurance.price+"/次";
-              sessionStorage.removeItem("insurance");
-            }
-            if(remark!=undefined){
-              _this.both.remark =remark;
-              sessionStorage.removeItem("remark");
-            }
-            $(document).on('click','.lablebox input',function () {
-              var $Val = $.trim($(this).val())
-              $(this).val('').focus().val($Val)
-            })
-            if(_this.pk == ""){
-              var currYear = (new Date()).getFullYear();
-              var opt={};
-              opt.date = {preset : 'date'};
-              opt.datetime = {preset : 'datetime'};
-              opt.time = {preset : 'time'};
-              opt.default = {
-                theme: 'android-ics light', //皮肤样式
-                display: 'bottom', //显示方式
-                mode: 'scroller', //日期选择模式
-                dateFormat: 'yy-mm-dd',
-                timeFormat: 'HH:ii',
-                lang: 'zh',
-                showNow: true,
-                nowText: "今天",
-                startYear: currYear, //开始年份
-                endYear: currYear + 20 ,//结束年份
-                onSelect: function (valueText, inst) {//选择时事件（点击确定后），valueText 为选择的时间，
-                  var dateF = "";
-                  if(inst.settings["0"]==1){
-                    dateF = new Date(inst.val.replace(/\-/g, "\/"));
-                  }else if(inst.settings["0"]==2){
-                    dateF = new Date($("#USER_AGES").val().replace(/\-/g, "\/")+" "+inst.val);
-                  }else if(inst.settings["0"]==3){
-                    dateF = new Date(inst.val.replace(/\-/g, "\/"));
-                  }else if(inst.settings["0"]==4){
-                    dateF = new Date($("#USER_AGEFo").val().replace(/\-/g, "\/")+" "+inst.val);
+              if(_this.pk == ""){
+                if(!_this.both.histroyAddressLength){
+                  var json = {
+                    page:1,
+                    size:1,
+                    keyword:"",
+                    userCode:sessionStorage.getItem("token"),
+                    source:sessionStorage.getItem("source"),
+                    type:sessionStorage.getItem("NEWORDERTRANTYPE") == '0' ? '' :sessionStorage.getItem("NEWORDERTRANTYPE"),
                   }
-                  var dateS=""
-                  if(inst.settings["0"]==1){
-                    dateS = new Date(new Date().getFullYear()+"/"+(new Date().getMonth()+1)+"/"+new Date().getDate());
-                  }else if(inst.settings["0"]==2){
-                    dateS = new Date(new Date().getFullYear()+"/"+(new Date().getMonth()+1)+"/"+new Date().getDate()+" "+new Date().getHours()+":"+new Date().getMinutes());
-                  }else if(inst.settings["0"]==3){
-                    dateS = new Date($("#USER_AGES").val().replace(/\-/g, "\/"));
-                  }else if(inst.settings["0"]==4){
-                    dateS = new Date($("#USER_AGES").val().replace(/\-/g, "\/")+" "+$("#USER_AGE").val());
-                  }
-                  var dateT = "";
-                  if(inst.settings["0"]==1){
-                    dateT = new Date($("#USER_AGEFo").val().replace(/\-/g, "\/"));
-                  }else if(inst.settings["0"]==2){
-                    dateT = new Date($("#USER_AGEFo").val().replace(/\-/g, "\/")+" "+$("#USER_AGET").val());
-                  }
-                  if(dateF-dateS>=0){
-                    if(inst.settings["0"]==1){
-                      if(dateF-dateT>0){
-                        $("#USER_AGEFo").val("");
-                        $("#USER_AGET").val("");
-                        _this.both.timeAfterF = $("#USER_AGET").val();
-                        _this.both.timeAfterS = $("#USER_AGEFo").val();
+                  $.ajax({
+                    type: "POST",
+                    url: androidIos.ajaxHttp()+"/order/getHistoryOrder",
+                    data:JSON.stringify(json),
+                    contentType: "application/json;charset=utf-8",
+                    dataType: "json",
+                    timeout: 10000,
+                    success: function (getHistoryOrder) {
+                      if(getHistoryOrder.success="1"){
+                        if(getHistoryOrder.total-1>0){
+                          _this.both.histroyAddressLength = true;
+                        }
+                      }else{
+                        androidIos.second(getHistoryOrder.message)
                       }
+                    },
+                    complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                      if(status=='timeout'){//超时,status还有success,error等值的情况
+                        androidIos.second("网络请求超时");
+                      }else if(status=='error'){
+                        androidIos.errorwife();
+                      }
+                    }
+                  })
+                }
+              }
+              if(startAddress!=undefined){
+                startAddress = JSON.parse(startAddress);
+                _this.both.startAddress.people = startAddress.name;
+                _this.both.startAddress.tel = startAddress.phone;
+                _this.both.startAddress.city = startAddress.province + '-' + startAddress.city + '-'  + startAddress.area;
+                _this.both.startAddress.address = startAddress.address;
+                _this.both.startAddress.company = startAddress.company;
+                _this.both.startAddress.pk =  startAddress.pk;
+                _this.price = "";
+                _this.both.price = "";
+                sessionStorage.removeItem("startAddress");
+              }
+              if(endAddress!=undefined){
+                endAddress = JSON.parse(endAddress);
+                _this.both.endAddress.people = endAddress.name;
+                _this.both.endAddress.tel = endAddress.phone;
+                _this.both.endAddress.city = endAddress.province + '-' + endAddress.city + '-'  + endAddress.area;
+                _this.both.endAddress.address = endAddress.address;
+                _this.both.endAddress.company = endAddress.company;
+                _this.both.endAddress.pk =  endAddress.pk;
+                _this.price = "";
+                _this.both.price = "";
+                sessionStorage.removeItem("endAddress");
+              }
+              if(goodsType!=undefined){
+                goodsType = JSON.parse(goodsType);
+                _this.both.productList[goodsType.index].goodsType =goodsType.parentName + '-' +goodsType.name;
+                _this.both.productList[goodsType.index].goodstypenumber =goodsType.parentcode + '-' +goodsType.code;
+                _this.both.productList[goodsType.index].protype = goodsType.protype;
+                _this.both.productList[goodsType.index].number = 1;
+                _this.both.productList[goodsType.index].tranpk = goodsType.tranpk;
+                _this.both.productList[goodsType.index].wight = "";
+                _this.both.productList[goodsType.index].weight = "";
+                _this.price = "";
+                _this.both.price = "";
+                sessionStorage.removeItem("goodsType");
+              }
+              if(appoint!=undefined){
+                appoint = JSON.parse(appoint);
+                _this.both.appoint =appoint.name;
+                _this.both.pk_carrier = appoint.pk_carrier;
+                _this.both.driver_name = appoint.driver_name;
+                sessionStorage.removeItem("appoint");
+              }
+              if(insurance!=undefined){
+                insurance = JSON.parse(insurance);
+                _this.both.insurance =insurance.name+" ¥"+insurance.price+"/次";
+                sessionStorage.removeItem("insurance");
+              }
+              if(remark!=undefined){
+                _this.both.remark =remark;
+                sessionStorage.removeItem("remark");
+              }
+              $(document).on('click','.lablebox input',function () {
+                var $Val = $.trim($(this).val())
+                $(this).val('').focus().val($Val)
+              })
+              if(_this.pk == ""){
+                var currYear = (new Date()).getFullYear();
+                var opt={};
+                opt.date = {preset : 'date'};
+                opt.datetime = {preset : 'datetime'};
+                opt.time = {preset : 'time'};
+                opt.default = {
+                  theme: 'android-ics light', //皮肤样式
+                  display: 'bottom', //显示方式
+                  mode: 'scroller', //日期选择模式
+                  dateFormat: 'yy-mm-dd',
+                  timeFormat: 'HH:ii',
+                  lang: 'zh',
+                  showNow: true,
+                  nowText: "今天",
+                  startYear: currYear, //开始年份
+                  endYear: currYear + 20 ,//结束年份
+                  onSelect: function (valueText, inst) {//选择时事件（点击确定后），valueText 为选择的时间，
+                    var dateF = "";
+                    if(inst.settings["0"]==1){
+                      dateF = new Date(inst.val.replace(/\-/g, "\/"));
                     }else if(inst.settings["0"]==2){
-                      if(dateF-dateT>0){
+                      dateF = new Date($("#USER_AGES").val().replace(/\-/g, "\/")+" "+inst.val);
+                    }else if(inst.settings["0"]==3){
+                      dateF = new Date(inst.val.replace(/\-/g, "\/"));
+                    }else if(inst.settings["0"]==4){
+                      dateF = new Date($("#USER_AGEFo").val().replace(/\-/g, "\/")+" "+inst.val);
+                    }
+                    var dateS=""
+                    if(inst.settings["0"]==1){
+                      dateS = new Date(new Date().getFullYear()+"/"+(new Date().getMonth()+1)+"/"+new Date().getDate());
+                    }else if(inst.settings["0"]==2){
+                      dateS = new Date(new Date().getFullYear()+"/"+(new Date().getMonth()+1)+"/"+new Date().getDate()+" "+new Date().getHours()+":"+new Date().getMinutes());
+                    }else if(inst.settings["0"]==3){
+                      dateS = new Date($("#USER_AGES").val().replace(/\-/g, "\/"));
+                    }else if(inst.settings["0"]==4){
+                      dateS = new Date($("#USER_AGES").val().replace(/\-/g, "\/")+" "+$("#USER_AGE").val());
+                    }
+                    var dateT = "";
+                    if(inst.settings["0"]==1){
+                      dateT = new Date($("#USER_AGEFo").val().replace(/\-/g, "\/"));
+                    }else if(inst.settings["0"]==2){
+                      dateT = new Date($("#USER_AGEFo").val().replace(/\-/g, "\/")+" "+$("#USER_AGET").val());
+                    }
+                    if(dateF-dateS>=0){
+                      if(inst.settings["0"]==1){
+                        if(dateF-dateT>0){
+                          $("#USER_AGEFo").val("");
+                          $("#USER_AGET").val("");
+                          _this.both.timeAfterF = $("#USER_AGET").val();
+                          _this.both.timeAfterS = $("#USER_AGEFo").val();
+                        }
+                      }else if(inst.settings["0"]==2){
+                        if(dateF-dateT>0){
+                          $("#USER_AGEFo").val("");
+                          $("#USER_AGET").val("");
+                          _this.both.timeAfterF = $("#USER_AGET").val();
+                          _this.both.timeAfterS = $("#USER_AGEFo").val();
+                        }
+                      }
+                    }else{
+                      if(inst.settings["0"]==1){
+                        if(dateF - (new Date(new Date().getFullYear()+"/"+(new Date().getMonth()+1)+"/"+new Date().getDate()+" "+"00:00:00")).getTime()<=0){
+                          bomb.first("提货时间不能早于当前时间");
+                          $("#USER_AGES").val("");
+                          $("#USER_AGE").val("");
+                          _this.both.timeBeforeF = $("#USER_AGE").val();
+                          _this.both.timeBeforeS = $("#USER_AGES").val();
+                          return false;
+                        }
+                      }
+                      if(inst.settings["0"]==2){
+                        if(dateF - new Date(new Date().getFullYear()+"/"+(new Date().getMonth()+1)+"/"+new Date().getDate()+" "+new Date().getHours()+":"+new Date().getMinutes()).getTime()<=0){
+                          bomb.first("提货时间不能早于当前时间");
+                          $("#USER_AGE").val("");
+                          _this.both.timeBeforeF = $("#USER_AGE").val();
+                          return false;
+                        }
+                      }
+                      if(inst.settings["0"]==3||inst.settings["0"]==4){
+                        bomb.first("到货时间不能早于提货时间");
                         $("#USER_AGEFo").val("");
                         $("#USER_AGET").val("");
                         _this.both.timeAfterF = $("#USER_AGET").val();
                         _this.both.timeAfterS = $("#USER_AGEFo").val();
-                      }
-                    }
-                  }else{
-                    if(inst.settings["0"]==1){
-                      if(dateF - (new Date(new Date().getFullYear()+"/"+(new Date().getMonth()+1)+"/"+new Date().getDate()+" "+"00:00:00")).getTime()<=0){
-                        bomb.first("提货时间不能早于当前时间");
-                        $("#USER_AGES").val("");
-                        $("#USER_AGE").val("");
-                        _this.both.timeBeforeF = $("#USER_AGE").val();
-                        _this.both.timeBeforeS = $("#USER_AGES").val();
                         return false;
                       }
-                    }
-                    if(inst.settings["0"]==2){
-                      if(dateF - new Date(new Date().getFullYear()+"/"+(new Date().getMonth()+1)+"/"+new Date().getDate()+" "+new Date().getHours()+":"+new Date().getMinutes()).getTime()<=0){
-                        bomb.first("提货时间不能早于当前时间");
-                        $("#USER_AGE").val("");
-                        _this.both.timeBeforeF = $("#USER_AGE").val();
-                        return false;
-                      }
-                    }
-                    if(inst.settings["0"]==3||inst.settings["0"]==4){
-                      bomb.first("到货时间不能早于提货时间");
                       $("#USER_AGEFo").val("");
                       $("#USER_AGET").val("");
                       _this.both.timeAfterF = $("#USER_AGET").val();
                       _this.both.timeAfterS = $("#USER_AGEFo").val();
-                      return false;
                     }
-                    $("#USER_AGEFo").val("");
-                    $("#USER_AGET").val("");
-                    _this.both.timeAfterF = $("#USER_AGET").val();
-                    _this.both.timeAfterS = $("#USER_AGEFo").val();
-                  }
-                  if(inst.settings["0"]==1){
-                    _this.both.timeBeforeS =valueText;
-                    _this.both.timeBeforeF  ="";
-                  }else if(inst.settings["0"]==2){
-                    _this.both.timeBeforeF = valueText+":00";
-                  }else if(inst.settings["0"]==3){
-                    _this.both.timeAfterS = valueText;
-                    _this.both.timeAfterF  ="";
-                  }else if(inst.settings["0"]==4){
-                    _this.both.timeAfterF = valueText+":00";
-                  }
-                }
-              };
-              $("#USER_AGEFo").mobiscroll($.extend(opt['date'], opt['default'],"3"));
-              $("#USER_AGET").mobiscroll($.extend(opt['time'], opt['default'],"4"));
-              $("#USER_AGE").mobiscroll($.extend(opt['time'], opt['default'],"2"));
-              $("#USER_AGES").mobiscroll($.extend(opt['date'], opt['default'],"1"));
-            }
-            $("#USER_AGES,#USER_AGE,#USER_AGET,#USER_AGEFo").focus(function(){
-              document.activeElement.blur();
-            });
-            _this.$nextTick(function () {
-              for(var i = 0;i<_this.both.productList.length;i++){
-                var x = 0 , y = 0;
-                x = Math.floor(1 / _this.both.productList[i].wightTen / 1000);
-                y = Math.floor(1 / _this.both.productList[i].weightTen / 1000);
-                if(_this.both.productList[i].protype == 0 || _this.both.productList[i].protype == 2){
-                  var unitWight = new LArea();
-                  unitWight.init({
-                    'trigger': '#Z00'+i,
-                    'valueTo': '#Z00'+i,
-                    'keys': {
-                      id: 'id',
-                      name: 'name'
-                    },
-                    'type': 1,
-                    'data':[{
-                      "code":"1",
-                      "region":"吨"
-                    },{
-                      "code":"0.001",
-                      "region":"千克"
-                    }]
-                  });
-                  unitWight.value = [x];
-                  unitWight.addPointer = function (name) {
-                    name = JSON.parse(name);
-                    if(_this.both.productList[name.id.substr(4)*1].wight !=""){
-                      _this.both.productList[name.id.substr(4)*1].wight = _this.both.productList[name.id.substr(4)*1].wight/(name.firstCode/_this.both.productList[name.id.substr(4)*1].wightTen);
+                    if(inst.settings["0"]==1){
+                      _this.both.timeBeforeS =valueText;
+                      _this.both.timeBeforeF  ="";
+                    }else if(inst.settings["0"]==2){
+                      _this.both.timeBeforeF = valueText+":00";
+                    }else if(inst.settings["0"]==3){
+                      _this.both.timeAfterS = valueText;
+                      _this.both.timeAfterF  ="";
+                    }else if(inst.settings["0"]==4){
+                      _this.both.timeAfterF = valueText+":00";
                     }
-                    _this.both.productList[name.id.substr(4)*1].wightTen = name.firstCode;
-                    _this.both.productList[name.id.substr(4)*1].unitWight = name.firstVal;
                   }
-                }
-                if(_this.both.productList[i].protype == 1 || _this.both.productList[i].protype == 2) {
-                  var unitWeight = new LArea();
-                  unitWeight.init({
-                    'trigger': '#Z01' + i,
-                    'valueTo': '#Z01' + i,
-                    'keys': {
-                      id: 'id',
-                      name: 'name'
-                    },
-                    'type': 1,
-                    'data': [{
-                      "code": "1",
-                      "region": "立方米"
-                    }, {
-                      "code": "0.001",
-                      "region": "升"
-                    }]
-                  });
-                  unitWeight.value = [y];
-                  unitWeight.addPointer = function (name) {
-                    name = JSON.parse(name);
-                    if (_this.both.productList[name.id.substr(4) * 1].weight != "") {
-                      _this.both.productList[name.id.substr(4) * 1].weight = _this.both.productList[name.id.substr(4) * 1].weight / (name.firstCode / _this.both.productList[name.id.substr(4) * 1].weightTen);
-                    }
-                    _this.both.productList[name.id.substr(4) * 1].weightTen = name.firstCode;
-                    _this.both.productList[name.id.substr(4) * 1].unitWeight = name.firstVal;
-                  }
-                }
+                };
+                $("#USER_AGEFo").mobiscroll($.extend(opt['date'], opt['default'],"3"));
+                $("#USER_AGET").mobiscroll($.extend(opt['time'], opt['default'],"4"));
+                $("#USER_AGE").mobiscroll($.extend(opt['time'], opt['default'],"2"));
+                $("#USER_AGES").mobiscroll($.extend(opt['date'], opt['default'],"1"));
               }
-            })
+              $("#USER_AGES,#USER_AGE,#USER_AGET,#USER_AGEFo").focus(function(){
+                document.activeElement.blur();
+              });
+              _this.$nextTick(function () {
+                for(var i = 0;i<_this.both.productList.length;i++){
+                  var x = 0 , y = 0;
+                  x = Math.floor(1 / _this.both.productList[i].wightTen / 1000);
+                  y = Math.floor(1 / _this.both.productList[i].weightTen / 1000);
+                  if(_this.both.productList[i].protype == 0 || _this.both.productList[i].protype == 2){
+                    var unitWight = new LArea();
+                    unitWight.init({
+                      'trigger': '#Z00'+i,
+                      'valueTo': '#Z00'+i,
+                      'keys': {
+                        id: 'id',
+                        name: 'name'
+                      },
+                      'type': 1,
+                      'data':[{
+                        "code":"1",
+                        "region":"吨"
+                      },{
+                        "code":"0.001",
+                        "region":"千克"
+                      }]
+                    });
+                    unitWight.value = [x];
+                    unitWight.addPointer = function (name) {
+                      name = JSON.parse(name);
+                      if(_this.both.productList[name.id.substr(4)*1].wight !=""){
+                        _this.both.productList[name.id.substr(4)*1].wight = _this.both.productList[name.id.substr(4)*1].wight/(name.firstCode/_this.both.productList[name.id.substr(4)*1].wightTen);
+                      }
+                      _this.both.productList[name.id.substr(4)*1].wightTen = name.firstCode;
+                      _this.both.productList[name.id.substr(4)*1].unitWight = name.firstVal;
+                    }
+                  }
+                  if(_this.both.productList[i].protype == 1 || _this.both.productList[i].protype == 2) {
+                    var unitWeight = new LArea();
+                    unitWeight.init({
+                      'trigger': '#Z01' + i,
+                      'valueTo': '#Z01' + i,
+                      'keys': {
+                        id: 'id',
+                        name: 'name'
+                      },
+                      'type': 1,
+                      'data': [{
+                        "code": "1",
+                        "region": "立方米"
+                      }, {
+                        "code": "0.001",
+                        "region": "升"
+                      }]
+                    });
+                    unitWeight.value = [y];
+                    unitWeight.addPointer = function (name) {
+                      name = JSON.parse(name);
+                      if (_this.both.productList[name.id.substr(4) * 1].weight != "") {
+                        _this.both.productList[name.id.substr(4) * 1].weight = _this.both.productList[name.id.substr(4) * 1].weight / (name.firstCode / _this.both.productList[name.id.substr(4) * 1].weightTen);
+                      }
+                      _this.both.productList[name.id.substr(4) * 1].weightTen = name.firstCode;
+                      _this.both.productList[name.id.substr(4) * 1].unitWeight = name.firstVal;
+                    }
+                  }
+                }
+              })
+            });
           },
         lookMore:function (type) {
             var _this = this.both;
@@ -847,6 +967,19 @@
              }
              _this.carTypeListMore = false;
            }
+        },
+        konwList:function (list) {
+          var ary = list;
+          var nary=ary.sort();
+          for(var i=0;i<nary.length;i++){
+            if (nary[i]==nary[i+1]){
+              nary.splice(i,1);
+              return {
+                list : nary,
+                yes : nary[i]
+              };
+            }
+          }
         },
         ajaxPost: function() {
           var _this = this;
@@ -1081,93 +1214,6 @@
           var _this = this;
           _this.vehicleBox = true;
           _this.both.tranTypeValue = _this.both.tranType;
-          if(_this.both.carList.length == 0){
-            $.ajax({
-              type: "POST",
-              url: androidIos.ajaxHttp()+"/settings/getTransType",
-              contentType: "application/json;charset=utf-8",
-              dataType: "json",
-              timeout: 30000,
-              success: function (getSysConfigList) {
-                if(getSysConfigList.length > 2){
-                  _this.both.carListMore = true
-                }
-                for(var i = 0; i < getSysConfigList.length;i++){
-                  getSysConfigList[i].choose = false;
-                  getSysConfigList[i].look = false;
-                  if(i < 2){
-                    getSysConfigList[i].look = true;
-                  }
-                }
-                _this.both.carList = getSysConfigList;
-              },
-              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                if(status=='timeout'){//超时,status还有success,error等值的情况
-                  androidIos.second("网络请求超时");
-                }else if(status=='error'){
-                  androidIos.errorwife();
-                }
-              }
-            })
-          }
-          if(_this.both.carTypeList.length == 0){
-            $.ajax({
-              type: "GET",
-              url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
-              data:{str:"car_type",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
-              dataType: "json",
-              timeout: 10000,
-              success: function (getSysConfigList) {
-                if(getSysConfigList.length > 3){
-                  _this.both.carTypeListMore = true
-                }
-                for(var i = 0; i < getSysConfigList.length;i++){
-                  getSysConfigList[i].choose = false;
-                  getSysConfigList[i].look = false;
-                  if(i < 3){
-                    getSysConfigList[i].look = true;
-                  }
-                }
-                _this.both.carTypeList = getSysConfigList;
-              },
-              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                if(status=='timeout'){//超时,status还有success,error等值的情况
-                  androidIos.second("网络请求超时");
-                }else if(status=='error'){
-                  androidIos.errorwife();
-                }
-              }
-            })
-          }
-          if(_this.both.carWidthList.length == 0){
-            $.ajax({
-              type: "GET",
-              url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
-              data:{str:"car_length",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
-              dataType: "json",
-              timeout: 10000,
-              success: function (getSysConfigList) {
-                if(getSysConfigList.length > 5){
-                  _this.both.carWidthListMore = true
-                }
-                for(var i = 0; i < getSysConfigList.length;i++){
-                  getSysConfigList[i].choose = false;
-                  getSysConfigList[i].look = false;
-                  if(i < 5){
-                    getSysConfigList[i].look = true;
-                  }
-                }
-                _this.both.carWidthList = getSysConfigList;
-              },
-              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                if(status=='timeout'){//超时,status还有success,error等值的情况
-                  androidIos.second("网络请求超时");
-                }else if(status=='error'){
-                  androidIos.errorwife();
-                }
-              }
-            })
-          }
           if(_this.both.carList.length > 0 && _this.both.carWidthList.length > 0 && _this.both.carTypeList.length > 0){
             var list1 = _this.both.carListSure.split(",");
             var list2 = _this.both.carWidthListSure.split(",");
@@ -1175,9 +1221,6 @@
             var len1 = list1.length;
             var len2 = list2.length;
             var len3 = list3.length;
-            list1.splice(len1-1,1);
-            list2.splice(len2-1,1);
-            list3.splice(len3-1,1);
             _this.both.cartypeOther = _this.both.cartypeOtherSure;
             for(var z =0 ;z < 3;z++){
               var child = z == 0 ? list1 : z==1 ? list2 :list3 ;
@@ -1586,7 +1629,7 @@
               pay:self.pay==1?"收货方":"发货方",
               est_amount:_this.price*1,
               remark:self.remark,
-              pk:_this.pk,
+              pk:_this.$route.query.type == 3 ? _this.$route.query.pk : _this.pk,
               weightBoth:weightBoth,
             };
             androidIos.loading("正在提交");
@@ -1597,7 +1640,7 @@
               data:JSON.stringify(json),
               contentType: "application/json;charset=utf-8",
               dataType: "json",
-              timeout: 10000,
+              timeout: 50000,
               success: function (createOrder) {
                 $("#common-blackBox").remove();
                 bomb.addClass("submit","gogogo");
@@ -1605,7 +1648,7 @@
                   _this.newOrderMessageBox = false;
                   _this.$cjj("提交成功");
                   setTimeout(function () {
-                    bridge.invoke('gobackfrom');
+                    androidIos.gobackFrom(_this);
                   },1000)
                 }else if(createOrder.success=="-1"){
                   androidIos.second(createOrder.message)
