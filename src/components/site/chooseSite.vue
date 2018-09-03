@@ -320,10 +320,14 @@
     margin-top: 0.2rem;
   }
   #chooseSite li{
-    width: 100%;
+    width: 92%;
     background: white;
-    margin-bottom: 0.2rem;
+    margin: 0 auto 0.2rem auto;
+    display: block;
     position: relative;
+    border-radius: 0.2rem;
+    overflow: hidden;
+    box-shadow: 0 0.1rem 0.2rem #d4d4d4;
   }
   #chooseSite .second{
     float: right;

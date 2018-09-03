@@ -6,28 +6,30 @@
         <h5 @click="remove(index)" v-if="productBox.productsList.length>1">删除</h5>
         <p>拆量{{index+1}}</p>
         <div class="clearBoth"></div>
-        <div v-for="(items,indexs) in item.list">
-          <p>{{items.products}}</p>
+          <div v-for="(items,indexs) in item.list">
+            <p>{{items.products}}</p>
+            <div class="clearBoth"></div>
+            <div class="divBoth">
+            <div style="border-bottom: 1px solid #dbdbdb;" class="liDiv">
+              <h1>货物件数</h1>
+              <h2><span>{{items.number}}</span>件</h2>
+              <div class="clearBoth"></div>
+            </div>
+            <div style="border-bottom: 1px solid #dbdbdb;" class="liDiv" v-if="items.weightBoth*1 > 0 ">
+              <h1>货物重量</h1>
+              <h2><span v-if="productBox.productsList.length == 1">{{items.weight*1}}</span>{{items.weightUnit}}</h2>
+              <input v-if="productBox.productsList.length > 1" @keyup="weightKeyup(index,indexs)" type="number" maxlength="100" v-model="items.weight" placeholder="请输入拆量吨位"/>
+              <div class="clearBoth"></div>
+            </div>
+            <div class="liDiv"  v-if="items.volumeBoth*1 > 0 ">
+              <h1>货物体积</h1>
+              <h2><span v-if="productBox.productsList.length == 1">{{items.volume*1}}</span>{{items.volumeUnit}}</h2>
+              <input v-if="productBox.productsList.length > 1" @keyup = "volumekeyup(index,indexs)" type="number" v-model="items.volume" placeholder="请输入拆量体积"/>
+              <div class="clearBoth"></div>
+            </div>
+            </div>
+          </div>
           <div class="clearBoth"></div>
-          <div style="border-bottom: 1px solid #dbdbdb;" class="liDiv">
-            <h1>货物件数</h1>
-            <h2><span>{{items.number}}</span>件</h2>
-            <div class="clearBoth"></div>
-          </div>
-          <div style="border-bottom: 1px solid #dbdbdb;" class="liDiv" v-if="items.weightBoth*1 > 0 ">
-            <h1>货物重量</h1>
-            <h2><span v-if="productBox.productsList.length == 1">{{items.weight*1}}</span>{{items.weightUnit}}</h2>
-            <input v-if="productBox.productsList.length > 1" @keyup="weightKeyup(index,indexs)" type="number" maxlength="100" v-model="items.weight" placeholder="请输入拆量吨位"/>
-            <div class="clearBoth"></div>
-          </div>
-          <div class="liDiv"  v-if="items.volumeBoth*1 > 0 ">
-            <h1>货物体积</h1>
-            <h2><span v-if="productBox.productsList.length == 1">{{items.volume*1}}</span>{{items.volumeUnit}}</h2>
-            <input v-if="productBox.productsList.length > 1" @keyup = "volumekeyup(index,indexs)" type="number" v-model="items.volume" placeholder="请输入拆量体积"/>
-            <div class="clearBoth"></div>
-          </div>
-        </div>
-        <div class="clearBoth"></div>
       </li>
       <p id="add" @click="add()" v-if=" productBox.productsList.length < 2">新增拆量</p>
     </ul>
@@ -158,8 +160,10 @@
                return false;
              }
              for(var i =0;i<_this.productBox.productsList.length;i++){
+               var num = 0;
                var productsList = _this.productBox.productsList[i];
                for(var x = 0; x<productsList.list.length;x++){
+                 num += productsList.list[x].weight*1 + productsList.list[x].volume*1 ;
                  if(i == 0){
                    var w = productsList.list[x].weight*1;
                    var v = productsList.list[x].volume*1;
@@ -169,6 +173,10 @@
                    weight[x] = weight[x]*1 + productsList.list[x].weight*1;
                    volume[x] = volume[x]*1 + productsList.list[x].volume*1;
                  }
+               }
+               if(num == 0){
+                 bomb.first("拆量"+ (i + 1) + "请拆量！")
+                 return false;
                }
              }
              for(var i =0;i<weight.length;i++){
@@ -203,8 +211,6 @@
                 _this.productBox.productsList[item].list[items].volume = _this.productBox.productsList[0].list[items].volumeBoth - _this.productBox.productsList[item].list[items].volume > 0 ?  _this.productBox.productsList[item].list[items].volume : _this.productBox.productsList[0].list[items].volumeBoth;
                 _this.productBox.productsList[1-item].list[items].volume = _this.productBox.productsList[0].list[items].volumeBoth - _this.productBox.productsList[item].list[items].volume;
               }
-          }else{
-             console.log("无法拆量")
           }
         },
       }
@@ -213,8 +219,9 @@
 
 <style scoped>
   li{
-    width:100%;
-    margin-top: 0.2rem;
+    width:94%;
+    margin: 0.2rem auto 0 auto;
+    display: block;
   }
   li p{
      font-size: 0.35rem;
@@ -280,5 +287,10 @@
   }
   .colorfull{
      background: #3399FF!important;
+  }
+  .divBoth{
+    border-radius: 0.2rem;
+    box-shadow: 0 0.1rem 0.2rem #d4d4d4;
+    overflow: hidden;
   }
 </style>

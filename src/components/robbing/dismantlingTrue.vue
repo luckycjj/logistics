@@ -3,12 +3,17 @@
     <div id="title" v-title data-title="确认拆量信息" ></div>
     <ul>
         <li v-for="(item,index) in productBox.productsList">
-          <p>{{productBox.address}}</p>
+          <p v-html="productBox.address.split('-')[0]"></p>
+          <p v-html="productBox.address.split('-')[1]"></p>
+          <h3>{{productBox.trantype}}</h3>
           <div class="product">
-            <h1 v-for = "(items) in item.list">{{productBox.trantype}}/{{items.products}}/{{items.number*1}}件/{{items.weight*1}}{{items.weightUnit}}/{{items.volume*1}}{{items.volumeUnit}}</h1>
+            <h1 v-for = "(items) in item.list" v-if="items.weight*1 + items.volume*1 != 0">
+              <h4>{{items.products}}</h4>
+              <h5>{{items.number*1}}件/{{items.weight*1}}{{items.weightUnit}}/{{items.volume*1}}{{items.volumeUnit}}</h5>
+              <div class="clearBoth"></div>
+            </h1>
           </div>
-          <h2>提货 {{productBox.pickTime}}</h2>
-          <h2>到货 {{productBox.arrivTime}}</h2>
+          <h2>{{productBox.pickTime}} - {{productBox.arrivTime}}</h2>
         </li>
     </ul>
     <button @click="sure()">确认拆量</button>
@@ -144,14 +149,20 @@
 
 <style scoped>
    li{
-     width:90%;
+     width:84%;
      padding: 0.3rem 5%;
-     margin-bottom: 0.2rem;
+     display: block;
+     margin:0.2rem auto 0 auto;
+     border-radius: 0.2rem;
+     box-shadow: 0 0.1rem 0.2rem #d4d4d4;
+     overflow: hidden;
      background: white;
    }
   li p{
-    font-size: 0.35rem;
+    font-size: 0.36rem;
     color:#333;
+    padding-left: 0.5rem;
+    margin-bottom: 0.2rem;
   }
   li h1{
      font-size: 0.3125rem;
@@ -160,9 +171,6 @@
   li h2{
     font-size: 0.3125rem;
     color:#999;
-  }
-  .product{
-    margin: 0.2rem 0 ;
   }
    button{
      width:96%;
@@ -174,5 +182,50 @@
      display: block;
      font-size: 0.38rem;
      letter-spacing: 0.0625rem;
+   }
+   li p:nth-child(1){
+     background-image: url("../../images/pickmessage.png");
+   }
+   li p{
+     background-image: url("../../images/arrmessage.png");
+     background-size: 0.267rem;
+     background-repeat: no-repeat;
+     background-position: 0 0.13rem;
+   }
+  li h3,li h2{
+     width: 100%;
+     padding-left: 8%;
+     font-size: 0.3125rem;
+     margin-top: 0.1rem;
+     background-repeat: no-repeat;
+     background-size: 0.5rem 0.5rem;
+     background-position: 0 0rem;
+     color:#666;
+   }
+   li h3{
+     margin-bottom: 0.2rem;
+   }
+  li h3{
+     background-image: url("../../images/trantype.png");
+   }
+  li h2{
+    background-image: url("../../images/time.png");
+  }
+   .product h1 h4,.product h1 h5{
+     width: 42%;
+     padding-left: 8%;
+     font-size: 0.3125rem;
+     float: left;
+     margin-top: 0.1rem;
+     background-repeat: no-repeat;
+     background-size: 0.5rem 0.5rem;
+     background-position: 0 0rem;
+     color:#666;
+   }
+   li h4{
+     background-image: url("../../images/product.png");
+   }
+   li h5{
+     background-image: url("../../images/weight.png");
    }
 </style>
