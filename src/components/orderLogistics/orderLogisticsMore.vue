@@ -8,7 +8,7 @@
     <div id="mescroll" class="mescroll">
       <ul id="dataList" class="data-list">
         <li v-for="item in pdlist">
-          <div class="top" v-if="type != '10000' && orderSource!= 3">
+          <div class="top" v-if="type != '10000'">
             <div style="width:100%;position: relative;top:0;left:0;">
               <span v-html="item.orderTypeName"></span>
               <img src="../../images/order2.png" style="height: 1.64rem;">
@@ -56,9 +56,9 @@
           </div>
           <div class="message">
             <div class="goodsmessage">
-              <p v-if="orderSource!= 3" :data-start="item.pickMessage.address" :data-end="item.endMessage.address" class="startEnd"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.startAddress}}</span><img style="float: left;margin:0.3rem 0.3rem;width:0.41rem;" src="../../images/addressImg.png"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.endAddress}}</span><span  v-if="type == '20' || type == '40' " class="distance">{{item.goodsmessage.distance}}km</span><div class="clearBoth"></div></p>
-              <h1  v-if="orderSource!= 3">{{item.goodsmessage.tranType}}</h1>
-              <h4 v-if="orderSource!= 3">{{item.goodsmessage.money}}元</h4>
+              <p :data-start="item.pickMessage.address" :data-end="item.endMessage.address" class="startEnd"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.startAddress}}</span><img style="float: left;margin:0.3rem 0.3rem;width:0.41rem;" src="../../images/addressImg.png"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.endAddress}}</span><span  v-if="type == '20' || type == '40' " class="distance">{{item.goodsmessage.distance}}km</span><div class="clearBoth"></div></p>
+              <h1>{{item.goodsmessage.tranType}}</h1>
+              <h4>{{item.goodsmessage.money}}元</h4>
               <div class="clearBoth"></div>
               <div v-for="itemS in item.goodsmessage.productList ">
                 <h2>{{itemS.goods}}</h2>
@@ -66,9 +66,9 @@
                 <div class="clearBoth"></div>
               </div>
               <div class="clearBoth"></div>
-              <h5  v-if="orderSource!= 3">{{item.goodsmessage.startTime}} - {{item.goodsmessage.endTime}}</h5>
+              <h5 >{{item.goodsmessage.startTime}} - {{item.goodsmessage.endTime}}</h5>
             </div>
-            <div class="peoplemessage"  v-if="orderSource!= 3">
+            <div class="peoplemessage">
               <p><span :class="pick?'colorFull':''" @click="pickMessage('true')">发货方</span><span :class="!pick?'colorFull':''" @click="pickMessage('false')">收货方</span></p>
               <div style="background: white;box-shadow: 0 0.1rem 10px #d8d8d8;position: relative;margin:0.1rem auto 0 auto;border-radius: 0.2rem;">
                 <div class="messageBox" v-if="pick">
@@ -120,7 +120,7 @@
             </div>
             <div class="clearBoth"></div>
           </div>
-          <div class="number"  v-if="orderSource!= 3">
+          <div class="number">
             订单编号：{{item.number}}<br>
             下单时间：{{item.time}}
           </div>
@@ -141,10 +141,6 @@
             <div class="go" v-else-if=" type == '0' && orderSource == 1  && (pdlist[0].fabu == '2')">
               <button v-if="pdlist[0].fabu == '2'"  style="background: transparent;color:#3492ff;" @click="closedOrder(2)">驳回</button>
               <button v-if="pdlist[0].fabu == '2'" @click="shenhe()">确认</button>
-              <div class="clearBoth"></div>
-            </div>
-            <div class="go" v-else-if="orderSource == 3">
-              <button  class="zhifu" @click="scoreYes(3)">签收</button>
               <div class="clearBoth"></div>
             </div>
             <div class="go" v-else-if="type=='1000' && orderSource == 1">
@@ -317,7 +313,7 @@
               var logisticsBoxFont = logisticsBox.firstChild.offsetHeight / htmlFont[0].style.fontSize.replace("px","");
               logisticsBox.style.height = logisticsBoxFont + "rem";
             }
-            if(curPageData[0].orderType>3 && self.orderSource != 3){
+            if(curPageData[0].orderType>3){
               $("#star_grade").html("");
               $("#star_grade").markingSystem({
                 num: 5,
@@ -331,7 +327,7 @@
                 width: 0.4* $("html").css("font-size").replace("px", ""),
               });
             }
-            if(curPageData[0].orderType == 10 && self.orderSource != 3){
+            if(curPageData[0].orderType == 10){
               $("#star_gradeS").html("");
               $("#star_gradeS").markingSystem({
                 num: 5,
@@ -346,7 +342,7 @@
               });
               $("#star_gradeS .grade").remove();
             }
-            if(curPageData[0].orderType >2 && self.orderSource != 3){
+            if(curPageData[0].orderType >2){
               $("#star_gradeF").html("");
               $("#star_gradeF").markingSystem({
                 num: 5,
@@ -498,7 +494,6 @@
       },
       scoreYes:function(type){
         var _this = this;
-        if(type == 1){
           _this.scoreList = [{
             name:"货物",
             score:"0"
@@ -509,47 +504,6 @@
             name:"承运商",
             score:"0"
           }]
-        }else if(type == 3){
-          androidIos.loading("正在签收");
-          _this.scoreList = [{
-            name:"货物",
-            score:"0"
-          }];
-          var succ = 0;
-          $.ajax({
-            type: "POST",
-            url: androidIos.ajaxHttp()+"/order/signInv",
-            data:JSON.stringify({
-              pk:_this.$route.query.pk,
-              userCode:sessionStorage.getItem("token"),
-              source:sessionStorage.getItem("source")
-            }),
-            contentType: "application/json;charset=utf-8",
-            dataType: "json",
-            timeout: 10000,
-            async:false,
-            success: function (signInv) {
-              if(signInv.success == "1"){
-                succ = 1;
-                _this.$cjj("签收成功");
-              }else{
-                succ = 0;
-                androidIos.second(signInv.message);
-              }
-            },
-            complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-              $("#common-blackBox").remove();
-              if(status=='timeout'){//超时,status还有success,error等值的情况
-                androidIos.second("网络请求超时");
-              }else if(status=='error'){
-                androidIos.errorwife();
-              }
-            }
-          })
-          if(succ == 0){
-             return false;
-          }
-        }
         _this.$nextTick(function () {
             _this.scoreBox = true;
             _this.scorereason = "";
@@ -899,7 +853,6 @@
           }
         })
       }
-
     },500)
   }
 </script>
