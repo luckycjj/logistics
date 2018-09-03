@@ -9,6 +9,7 @@ import site from '../pages/site'
 import car from '../pages/car'
 import uploadData from '../pages/uploadData'
 import agreeToRefuse from '../pages/agreeToRefuse'
+import signIn from  '../pages/signIn'
 import Vue from 'vue'
 import Router from 'vue-router'
 import  newOrderF from '@/components/newOrder/newOrder'
@@ -133,6 +134,11 @@ export default new Router({
         {path: 'uploadDataT', component: uploadDataT},
         {path: 'uploadDataFo', component: uploadDataFo}
       ]
+    },
+    {
+      path:'/signIn',
+      name:'signIn',
+      component:signIn,
     },
     {
       path: '/calculator',
