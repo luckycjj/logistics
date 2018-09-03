@@ -407,12 +407,13 @@
       closedOrder:function (type) {
         var self = this;
         self.cancelReasonBox = true;
-        self.closedType = type;
-        if(self.cancelReason.length == 0){
+        if(self.cancelReason.length == 0 || self.closedType*1 != type ){
+          self.closedType = type;
+          var orderClosed = self.closedType == "1" ? "order_closed" : "reject_order";
           $.ajax({
             type: "GET",
             url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
-            data:{str:"order_closed",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
+            data:{str:orderClosed,userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
             dataType: "json",
             timeout: 10000,
             success: function (getSysConfigList) {
