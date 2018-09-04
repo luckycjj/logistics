@@ -132,7 +132,7 @@
               <button @click="orderAgain(3)" class="zhifu">修改订单</button>
               <div class="clearBoth"></div>
             </div>
-            <div class="go" v-else-if="type == '10' && orderSource == 1 && pdlist[0].indexOf('1') != -1">
+            <div class="go" v-else-if="type == '10' && orderSource == 1 && pdlist[0].fabu.indexOf('1') != -1">
               <button  style="background: transparent;color:#3492ff;"  @click="closedOrder(1)">取消订单</button>
               <button @click="shengcheng()">生成委托</button>
               <div class="clearBoth"></div>
