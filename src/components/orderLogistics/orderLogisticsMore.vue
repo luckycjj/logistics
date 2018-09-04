@@ -124,30 +124,30 @@
             下单时间：{{item.time}}
           </div>
           <div id="sure">
-            <div class="go" v-if="type=='10000' && orderSource == 2 && pdlist[0].fabu.indexOf('2') != -1" >
+            <div class="go" v-if="type=='10000' && orderSource == 2 && (pdlist[0].fabu.indexOf('2') != -1 || pdlist[0].fabu.indexOf('3') != -1)" >
               <button  @click="payOrder()" class="zhifu">支付</button>
               <div class="clearBoth"></div>
             </div>
-            <div class="go" v-else-if="type*1 < 10 && type*1 > 0  && orderSource == 1 &&  pdlist[0].fabu.indexOf('1') != -1">
+            <div class="go" v-else-if="type*1 < 10 && type*1 > 0  && orderSource == 1 &&  (pdlist[0].fabu.indexOf('1') != -1 || pdlist[0].fabu.indexOf('3') != -1)">
               <button @click="orderAgain(3)" class="zhifu">修改订单</button>
               <div class="clearBoth"></div>
             </div>
-            <div class="go" v-else-if="type == '10' && orderSource == 1 && pdlist[0].fabu.indexOf('1') != -1">
+            <div class="go" v-else-if="type == '10' && orderSource == 1 && (pdlist[0].fabu.indexOf('1') != -1 || pdlist[0].fabu.indexOf('3') != -1)">
               <button  style="background: transparent;color:#3492ff;"  @click="closedOrder(1)">取消订单</button>
               <button @click="shengcheng()">生成委托</button>
               <div class="clearBoth"></div>
             </div>
-            <div class="go" v-else-if=" type == '0' && orderSource == 1  && pdlist[0].fabu.indexOf('2') != -1">
+            <div class="go" v-else-if=" type == '0' && orderSource == 1  && (pdlist[0].fabu.indexOf('2') != -1 || pdlist[0].fabu.indexOf('3') != -1)">
               <button   style="background: transparent;color:#3492ff;" @click="closedOrder(2)">驳回</button>
               <button @click="shenhe()">确认</button>
               <div class="clearBoth"></div>
             </div>
-            <div class="go" v-else-if="type=='1000' && orderSource == 1 && pdlist[0].fabu.indexOf('1') != -1">
+            <div class="go" v-else-if="type=='1000' && orderSource == 1 && (pdlist[0].fabu.indexOf('1') != -1 || pdlist[0].fabu.indexOf('3') != -1)">
               <button style="background: transparent;color:#3492ff;" @click="scoreYes(1)">评价</button>
               <button @click="orderAgain(2)">再下一单</button>
               <div class="clearBoth"></div>
             </div>
-            <div class="go" v-else-if="type=='1001' && orderSource == 1 && pdlist[0].fabu.indexOf('1') != -1">
+            <div class="go" v-else-if="type=='1001' && orderSource == 1 && (pdlist[0].fabu.indexOf('1') != -1 || pdlist[0].fabu.indexOf('3') != -1)">
               <button class="zhifu" @click="orderAgain(2)">再下一单</button>
               <div class="clearBoth"></div>
             </div>
