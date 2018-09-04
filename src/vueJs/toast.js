@@ -2,7 +2,7 @@ var Toast = {};
 Toast.install = function (Vue,options) {
     Vue.prototype.$cjj = (tips) => {
       let opt = {
-        duration:'200'         // 持续时间
+        duration:'350'         // 持续时间
       }
       for(let property in options){
         opt[property] = options[property];  // 使用 options 的配置

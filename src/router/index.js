@@ -33,7 +33,6 @@ import  siteSe from '@/components/site/lastSure'
 import  siteEg from '@/components/site/car'
 import  orderLogisticsF from '@/components/orderLogistics/orderLogisticsMore'
 import  orderLogisticsS from '@/components/orderLogistics/map'
-import  orderLogisticsT from '@/components/orderLogistics/score'
 import  trackF from '@/components/track/trackMore'
 import  trackS from '@/components/track/map'
 import  trackT from '@/components/track/qrcode'
@@ -226,7 +225,6 @@ export default new Router({
           }]
         },
         {path: 'map', component:orderLogisticsS},
-        {path:"score",component:orderLogisticsT},
       ]
     },
     {

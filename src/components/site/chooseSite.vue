@@ -89,6 +89,11 @@
           up: {
             callback: self.upCallback, //上拉回调
             isBounce: false, //此处禁止ios回弹,解析(务必认真阅读,特别是最后一点): http://www.mescroll.com/qa.html#q10
+            empty:{
+              warpId:'mescroll',
+              icon:require('../../images/nojilu.png'),
+              tip:"暂无站点~"
+            }
           },
           down: {
             offset: 2.1 * $("html").css("font-size").replace("px", "")
