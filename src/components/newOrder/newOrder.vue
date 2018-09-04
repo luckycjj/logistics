@@ -947,7 +947,7 @@
                   }
                 }
                 if(_this.pk == "" && _this.$route.query.type == undefined){
-                  bridge.invoke("guide",1)
+                  bridge.invoke("guide","1");
                 }
               })
             });
