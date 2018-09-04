@@ -752,7 +752,6 @@
                   trackingStatusValue = 10000;
                 }
               }
-              trackingStatusValue = 1000;
               sessionStorage.setItem("dataStart",invoiceDetail.delivery.addressLatAndLon);
               sessionStorage.setItem("dataEnd",invoiceDetail.arrival.addressLatAndLon);
               thisThat.payStatus = invoiceDetail.payStatus;
