@@ -4,7 +4,7 @@
     <div id="carTitleBox"   @click="event($event)">
       <div class="carTitleBox">
         <div class="carTitleback" @click="goback()"></div>
-        <input placeholder="请输入详细地址" id="carNumber" v-model="address" maxlength="8" @focus="aaa()">
+        <input type="tel" placeholder="请输入手机号码" id="carNumber" v-model="address" maxlength="30" @focus="aaa()">
         <p @click="sousuo()">搜索</p>
       </div>
     </div>
@@ -245,7 +245,7 @@
         dataType: "json",
         timeout: 10000,
         success: function (getHistoryOrder) {
-           if(getHistoryOrder.success="1"){
+           if(getHistoryOrder.success == "1"){
              listData = getHistoryOrder.list;
            }else{
              androidIos.second(getHistoryOrder.message)
