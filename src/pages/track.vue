@@ -83,10 +83,10 @@
     width:19px;
   }
   @media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-resolution: 144dpi){
-    .amap-lib-marker-to{
+    #track .amap-lib-marker-to{
       background-image: none;
     }
-    .amap-lib-marker-from {
+    #track .amap-lib-marker-from {
       background-image:none;
     }
   }

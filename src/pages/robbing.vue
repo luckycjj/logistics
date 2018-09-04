@@ -91,32 +91,32 @@
     display: none;
   }
   @media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-resolution: 144dpi){
-    .amap-lib-marker-to{
+    #robbing .amap-lib-marker-to{
       background-image: none;
     }
-    .amap-lib-marker-from {
+    #robbing .amap-lib-marker-from {
       background-image:none;
     }
   }
-  .amap-lib-marker-from {
+  #robbing .amap-lib-marker-from {
     background-image:none;
   }
-  .amap-lib-marker-to{
+  #robbing  .amap-lib-marker-to{
     background-image: none;
   }
-  .amaplibmarkerto{
+  #robbing  .amaplibmarkerto{
     background-image: url("../images/end.png")!important;
     background-size:cover!important;
   }
-  .amaplibmarkerfrom{
+  #robbing .amaplibmarkerfrom{
     background-image: url("../images/start.png")!important;
     background-size:cover!important;
   }
-  .amaplibmarkertos{
+  #robbing .amaplibmarkertos{
     background-image: url("../images/end1.png")!important;
     background-size:cover!important;
   }
-  .amaplibmarkerfroms{
+  #robbing  .amaplibmarkerfroms{
     background-image: url("../images/start1.png")!important;
     background-size:cover!important;
   }

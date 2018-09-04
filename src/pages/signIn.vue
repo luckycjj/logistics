@@ -514,7 +514,28 @@
     top: 0;
     z-index: 13;
   }
-
+  @media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-resolution: 144dpi){
+    #signIn .amap-lib-marker-to{
+      background-image: none;
+    }
+    #signIn  .amap-lib-marker-from {
+      background-image:none;
+    }
+  }
+  #signIn .amap-lib-marker-from {
+    background-image:none;
+  }
+  #signIn  .amap-lib-marker-to{
+    background-image: none;
+  }
+  #signIn .amap-lib-marker-to{
+    background-image: url("../images/end.png")!important;
+    background-size:cover!important;
+  }
+  #signIn .amap-lib-marker-from{
+    background-image: url("../images/start.png")!important;
+    background-size:cover!important;
+  }
   #signIn .set_image_all .set_image_top>div {
     display: inline-block;
     overflow: hidden;

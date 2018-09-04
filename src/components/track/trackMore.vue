@@ -144,7 +144,7 @@
         <button v-else-if="type==5" @click="daoda(41)">运输到达</button>
         <button v-else-if="type==6" @click="daoda(42)">开始卸货</button>
         <button v-else-if="type==7" @click="daoda(43)">卸货完毕</button>
-        <button v-else-if="type==8 && endtype == '0'" @click="qianshou(endtype)">交接</button>
+        <button v-else-if="type==8 && endtype == '0' && actFlag == 'Y'" @click="qianshou(endtype)">交接</button>
         <button v-else-if="type==8 && endtype == '1'" @click="qianshou(endtype)">签收</button>
       </div>
       <div class="go"  v-else>
@@ -225,6 +225,7 @@
         carList:[],
         httpurl:"",
         carpeoList:[],
+        actFlag:"Y",
         errorlogo: 'this.src="' + require('../../images/carpeople.png') + '"'
       }
     },
@@ -920,9 +921,10 @@
               tranNumber:"123321334343",
               number:loadSegmentDetail.entrustNo,
               time:loadSegmentDetail.createTime,
-              pkCar:loadSegmentDetail.pkCar
+              pkCar:loadSegmentDetail.pkCar,
             }]
             thisThat.carList = [];
+            thisThat.actFlag = loadSegmentDetail.actFlag;
             for(var i = 0; i < loadSegmentDetail.driverDto.length ; i++ ){
               var json = {
                 logo:loadSegmentDetail.driverDto[i].driverImg,
