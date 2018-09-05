@@ -239,16 +239,19 @@
             var list=[];
             for(var i = 0;i < self.pdlist[0].goodsmessage.productList.length ; i++){
               var pro = self.pdlist[0].goodsmessage.productList[i];
+              var weightBoth = pro.weight.indexOf("吨") !=  -1 ? pro.weight.split("吨")[0] : pro.weight.split("千克")[0];
+              var volumeBoth = pro.volume.indexOf("升") !=  -1 ? pro.volume.split("升")[0] : pro.volume.split("立方米")[0];
               var data = {
                 goodPk:pro.pkInvPackB,
                 goods:pro.goods,
                 goodsCode:pro.goodsCode,
                 number:pro.number,
                 weight:pro.weight,
-                weightBoth:pro.weight.indexOf("吨") !=  -1 ? pro.weight.split("吨")[0] : pro.weight.split("千克")[0] ,
+                weightBoth:weightBoth ,
                 volume:pro.volume,
-                volumeBoth:pro.volume.indexOf("升") !=  -1 ? pro.volume.split("升")[0] : pro.volume.split("立方米")[0] ,
-                tranType:self.pdlist[0].goodsmessage.tranType
+                volumeBoth: volumeBoth,
+                tranType:self.pdlist[0].goodsmessage.tranType,
+                density:weightBoth / volumeBoth
               }
               list.push(data)
             }

@@ -69,10 +69,10 @@
                for(var i=0;i<_this.productBox.productsList[x].list.length;i++){
                  _this.productBox.productsList[x].list[i].number=(_this.productBox.productsList[x].list[i].number.toString().match(/\d+(\d{0,0})?/)||[''])[0];
                  if(_this.productBox.productsList[x].list[i].weight*1 != 0){
-                   _this.productBox.productsList[x].list[i].weight=(_this.productBox.productsList[x].list[i].weight.toString().match(/\d+(\.\d{0,4})?/)||[''])[0];
+                   _this.productBox.productsList[x].list[i].weight=(_this.productBox.productsList[x].list[i].weight.toString().match(/\d+(\.\d{0,2})?/)||[''])[0];
                  }
                  if(_this.productBox.productsList[x].list[i].volume*1 != 0){
-                   _this.productBox.productsList[x].list[i].volume=(_this.productBox.productsList[x].list[i].volume.toString().match(/\d+(\.\d{0,4})?/)||[''])[0];
+                   _this.productBox.productsList[x].list[i].volume=(_this.productBox.productsList[x].list[i].volume.toString().match(/\d+(\.\d{0,2})?/)||[''])[0];
                  }
                }
              }
@@ -109,6 +109,7 @@
                   numberBoth:Sitedismantling.product[i].number,
                   weightBoth:Sitedismantling.product[i].weightBoth,
                   volumeBoth:Sitedismantling.product[i].volumeBoth,
+                  density:Sitedismantling.product[i].density,
                 }
                 list.push(json);
               }
@@ -180,10 +181,10 @@
                }
              }
              for(var i =0;i<weight.length;i++){
-               if(_this.productBox.productsList[0].list[i].weightBoth - weight[i] != 0 ){
+               if(_this.productBox.productsList[0].list[i].weightBoth - weight[i] > 0.01 ){
                  bomb.first(_this.productBox.productsList[0].list[i].products +"重量拆分有误！");
                  return false;
-               }else if(_this.productBox.productsList[0].list[i].volumeBoth - volume[i] != 0){
+               }else if(_this.productBox.productsList[0].list[i].volumeBoth - volume[i] > 0.01){
                  bomb.first(_this.productBox.productsList[0].list[i].products +"体积拆分有误！");
                  return false;
                }
@@ -205,11 +206,19 @@
           var _this = this;
           if(_this.productBox.productsList.length > 1){
               if(type == "w"){
-                _this.productBox.productsList[item].list[items].weight = _this.productBox.productsList[0].list[items].weightBoth - _this.productBox.productsList[item].list[items].weight > 0 ?  _this.productBox.productsList[item].list[items].weight : _this.productBox.productsList[0].list[items].weightBoth;
+                _this.productBox.productsList[item].list[items].weight = _this.productBox.productsList[0].list[items].weightBoth - _this.productBox.productsList[item].list[items].weight > 0 ?  _this.productBox.productsList[item].list[items].weight*1 : _this.productBox.productsList[0].list[items].weightBoth*1;
                 _this.productBox.productsList[1-item].list[items].weight = _this.productBox.productsList[0].list[items].weightBoth - _this.productBox.productsList[item].list[items].weight;
+                if(_this.productBox.productsList[0].list[items].density != null){
+                  _this.productBox.productsList[item].list[items].volume =   (_this.productBox.productsList[item].list[items].weight / _this.productBox.productsList[0].list[items].density).toFixed(2)*1;
+                  _this.productBox.productsList[1-item].list[items].volume = _this.productBox.productsList[0].list[items].volumeBoth - _this.productBox.productsList[item].list[items].volume;
+                }
               }else if(type == "v"){
-                _this.productBox.productsList[item].list[items].volume = _this.productBox.productsList[0].list[items].volumeBoth - _this.productBox.productsList[item].list[items].volume > 0 ?  _this.productBox.productsList[item].list[items].volume : _this.productBox.productsList[0].list[items].volumeBoth;
+                _this.productBox.productsList[item].list[items].volume = _this.productBox.productsList[0].list[items].volumeBoth - _this.productBox.productsList[item].list[items].volume > 0 ?  _this.productBox.productsList[item].list[items].volume*1 : _this.productBox.productsList[0].list[items].volumeBoth*1;
                 _this.productBox.productsList[1-item].list[items].volume = _this.productBox.productsList[0].list[items].volumeBoth - _this.productBox.productsList[item].list[items].volume;
+                if(_this.productBox.productsList[0].list[items].density != null){
+                  _this.productBox.productsList[item].list[items].weight =   (_this.productBox.productsList[1-item].list[items].volume * _this.productBox.productsList[0].list[items].density).toFixed(2)*1;
+                  _this.productBox.productsList[1-item].list[items].weight = _this.productBox.productsList[0].list[items].weightBoth - _this.productBox.productsList[item].list[items].weight;
+                }
               }
           }
         },
