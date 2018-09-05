@@ -1,6 +1,8 @@
 <template>
    <div id="qrcode">
-     <div id="title" v-title data-title="扫描二维码"></div>
+     <div id="title" v-if="ty == '0'" v-title data-title="交接二维码"></div>
+     <div id="title" v-if="ty == '1'" v-title data-title="签收二维码"></div>
+     <div id="title" v-if="ty == '2'" v-title data-title="订单二维码"></div>
      <canvas id="canvas"></canvas>
    </div>
 </template>
@@ -15,6 +17,10 @@
         QueryDetail:sessionStorage.getItem("orderPk"),
         ty:0,
       }
+    },
+    beforeMount:function () {
+      var _this = this;
+      _this.ty = _this.$route.query.ty;
     },
     mounted:function () {
       var _this = this;
