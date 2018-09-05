@@ -5,7 +5,7 @@
       <img src="../../images/carloading.gif" style="width:4rem;position: absolute;top:50%;left:50%;margin-left: -2rem;margin-top: -4rem">
       <p style="font-size: 0.4rem;top:50%;text-align: center;line-height: 1rem;color:#3399FF;width:100%;position: absolute">正在加载中...</p>
     </div>
-    <div id="mescroll" class="mescroll" :class="type==0 || (peopleType == 2 && type !=1 )?'meBottom':''">
+    <div id="mescroll" class="mescroll" :class="type==0 || (peopleType == 2 && type !=1 ) || (type==8 && endtype == '0' && actFlag != 'Y') ?'meBottom':''">
       <ul id="dataList" class="data-list">
         <li v-for="item in pdlist">
           <div class="top">
