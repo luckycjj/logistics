@@ -172,8 +172,8 @@
               _this.startW = getGoodsDetail.deliAddr.addressLatAndLon == undefined ? "30.26" : getGoodsDetail.deliAddr.addressLatAndLon.split(",")[1] ;
               _this.endJ = getGoodsDetail.arriAddr.addressLatAndLon == undefined ? "121.40" : getGoodsDetail.arriAddr.addressLatAndLon.split(",")[0] ;
               _this.endW = getGoodsDetail.arriAddr.addressLatAndLon == undefined ? "30.36" : getGoodsDetail.arriAddr.addressLatAndLon.split(",")[1] ;
-              var carLength = getGoodsDetail.carLength != "" ? "(" + getGoodsDetail.carLength + "米)" : "";
-              var carModel = getGoodsDetail.carModel != "" ? "(" + getGoodsDetail.carModel + ")" : "";
+              var carLength = getGoodsDetail.carLength != "" && getGoodsDetail.carLength != null ? "(" + getGoodsDetail.carLength + "米)" : "";
+              var carModel = getGoodsDetail.carModel != "" && getGoodsDetail.carModel != null ? "(" + getGoodsDetail.carModel + ")" : "";
               _this.carModel  = getGoodsDetail.transType  + carLength + carModel;
               for(var i = 0 ;i < getGoodsDetail.list.length ; i++){
                  if(getGoodsDetail.list[i].volume * 1000 - 1000 < 0 ){
@@ -623,9 +623,9 @@
     left: 50%;
     padding-top: 0.9rem;
   }
-  #signYes1 li{
+  /*#signYes1 li{
      float: left;
-  }
+  }*/
   #signYes1 p{
     font-size: 0.3125rem;
     text-align: center;
