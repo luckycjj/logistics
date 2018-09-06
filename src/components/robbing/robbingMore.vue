@@ -159,6 +159,7 @@
         closedOrder:[],
         closedOrderReason:"",
         httpurl:"",
+        orderNowoperation:"2",
         errorlogo: 'this.src="' + require('../../images/carpeople.png') + '"'
       }
     },
@@ -201,74 +202,6 @@
         sessionStorage.removeItem("Sitechoosesite");
         sessionStorage.removeItem("Sitedismantling");
         sessionStorage.setItem("dispatchPK",self.$route.query.pk);
-        $(document).unbind("click").on("click","#siteCar",function () {
-           androidIos.chooseSite();
-          $("#sitechoosesite").unbind("click").click(function () {
-            var list=[];
-            for(var i = 0;i < self.pdlist[0].goodsmessage.productList.length ; i++){
-              var pro = self.pdlist[0].goodsmessage.productList[i];
-              var data = {
-                goods:pro.goods,
-                number:pro.number,
-                weight:pro.weight,
-                weightBoth:pro.weight.indexOf("吨") !=  -1 ? pro.weight.split("吨")[0] : pro.weight.split("千克")[0] ,
-                volume:pro.volume,
-                volumeBoth:pro.volume.indexOf("升") !=  -1 ? pro.volume.split("升")[0] : pro.volume.split("立方米")[0] ,
-                tranType:self.pdlist[0].goodsmessage.tranType
-              }
-              list.push(data)
-            }
-            var json = {
-              startTime:self.pdlist[0].goodsmessage.startTime,
-              startAddress:self.pdlist[0].pickMessage.address,
-              startAddresspk:self.pdlist[0].pickMessage.addresspk,
-              endTime:self.pdlist[0].goodsmessage.endTime,
-              endAddress:self.pdlist[0].endMessage.address,
-              endAddresspk:self.pdlist[0].endMessage.addresspk,
-              product:list
-            }
-            if((new Date(json.endTime)).getTime() - (new Date()).getTime() < 0){
-              bomb.first("该订单到达时间小于当前时间，无法拆段");
-              return false;
-            }
-            androidIos.addPageList();
-            sessionStorage.setItem("Sitechoosesite",JSON.stringify(json));
-            self.$router.push({ path: '/site/chooseSite'});
-          });
-          $("#sitedismantling").unbind("click").click(function () {
-            var list=[];
-            for(var i = 0;i < self.pdlist[0].goodsmessage.productList.length ; i++){
-              var pro = self.pdlist[0].goodsmessage.productList[i];
-              var weightBoth = pro.weight.indexOf("吨") !=  -1 ? pro.weight.split("吨")[0] : pro.weight.split("千克")[0];
-              var volumeBoth = pro.volume.indexOf("升") !=  -1 ? pro.volume.split("升")[0] : pro.volume.split("立方米")[0];
-              var data = {
-                goodPk:pro.pkInvPackB,
-                goods:pro.goods,
-                goodsCode:pro.goodsCode,
-                number:pro.number,
-                weight:pro.weight,
-                weightBoth:weightBoth ,
-                volume:pro.volume,
-                volumeBoth: volumeBoth,
-                tranType:self.pdlist[0].goodsmessage.tranType,
-                density:weightBoth / volumeBoth
-              }
-              list.push(data)
-            }
-            var json = {
-              startTime:self.pdlist[0].goodsmessage.startTime,
-              startAddress:self.pdlist[0].pickMessage.address,
-              startAddresspk:self.pdlist[0].pickMessage.addresspk,
-              endTime:self.pdlist[0].goodsmessage.endTime,
-              endAddress:self.pdlist[0].endMessage.address,
-              endAddresspk:self.pdlist[0].endMessage.addresspk,
-              product:list
-            }
-            androidIos.addPageList();
-            sessionStorage.setItem("Sitedismantling",JSON.stringify(json));
-            self.$router.push({ path: '/robbing/dismantling'});
-          });
-        });
         self.mescroll = new MeScroll("mescroll", { //请至少在vue的mounted生命周期初始化mescroll,以确保您配置的id能够被找到
           up: {
             callback: self.upCallback, //上拉回调
@@ -298,6 +231,7 @@
               $("#siteCar").hide();
             }else{
               $("#siteCar").show();
+              $("#siteLook").remove();
             }
             for(var x = 0 ; x < $(".firstBox").length;x++){
               var className = document.getElementsByClassName("companyImg")[x];
@@ -318,6 +252,74 @@
                 }
               }
             }
+            $(document).unbind("click").on("click","#siteCar",function () {
+              androidIos.chooseSite(self.orderNowoperation);
+              $("#sitechoosesite").unbind("click").click(function () {
+                var list=[];
+                for(var i = 0;i < self.pdlist[0].goodsmessage.productList.length ; i++){
+                  var pro = self.pdlist[0].goodsmessage.productList[i];
+                  var data = {
+                    goods:pro.goods,
+                    number:pro.number,
+                    weight:pro.weight,
+                    weightBoth:pro.weight.indexOf("吨") !=  -1 ? pro.weight.split("吨")[0] : pro.weight.split("千克")[0] ,
+                    volume:pro.volume,
+                    volumeBoth:pro.volume.indexOf("升") !=  -1 ? pro.volume.split("升")[0] : pro.volume.split("立方米")[0] ,
+                    tranType:self.pdlist[0].goodsmessage.tranType
+                  }
+                  list.push(data)
+                }
+                var json = {
+                  startTime:self.pdlist[0].goodsmessage.startTime,
+                  startAddress:self.pdlist[0].pickMessage.address,
+                  startAddresspk:self.pdlist[0].pickMessage.addresspk,
+                  endTime:self.pdlist[0].goodsmessage.endTime,
+                  endAddress:self.pdlist[0].endMessage.address,
+                  endAddresspk:self.pdlist[0].endMessage.addresspk,
+                  product:list
+                }
+                if((new Date(json.endTime)).getTime() - (new Date()).getTime() < 0){
+                  bomb.first("该订单到达时间小于当前时间，无法拆段");
+                  return false;
+                }
+                androidIos.addPageList();
+                sessionStorage.setItem("Sitechoosesite",JSON.stringify(json));
+                self.$router.push({ path: '/site/chooseSite'});
+              });
+              $("#sitedismantling").unbind("click").click(function () {
+                var list=[];
+                for(var i = 0;i < self.pdlist[0].goodsmessage.productList.length ; i++){
+                  var pro = self.pdlist[0].goodsmessage.productList[i];
+                  var weightBoth = pro.weight.indexOf("吨") !=  -1 ? pro.weight.split("吨")[0] : pro.weight.split("千克")[0];
+                  var volumeBoth = pro.volume.indexOf("升") !=  -1 ? pro.volume.split("升")[0] : pro.volume.split("立方米")[0];
+                  var data = {
+                    goodPk:pro.pkInvPackB,
+                    goods:pro.goods,
+                    goodsCode:pro.goodsCode,
+                    number:pro.number,
+                    weight:pro.weight,
+                    weightBoth:weightBoth ,
+                    volume:pro.volume,
+                    volumeBoth: volumeBoth,
+                    tranType:self.pdlist[0].goodsmessage.tranType,
+                    density:weightBoth / volumeBoth
+                  }
+                  list.push(data)
+                }
+                var json = {
+                  startTime:self.pdlist[0].goodsmessage.startTime,
+                  startAddress:self.pdlist[0].pickMessage.address,
+                  startAddresspk:self.pdlist[0].pickMessage.addresspk,
+                  endTime:self.pdlist[0].goodsmessage.endTime,
+                  endAddress:self.pdlist[0].endMessage.address,
+                  endAddresspk:self.pdlist[0].endMessage.addresspk,
+                  product:list
+                }
+                androidIos.addPageList();
+                sessionStorage.setItem("Sitedismantling",JSON.stringify(json));
+                self.$router.push({ path: '/robbing/dismantling'});
+              });
+            });
           })
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
@@ -666,6 +668,7 @@
           thisThat.carloading = false;
           if (loadSegmentDetail.success == "" || loadSegmentDetail.success == "1") {
             thisThat.type = thisThat.$route.query.type;
+            thisThat.orderNowoperation = loadSegmentDetail.segType;
             var list=[];
             var weh = 0;
             for(var i =0;i<loadSegmentDetail.invPackDao.length;i++){
