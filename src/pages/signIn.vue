@@ -379,7 +379,7 @@
           var list = [];
           for(var i = 0; i < _this.errorSignList.length;i++){
              if(_this.errorSignList[i].choose){
-                list.push(_this.errorSignList[i].displayName)
+                list.push(_this.errorSignList[i].value)
              }
           }
           if(list.length == 0 && _this.errorSignRemark == ""){
