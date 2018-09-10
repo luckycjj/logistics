@@ -42,6 +42,8 @@
         sessionStorage.setItem("token",response.userCode);
         sessionStorage.setItem("source",response.source);
       });
+      sessionStorage.setItem("token","13162095658");
+      sessionStorage.setItem("source",2);
     },
     updated: function () {
       var _this = this;
