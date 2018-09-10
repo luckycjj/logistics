@@ -77,23 +77,32 @@
               <h5 >{{item.goodsmessage.startTime}} - {{item.goodsmessage.endTime}}</h5>
             </div>
             <div class="peoplemessage">
-              <p><span :class="pick?'colorFull':''" @click="pickMessage('true')">发货方</span><span :class="!pick?'colorFull':''" @click="pickMessage('false')">收货方</span></p>
+              <p><span>发货方</span></p>
               <div style="background: white;box-shadow: 0 0.1rem 10px #d8d8d8;position: relative;margin:0.1rem auto 0 auto;border-radius: 0.2rem;">
-                <div class="messageBox" v-if="pick">
+                <div class="messageBox">
                   <h1 style="font-size: 0.38rem; color:#333;font-weight: bold;float: left;margin-left: 4%;margin-top: 0.52rem;">{{item.pickMessage.name}}</h1>
                   <h1 style="font-size: 0.35rem; color:#999;float: left;margin-left: 0.3rem;margin-top: 0.52rem;">{{item.pickMessage.tel}}</h1>
                   <div class="clearBoth"></div>
                   <h1 style="font-size: 0.35rem; color:#666;margin-left: 4%;margin-top: 0.4rem;">{{item.pickMessage.company}}</h1>
                   <h1 style="font-size: 0.35rem; color:#999;margin-left: 4%;margin-top: 0.2rem;">{{item.pickMessage.address}}</h1>
                 </div>
-                <div class="messageBox" v-if="!pick">
+                <div class="thirdBox" @click="telphone(item.pickMessage.tel)">
+                  <h6></h6>
+                </div>
+                <div class="clearBoth"></div>
+              </div>
+            </div>
+            <div class="peoplemessage">
+              <p><span>收货方</span></p>
+              <div style="background: white;box-shadow: 0 0.1rem 10px #d8d8d8;position: relative;margin:0.1rem auto 0 auto;border-radius: 0.2rem;">
+                <div class="messageBox">
                   <h1 style="font-size: 0.38rem; color:#333;font-weight: bold;float: left;margin-left: 4%;margin-top: 0.52rem;">{{item.endMessage.name}}</h1>
                   <h1 style="font-size: 0.35rem; color:#999;float: left;margin-left: 0.3rem;margin-top: 0.52rem;">{{item.endMessage.tel}}</h1>
                   <div class="clearBoth"></div>
                   <h1 style="font-size: 0.35rem; color:#666;margin-left: 4%;margin-top: 0.4rem;">{{item.endMessage.company}}</h1>
                   <h1 style="font-size: 0.35rem; color:#999;margin-left: 4%;margin-top: 0.2rem;">{{item.endMessage.address}}</h1>
                 </div>
-                <div class="thirdBox" @click="telphone(pick?item.pickMessage.tel:item.endMessage.tel)">
+                <div class="thirdBox" @click="telphone(item.endMessage.tel)">
                   <h6></h6>
                 </div>
                 <div class="clearBoth"></div>
@@ -1090,7 +1099,6 @@
   .peoplemessage p{
     width:100%;
     line-height: 0.8rem;
-    margin-bottom: 0.2rem;
   }
   .peoplemessage h1{
     color:#333;

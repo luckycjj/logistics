@@ -71,23 +71,32 @@
               <h5>{{item.goodsmessage.startTime}} - {{item.goodsmessage.endTime}}</h5>
             </div>
             <div class="peoplemessage">
-              <p><span :class="pick?'colorFull':''" @click="pickMessage('true')">发货方</span><span :class="!pick?'colorFull':''" @click="pickMessage('false')">收货方</span></p>
+              <p><span>发货方</span></p>
               <div style="background: white;box-shadow: 0 0.1rem 10px #d8d8d8;position: relative;margin:0.1rem auto 0 auto;border-radius: 0.2rem;">
-                <div class="messageBox" v-if="pick">
+                <div class="messageBox">
                   <h1 style="font-size: 0.38rem; color:#333;font-weight: bold;float: left;margin-left: 4%;margin-top: 0.52rem;">{{item.pickMessage.name}}</h1>
                   <h1 style="font-size: 0.35rem; color:#999;float: left;margin-left: 0.3rem;margin-top: 0.52rem;">{{item.pickMessage.tel}}</h1>
                   <div class="clearBoth"></div>
                   <h1 style="font-size: 0.35rem; color:#666;margin-left: 4%;margin-top: 0.4rem;">{{item.pickMessage.company}}</h1>
                   <h1 style="font-size: 0.35rem; color:#999;margin-left: 4%;margin-top: 0.2rem;">{{item.pickMessage.address}}</h1>
                 </div>
-                <div class="messageBox" v-if="!pick">
+                <div class="thirdBox" @click="telphone(item.pickMessage.tel)">
+                  <h6></h6>
+                </div>
+                <div class="clearBoth"></div>
+              </div>
+            </div>
+            <div class="peoplemessage">
+              <p><span>收货方</span></p>
+              <div style="background: white;box-shadow: 0 0.1rem 10px #d8d8d8;position: relative;margin:0.1rem auto 0 auto;border-radius: 0.2rem;">
+                <div class="messageBox">
                   <h1 style="font-size: 0.38rem; color:#333;font-weight: bold;float: left;margin-left: 4%;margin-top: 0.52rem;">{{item.endMessage.name}}</h1>
                   <h1 style="font-size: 0.35rem; color:#999;float: left;margin-left: 0.3rem;margin-top: 0.52rem;">{{item.endMessage.tel}}</h1>
                   <div class="clearBoth"></div>
                   <h1 style="font-size: 0.35rem; color:#666;margin-left: 4%;margin-top: 0.4rem;">{{item.endMessage.company}}</h1>
                   <h1 style="font-size: 0.35rem; color:#999;margin-left: 4%;margin-top: 0.2rem;">{{item.endMessage.address}}</h1>
                 </div>
-                <div class="thirdBox" @click="telphone(pick?item.pickMessage.tel:item.endMessage.tel)">
+                <div class="thirdBox" @click="telphone(item.endMessage.tel)">
                   <h6></h6>
                 </div>
                 <div class="clearBoth"></div>
@@ -146,6 +155,7 @@
         <button v-else-if="type==7" @click="daoda(43)">卸货完毕</button>
         <button v-else-if="type==8 && endtype == '0' && actFlag == 'Y'" @click="qianshou(endtype)">交接</button>
         <button v-else-if="type==8 && endtype == '1'" @click="qianshou(endtype)">签收</button>
+        <button v-else-if="type==9">确认签收</button>
       </div>
       <div class="go"  v-else>
         <button v-if="type==1" @click="genghuan()">更换车辆</button>
@@ -299,7 +309,7 @@
           self.pdlist = self.pdlist.concat(curPageData);
           self.pick = true;
           self.logisticsOk = false;
-          self.type = curPageData[0].orderType == '10'?1:curPageData[0].orderType == '20'?2:curPageData[0].orderType == '31'?3:curPageData[0].orderType == '32'?4:curPageData[0].orderType == '33'?5:curPageData[0].orderType == '41'?6:curPageData[0].orderType == '42'?7:curPageData[0].orderType == '43'?8:0;
+          self.type = curPageData[0].orderType == '10'?1:curPageData[0].orderType == '20'?2:curPageData[0].orderType == '31'?3:curPageData[0].orderType == '32'?4:curPageData[0].orderType == '33'?5:curPageData[0].orderType == '41'?6:curPageData[0].orderType == '42'?7:curPageData[0].orderType == '43'?8:curPageData[0].orderType == '50'?9:0;
           self.mescroll.endSuccess(curPageData.length);
           sessionStorage.setItem("orderPk",self.$route.query.pk);
           sessionStorage.setItem("dispatchPK",self.$route.query.pk);
@@ -755,21 +765,32 @@
       daoda:function(type){
         var _this = this;
         if(bomb.hasClass("gogogo","gogogo")){
-          /*for(var i = 0 ; i < _this.carList.length; i++){
-            if(_this.carList[i].length == ""){
-              androidIos.first("请提醒" + _this.carList[i].name +"("+_this.carList[i].tel+")打开定位系统");
-              $(".tanBox-yes").html("联系");
-              $(".tanBox-yes").unbind('click').click(function(){
-                $(".tanBox-bigBox").remove();
-                bridge.invoke("callTelephone",_this.carList[i].tel);
-              });
-              return false;
+          if(type == 32){
+            for(var i = 0 ; i < _this.carList.length; i++){
+              if(_this.carList[i].length == ""){
+                androidIos.first("请提醒" + _this.carList[i].name +"("+_this.carList[i].tel+")打开定位系统");
+                $(".tanBox-yes").html("联系");
+                $(".tanBox-yes").unbind('click').click(function(){
+                  $(".tanBox-bigBox").remove();
+                  bridge.invoke("callTelephone",_this.carList[i].tel);
+                });
+                return false;
+              }
+              var nowTime = (new Date()).getTime();
+              var okTime = type == 32 ? (new Date(_this.pdlist[0].goodsmessage.startTime)).getTime() : (new Date(_this.pdlist[0].goodsmessage.endTime)).getTime() ;
+              if((nowTime-okTime)/1000/60/60 > 1){
+                androidIos.second(_this.carList[i].name +"("+_this.carList[i].tel+")已超过规定时间");
+                return false;
+              }else if((nowTime-okTime)/1000/60/60 < -1){
+                androidIos.second(_this.carList[i].name +"("+_this.carList[i].tel+")还未到达规定时间,请稍后再试");
+                return false;
+              }
+              if(_this.carList[i].length - 3 > 0 ){
+                androidIos.second(_this.carList[i].name +"("+_this.carList[i].tel+")还未到达目的地附近,请稍后再试");
+                return false;
+              }
             }
-            if(_this.carList[i].length - 3 > 0 ){
-              androidIos.second(_this.carList[i].name +"("+_this.carList[i].tel+")还未到达目的地附近,请稍后再试");
-              return false;
-            }
-          }*/
+          }
           var message = type == '31'?'提货达到':type == '32'?'开始装货':type == '33'?'装货完毕':type == '41'?'运输到达':type == '42'?'开始卸货':'卸货完毕';
           var http = type == '33' || type == '41' ? '/order/arriveOrDelivery':'/order/updateStatus';
           type = type == '33'?'1': type == '41' ?'2':type;
@@ -1071,7 +1092,6 @@
   .peoplemessage p{
     width:100%;
     line-height: 0.8rem;
-    margin-bottom: 0.2rem;
   }
   .peoplemessage h1{
     color:#333;
