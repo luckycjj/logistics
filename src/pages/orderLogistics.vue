@@ -76,13 +76,13 @@
     bottom: 0.3rem !important;
   }
   #orderLogisticsMore .amap-zoomcontrol{
-    display: none;
+    display: none!important;
   }
   #orderLogistics .amap-icon{
     width:19px;
   }
   #orderLogisticsMore .amap-controls{
-    display: none;
+    display: none!important;
   }
   #orderLogisticsMore  #star_grade .set_image_top img,#orderLogisticsMore  #star_gradeF .set_image_top img,#orderLogisticsMore  #star_gradeS .set_image_top img{
     width:0.4rem;

@@ -34,12 +34,40 @@
             <span style="font-size: 0.4rem">{{item.evaluate.grade}}分</span>
             <div class="clearBoth"></div>
           </div>
-          <div style="width:94%;background: white;height:3rem;box-shadow: 0 0.1rem 10px #d8d8d8;overflow:hidden;position: relative;margin:0.4rem auto 0 auto;border-top-left-radius: 0.2rem;border-top-right-radius: 0.2rem;"  v-if="(type == '20' || type == '40') ">
+         <!-- <div style="width:94%;background: white;height:3rem;box-shadow: 0 0.1rem 10px #d8d8d8;overflow:hidden;position: relative;margin:0.4rem auto 0 auto;border-top-left-radius: 0.2rem;border-top-right-radius: 0.2rem;"  v-if="(type == '20' || type == '40' || type == '60') ">
             <router-view/>
             <div style="width:100%;height:3rem;position: absolute;top:0;left:0;background: transparent;z-index:180;border-top-left-radius: 0.2rem;border-top-right-radius: 0.2rem;" @click="mapSClick()">
             </div>
+          </div>-->
+          <div id="full_feature" class="swipslider" v-if="(type == '20' || type == '40' || type == '60') && carList.length > 0">
+            <ul class="sw-slides">
+              <li class="sw-slide" v-for="(car,index) in carList">
+                <div style="width:100%;background: white;height:3rem;box-shadow: 0 0.1rem 10px #d8d8d8;overflow:hidden;position: relative;margin:0.4rem auto 0 auto;border-top-left-radius: 0.2rem;border-top-right-radius: 0.2rem;">
+                  <div v-if=" car.peopleJ != '' && car.peopleW != ''"  @click="mapGoSS(car)">
+                    <div :id="'container'+index" class="containerImport"></div>
+                    <div :id="'panel'+index" class="panelImport"></div>
+                    <div style="width:100%;height:3rem;position: absolute;top:0;left:0;background: transparent;z-index:180;border-top-left-radius: 0.2rem;border-top-right-radius: 0.2rem;"></div>
+                  </div>
+                  <img style="width:50%;margin: 0 auto;" src="../../images/notransport.png" v-else>
+                </div>
+                <div id="carPeopleMessage">
+                  <div class="imgBoxOverFllow">
+                    <img :src="car.logo" :onerror="errorlogo" class="peopleImg">
+                  </div>
+                  <div class="carPeopleMessage">
+                    <p >{{car.name}}</p> <h2>距离目的地<span v-html="car.length-1>0 ? car.length+'千米':car.length*1000+'米'"></span></h2>
+                    <div :id="'star_grade'+index"  class="star_grade"></div>
+                    <h1>驾龄：{{car.year}}年</h1>
+                  </div>
+                  <div class="tel" @click="telphone(car.tel)">
+                    <img src="../../images/tel.png">
+                  </div>
+                  <div class="clearBoth"></div>
+                </div>
+              </li>
+            </ul>
           </div>
-          <div id="carPeopleMessage"  v-if=" item.carPeople.yes  && ( type == '20' || type == '40')  && orderSource == 1 " :class="type != '20' && type != '40' ? 'carPeopleMessageTitle' : '' ">
+         <!-- <div id="carPeopleMessage"  v-if=" item.carPeople.yes  && ( type == '20' || type == '40' || type == '60')  && orderSource == 1 " :class="type != '20' && type != '40' && type != '60' ? 'carPeopleMessageTitle' : '' ">
             <div class="imgBoxOverFllow">
               <img :src="item.carPeople.logo" :onerror="errorlogo2" class="peopleImg">
             </div>
@@ -52,7 +80,7 @@
               <img src="../../images/tel.png">
             </div>
             <div class="clearBoth"></div>
-          </div>
+          </div>-->
           <div class="message">
             <div class="goodsmessage">
               <p :data-start="item.pickMessage.address" :data-end="item.endMessage.address" class="startEnd"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.startAddress}}</span><img style="float: left;margin:0.3rem 0.3rem;width:0.41rem;" src="../../images/addressImg.png"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.endAddress}}</span><span  v-if="type == '20' || type == '40' " class="distance">{{item.goodsmessage.distance}}km</span><div class="clearBoth"></div></p>
@@ -107,7 +135,7 @@
           </div>
           <div class="carrier" v-if="item.carrier.pkCarrier!=''">
             <div class="firstBox">
-              <img :src="httpurl + item.carrier.logo" :onerror="errorlogo" class="companyImg">
+              <img :src="item.carrier.logo" :onerror="errorlogo" class="companyImg">
             </div>
             <div class="secondBox">
               <p><span>{{item.carrier.company}}</span></p>
@@ -198,6 +226,7 @@
   import {bomb} from "../../js/zujian";
   import bridge from '../../js/bridge';
   import  "../../js/markingSystem";
+  import "../../js/swipeslider";
   var thisThat;
   export default {
     name: "robbingMore",
@@ -219,6 +248,7 @@
         cancelreason:"",
         httpurl:"",
         closedType:1,
+        carList:[],
         errorlogo: 'this.src="' + require('../../images/chengyunshang.png') + '"',
         errorlogo2: 'this.src="' + require('../../images/carpeople.png') + '"',
       }
@@ -228,6 +258,11 @@
       androidIos.bridge(_this);
     },
     methods:{
+      mapGoSS:function(order){
+        var _this = this;
+        androidIos.addPageList();
+        _this.$router.push({ path: '/orderLogistics/map'});
+      },
       go:function () {
         var self = this;
         thisThat = this;
@@ -306,6 +341,113 @@
           sessionStorage.setItem("orderType",self.pdlist[0].orderType);
           sessionStorage.setItem("orderPk",self.$route.query.pk);
           self.$nextTick(function () {
+            if(self.carList.length > 1){
+              $('#full_feature').swipeslider();
+            }
+            if(self.type == '20' || self.type == '40' || self.type == '60'){
+              for(var i = 0; i<$(".sw-slides li").length;i++){
+                var price = self.carList.length > 1 ?(i == 0 ? self.carList[self.carList.length-1].price:i ==$(".sw-slides li").length - 1?self.carList[0].price:self.carList[i-1].price):self.carList[i].price;
+                var id =  self.carList.length > 1 ? ( i == 0?self.carList.length - 1+'000':i ==$(".sw-slides li").length - 1?'0111' :i-1):i;
+                $("#star_grade"+id).html("");
+                $("#star_grade"+id).markingSystem({
+                  num: 5,
+                  havePoint: true,
+                  haveGrade: true,
+                  backgroundImageInitial:require('../../images/star_hollow.png'),
+                  backgroundImageOver:require('../../images/star_solid.png'),
+                  unit: '星',
+                  grade:price,
+                  height: 0.4* $("html").css("font-size").replace("px", ""),
+                  width: 0.4* $("html").css("font-size").replace("px", ""),
+                });
+                var _this = self;
+                var cc = 0;
+                var dd = 0;
+                if( self.carList.length > 1 ){
+                  if(i == 0){
+                    cc = (self.carList.length-1)+"000";
+                    dd = self.carList.length - 1;
+                  }else if(i == ($(".sw-slides li").length -1)){
+                    cc = "0111"
+                    dd = 0 ;
+                  }else{
+                    cc = i - 1 ;
+                    dd = i -1;
+                  }
+                }else{
+                  cc = i ;
+                  dd = i ;
+                }
+                var ee = i;
+                var ordertype = _this.carList[dd].ordertype;
+                if(ordertype == '20' || ordertype == '40'|| ordertype == '60'){
+                  var map = new AMap.Map("container"+cc, {
+                    resizeEnable: true,
+                    center: [_this.carList[dd].startJ, _this.carList[dd].startW],//地图中心点
+                    zoom: 13 //地图显示的缩放级别
+                  });
+                  AMap.plugin(['AMap.ToolBar','AMap.Scale'],
+                    function(){
+                      map.addControl(new AMap.ToolBar());
+                      map.addControl(new AMap.Scale());
+                    });
+                  //构造路线导航类
+                  var driving = new AMap.Driving({
+                    map: map,
+                    panel: "panel"+cc
+                  });
+                  var marker;
+                  var ordertyper = _this.carList[dd].ordertype;
+                  if( ordertype == '40'|| ordertype == '60' ){
+                    var lnglat = new AMap.LngLat(_this.carList[dd].endJ, _this.carList[dd].endW);
+                    _this.compareDistanc(lnglat,dd);
+                    driving.search([_this.carList[dd].startJ, _this.carList[dd].startW], [_this.carList[dd].endJ, _this.carList[dd].endW], function(status, result) {});
+                   /* if (marker) {
+                      marker.setMap(null);
+                      marker = null;
+                    }*/
+                    marker = new AMap.Marker({
+                      icon: require('../../images/start1.png'),
+                      position: [_this.carList[dd].peopleJ, _this.carList[dd].peopleW]
+                    });
+                    marker.setMap(map);
+                  }else{
+                    var lnglat = new AMap.LngLat(_this.carList[dd].startJ, _this.carList[dd].startW);
+                    _this.compareDistanc(lnglat,dd);
+                    driving.search([_this.carList[dd].peopleJ, _this.carList[dd].peopleW],[_this.carList[dd].startJ, _this.carList[dd].startW], function(status, result) {});
+                  }
+                }
+              }
+            }
+            if(self.type== "20" || self.type== "40" || self.type== "60"){
+              var sss = setInterval(function () {
+                if((_this.carList.length == 1 && $(".amap-lib-marker-to").length == _this.carList.length) || (_this.carList.length>1&&$(".amap-lib-marker-to").length - 2  == _this.carList.length) ){
+                  clearInterval(sss);
+                  for(var i = 0 ;i < $(".amap-lib-marker-to").length ;i++){
+                    var dd = 0;
+                    if( _this.carList.length > 1 ){
+                      if(i == 0){
+                        dd = _this.carList.length - 1;
+                      }else if(i == ($(".sw-slides li").length -1)){
+                        dd = 0 ;
+                      }else{
+                        dd = i -1;
+                      }
+                    }else{
+                      dd = i ;
+                    }
+                    var ordertype = _this.carList[dd].ordertype;
+                    if(ordertype == '20'){
+                      $(".amap-lib-marker-to").eq(i).addClass("amaplibmarkertos");
+                      $(".amap-lib-marker-from").eq(i).addClass("amaplibmarkerfroms");
+                    }else{
+                      $(".amap-lib-marker-to").eq(i).addClass("amaplibmarkerto");
+                      $(".amap-lib-marker-from").eq(i).addClass("amaplibmarkerfrom");
+                    }
+                  }
+                }
+              },100);
+            }
             if(self.pdlist[0].logistics.length > 0){
               var htmlFont = document.getElementsByTagName("html");
               var logisticsBox = document.getElementById("logisticsBox");
@@ -399,6 +541,11 @@
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
           self.mescroll.endErr();
         });
+      },
+      compareDistanc: function(lnglat,dd) {
+        var _this = this;
+        var myDistance = lnglat.distance([_this.carList[dd].peopleJ, _this.carList[dd].peopleW]);//这里测量距离
+        _this.carList[dd].length = (myDistance/1000).toFixed(3);
       },
       closedOrder:function (type) {
         var self = this;
@@ -659,11 +806,6 @@
         }
 
       },
-      mapSClick:function(){
-        var _this = this;
-        androidIos.addPageList();
-        _this.$router.push({ path: '/orderLogistics/map'});
-      },
       telphone:function(tel){
         bridge.invoke('callTelephone',tel);
       },
@@ -802,7 +944,7 @@
                   remark:invoiceDetail.remark
                 },
                 carPeople:{
-                  logo:"data:image/png;base64,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",
+                  logo:invoiceDetail.driverDto!=null&&invoiceDetail.driverDto.length != 0?invoiceDetail.driverDto[0].driverImg:"",
                   year:invoiceDetail.driverDto!=null&&invoiceDetail.driverDto.length != 0?(invoiceDetail.driverDto[0].driverAge*1 < 1 ?"小于一年":invoiceDetail.driverDto[0].driverAge*1+'年'):"",
                   grade:invoiceDetail.driverDto!=null&&invoiceDetail.driverDto.length != 0?invoiceDetail.driverDto[0].score*1:"",
                   name:invoiceDetail.driverDto!=null&&invoiceDetail.driverDto.length != 0?invoiceDetail.driverDto[0].driverName:"",
@@ -826,6 +968,26 @@
               // fabu 1业务员 2审核员 3管理员
               if(invoiceDetail.driverDto != null && invoiceDetail.driverDto.length != 0){
                 sessionStorage.setItem("driverPk",invoiceDetail.driverDto[0].pkDriver);
+              }
+              thisThat.carList = [];
+              for(var i = 0; i < invoiceDetail.driverDto.length ; i++ ){
+                var json = {
+                  logo:invoiceDetail.driverDto[i].driverImg,
+                  name:invoiceDetail.driverDto[i].driverName,
+                  year:invoiceDetail.driverDto[i].driverAge*1 < 1 ? "小于1" : invoiceDetail.driverDto[i].driverAge,
+                  tel:invoiceDetail.driverDto[i].mobile,
+                  startJ :invoiceDetail.delivery.addressLatAndLon == ""||invoiceDetail.delivery.addressLatAndLon == null ? "" :invoiceDetail.delivery.addressLatAndLon.split(",")[0],
+                  startW : invoiceDetail.delivery.addressLatAndLon == ""||invoiceDetail.delivery.addressLatAndLon == null ? "" :invoiceDetail.delivery.addressLatAndLon.split(",")[1],
+                  endJ:invoiceDetail.arrival.addressLatAndLon == "" ||invoiceDetail.arrival.addressLatAndLon == null ? "" :invoiceDetail.arrival.addressLatAndLon.split(",")[0],
+                  endW:invoiceDetail.arrival.addressLatAndLon == "" ||invoiceDetail.arrival.addressLatAndLon == null ? "" :invoiceDetail.arrival.addressLatAndLon.split(",")[1],
+                  pkDriver:invoiceDetail.driverDto[i].pkDriver,
+                  peopleJ:invoiceDetail.driverDto[i].driverPosition.split(",")[0],
+                  peopleW:invoiceDetail.driverDto[i].driverPosition.split(",")[1],
+                  ordertype:invoiceDetail.trackingStatusValue*1,
+                  price:invoiceDetail.driverDto[i].score*1,
+                  length:"",
+                }
+                thisThat.carList.push(json);
               }
               var data=pdlist;
               var listData=data;//模拟分页数据
@@ -942,6 +1104,7 @@
     width:100%;
     margin-top: 0.25rem;
     position: relative;
+
   }
   .peoplemessage p{
     width:100%;
@@ -1310,7 +1473,7 @@
   #carPeopleMessage{
     padding:0.2rem 3%;
     background: white;
-    width: 88%;
+    width: 94%;
     margin: 0 auto;
     box-shadow: 0 0.1rem 10px #d8d8d8;
     position: relative;
@@ -1334,6 +1497,8 @@
     float: left;
     margin-left: 0.3rem;
     margin-top: 0.1rem;
+    position: relative;
+    width:70%;
   }
   #carPeopleMessage .carPeopleMessage p{
     font-size: 0.3125rem;
@@ -1344,10 +1509,30 @@
     color:#999;
   }
   #carPeopleMessage .tel{
-    width:1.5rem;
-    float: right;
-    margin-top: 0.35rem;
-    margin-left: 0.2rem;
+    width: 1.5rem;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    margin-top: -0.56rem;
+  }
+  .containerImport{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .panelImport {
+    position: fixed;
+    background-color: white;
+    max-height: 90%;
+    overflow-y: auto;
+    top: 10px;
+    right: 10px;
+    width: 280px;
+    display: none!important;
   }
   #carPeopleMessage .tel p{
     font-size: 0.3125rem;
@@ -1372,6 +1557,18 @@
     margin-left: 0.3rem;
      color:#333;
     float: left;
+  }
+ .carPeopleMessage h2{
+    font-size: 0.3125rem;
+    color:#999;
+    position: absolute;
+    right:0;
+    top:0;
+  }
+  #full_feature {
+    padding-top: 0!important;
+    width: 94%;
+    margin: 0.4rem auto 0 auto!important;
   }
   #star_gradeS{
     float: left;

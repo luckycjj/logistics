@@ -309,7 +309,6 @@
               var errorBiglist = document.getElementById("errorBiglist");
               var errorBiglistFont = errorBiglist.firstChild.offsetHeight / htmlFont[0].style.fontSize.replace("px","");
               errorBiglist.style.height = errorBiglistFont + "rem";
-              console.log(errorBiglistFont)
             }
             if(self.type < 8 ){
               var sss = setInterval(function () {
@@ -414,15 +413,15 @@
                     var lnglat = new AMap.LngLat(_this.carList[dd].endJ, _this.carList[dd].endW);
                     _this.compareDistanc(lnglat,dd);
                     driving.search([_this.carList[dd].startJ, _this.carList[dd].startW], [_this.carList[dd].endJ, _this.carList[dd].endW], function(status, result) {});
-                    if (marker) {
-                      marker.setMap(null);
-                      marker = null;
-                    }
-                    marker = new AMap.Marker({
-                      icon: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACYAAAA8CAMAAAA9rjhhAAAAk1BMVEUAAABCkf9ClvxCl/xCl/xCl/1ClvxCl/1Dlf9Emv9ClvxCl/xCl/1ClvxBl/tCl/9Cl/xDlvxDlv1Dl/1Cl/xDk/9DlvxDlv1DlvxDl/tDl/tDl/xCl/1Cl/1Dlv1Bl/xGmf9CmP9Alv9Dl/3////s8/+30v6Svv6rzP6Ftv7N4P5np/1Wn/32+f/i7f/Y5v52r/3nvH34AAAAI3RSTlMABPri6rrxghkKyv6fW00yY9ysiW8T1bRUR0DRwKWTdCgmD7Pu0p0AAAGHSURBVEjHjdVXdsIwFEXRK1nujRYIaZQHmJI2/9GFgHB7luz9pY+zbBUXNASjJFJSqigZBTBZLmIqxYsluuRv1PKWs0j4khjpCzRsXerkblHzFJFB9ISSqCreVfdNyCKBlpJVqiem7Jl3n94H9fjAVaA37HJoO+pMBgB8uit2bXvSfAAOGVSZA+TUn1GO1ZBshYkenfYNx0Y2weuQ7BVqyE0V5JBMwivHl6L0ybJxOT7sSkUrc+DWsmNxc2aZC7+WFXrAMh8vQ7IXCK8/8wTwXmXnw813O3sHkPWvNAMgVN/2KoGraV82xb9NzIrTdYbn3Y/+6Gxw4/Jsd/X1SzcL3C2J0QerN02bk0WEh5Ete8aDcMzVWKA0M2czVEJlqlSImpntYpXQMDsnhGZd7AhNYmxfpvWTmaJNzHk1B5fxLAPHHxQXXfK4WcU5OP57SNAt8OqVF8DAr2c+uOrI+DFxzx1Po3VTXNis5b2Sa1hNqzfYJnSM8+dHm6HXhGiCfoHnBRggTcH8AUtJx3fNHCAxAAAAAElFTkSuQmCC",
-                      position: [_this.carList[dd].peopleJ, _this.carList[dd].peopleW]
-                    });
-                    marker.setMap(map);
+                      /*if (marker) {
+                        marker.setMap(null);
+                        marker = null;
+                      }*/
+                      marker = new AMap.Marker({
+                        icon:require('../../images/start1.png'),
+                        position: [_this.carList[dd].peopleJ, _this.carList[dd].peopleW]
+                      });
+                      marker.setMap(map);
                   }else{
                     var lnglat = new AMap.LngLat(_this.carList[dd].startJ, _this.carList[dd].startW);
                     _this.compareDistanc(lnglat,dd);
