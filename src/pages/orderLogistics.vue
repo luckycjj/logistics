@@ -88,32 +88,32 @@
     width:0.4rem;
   }
   @media only screen and (-webkit-min-device-pixel-ratio: 1.5), only screen and (min-resolution: 144dpi){
-    #orderLogisticsMore .amap-lib-marker-to{
+    #orderLogistics .amap-lib-marker-to{
       background-image: none;
     }
-    #orderLogisticsMore  .amap-lib-marker-from {
+    #orderLogistics  .amap-lib-marker-from {
       background-image:none;
     }
   }
-  #orderLogisticsMore .amap-lib-marker-from {
+  #orderLogistics .amap-lib-marker-from {
     background-image:none;
   }
-  #orderLogisticsMore  .amap-lib-marker-to{
+  #orderLogistics  .amap-lib-marker-to{
     background-image: none;
   }
-  #orderLogisticsMore .amaplibmarkerto{
+  #orderLogistics .amaplibmarkerto{
     background-image: url("../images/end.png")!important;
     background-size:cover!important;
   }
-  #orderLogisticsMore .amaplibmarkerfrom{
+  #orderLogistics .amaplibmarkerfrom{
     background-image: url("../images/start.png")!important;
     background-size:cover!important;
   }
-  #orderLogisticsMore .amaplibmarkertos{
+  #orderLogistics .amaplibmarkertos{
     background-image: url("../images/end1.png")!important;
     background-size:cover!important;
   }
-  #orderLogisticsMore .amaplibmarkerfroms{
+  #orderLogistics .amaplibmarkerfroms{
     background-image: url("../images/start1.png")!important;
     background-size:cover!important;
   }
