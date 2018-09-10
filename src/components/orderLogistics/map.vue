@@ -89,11 +89,9 @@
                   var marker;
                   if(ordertype ==  "40"  || ordertype ==  "60"){
                     driving.search([_this.startJ, _this.startW], [_this.endJ, _this.endW], function(status, result) {
-                      var lnglat = new AMap.LngLat(_this.peopleJ, _this.peopleW);
-                      _this.lnglat(lnglat);
-                      var sss = setInterval(function () {
+                      var ssss = setInterval(function () {
                         if($(".amap-lib-marker-to").length>0){
-                          clearInterval(sss);
+                          clearInterval(ssss);
                           $(".amap-lib-marker-to").addClass("amaplibmarkerto");
                           $(".amap-lib-marker-from").addClass("amaplibmarkerfrom");
                         }
@@ -110,16 +108,13 @@
                     marker.setMap(map);
                   }else{
                     driving.search([_this.peopleJ, _this.peopleW],[_this.startJ, _this.startW], function(status, result) {
-                      var lnglat = new AMap.LngLat(_this.peopleJ, _this.peopleW);
-                      _this.lnglat(lnglat);
-                      var sss = setInterval(function () {
+                      var ssss = setInterval(function () {
                         if($(".amap-lib-marker-to").length>0){
-                          clearInterval(sss);
+                          clearInterval(ssss);
                           $(".amap-lib-marker-to").addClass("amaplibmarkertos");
                           $(".amap-lib-marker-from").addClass("amaplibmarkerfroms");
                         }
                       },100)
-
                     });
                   }
                   _this.setTime = setInterval(function () {
@@ -150,11 +145,9 @@
                     });
                     if(ordertype ==  "40" || ordertype ==  "60"){
                       driving.search([_this.startJ, _this.startW], [_this.endJ, _this.endW], function(status, result) {
-                        var lnglat = new AMap.LngLat(_this.peopleJ, _this.peopleW);
-                        _this.lnglat(lnglat);
-                        var sss = setInterval(function () {
+                        var ssss = setInterval(function () {
                           if($(".amap-lib-marker-to").length>0){
-                            clearInterval(sss);
+                            clearInterval(ssss);
                             $(".amap-lib-marker-to").addClass("amaplibmarkerto");
                             $(".amap-lib-marker-from").addClass("amaplibmarkerfrom");
                           }
@@ -171,16 +164,13 @@
                       marker.setMap(map);
                     }else{
                       driving.search([_this.peopleJ, _this.peopleW],[_this.startJ, _this.startW], function(status, result) {
-                        var lnglat = new AMap.LngLat(_this.peopleJ, _this.peopleW);
-                        _this.lnglat(lnglat);
-                        var sss = setInterval(function () {
+                        var ssss = setInterval(function () {
                           if($(".amap-lib-marker-to").length>0){
-                            clearInterval(sss);
+                            clearInterval(ssss);
                             $(".amap-lib-marker-to").addClass("amaplibmarkertos");
                             $(".amap-lib-marker-from").addClass("amaplibmarkerfroms");
                           }
                         },100)
-
                       });
                     }
                   },30000)

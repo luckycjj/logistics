@@ -34,11 +34,6 @@
             <span style="font-size: 0.4rem">{{item.evaluate.grade}}分</span>
             <div class="clearBoth"></div>
           </div>
-         <!-- <div style="width:94%;background: white;height:3rem;box-shadow: 0 0.1rem 10px #d8d8d8;overflow:hidden;position: relative;margin:0.4rem auto 0 auto;border-top-left-radius: 0.2rem;border-top-right-radius: 0.2rem;"  v-if="(type == '20' || type == '40' || type == '60') ">
-            <router-view/>
-            <div style="width:100%;height:3rem;position: absolute;top:0;left:0;background: transparent;z-index:180;border-top-left-radius: 0.2rem;border-top-right-radius: 0.2rem;" @click="mapSClick()">
-            </div>
-          </div>-->
           <div id="full_feature" class="swipslider" v-if="(type == '20' || type == '40' || type == '60') && carList.length > 0">
             <ul class="sw-slides">
               <li class="sw-slide" v-for="(car,index) in carList">
@@ -67,23 +62,9 @@
               </li>
             </ul>
           </div>
-         <!-- <div id="carPeopleMessage"  v-if=" item.carPeople.yes  && ( type == '20' || type == '40' || type == '60')  && orderSource == 1 " :class="type != '20' && type != '40' && type != '60' ? 'carPeopleMessageTitle' : '' ">
-            <div class="imgBoxOverFllow">
-              <img :src="item.carPeople.logo" :onerror="errorlogo2" class="peopleImg">
-            </div>
-            <div class="carPeopleMessage">
-              <p>{{item.carPeople.name}}</p>
-              <div id="star_grade" class="star_grade"></div>
-              <h1>驾龄：{{item.carPeople.year}}</h1>
-            </div>
-            <div class="tel" @click="telphone(item.carPeople.tel)">
-              <img src="../../images/tel.png">
-            </div>
-            <div class="clearBoth"></div>
-          </div>-->
           <div class="message">
             <div class="goodsmessage">
-              <p :data-start="item.pickMessage.address" :data-end="item.endMessage.address" class="startEnd"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.startAddress}}</span><img style="float: left;margin:0.3rem 0.3rem;width:0.41rem;" src="../../images/addressImg.png"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.endAddress}}</span><span  v-if="type == '20' || type == '40' " class="distance">{{item.goodsmessage.distance}}km</span><div class="clearBoth"></div></p>
+              <p :data-start="item.pickMessage.address" :data-end="item.endMessage.address" class="startEnd"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.startAddress}}</span><img style="float: left;margin:0.3rem 0.3rem;width:0.41rem;" src="../../images/addressImg.png"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.endAddress}}</span><div class="clearBoth"></div></p>
               <h1>{{item.goodsmessage.tranType}}</h1>
               <h4>{{item.goodsmessage.money}}元</h4>
               <div class="clearBoth"></div>
@@ -446,7 +427,7 @@
                     }
                   }
                 }
-              },100);
+              },10);
             }
             if(self.pdlist[0].logistics.length > 0){
               var htmlFont = document.getElementsByTagName("html");
@@ -1564,6 +1545,10 @@
     position: absolute;
     right:0;
     top:0;
+  }
+  .carPeopleMessage h2 span{
+    font-size: 0.3125rem;
+    color:#999;
   }
   #full_feature {
     padding-top: 0!important;
