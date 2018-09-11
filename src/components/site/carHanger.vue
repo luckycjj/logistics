@@ -9,12 +9,26 @@
       <div id="filter">
         <div style="position: absolute;top:0;bottom:1.2rem;width:100%;height: auto;overflow: scroll;">
           <div class="table">
+            <p>运输状态</p>
+            <ul>
+              <li v-for="(item,index) in tranState" :class="[item.choose?'filterColor':'',index%3==1?'margin':'']" @click="choosefilter(1,index)">{{item.displayName}}</li>
+              <div class="clearBoth"></div>
+            </ul>
+          </div>
+          <div class="table">
+            <p>运输类型</p>
+            <ul>
+              <li v-for="(item,index) in tranType" :class="[item.choose?'filterColor':'',index%3==1?'margin':'']" @click="choosefilter(2,index)">{{item.displayName}}</li>
+              <div class="clearBoth"></div>
+            </ul>
+          </div>
+          <!--<div class="table">
             <p>车辆类型</p>
             <ul>
               <li v-for="(item,index) in carType" :class="[item.choose?'filterColor':'',index%3==1?'margin':'']" @click="choosefilter(3,index)">{{item.displayName}}</li>
               <div class="clearBoth"></div>
             </ul>
-          </div>
+          </div>-->
         </div>
         <div id="filterSureBox">
           <div class="filterSure" @click="resetFilter()">重置</div>
@@ -37,6 +51,8 @@
     data(){
       return{
         carType:[],
+        tranState:[],
+        tranType:[],
         search:{
           tranState:"",
           tranType:"",
@@ -186,18 +202,43 @@
             $("#search").unbind("click").click(function () {
               if($(this).find("h5").text() == "筛选"){
                 _this.show = true;
-                if(_this.carType.length == 0){
+                if(_this.tranState.length == 0){
                   $.ajax({
-                    type: "POST",
-                    url: androidIos.ajaxHttp()+"/settings/getCarType",
-                    contentType: "application/json;charset=utf-8",
+                    type: "GET",
+                    url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
+                    data:{str:"car_status",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
                     dataType: "json",
-                    timeout: 30000,
-                    success: function (getCarType) {
-                      for(var i = 0;i<getCarType.length;i++){
-                        getCarType[i].choose = false;
+                    timeout: 10000,
+                    success: function (getSysConfigList) {
+                      for(var i = 0;i<getSysConfigList.length;i++){
+                        getSysConfigList[i].choose = false;
                       }
-                      _this.carType = getCarType;
+                      _this.tranState = getSysConfigList;
+                    },
+                    complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                      if(status=='timeout'){//超时,status还有success,error等值的情况
+                        androidIos.second("网络请求超时");
+                      }else if(status=='error'){
+                        androidIos.errorwife();
+                      }
+                    }
+                  })
+                }
+                if(_this.tranType.length == 0){
+                  $.ajax({
+                    type: "GET",
+                    url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
+                    data:{str:"trans_type",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
+                    dataType: "json",
+                    timeout: 10000,
+                    success: function (getSysConfigList) {
+                      for(var i = 0;i<getSysConfigList.length;i++){
+                        getSysConfigList[i].choose = false;
+                        if(getSysConfigList[i].value == _this.search.tranType){
+                          getSysConfigList[i].choose = true;
+                        }
+                      }
+                      _this.tranType = getSysConfigList;
                     },
                     complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
                       if(status=='timeout'){//超时,status还有success,error等值的情况
@@ -253,7 +294,7 @@
                   if(_this.orderPk == ""){
                     $("#search").find("h5").text("编辑");
                   }else if(_this.orderPk != ""){
-                    $("#search").find("h5").text(""); //筛选
+                    $("#search").find("h5").text("筛选"); //筛选
                   }
                   _this.listType = pdType;
                   _this.pageNum = pageNum;
@@ -355,31 +396,37 @@
       },
       resetFilter:function () {
         var _this = this;
-        /*  for(var i = 0 ;i < _this.tranState.length;i ++){
+          for(var i = 0 ;i < _this.tranState.length;i ++){
             _this.tranState[i].choose = false;
-          }*/
-        /* for(var i = 0 ;i < _this.tranType.length;i ++){
+          }
+         for(var i = 0 ;i < _this.tranType.length;i ++){
            _this.tranType[i].choose = false;
-         }*/
+         }
         for(var i = 0 ;i < _this.carType.length;i ++){
           _this.carType[i].choose = false;
         }
       },
       okFilter:function () {
         var _this = this;
-        var tranState="",tranType="",carType="";
-        for(var i = 0 ;i < _this.carType.length;i ++){
-          if(_this.carType[i].choose){
-            if(carType == ""){
-              carType = _this.carType[i].value
-            }else{
-              carType= carType + "," + _this.carType[i].value;
-            }
+        var tranState=[],tranType=[],carType=[];
+        for(var i = 0 ;i < _this.tranState.length;i ++){
+          if(_this.tranState[i].choose){
+            tranState.push( _this.tranState[i].value)
           }
         }
-        _this.search.tranState = tranState;
-        _this.search.tranType = tranType;
-        _this.search.carType = carType;
+        for(var i = 0 ;i < _this.carType.length;i ++){
+          if(_this.carType[i].choose){
+            carType.push( _this.carType[i].value)
+          }
+        }
+        for(var i = 0 ;i < _this.tranType.length;i ++){
+          if(_this.tranType[i].choose){
+            tranType.push( _this.tranType[i].value)
+          }
+        }
+        _this.search.tranState = tranState.join(",");
+        _this.search.tranType = tranType.join(",");
+        _this.search.carType = carType.join(",");
         _this.show = false;
         _this.mescroll.resetUpScroll();
       }
