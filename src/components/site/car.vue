@@ -139,7 +139,7 @@
           var nnnn = 0;
           for (var i = 0; i < curPageData.length; i++) {
             var pd=curPageData[i];
-            var type =_this.orderPk =="" ? ( pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用': '已审核'):( pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用' : (pd.type == 2 ? '运输中' : '空闲中'));
+            var type =_this.orderPk =="" ? ( pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用': '已审核'):( pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用' : (pd.type == 1 ? '使用中': pd.type == 2 ?  '在途中' : pd.type == 3 ? '维修中' : pd.type == 4 ? '保养中' : '空闲中'));
             type = '<span class="nowtype">'+type+'</span>';
             var display = $("#search").find("h5").text() == "取消" ? "block":"none";
             var length = pd.length == "" ? "" : pd.length+ "米" ;
@@ -345,7 +345,7 @@
                           driverLicense:tt.driverLicense,
                           zongweight:tt.loadWeight*1,
                           nowweight:tt.weight*1,
-                          type:tt.weight*1 > 0 ? 2 :1,
+                          type:tt.carStatus,
                           carType:pdType,
                           transType:tt.transType,
                           now:tt.checkStatus == '1' ? 0 :tt.checkStatus == '3' ? 2 : tt.checkStatus == '4' ? 3 : 1 ,
@@ -424,7 +424,7 @@
                       driverLicense:tt.driverLicense,
                       zongweight:tt.loadWeight*1,
                       nowweight:tt.weight*1,
-                      type:tt.weight*1 > 0 ? 2 :1,
+                      type:tt.carStatus,
                       carType:pdType,
                       transType:tt.transType,
                       now:tt.checkStatus == '1' ? 0 : tt.checkStatus == '3' ? 2 :  tt.checkStatus == '4' ? 3 : 1 ,
