@@ -123,9 +123,7 @@
             cartype:self.$route.query.carType.split(",")[0],
           })
         }
-        if(carsure.length > 1){
-          sessionStorage.setItem("carsure",JSON.stringify(carsure));
-        }
+        sessionStorage.setItem("carsure",JSON.stringify(carsure));
         thisThat = self;
         self.carType = self.$route.query.carType;
         self.pkCar = self.$route.query.pkCar;
