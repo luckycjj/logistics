@@ -1,23 +1,10 @@
 <template>
-  <div id="car">
-    <div id="title" v-title data-title="车辆信息"></div>
-    <div class="nav" v-if="orderPk == ''">
-      <p class="active" i="0" @click="navClick(0)">整车</p>
-      <p i="1" @click="navClick(1)">车头</p>
-      <p i="2" @click="navClick(2)">车挂</p>
-      <div class="clearBoth"></div>
-    </div>
-    <div class="nav" v-if="orderPk != ''">
-      <p class="active" style="width:50%;" i="0" @click="navClick(0)">整车</p>
-      <p i="1" style="width:50%;" @click="navClick(1)">车头</p>
-      <div class="clearBoth"></div>
-    </div>
-    <div id="mescroll" class="mescroll" :style="{ bottom : orderPk == '' ? '1.2rem' : '0' }">
+  <div id="carHanger">
+    <div id="title" v-title :data-title="title"></div>
+    <div id="mescroll" class="mescroll mesrollTop">
       <ul id="dataList0" class="data-list">
       </ul>
     </div>
-    <button id="newCar" @click="newCar()" v-show="orderPk == ''">新增车辆</button>
-    <button id="yesGo" v-show="carSure.length > 1 && orderPk != ''" @click="carSureGo()">确定</button>
     <div id="filterBox" v-if="show" @click="filterBoxBlackFalse($event)">
       <div id="filter">
         <div style="position: absolute;top:0;bottom:1.2rem;width:100%;height: auto;overflow: scroll;">
@@ -35,7 +22,6 @@
           <div class="clearBoth"></div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -47,7 +33,7 @@
   import bridge from '../../js/bridge';
   import {bomb} from "../../js/zujian";
   export default {
-    name: "car",
+    name: "car-hanger",
     data(){
       return{
         carType:[],
@@ -65,6 +51,7 @@
         totle:0,
         show:false,
         pdType:0,
+        title:"",
       }
     },
     watch:{
@@ -80,6 +67,12 @@
         deep:true
       }
     },
+    beforeMount:function () {
+      var _this = this;
+      if(_this.$route.query.memo != null){
+        _this.title = "车头(" + JSON.parse(_this.$route.query.memo).carNumber + ")";
+      }
+    },
     mounted:function () {
       var _this = this;
       androidIos.bridge(_this);
@@ -89,11 +82,14 @@
         var _this = this;
         sessionStorage.removeItem("changeCarpeople");
         sessionStorage.removeItem("changeCarFupeople");
-        var carsure = sessionStorage.getItem("carsure");
+      /*  var carsure = sessionStorage.getItem("carsure");
         if(carsure != null){
           _this.carSure = JSON.parse(carsure);
-          sessionStorage.removeItem("carsure");
-        }
+        }else{*/
+          if(_this.$route.query.memo != null){
+            _this.carSure.push(JSON.parse(_this.$route.query.memo))
+          }
+       /* }*/
         _this.orderPk = sessionStorage.getItem("dispatchPK") == undefined ? "" :sessionStorage.getItem("dispatchPK");
         var mescroll = new MeScroll("mescroll", { //id固定"body"
           //上拉加载的配置项
@@ -133,19 +129,13 @@
           var nnnn = 0;
           for (var i = 0; i < curPageData.length; i++) {
             var pd=curPageData[i];
-            var type =_this.orderPk =="" ? ( pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用': '已审核'):( pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用' : (pd.type == 2 ? '运输中' : '空闲中'));
+            var type = pd.type == 2 ? '运输中' : '空闲中';
             type = '<span class="nowtype">'+type+'</span>';
             var display = $("#search").find("h5").text() == "取消" ? "block":"none";
             var length = pd.length == "" ? "" : pd.length+ "米" ;
             var minheight = pd.zongweight == "0" ? "0.5rem" : "auto";
             var display2 = pd.zongweight == "0" ? "none" : "inline";
-            var paddingBottom =  pd.zongweight == "0" ? "0rem" : "0.12rem";
             var img = _this.orderPk ==""  && (pd.now == '0' || pd.now == '1' || pd.now == '2')?"<div class='clearImg' style='display: "+display+"'></div><div class='reaseImg' style='display: "+display+"'></div>":_this.orderPk =="" && pd.carType == '0' && pd.now == '3'  ? "<div class='clearImg' style='right:0.6rem;display: " + display + "'></div>" : "";
-            for(var a = 0 ; a < _this.carSure.length ; a ++){
-               if(_this.carSure[a].pkcar == pd.pkCar){
-                 display = "block";
-               }
-            }
             var str = '<div class="top" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
               '<span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span>'+type+'<div class="clearBoth"></div>'+
               '<p style="min-height: ' + minheight + ';" class="weight"><span style="font-size: 0.3125rem;display: ' + display2+ '">满载：<span style="font-size: 0.3125rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
@@ -156,7 +146,7 @@
             liDom.dataset.nowtype = pd.now;
             liDom.innerHTML=str;
             listDom.appendChild(liDom);
-            $("#car #dataList0 li .top").unbind('click').click(function () {
+            $("#carHanger #dataList0 li .top").unbind('click').click(function () {
               var that = $(this);
               if($("#search").find("h5").text() != "取消"){
                 var carNumber = that.find(".carnumber").text();
@@ -168,32 +158,17 @@
                     androidIos.addPageList();
                     _this.$router.push({ path: '/car',query:{title: carModel,pkCar:pkcar,carType:cartype}});
                   }else{
-                     var json = {
-                         pkcar:pkcar,
-                         carModel:carModel ,
-                         cartype:cartype,
-                         carNumber:carNumber
-                      };
-                      androidIos.addPageList();
-                      _this.$router.push({ path: '/site/carHanger',query:{memo:JSON.stringify(json)}});
-                  }
-                }else{
-                  if(that.parents("li").attr("data-nowtype") == '0'){
-                    bomb.first( that.find(".carnumber").text() + "正在审核");
-                    return false;
-                  }
-                  if(that.parents("li").attr("data-nowtype") == '2'){
-                    bomb.first( that.find(".carnumber").text() + "已被驳回，请修改信息");
-                    return false;
-                  }
-                  if(that.parents("li").attr("data-nowtype") == '3'){
-                    bomb.first( that.find(".carnumber").text() + "已被禁用，请修改信息");
-                    return false;
+                      _this.carSure.push({
+                        pkcar:pkcar,
+                        carModel:carModel ,
+                        cartype:cartype,
+                      });
+                      _this.carSureGo();
                   }
                 }
               }
             })
-            $("#car #dataList0 li .thirdBox").unbind('click').click(function () {
+            $("#carHanger #dataList0 li .thirdBox").unbind('click').click(function () {
               var tel = $(this).attr("data-tel");
               bridge.invoke('callTelephone',tel);
             })
@@ -399,10 +374,10 @@
                 size:pageSize,
                 status:_this.search.tranState,
                 transType:_this.search.tranType,
-                carType: pdType == "0" ? "5de1912471af4c2d839a27f268cd8ca7" :_this.orderPk == "" && pdType == "2" ? "41efd612fc2e4067a1debc30a1c36383": pdType == "1" ? "2ba6da2fd9cd4689965afe5abc8f9df4":_this.search.carType,
+                carType: "41efd612fc2e4067a1debc30a1c36383",
                 userCode:sessionStorage.getItem("token"),
                 source:sessionStorage.getItem("source"),
-                checkStatus:_this.orderPk == "" ? "" : 2,
+                checkStatus:2,
               }),
               contentType: "application/json;charset=utf-8",
               dataType: "json",
@@ -467,8 +442,8 @@
         var cartype = "";
         for(var i = 0 ; i < _this.carSure.length ; i++){
           carModel.push(_this.carSure[i].carModel);
-           pkcar.push(_this.carSure[i].pkcar);
-           cartype = _this.carSure[i].cartype;
+          pkcar.push(_this.carSure[i].pkcar);
+          cartype = _this.carSure[i].cartype;
         }
         carModel = carModel.join(",");
         pkcar = pkcar.join(",");
@@ -514,12 +489,12 @@
       },
       resetFilter:function () {
         var _this = this;
-      /*  for(var i = 0 ;i < _this.tranState.length;i ++){
-          _this.tranState[i].choose = false;
-        }*/
-       /* for(var i = 0 ;i < _this.tranType.length;i ++){
-          _this.tranType[i].choose = false;
-        }*/
+        /*  for(var i = 0 ;i < _this.tranState.length;i ++){
+            _this.tranState[i].choose = false;
+          }*/
+        /* for(var i = 0 ;i < _this.tranType.length;i ++){
+           _this.tranType[i].choose = false;
+         }*/
         for(var i = 0 ;i < _this.carType.length;i ++){
           _this.carType[i].choose = false;
         }
@@ -549,10 +524,10 @@
 <style>
   @import "../../css/mescroll.css";
   @import "../../css/scroll.css";
-  #car .nav{
+  #carHanger .nav{
     width:100%;
   }
-  #car .nav p{
+  #carHanger .nav p{
     float: left;
     width: 33.333333%;
     background: white;
@@ -561,11 +536,11 @@
     font-size: 0.4rem;
     color:#333;
   }
-  #car .nav .active{
+  #carHanger .nav .active{
     border-bottom: 1px solid #3399FF;
     color: #3399FF;
   }
-  #car .clearImg{
+  #carHanger .clearImg{
     width:0.6rem;
     height: 0.6rem;
     background-image: url("../../images/clean.png");
@@ -578,7 +553,7 @@
     /* margin-top: -0.3rem;*/
     display: none;
   }
-  #car .reaseImg{
+  #carHanger .reaseImg{
     width:0.6rem;
     height: 0.6rem;
     background-image: url("../../images/edit.png");
@@ -591,7 +566,7 @@
     /*margin-top: -0.3rem;*/
     display: none;
   }
-  #car .checkImg{
+  #carHanger .checkImg{
     width:0.6rem;
     height: 0.6rem;
     background-image: url("../../images/checked.png");
@@ -604,13 +579,13 @@
     /*margin-top: -0.3rem;*/
     display: none;
   }
-  #car #mescroll{
+  #carHanger #mescroll{
     margin-top: 0.5rem;
   }
-  #car #mescroll ul{
+  #carHanger #mescroll ul{
     width:100%;
   }
-  #car #mescroll ul li{
+  #carHanger #mescroll ul li{
     width: 94%;
     background: white;
     /* margin-bottom: 0.2rem; */
@@ -618,36 +593,36 @@
     border-radius: 0.2rem;
     box-shadow: 0 5px 10px #cecbcb;
   }
-  #car li .top{
+  #carHanger li .top{
     width:95%;
     margin-left: 5%;
     padding-bottom: 0.15rem;
     position: relative;
   }
-  #car li .top .carnumber{
+  #carHanger li .top .carnumber{
     font-size: 0.4rem;
     line-height: 1rem;
     margin-right:0.2rem;
     color:#333;
   }
-  #car li .top .cartype{
+  #carHanger li .top .cartype{
     font-size: 0.3125rem;
     line-height: 1rem;
     margin-right:0.2rem;
     color:#999999;
   }
-  #car li .top .carlength,#car li .top .carModel,#car li .top .transtype{
+  #carHanger li .top .carlength,#carHanger li .top .carModel,#carHanger li .top .transtype{
     font-size: 0.3125rem;
     line-height: 1rem;
     margin-right:0.2rem;
     color:#999999;
   }
-  #car li .top .weight{
+  #carHanger li .top .weight{
     font-size: 0.3125rem;
     margin-right:0.2rem;
     color:#999999;
   }
-  #car li .top .nowtype{
+  #carHanger li .top .nowtype{
     position: absolute;
     right: 0;
     font-size: 0.4rem;
@@ -655,29 +630,29 @@
     margin-right: 5%;
     color:#333;
   }
-  #car li .bottom{
+  #carHanger li .bottom{
     position: relative;
     width:90%;
     margin-left: 5%;
     padding-bottom: 0.15rem;
     border-top: 1px solid #dbdbdb;
   }
-  #car .firstBox{
+  #carHanger .firstBox{
     float: left;
     margin:0.25rem 5% 0.25rem 0;
     width:1rem;height:1rem;overflow: hidden;border-radius: 50%;line-height: 1rem
   }
-  #car .firstBox img{
+  #carHanger .firstBox img{
     width:100%;
     display: inline-block;
     vertical-align: middle;
   }
-  #car .secondBox{
+  #carHanger .secondBox{
     width:40%;
     float: left;
     margin-top: 0.25rem;
   }
-  #car .thirdBox{
+  #carHanger .thirdBox{
     width:30%;
     background-image: url("../../images/tel.png");
     background-position: 100% 50%;
@@ -689,27 +664,27 @@
     bottom: 0;
     height: auto;
   }
-  #car .secondBox p{
+  #carHanger .secondBox p{
     font-size: 0.35rem;
     color:#333;
   }
-  #car .secondBox p span{
+  #carHanger .secondBox p span{
     font-size: 0.3125rem;
     color:#333;
   }
-  #car .secondBox h1{
+  #carHanger .secondBox h1{
     font-size: 0.3125rem;
     color:#999;
   }
-  #car  .secondBox h2, #car secondBox span{
+  #carHanger  .secondBox h2, #carHanger secondBox span{
     font-size: 0.3125rem;
     color:#999;
     line-height: 0.5rem;
   }
-  #car .secondBox h2 span{
+  #carHanger .secondBox h2 span{
     margin-left: 0.2rem;
   }
-  #car .mescroll{
+  #carHanger .mescroll{
     position: fixed;
     top:2.21875rem;
     bottom: 0;

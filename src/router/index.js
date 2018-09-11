@@ -31,6 +31,7 @@ import  siteFi from '@/components/site/siteSure'
 import  siteSi from '@/components/site/timeSite'
 import  siteSe from '@/components/site/lastSure'
 import  siteEg from '@/components/site/car'
+import  siteNi from '@/components/site/carHanger'
 import  orderLogisticsF from '@/components/orderLogistics/orderLogisticsMore'
 import  orderLogisticsS from '@/components/orderLogistics/map'
 import  trackF from '@/components/track/trackMore'
@@ -181,7 +182,8 @@ export default new Router({
         {path: 'siteSure', component: siteFi},
         {path: 'timeSite', component: siteSi},
         {path: 'lastSure', component: siteSe},
-        {path: 'car', component: siteEg}
+        {path: 'car', component: siteEg},
+        {path: 'carHanger', component: siteNi}
       ]
     },
     {

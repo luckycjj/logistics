@@ -776,7 +776,7 @@
                 });
                 return false;
               }
-              var nowTime = (new Date()).getTime();
+             /* var nowTime = (new Date()).getTime();
               var okTime = type == 32 ? (new Date(_this.pdlist[0].goodsmessage.startTime)).getTime() : (new Date(_this.pdlist[0].goodsmessage.endTime)).getTime() ;
               if((nowTime-okTime)/1000/60/60 > 1){
                 androidIos.second(_this.carList[i].name +"("+_this.carList[i].tel+")已超过规定时间");
@@ -784,7 +784,7 @@
               }else if((nowTime-okTime)/1000/60/60 < -1){
                 androidIos.second(_this.carList[i].name +"("+_this.carList[i].tel+")还未到达规定时间,请稍后再试");
                 return false;
-              }
+              }*/
               if(_this.carList[i].length - 3 > 0 ){
                 androidIos.second(_this.carList[i].name +"("+_this.carList[i].tel+")还未到达目的地附近,请稍后再试");
                 return false;
