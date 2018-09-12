@@ -204,10 +204,10 @@
                 var cartype = that.attr("data-carType");
                 var carModel = that.find(".cartype").text();
                 if(_this.orderPk != ""){
-                  /*if(nowType != "空闲中"){
+                  if(nowType != "空闲中"){
                     bomb.first( that.find(".carnumber").text() + "正在" + nowType + "无法派车");
                     return false;
-                  }*/
+                  }
                   if(carModel == "整车"){
                     androidIos.addPageList();
                     _this.$router.push({ path: '/car',query:{title: carModel,pkCar:pkcar,carType:cartype}});
