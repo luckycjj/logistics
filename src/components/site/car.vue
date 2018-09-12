@@ -209,9 +209,6 @@
                     return false;
                   }*/
                   if(carModel == "整车"){
-                    if(e.target.classList.value.indexOf("downJian") != -1){
-                      return false;
-                    }
                     androidIos.addPageList();
                     _this.$router.push({ path: '/car',query:{title: carModel,pkCar:pkcar,carType:cartype}});
                   }else{
@@ -240,17 +237,6 @@
                 }
               }
             })
-            /*$("#car .downJian").unbind("click").click(function () {
-              var thatDo = $(this);
-              var displayImg = thatDo.parents(".top").find(".carMessageMore").css("display");
-              if(displayImg == "none"){
-                thatDo.parents(".top").find(".carMessageMore").css("display","block");
-                thatDo.addClass("logisticsImg");
-              }else{
-                thatDo.parents(".top").find(".carMessageMore").css("display","none");
-                thatDo.removeClass("logisticsImg");
-              }
-            })*/
             $("#search").unbind("click").click(function () {
               if($(this).find("h5").text() == "筛选"){
                 _this.show = true;
