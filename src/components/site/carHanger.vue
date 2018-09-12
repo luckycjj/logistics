@@ -149,7 +149,7 @@
           for (var i = 0; i < curPageData.length; i++) {
             var pd=curPageData[i];
             var type = pd.type == 1 ? '使用中': pd.type == 2 ?  '在途中' : pd.type == 3 ? '维修中' : pd.type == 4 ? '保养中' : '空闲中';
-            type = '<span class="nowtype">'+type+'</span>';
+            var types = '<span class="nowtype">'+type+'</span>';
             var display = $("#search").find("h5").text() == "取消" ? "block":"none";
             var length = pd.length == "" ? "" : pd.length+ "米" ;
             var minheight = pd.zongweight == "0" ? "0.5rem" : "auto";
@@ -162,11 +162,16 @@
               }
             }
             var img2 = _this.orderPk != "" ?"<div class='checkImg' style='display: "+display3+"'></div>":"";
-            var str = '<div class="top" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
-              '<span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span>'+type+'<div class="clearBoth"></div>'+
+            var className = pd.transType.indexOf("集装箱") != -1 ? "cartype4" : pd.transType.indexOf("危险") != -1 ? "cartype2" : pd.transType.indexOf("普") != -1 ? "cartype1" : pd.transType.indexOf("冷") != -1 ? "cartype3": "";
+            var carmessage = pd.transType.indexOf("集装箱") != -1 ? "集装箱" : pd.transType.indexOf("危险") != -1 ? "危险品" : pd.transType.indexOf("普") != -1 ? "普货" : pd.transType.indexOf("冷") != -1 ? "冷链": "";
+            var str = '<div class="top" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">' +
+              '<div><div class="' + className + ' zongCartype">' + carmessage + '车挂</div><div class="clearBoth"></div></div>'+
+              '<div class="carMessageMore" style="position: relative;">' +
+              '<h1 style="width:80%;margin-top: 0.2rem;margin-bottom: 0.1rem;"> <span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span></h1>'+types+'<div class="clearBoth"></div>'+
               '<p style="min-height: ' + minheight + ';" class="weight"><span style="font-size: 0.3125rem;display: ' + display2+ '">满载：<span style="font-size: 0.3125rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
               img + img2 +
-              '<div class="clearBoth"></div></div>';
+              '</div>'+
+              '</div>'
             var liDom=document.createElement("li");
             liDom.classList.add("liDom");
             liDom.dataset.nowtype = pd.now;
@@ -437,6 +442,42 @@
 <style>
   @import "../../css/mescroll.css";
   @import "../../css/scroll.css";
+  #carHanger ul li .zongCartype{
+    padding-left: 1.2rem;
+    height: 0.7rem;
+    margin-top: 0.2rem;
+    background-position: 0 50%;
+    background-repeat: no-repeat;
+    background-size: 0.8656rem 0.7rem ;
+    font-size: 0.375rem;
+    line-height: 0.7rem;
+    float: left;
+  }
+  /*#carHanger ul li  .carMessageMore{
+    display: none;
+  }*/
+  #carHanger ul li .cartype1{
+    background-image: url("../../images/gua1.png");
+  }
+  #carHanger ul li .cartype2{
+    background-image: url("../../images/gua2.png");
+  }
+  #carHanger ul li .cartype3{
+    background-image: url("../../images/gua3.png");
+  }
+  #carHanger ul li .cartype4{
+    background-image: url("../../images/gua4.png");
+  }
+  #carHanger ul li .downJian{
+    width:0.5rem;
+    margin-top: 0.2rem;
+    float: right;
+    padding:0.35rem 0.3rem 0.35rem 0.3rem;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: 0.5rem ;
+    background-image: url("../../images/downJian.png");
+  }
   #carHanger .nav{
     width:100%;
   }
@@ -514,19 +555,16 @@
   }
   #carHanger li .top .carnumber{
     font-size: 0.4rem;
-    line-height: 1rem;
     margin-right:0.2rem;
     color:#333;
   }
   #carHanger li .top .cartype{
     font-size: 0.3125rem;
-    line-height: 1rem;
     margin-right:0.2rem;
     color:#999999;
   }
   #carHanger li .top .carlength,#carHanger li .top .carModel,#carHanger li .top .transtype{
     font-size: 0.3125rem;
-    line-height: 1rem;
     margin-right:0.2rem;
     color:#999999;
   }
@@ -538,6 +576,7 @@
   #carHanger li .top .nowtype{
     position: absolute;
     right: 0;
+    top:0;
     font-size: 0.4rem;
     line-height: 1rem;
     margin-right: 5%;

@@ -150,13 +150,13 @@
         }
 
         /*设置列表数据*/
-        function setListData(curPageData, num, size,type){
+        function setListData(curPageData, num, size,typeNumber){
           var listDom=document.getElementById("dataList0");
           var nnnn = 0;
           for (var i = 0; i < curPageData.length; i++) {
             var pd=curPageData[i];
             var type =_this.orderPk =="" ? ( pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用': '已审核'):( pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用' : (pd.type == 1 ? '使用中': pd.type == 2 ?  '在途中' : pd.type == 3 ? '维修中' : pd.type == 4 ? '保养中' : '空闲中'));
-            type = '<span class="nowtype">'+type+'</span>';
+            var types = '<span class="nowtype">'+type+'</span>';
             var display = $("#search").find("h5").text() == "取消" ? "block":"none";
             var length = pd.length == "" ? "" : pd.length+ "米" ;
             var minheight = pd.zongweight == "0" ? "0.5rem" : "auto";
@@ -170,17 +170,32 @@
               }
             }
             var img2 = _this.orderPk != "" ?"<div class='checkImg' style='display: "+display3+"'></div>":"";
-            var str = '<div class="top" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
-              '<span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span>'+type+'<div class="clearBoth"></div>'+
-              '<p style="min-height: ' + minheight + ';" class="weight"><span style="font-size: 0.3125rem;display: ' + display2+ '">满载：<span style="font-size: 0.3125rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
-              img + img2 +
-              '<div class="clearBoth"></div></div>';
+            var str = "";
+            if(_this.orderPk == "" || (_this.orderPk != "" && typeNumber == 1 )){
+              str += '<div class="top" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
+                '<h1 style="width:80%;margin-top: 0.2rem;margin-bottom: 0.1rem;"><span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span></h1>'+types+'<div class="clearBoth"></div>'+
+                '<p style="min-height: ' + minheight + ';" class="weight"><span style="font-size: 0.3125rem;display: ' + display2+ '">满载：<span style="font-size: 0.3125rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
+                img + img2 +
+                '<div class="clearBoth"></div></div>';
+            }else{
+              var className = pd.transType.indexOf("集装箱") != -1 ? "cartype4" : pd.transType.indexOf("危险") != -1 ? "cartype2" : pd.transType.indexOf("普") != -1 ? "cartype1" : pd.transType.indexOf("冷") != -1 ? "cartype3": "";
+              var carmessage = pd.transType.indexOf("集装箱") != -1 ? "集装箱" : pd.transType.indexOf("危险") != -1 ? "危险品" : pd.transType.indexOf("普") != -1 ? "普货" : pd.transType.indexOf("冷") != -1 ? "冷链": "";
+              str += '<div class="top" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">' +
+                    '<div><div class="' + className + ' zongCartype">' + carmessage + '车辆</div><div class="clearBoth"></div></div>'+
+                    '<div class="carMessageMore" style="position: relative;">' +
+                     '<h1 style="width:80%;margin-top: 0.2rem;margin-bottom: 0.1rem;"> <span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span></h1>'+types+'<div class="clearBoth"></div>'+
+                    '<p style="min-height: ' + minheight + ';" class="weight"><span style="font-size: 0.3125rem;display: ' + display2+ '">满载：<span style="font-size: 0.3125rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
+                    img + img2 +
+                   '</div>'+
+               '</div>'
+            }
+            //<div class="downJian"></div>
             var liDom=document.createElement("li");
             liDom.classList.add("liDom");
             liDom.dataset.nowtype = pd.now;
             liDom.innerHTML=str;
             listDom.appendChild(liDom);
-            $("#car #dataList0 li .top").unbind('click').click(function () {
+            $("#car #dataList0 li .top").unbind('click').click(function (e) {
               var that = $(this);
               if($("#search").find("h5").text() != "取消"){
                 var nowType = that.find(".nowtype").text();
@@ -189,11 +204,14 @@
                 var cartype = that.attr("data-carType");
                 var carModel = that.find(".cartype").text();
                 if(_this.orderPk != ""){
-                  if(nowType != "空闲中"){
+                  /*if(nowType != "空闲中"){
                     bomb.first( that.find(".carnumber").text() + "正在" + nowType + "无法派车");
                     return false;
-                  }
+                  }*/
                   if(carModel == "整车"){
+                    if(e.target.classList.value.indexOf("downJian") != -1){
+                      return false;
+                    }
                     androidIos.addPageList();
                     _this.$router.push({ path: '/car',query:{title: carModel,pkCar:pkcar,carType:cartype}});
                   }else{
@@ -222,6 +240,17 @@
                 }
               }
             })
+            /*$("#car .downJian").unbind("click").click(function () {
+              var thatDo = $(this);
+              var displayImg = thatDo.parents(".top").find(".carMessageMore").css("display");
+              if(displayImg == "none"){
+                thatDo.parents(".top").find(".carMessageMore").css("display","block");
+                thatDo.addClass("logisticsImg");
+              }else{
+                thatDo.parents(".top").find(".carMessageMore").css("display","none");
+                thatDo.removeClass("logisticsImg");
+              }
+            })*/
             $("#search").unbind("click").click(function () {
               if($(this).find("h5").text() == "筛选"){
                 _this.show = true;
@@ -641,6 +670,42 @@
     /*margin-top: -0.3rem;*/
     display: none;
   }
+  #car ul li .zongCartype{
+    padding-left: 1.2rem;
+    height: 0.7rem;
+    margin-top: 0.2rem;
+    background-position: 0 50%;
+    background-repeat: no-repeat;
+    background-size: 0.861rem 0.7rem ;
+    font-size: 0.375rem;
+    line-height: 0.7rem;
+    float: left;
+  }
+  /*#car ul li  .carMessageMore{
+    display: none;
+  }*/
+  #car ul li .cartype1{
+    background-image: url("../../images/cartype1.png");
+  }
+  #car ul li .cartype2{
+    background-image: url("../../images/cartype2.png");
+  }
+  #car ul li .cartype3{
+    background-image: url("../../images/cartype3.png");
+  }
+  #car ul li .cartype4{
+    background-image: url("../../images/cartype4.png");
+  }
+  #car ul li .downJian{
+     width:0.5rem;
+    margin-top: 0.2rem;
+     float: right;
+     padding:0.35rem 0.3rem 0.35rem 0.3rem;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: 0.5rem ;
+    background-image: url("../../images/downJian.png");
+  }
   #car #mescroll{
     margin-top: 0.5rem;
   }
@@ -654,6 +719,8 @@
     margin: 0 auto 0.3rem auto;
     border-radius: 0.2rem;
     box-shadow: 0 5px 10px #cecbcb;
+    overflow: hidden;
+    position: relative;
   }
   #car li .top{
     width:95%;
@@ -663,19 +730,20 @@
   }
   #car li .top .carnumber{
     font-size: 0.4rem;
-    line-height: 1rem;
     margin-right:0.2rem;
     color:#333;
   }
   #car li .top .cartype{
     font-size: 0.3125rem;
-    line-height: 1rem;
     margin-right:0.2rem;
     color:#999999;
   }
+  #car li .logisticsImg{
+    -webkit-transform:scaleY(-1);
+    transform:scaleY(-1);
+  }
   #car li .top .carlength,#car li .top .carModel,#car li .top .transtype{
     font-size: 0.3125rem;
-    line-height: 1rem;
     margin-right:0.2rem;
     color:#999999;
   }
@@ -688,9 +756,9 @@
     position: absolute;
     right: 0;
     font-size: 0.4rem;
-    line-height: 1rem;
     margin-right: 5%;
     color:#333;
+    top:0;
   }
   #car li .bottom{
     position: relative;

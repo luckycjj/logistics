@@ -33,11 +33,6 @@
       <input type="tel" maxlength="10" @keyup="weightKey()" v-model="message.weight" placeholder="请输入载量" />
       <div class="clearBoth"></div>
     </div>
-    <!--<div class="box" style="margin-top: 0px;">
-      <span>司 机</span>
-      <p id="Z01" :class="message.driver=='请选择司机'?'carnumber':''">{{message.driver}}</p>
-      <div class="clearBoth"></div>
-    </div>-->
     <div class="box" style="margin-top: 0px;height: auto"  v-show="message.carmodelNumber == '5de1912471af4c2d839a27f268cd8ca7' || message.carmodelNumber == '2ba6da2fd9cd4689965afe5abc8f9df4' || message.carmodelNumber == ''">
       <span>行驶证</span>
       <div class="clearBoth"></div>
@@ -121,7 +116,7 @@
       message:{
         handler:function(val,oldval){
           var _this = this;
-          _this.message.weight=(_this.message.weight.match(/\d+(\.\d{0,0})?/)||[''])[0];
+          _this.message.weight=(_this.message.weight.match(/\d+(\.\d{0,2})?/)||[''])[0];
         },
         deep:true
       }
@@ -133,7 +128,7 @@
     methods:{
       weightKey:function () {
         var _this = this;
-        _this.suremend();
+        /*_this.suremend();*/
       },
       ajaxWeight:function () {
         var _this = this;
