@@ -578,7 +578,6 @@
     right: 0;
     top:0;
     font-size: 0.4rem;
-    line-height: 1rem;
     margin-right: 5%;
     color:#333;
   }
