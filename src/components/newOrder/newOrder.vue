@@ -1017,7 +1017,7 @@
                   }
                 }
                 carListSureValue = carListSureValueList.join(",");
-                var carWidthListSureValueList = (self.carWidthListSure + self.cartypeOtherSure).split(",");
+                var carWidthListSureValueList = (self.carWidthListSure + ","+ self.cartypeOtherSure).split(",");
                 var carWidthListSureValue = "";
                 for(var i = 0 ; i < carWidthListSureValueList.length ;i ++){
                   if(carWidthListSureValueList[i] == ""){
