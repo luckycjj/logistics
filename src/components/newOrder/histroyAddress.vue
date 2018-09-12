@@ -141,6 +141,7 @@
                 }
                 list.push(listJson);
               }
+              var newOrder = JSON.parse(sessionStorage.getItem("newOrder"));
               var pdlist = {
                 histroyAddressLength:true,
                 startAddress:{
@@ -175,20 +176,20 @@
                 scrollTop:0,
                 initialWeight:0,
                 price:"",
-                carList:[],
+                carList:newOrder.carList,
                 carListSure:"",
                 carListSureValue:"",
-                carWidthList:[],
+                carWidthList:newOrder.carWidthList,
                 carWidthListSure:"",
                 carWidthListSureValue:"",
                 cartypeOther:"",
                 cartypeOtherSure:"",
-                carTypeList:[],
+                carTypeList:newOrder.carTypeList,
                 carTypeListSure:"",
                 carTypeListSureValue:"",
-                carListMore:false,
-                carWidthListMore:false,
-                carTypeListMore:false,
+                carListMore:newOrder.carListMore,
+                carWidthListMore:newOrder.carWidthListMore,
+                carTypeListMore:newOrder.carTypeListMore,
               }
               sessionStorage.setItem("histroyAddress",JSON.stringify(pdlist));
               androidIos.gobackFrom(_this);
