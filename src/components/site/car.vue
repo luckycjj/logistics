@@ -726,6 +726,7 @@
         }else{
           bomb.removeClass("downJian"+Zongtype,"logisticsImg");
           _this.mescroll1 = "";
+          $("#mescroll" + Zongtype).html("");
         }
 
       },
