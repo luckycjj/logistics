@@ -210,6 +210,8 @@
         sessionStorage.removeItem("siteSure");
         sessionStorage.removeItem("Sitechoosesite");
         sessionStorage.removeItem("Sitedismantling");
+        sessionStorage.removeItem("weh");
+        sessionStorage.removeItem("nowOrderCartype");
         sessionStorage.setItem("dispatchPK",self.$route.query.pk);
         self.mescroll = new MeScroll("mescroll", { //请至少在vue的mounted生命周期初始化mescroll,以确保您配置的id能够被找到
           up: {
@@ -694,6 +696,7 @@
               list.push(listJson);
             }
             sessionStorage.setItem("weh",weh);
+            sessionStorage.setItem("nowOrderCartype",loadSegmentDetail.transType);
             sessionStorage.setItem("dataStart",loadSegmentDetail.delivery.addressLatAndLon);
             sessionStorage.setItem("dataEnd",loadSegmentDetail.arrival.addressLatAndLon);
             var tranTypeBoth = loadSegmentDetail.transType;
