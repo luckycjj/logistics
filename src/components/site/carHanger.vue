@@ -254,7 +254,7 @@
               }
               var img2 = _this.orderPk != "" ?"<div class='checkImg' style='display: "+display3+"'></div>":"";
               var str = "";
-              str += '<div class="top" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
+              str += '<div class="top" data-sWeight="'+(pd.zongweight - pd.nowweight)+'" data-userNow="'+pd.userNow+'" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
                 '<h1 style="width:80%;margin-top: 0.2rem;margin-bottom: 0.1rem;"><span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span></h1>'+types+'<div class="clearBoth"></div>'+
                 '<p style="min-height: ' + minheight + ';" class="weight"><span style="font-size: 0.3125rem;display: ' + display2+ '">满载：<span style="font-size: 0.3125rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
                 img + img2 +
@@ -274,11 +274,28 @@
                   var pkcar = that.attr("data-pkCar");
                   var cartype = that.attr("data-carType");
                   var carModel = that.find(".cartype").text();
+                  var usernow = that.attr("data-usernow");
+                  var sWeight = that.attr("data-sweight");
                   if(_this.orderPk != ""){
-                    /* if(nowType != "空闲中"){
-                       bomb.first( that.find(".carnumber").text() + "正在" + nowType + "无法派车");
-                       return false;
-                     }*/
+                    if(nowType.indexOf("使用") != -1){
+                      if(usernow.indexOf("整") != -1){
+                        bomb.first( "该车辆的运输方式为整车运输，无法拼车");
+                        return false;
+                      }else if(usernow.indexOf("零") != -1){
+                        if(sessionStorage.getItem("nowOrderCartype").indexOf("整") != -1){
+                          bomb.first( "该订单选择的运输方式为整车运输，无法拼车");
+                          return false;
+                        }else if(sessionStorage.getItem("nowOrderCartype").indexOf("零") != -1){
+                          if(sWeight - sessionStorage.getItem("weh") < 0 ){
+                            bomb.first( "该车辆剩余载重量不足，请选择其它车辆");
+                            return false;
+                          }
+                        }
+                      }
+                    }else if(nowType.indexOf("维") != -1 || nowType.indexOf("保") != -1){
+                      bomb.first( "该车辆正在" + nowType + ",请选择其它车辆");
+                      return false;
+                    }
                     if(carModel == "整车"){
                       androidIos.addPageList();
                       _this.$router.push({ path: '/car',query:{title: carModel,pkCar:pkcar,carType:cartype}});
@@ -360,6 +377,7 @@
                         carType:pdType,
                         transType:tt.transType,
                         now:tt.checkStatus == '1' ? 0 : tt.checkStatus == '3' ? 2 :  tt.checkStatus == '4' ? 3 : 1 ,
+                        userNow:tt.pkTransType == null ? "" : tt.pkTransType
                       }
                       listData.push(json);
                     }

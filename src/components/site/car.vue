@@ -160,6 +160,73 @@
           $("#mescroll").hide();
           $("#search").find("h5").text("筛选");//筛选
         }
+        $("#search").unbind("click").click(function () {
+          if($(this).find("h5").text() == "筛选"){
+            _this.show = true;
+            if(_this.tranState.length == 0){
+              $.ajax({
+                type: "GET",
+                url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
+                data:{str:"car_status",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
+                dataType: "json",
+                timeout: 10000,
+                success: function (getSysConfigList) {
+                  for(var i = 0;i<getSysConfigList.length;i++){
+                    getSysConfigList[i].choose = false;
+                  }
+                  _this.tranState = getSysConfigList;
+                },
+                complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                  if(status=='timeout'){//超时,status还有success,error等值的情况
+                    androidIos.second("网络请求超时");
+                  }else if(status=='error'){
+                    androidIos.errorwife();
+                  }
+                }
+              })
+            }
+            if(_this.tranType.length == 0){
+              $.ajax({
+                type: "GET",
+                url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
+                data:{str:"trans_type",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
+                dataType: "json",
+                timeout: 10000,
+                success: function (getSysConfigList) {
+                  for(var i = 0;i<getSysConfigList.length;i++){
+                    getSysConfigList[i].choose = false;
+                    if(getSysConfigList[i].value == _this.search.tranType){
+                      getSysConfigList[i].choose = true;
+                    }
+                  }
+                  _this.tranType = getSysConfigList;
+                },
+                complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                  if(status=='timeout'){//超时,status还有success,error等值的情况
+                    androidIos.second("网络请求超时");
+                  }else if(status=='error'){
+                    androidIos.errorwife();
+                  }
+                }
+              })
+            }
+          }else{
+            var display = $("#car .clearImg").css("display");
+            if(display == "block"){
+              if($("#dataList0 li").length > 0){
+                $("#car .clearImg").css("display","none");
+                $("#car .reaseImg").css("display","none");
+                $(this).find("h5").text("编辑");
+              }
+            }else{
+              if($("#dataList0 li").length > 0){
+                $("#car .clearImg").css("display","block");
+                $("#car .reaseImg").css("display","block");
+                $(this).find("h5").text("取消");
+              }
+            }
+          }
+        });
         var mescroll = new MeScroll("mescroll", { //id固定"body"
           //上拉加载的配置项
           up: {
@@ -213,7 +280,7 @@
               }
             }
             var img2 = _this.orderPk != "" ?"<div class='checkImg' style='display: "+display3+"'></div>":"";
-            var str = '<div class="top" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
+            var str = '<div class="top" data-sWeight="'+(pd.zongweight - pd.nowweight)+'" data-userNow="'+pd.userNow+'" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
                 '<h1 style="width:80%;margin-top: 0.2rem;margin-bottom: 0.1rem;"><span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span></h1>'+types+'<div class="clearBoth"></div>'+
                 '<p style="min-height: ' + minheight + ';" class="weight"><span style="font-size: 0.3125rem;display: ' + display2+ '">满载：<span style="font-size: 0.3125rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
                 img + img2 +
@@ -231,11 +298,23 @@
                 var pkcar = that.attr("data-pkCar");
                 var cartype = that.attr("data-carType");
                 var carModel = that.find(".cartype").text();
+                var usernow = that.attr("data-usernow");
+                var sWeight = that.attr("data-sweight");
                 if(_this.orderPk != ""){
-                 /* if(nowType != "空闲中"){
-                    bomb.first( that.find(".carnumber").text() + "正在" + nowType + "无法派车");
+                  if(nowType.indexOf("使用") != -1){
+                    if(usernow.indexOf("整") != -1){
+                      bomb.first( "该车头的运输方式为整车运输，无法拼车");
+                      return false;
+                    }else if(usernow.indexOf("零") != -1){
+                      if(sessionStorage.getItem("nowOrderCartype").indexOf("整") != -1){
+                        bomb.first( "该订单选择的运输方式为整车运输，无法拼车");
+                        return false;
+                      }
+                    }
+                  }else if(nowType.indexOf("维") != -1 || nowType.indexOf("保") != -1){
+                    bomb.first( "该车头正在" + nowType + ",请选择其它车辆");
                     return false;
-                  }*/
+                  }
                   if(carModel == "整车"){
                     androidIos.addPageList();
                     _this.$router.push({ path: '/car',query:{title: carModel,pkCar:pkcar,carType:cartype}});
@@ -265,73 +344,6 @@
                 }
               }
             })
-            $("#search").unbind("click").click(function () {
-              if($(this).find("h5").text() == "筛选"){
-                _this.show = true;
-                if(_this.tranState.length == 0){
-                  $.ajax({
-                    type: "GET",
-                    url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
-                    data:{str:"car_status",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
-                    dataType: "json",
-                    timeout: 10000,
-                    success: function (getSysConfigList) {
-                      for(var i = 0;i<getSysConfigList.length;i++){
-                        getSysConfigList[i].choose = false;
-                      }
-                      _this.tranState = getSysConfigList;
-                    },
-                    complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                      if(status=='timeout'){//超时,status还有success,error等值的情况
-                        androidIos.second("网络请求超时");
-                      }else if(status=='error'){
-                        androidIos.errorwife();
-                      }
-                    }
-                  })
-                }
-                if(_this.tranType.length == 0){
-                  $.ajax({
-                    type: "GET",
-                    url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
-                    data:{str:"trans_type",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
-                    dataType: "json",
-                    timeout: 10000,
-                    success: function (getSysConfigList) {
-                      for(var i = 0;i<getSysConfigList.length;i++){
-                        getSysConfigList[i].choose = false;
-                        if(getSysConfigList[i].value == _this.search.tranType){
-                          getSysConfigList[i].choose = true;
-                        }
-                      }
-                      _this.tranType = getSysConfigList;
-                    },
-                    complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                      if(status=='timeout'){//超时,status还有success,error等值的情况
-                        androidIos.second("网络请求超时");
-                      }else if(status=='error'){
-                        androidIos.errorwife();
-                      }
-                    }
-                  })
-                }
-              }else{
-                var display = $("#car .clearImg").css("display");
-                if(display == "block"){
-                  if($("#dataList0 li").length > 0){
-                    $("#car .clearImg").css("display","none");
-                    $("#car .reaseImg").css("display","none");
-                    $(this).find("h5").text("编辑");
-                  }
-                }else{
-                  if($("#dataList0 li").length > 0){
-                    $("#car .clearImg").css("display","block");
-                    $("#car .reaseImg").css("display","block");
-                    $(this).find("h5").text("取消");
-                  }
-                }
-              }
-            });
             $(".reaseImg").unbind("click").click(function (event) {
               event.stopPropagation();
               var that = $(this).parents("li");
@@ -433,6 +445,7 @@
                           carType:pdType,
                           transType:tt.transType,
                           now:tt.checkStatus == '1' ? 0 :tt.checkStatus == '3' ? 2 : tt.checkStatus == '4' ? 3 : 1 ,
+                          userNow:tt.pkTransType == null ? "" : tt.pkTransType
                         }
                         listData.push(json);
                       }
@@ -508,6 +521,7 @@
                         carType:pdType,
                         transType:tt.transType,
                         now:tt.checkStatus == '1' ? 0 : tt.checkStatus == '3' ? 2 :  tt.checkStatus == '4' ? 3 : 1 ,
+                        userNow:tt.pkTransType == null ? "" : tt.pkTransType
                       }
                       listData.push(json);
                     }
@@ -595,7 +609,7 @@
               }
               var img2 = _this.orderPk != "" ?"<div class='checkImg' style='display: "+display3+"'></div>":"";
               var str = "";
-              str += '<div class="top" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
+              str += '<div class="top" data-sWeight="'+(pd.zongweight - pd.nowweight)+'" data-userNow="'+pd.userNow+'" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
                 '<h1 style="width:80%;margin-top: 0.2rem;margin-bottom: 0.1rem;"><span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span></h1>'+types+'<div class="clearBoth"></div>'+
                 '<p style="min-height: ' + minheight + ';" class="weight"><span style="font-size: 0.3125rem;display: ' + display2+ '">满载：<span style="font-size: 0.3125rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
                 img + img2 +
@@ -614,12 +628,29 @@
                   var carNumber = that.find(".carnumber").text();
                   var pkcar = that.attr("data-pkCar");
                   var cartype = that.attr("data-carType");
+                  var usernow = that.attr("data-usernow");
                   var carModel = that.find(".cartype").text();
+                  var sWeight = that.attr("data-sweight");
                   if(_this.orderPk != ""){
-                    /* if(nowType != "空闲中"){
-                       bomb.first( that.find(".carnumber").text() + "正在" + nowType + "无法派车");
+                     if(nowType.indexOf("使用") != -1){
+                       if(usernow.indexOf("整") != -1){
+                         bomb.first( "该车辆的运输方式为整车运输，无法拼车");
+                         return false;
+                       }else if(usernow.indexOf("零") != -1){
+                         if(sessionStorage.getItem("nowOrderCartype").indexOf("整") != -1){
+                           bomb.first( "该订单选择的运输方式为整车运输，无法拼车");
+                           return false;
+                         }else if(sessionStorage.getItem("nowOrderCartype").indexOf("零") != -1){
+                           if(sWeight - sessionStorage.getItem("weh") < 0 ){
+                             bomb.first( "该车辆剩余载重量不足，请选择其它车辆");
+                             return false;
+                           }
+                         }
+                       }
+                     }else if(nowType.indexOf("维") != -1 || nowType.indexOf("保") != -1){
+                       bomb.first( "该车辆正在" + nowType + ",请选择其它车辆");
                        return false;
-                     }*/
+                     }
                     if(carModel == "整车"){
                       androidIos.addPageList();
                       _this.$router.push({ path: '/car',query:{title: carModel,pkCar:pkcar,carType:cartype}});
@@ -649,73 +680,6 @@
                   }
                 }
               })
-              $("#search").unbind("click").click(function () {
-                if($(this).find("h5").text() == "筛选"){
-                  _this.show = true;
-                  if(_this.tranState.length == 0){
-                    $.ajax({
-                      type: "GET",
-                      url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
-                      data:{str:"car_status",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
-                      dataType: "json",
-                      timeout: 10000,
-                      success: function (getSysConfigList) {
-                        for(var i = 0;i<getSysConfigList.length;i++){
-                          getSysConfigList[i].choose = false;
-                        }
-                        _this.tranState = getSysConfigList;
-                      },
-                      complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                        if(status=='timeout'){//超时,status还有success,error等值的情况
-                          androidIos.second("网络请求超时");
-                        }else if(status=='error'){
-                          androidIos.errorwife();
-                        }
-                      }
-                    })
-                  }
-                  if(_this.tranType.length == 0){
-                    $.ajax({
-                      type: "GET",
-                      url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
-                      data:{str:"trans_type",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
-                      dataType: "json",
-                      timeout: 10000,
-                      success: function (getSysConfigList) {
-                        for(var i = 0;i<getSysConfigList.length;i++){
-                          getSysConfigList[i].choose = false;
-                          if(getSysConfigList[i].value == _this.search.tranType){
-                            getSysConfigList[i].choose = true;
-                          }
-                        }
-                        _this.tranType = getSysConfigList;
-                      },
-                      complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                        if(status=='timeout'){//超时,status还有success,error等值的情况
-                          androidIos.second("网络请求超时");
-                        }else if(status=='error'){
-                          androidIos.errorwife();
-                        }
-                      }
-                    })
-                  }
-                }else{
-                  var display = $("#car .clearImg").css("display");
-                  if(display == "block"){
-                    if($("#dataList0 li").length > 0){
-                      $("#car .clearImg").css("display","none");
-                      $("#car .reaseImg").css("display","none");
-                      $(this).find("h5").text("编辑");
-                    }
-                  }else{
-                    if($("#dataList0 li").length > 0){
-                      $("#car .clearImg").css("display","block");
-                      $("#car .reaseImg").css("display","block");
-                      $(this).find("h5").text("取消");
-                    }
-                  }
-                }
-              });
             }
           }
           function getListDataFromNet(pdType,pageNum,pageSize,successCallback,errorCallback) {
@@ -765,6 +729,7 @@
                         carType:pdType,
                         transType:tt.transType,
                         now:tt.checkStatus == '1' ? 0 : tt.checkStatus == '3' ? 2 :  tt.checkStatus == '4' ? 3 : 1 ,
+                        userNow:tt.pkTransType == null ? "" : tt.pkTransType
                       }
                       listData.push(json);
                     }
@@ -1025,6 +990,7 @@
     border-radius: 0.2rem;
     box-shadow: 0 5px 10px #cecbcb;
     position: relative;
+    border: 1px solid white;
   }
   #car li .top{
     width:95%;
@@ -1160,6 +1126,7 @@
   }
   #filterBox .table li{
     float: left;
+    border: none;
     width: 28%;
     padding: 0 1%;
     text-align: center;
