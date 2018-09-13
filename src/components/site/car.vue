@@ -583,7 +583,7 @@
               var img2 = _this.orderPk != "" ?"<div class='checkImg' style='display: "+display3+"'></div>":"";
               var str = "";
               str += '<div class="top" data-sWeight="'+(pd.zongweight - pd.nowweight)+'" data-userNow="'+pd.userNow+'" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
-                '<h1 style="width:80%;margin-top: 0.2rem;margin-bottom: 0.1rem;"><span class="carnumber">'+pd.carNumber+'</span><span class="cartype" style="margin-right: 0;">'+pd.sportType+'/</span><span class="carModel">'+pd.carModel+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span></h1>'+types+'<div class="clearBoth"></div>'+
+                '<h1 style="width:80%;margin-top: 0.2rem;margin-bottom: 0.1rem;"><span class="carnumber">'+pd.carNumber+'</span><span class="cartype" style="margin-right: 0;">'+pd.sportType+'</span><span class="carModel">/'+pd.carModel+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span></h1>'+types+'<div class="clearBoth"></div>'+
                 '<p style="min-height: ' + minheight + ';" class="weight"><span style="font-size: 0.34rem;display: ' + display2+ '">满载：<span style="font-size: 0.34rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
                 img + img2 +
                 '<div class="clearBoth"></div></div>';
@@ -622,7 +622,7 @@
                        bomb.first( "该车辆正在" + nowType + ",请选择其它车辆");
                        return false;
                      }
-                    if(carModel == "整车"){
+                    if(carModel.indexOf("整") != -1){
                       androidIos.addPageList();
                       _this.$router.push({ path: '/car',query:{title: carModel,pkCar:pkcar,carType:cartype}});
                     }else{
