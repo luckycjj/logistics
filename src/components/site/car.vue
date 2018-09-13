@@ -789,6 +789,7 @@
           }
         }else{
           bomb.removeClass("downJian"+Zongtype,"logisticsImg");
+          _this.mescroll1 = "";
         }
 
       },
@@ -891,7 +892,9 @@
         _this.search.carType = carType.join(",");
         _this.show = false;
         if(_this.orderPk != "" && _this.pdType == "0"){
-          _this.mescroll1.resetUpScroll();
+          if(_this.mescroll1 != ""){
+            _this.mescroll1.resetUpScroll();
+          }
         }else{
           _this.mescroll.resetUpScroll();
         }

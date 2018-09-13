@@ -384,6 +384,7 @@
           }
         }else{
           bomb.removeClass("downJian"+Zongtype,"logisticsImg");
+          _this.mescroll = "";
         }
 
       },
@@ -473,7 +474,9 @@
         _this.search.tranType = tranType.join(",");
         _this.search.carType = carType.join(",");
         _this.show = false;
-        _this.mescroll.resetUpScroll();
+        if(_this.mescroll != ""){
+          _this.mescroll.resetUpScroll();
+        }
       }
     }
   }
@@ -510,6 +513,10 @@
     font-size: 0.375rem;
     line-height: 0.7rem;
     float: left;
+  }
+  #carHanger li .logisticsImg{
+    -webkit-transform:scaleY(-1);
+    transform:scaleY(-1);
   }
   /*#carHanger ul li  .carMessageMore{
     display: none;
