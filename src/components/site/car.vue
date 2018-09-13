@@ -534,7 +534,6 @@
       },
       lookMoreCarAll:function (Zongtype) {
         var _this = this;
-        _this.maxHeight = ($(window).height() - $("#dataList4").offset().top)/($("html").css("fontSize").replace("px","")) - 0.5 + "rem";
         for(var i = 1 ; i < 5 ; i++){
           $("#mescroll" + i).css("maxHeight","none");
           $("#mescroll" + i).html("<ul id='dataList" + i + "' class='data-list'></ul>");
@@ -542,6 +541,7 @@
             bomb.removeClass("downJian"+i,"logisticsImg");
           }
         }
+        _this.maxHeight = ($(window).height() - $("#dataList4").offset().top)/($("html").css("fontSize").replace("px","")) - 0.5 + "rem";
         if(!bomb.hasClass("downJian"+Zongtype,"logisticsImg")){
           bomb.addClass("downJian"+Zongtype,"logisticsImg");
           $("#mescroll" + Zongtype).css("maxHeight",_this.maxHeight);
