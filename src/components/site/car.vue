@@ -67,13 +67,13 @@
               <div class="clearBoth"></div>
             </ul>
           </div>
-          <div class="table">
+          <!--<div class="table">
             <p>运输类型</p>
             <ul>
               <li v-for="(item,index) in tranType" :class="[item.choose?'filterColor':'',index%3==1?'margin':'']" @click="choosefilter(2,index)">{{item.displayName}}</li>
               <div class="clearBoth"></div>
             </ul>
-          </div>
+          </div>-->
         </div>
         <div id="filterSureBox">
           <div class="filterSure" @click="resetFilter()">重置</div>
