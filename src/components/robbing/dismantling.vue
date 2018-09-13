@@ -3,7 +3,6 @@
     <div id="title" v-title data-title="拆量" ></div>
     <ul>
       <li v-for="(item,index) in productBox.productsList" >
-        <h5 @click="remove(index)" v-if="productBox.productsList.length>1">删除</h5>
         <p>拆量{{index+1}}</p>
         <div class="clearBoth"></div>
           <div v-for="(items,indexs) in item.list">
@@ -31,7 +30,6 @@
           </div>
           <div class="clearBoth"></div>
       </li>
-      <p id="add" @click="add()" v-if=" productBox.productsList.length < 2">新增拆量</p>
     </ul>
     <button id="push" @click="push()" class="colorfull">提交</button>
   </div>
@@ -115,6 +113,24 @@
               }
               _this.productBox.productsList[0].list = list;
               _this.productBox.orderList[0].list = list;
+              var listSS =[];
+              for(var i = 0;i< _this.productBox.productsList[0].list.length;i++){
+                var json ={
+                  productPk:_this.productBox.productsList[0].list[i].goodPk,
+                  products:_this.productBox.productsList[0].list[i].products,
+                  productsCode:_this.productBox.productsList[0].list[i].productsCode,
+                  number:1,
+                  weight:_this.productBox.productsList[0].list[i].weightBoth - _this.productBox.productsList[0].list[i].weight,
+                  weightUnit:_this.productBox.productsList[0].list[i].weightUnit,
+                  volume:_this.productBox.productsList[0].list[i].volumeBoth - _this.productBox.productsList[0].list[i].volume,
+                  volumeUnit:_this.productBox.productsList[0].list[i].volumeUnit,
+                  numberBoth:_this.productBox.productsList[0].list[i].number,
+                  weightBoth:_this.productBox.productsList[0].list[i].weightBoth,
+                  volumeBoth:_this.productBox.productsList[0].list[i].volumeBoth,
+                }
+                listSS.push(json)
+              }
+              _this.productBox.productsList.push({list:listSS});
             }
             if(dismantling!=undefined){
               dismantling = JSON.parse(dismantling);
@@ -126,27 +142,6 @@
               $(this).val('').focus().val($Val)
             })
           },
-        add:function () {
-           var _this = this;
-           var list =[];
-           for(var i = 0;i< _this.productBox.productsList[0].list.length;i++){
-              var json ={
-                productPk:_this.productBox.productsList[0].list[i].goodPk,
-                products:_this.productBox.productsList[0].list[i].products,
-                productsCode:_this.productBox.productsList[0].list[i].productsCode,
-                number:1,
-                weight:_this.productBox.productsList[0].list[i].weightBoth - _this.productBox.productsList[0].list[i].weight,
-                weightUnit:_this.productBox.productsList[0].list[i].weightUnit,
-                volume:_this.productBox.productsList[0].list[i].volumeBoth - _this.productBox.productsList[0].list[i].volume,
-                volumeUnit:_this.productBox.productsList[0].list[i].volumeUnit,
-                numberBoth:_this.productBox.productsList[0].list[i].number,
-                weightBoth:_this.productBox.productsList[0].list[i].weightBoth,
-                volumeBoth:_this.productBox.productsList[0].list[i].volumeBoth,
-              }
-              list.push(json)
-           }
-           _this.productBox.productsList.push({list:list});
-        },
         remove:function (index) {
           var _this = this;
           _this.productBox.productsList.splice(index,1);
@@ -176,16 +171,16 @@
                  }
                }
                if(num == 0){
-                 bomb.first("拆量"+ (i + 1) + "请拆量！")
+                 bomb.first("拆量"+ (i + 1) + "请填写货物重量或体积");
                  return false;
                }
              }
              for(var i =0;i<weight.length;i++){
                if(_this.productBox.productsList[0].list[i].weightBoth - weight[i] > 0.01 ){
-                 bomb.first(_this.productBox.productsList[0].list[i].products +"重量拆分有误！");
+                 bomb.first(_this.productBox.productsList[0].list[i].products +"重量拆分有误");
                  return false;
                }else if(_this.productBox.productsList[0].list[i].volumeBoth - volume[i] > 0.01){
-                 bomb.first(_this.productBox.productsList[0].list[i].products +"体积拆分有误！");
+                 bomb.first(_this.productBox.productsList[0].list[i].products +"体积拆分有误");
                  return false;
                }
              }

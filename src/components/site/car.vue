@@ -2,14 +2,24 @@
   <div id="car">
     <div id="title" v-title data-title="车辆信息"></div>
     <div class="nav" v-if="orderPk == ''">
-      <p class="active" i="0" @click="navClick(0)">整车</p>
-      <p i="1" @click="navClick(1)">车头</p>
-      <p i="2" @click="navClick(2)">车挂</p>
+      <div class="classBoxP">
+        <p class="active" i="0" @click="navClick(0)">整车<span>{{jiaobiao.zhengCount}}</span></p>
+      </div>
+      <div class="classBoxP">
+      <p i="1" @click="navClick(1)">车头<span>{{jiaobiao.carHeadCount}}</span></p>
+      </div>
+      <div class="classBoxP">
+      <p i="2" @click="navClick(2)">车挂<span>{{jiaobiao.carHangCount}}</span></p>
+      </div>
       <div class="clearBoth"></div>
     </div>
     <div class="nav" v-if="orderPk != ''">
-      <p class="active" style="width:50%;" i="0" @click="navClick(0)">整车</p>
-      <p i="1" style="width:50%;" @click="navClick(1)">车头</p>
+      <div style="width:50%" class="classBoxP">
+        <p class="active" i="0" @click="navClick(0)">整车<span>{{jiaobiao.zhengCount}}</span></p>
+      </div>
+      <div style="width:50%" class="classBoxP">
+        <p i="1"  @click="navClick(1)">车头<span>{{jiaobiao.carHeadCount}}</span></p>
+      </div>
       <div class="clearBoth"></div>
     </div>
     <div id="mescroll" class="mescroll" style="display: none;" :style="{ bottom : orderPk == '' ? '1.2rem' : '0' }">
@@ -18,29 +28,29 @@
     </div>
     <div id="Allcar" style="display: none;">
         <ul>
-          <li>
-            <div class="allcarBoth"><div class="cartype1 zongCartype">普货车辆</div><div class="downJian" id="downJian2" @click="lookMoreCarAll(2)"></div><div class="clearBoth"></div></div>
+          <li class="boxshowNo">
+            <div class="allcarBoth"><div class="cartype1 zongCartype">普货车辆<span>({{jiaobiao.generalGoodsCount}})</span></div><div class="downJian" id="downJian2" @click="lookMoreCarAll(2)"></div><div class="clearBoth"></div></div>
             <div id="mescroll2" class="mescrollFirst">
               <ul id="dataList2" class="data-list data-listFirst">
               </ul>
             </div>
           </li>
-          <li>
-            <div class="allcarBoth"><div class="cartype3 zongCartype">冷链车辆</div><div class="downJian" id="downJian1" @click="lookMoreCarAll(1)"></div><div class="clearBoth"></div></div>
+          <li class="boxshowNo">
+            <div class="allcarBoth"><div class="cartype3 zongCartype">冷链车辆<span>({{jiaobiao.coldChainCount}})</span></div><div class="downJian" id="downJian1" @click="lookMoreCarAll(1)"></div><div class="clearBoth"></div></div>
             <div id="mescroll1" class="mescrollFirst">
               <ul id="dataList1" class="data-list data-listFirst">
               </ul>
             </div>
           </li>
-          <li>
-            <div class="allcarBoth"><div class="cartype2 zongCartype">危险品车辆</div><div class="downJian" id="downJian3" @click="lookMoreCarAll(3)"></div><div class="clearBoth"></div></div>
+          <li class="boxshowNo">
+            <div class="allcarBoth"><div class="cartype2 zongCartype">危险品车辆<span>({{jiaobiao.dangerCount}})</span></div><div class="downJian" id="downJian3" @click="lookMoreCarAll(3)"></div><div class="clearBoth"></div></div>
             <div id="mescroll3" class="mescrollFirst">
               <ul id="dataList3" class="data-list data-listFirst">
               </ul>
             </div>
           </li>
-          <li>
-            <div class="allcarBoth"><div class="cartype4 zongCartype">集装箱车辆</div><div class="downJian" id="downJian4" @click="lookMoreCarAll(4)"></div><div class="clearBoth"></div></div>
+          <li class="boxshowNo">
+            <div class="allcarBoth"><div class="cartype4 zongCartype">集装箱车辆<span>({{jiaobiao.containerCount}})</span></div><div class="downJian" id="downJian4" @click="lookMoreCarAll(4)"></div><div class="clearBoth"></div></div>
             <div id="mescroll4" class="mescrollFirst">
               <ul id="dataList4" class="data-list data-listFirst">
               </ul>
@@ -53,13 +63,6 @@
     <div id="filterBox" v-if="show" @click="filterBoxBlackFalse($event)">
       <div id="filter">
         <div style="position: absolute;top:0;bottom:1.2rem;width:100%;height: auto;overflow: scroll;">
-          <!--<div class="table">
-            <p>运输状态</p>
-            <ul>
-              <li v-for="(item,index) in carType" :class="[item.choose?'filterColor':'',index%3==1?'margin':'']" @click="choosefilter(3,index)">{{item.displayName}}</li>
-              <div class="clearBoth"></div>
-            </ul>
-          </div>-->
           <div class="table">
             <p>运输状态</p>
             <ul>
@@ -67,13 +70,6 @@
               <div class="clearBoth"></div>
             </ul>
           </div>
-          <!--<div class="table">
-            <p>运输类型</p>
-            <ul>
-              <li v-for="(item,index) in tranType" :class="[item.choose?'filterColor':'',index%3==1?'margin':'']" @click="choosefilter(2,index)">{{item.displayName}}</li>
-              <div class="clearBoth"></div>
-            </ul>
-          </div>-->
         </div>
         <div id="filterSureBox">
           <div class="filterSure" @click="resetFilter()">重置</div>
@@ -104,6 +100,7 @@
           tranType:"",
           carType:""
         },
+        jiaobiao:"",
         carSure:[],
         carSureTuo:[],
         mescroll:"",
@@ -175,31 +172,6 @@
                     getSysConfigList[i].choose = false;
                   }
                   _this.tranState = getSysConfigList;
-                },
-                complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                  if(status=='timeout'){//超时,status还有success,error等值的情况
-                    androidIos.second("网络请求超时");
-                  }else if(status=='error'){
-                    androidIos.errorwife();
-                  }
-                }
-              })
-            }
-            if(_this.tranType.length == 0){
-              $.ajax({
-                type: "GET",
-                url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
-                data:{str:"trans_type",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
-                dataType: "json",
-                timeout: 10000,
-                success: function (getSysConfigList) {
-                  for(var i = 0;i<getSysConfigList.length;i++){
-                    getSysConfigList[i].choose = false;
-                    if(getSysConfigList[i].value == _this.search.tranType){
-                      getSysConfigList[i].choose = true;
-                    }
-                  }
-                  _this.tranType = getSysConfigList;
                 },
                 complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
                   if(status=='timeout'){//超时,status还有success,error等值的情况
@@ -282,7 +254,7 @@
             var img2 = _this.orderPk != "" ?"<div class='checkImg' style='display: "+display3+"'></div>":"";
             var str = '<div class="top" data-sWeight="'+(pd.zongweight - pd.nowweight)+'" data-userNow="'+pd.userNow+'" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
                 '<h1 style="width:80%;margin-top: 0.2rem;margin-bottom: 0.1rem;"><span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span></h1>'+types+'<div class="clearBoth"></div>'+
-                '<p style="min-height: ' + minheight + ';" class="weight"><span style="font-size: 0.3125rem;display: ' + display2+ '">满载：<span style="font-size: 0.3125rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
+                '<p style="min-height: ' + minheight + ';" class="weight"><span style="font-size: 0.34rem;display: ' + display2+ '">满载：<span style="font-size: 0.34rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
                 img + img2 +
                 '<div class="clearBoth"></div></div>';
             var liDom=document.createElement("li");
@@ -542,7 +514,7 @@
                 }
               })
             }
-
+            _this.jiaobiaoAjax();
           },500)
         }
       },
@@ -553,9 +525,10 @@
           $("#mescroll" + i).html("<ul id='dataList" + i + "' class='data-list'></ul>");
           if( i != Zongtype){
             bomb.removeClass("downJian"+i,"logisticsImg");
+            $("#mescroll" + i).html("");
           }
         }
-        _this.maxHeight = ($(window).height() - $("#dataList4").offset().top)/($("html").css("fontSize").replace("px","")) - 0.5 + "rem";
+        _this.maxHeight = ($(window).height())/($("html").css("fontSize").replace("px","")) - 7.6+ "rem";
         if(!bomb.hasClass("downJian"+Zongtype,"logisticsImg")){
           bomb.addClass("downJian"+Zongtype,"logisticsImg");
           $("#mescroll" + Zongtype).css("maxHeight",_this.maxHeight);
@@ -610,13 +583,11 @@
               var img2 = _this.orderPk != "" ?"<div class='checkImg' style='display: "+display3+"'></div>":"";
               var str = "";
               str += '<div class="top" data-sWeight="'+(pd.zongweight - pd.nowweight)+'" data-userNow="'+pd.userNow+'" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
-                '<h1 style="width:80%;margin-top: 0.2rem;margin-bottom: 0.1rem;"><span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span></h1>'+types+'<div class="clearBoth"></div>'+
-                '<p style="min-height: ' + minheight + ';" class="weight"><span style="font-size: 0.3125rem;display: ' + display2+ '">满载：<span style="font-size: 0.3125rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
+                '<h1 style="width:80%;margin-top: 0.2rem;margin-bottom: 0.1rem;"><span class="carnumber">'+pd.carNumber+'</span><span class="cartype" style="margin-right: 0;">'+pd.sportType+'/</span><span class="carModel">'+pd.carModel+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span></h1>'+types+'<div class="clearBoth"></div>'+
+                '<p style="min-height: ' + minheight + ';" class="weight"><span style="font-size: 0.34rem;display: ' + display2+ '">满载：<span style="font-size: 0.34rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
                 img + img2 +
                 '<div class="clearBoth"></div></div>';
               var liDom=document.createElement("li");
-              liDom.style.border = "1px solid #949494";
-              liDom.style.boxShadow = "none";
               liDom.classList.add("liDom");
               liDom.dataset.nowtype = pd.now;
               liDom.innerHTML=str;
@@ -758,6 +729,48 @@
         }
 
       },
+      jiaobiaoAjax:function () {
+        var _this = this;
+        $.ajax({
+          type: "POST",
+          url: androidIos.ajaxHttp()+"/carrier/carTypeStatistics",
+          data:JSON.stringify({
+            status:_this.search.tranState,
+            userCode:sessionStorage.getItem("token"),
+            source:sessionStorage.getItem("source"),
+            type:_this.orderPk == "" ? 0 : 1,//0 所有 1 已审核
+          }),
+          contentType: "application/json;charset=utf-8",
+          dataType: "json",
+          timeout: 30000,
+          success: function (carTypeStatistics) {
+            if(carTypeStatistics.success == "1"){
+               _this.jiaobiao = {
+                 carHeadCount: carTypeStatistics.carHeadCount,
+                 carHangCount:carTypeStatistics.carHangCount,
+                 coldChainCount: carTypeStatistics.coldChainCount,
+                 containerCount: carTypeStatistics.containerCount,
+                 dangerCount: carTypeStatistics.dangerCount,
+                 generalGoodsCount: carTypeStatistics.generalGoodsCount,
+                 zhengCount : carTypeStatistics.coldChainCount*1 + carTypeStatistics.containerCount*1 + carTypeStatistics.dangerCount*1 + carTypeStatistics.generalGoodsCount*1,
+                 hangColdChainCount:  carTypeStatistics.hangColdChainCount,
+                 hangContainerCount: carTypeStatistics.hangContainerCount,
+                 hangDangerCount: carTypeStatistics.hangDangerCount,
+                 hangGeneralGoodsCount: carTypeStatistics.hangGeneralGoodsCount,
+               };
+            }else{
+              androidIos.second(carTypeStatistics.message);
+            }
+          },
+          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+            if(status=='timeout'){//超时,status还有success,error等值的情况
+              androidIos.second("网络请求超时");
+            }else if(status=='error'){
+              androidIos.errorwife();
+            }
+          }
+        })
+      },
       carSureGo:function () {
         var _this = this;
         var carModel = [];
@@ -863,7 +876,7 @@
         }else{
           _this.mescroll.resetUpScroll();
         }
-
+        _this.jiaobiaoAjax();
       }
     }
   }
@@ -879,6 +892,7 @@
     height: auto;
     width:100%;
     margin-top: 0.5rem;
+    overflow-y: scroll;
   }
   #car #Allcar .allcarBoth{
     width: 95%;
@@ -889,14 +903,23 @@
   #car .nav{
     width:100%;
   }
-  #car .nav p{
-    float: left;
-    width: 33.333333%;
+  #car .classBoxP{
+    width:33.33333333333%;
     background: white;
     line-height: 1rem;
+    float: left;
+  }
+  #car .nav p{
+    width: fit-content;
+    padding:0 0.2rem ;
     text-align: center;
     font-size: 0.4rem;
     color:#333;
+    margin: 0 auto;
+    white-space:pre;
+  }
+  #car .nav p span{
+    font-size: 0.4rem;
   }
   #car .nav .active{
     border-bottom: 1px solid #3399FF;
@@ -943,14 +966,18 @@
   }
   #car ul li .zongCartype{
     padding-left: 1.2rem;
-    height: 0.7rem;
+    height: 1.7rem;
     margin-top: 0.2rem;
     background-position: 0 50%;
     background-repeat: no-repeat;
-    background-size: 0.861rem 0.7rem ;
+    background-size: 0.8rem 0.8rem ;
+    font-size: 0.4rem;
+    line-height: 1.7rem;
+    float: left;
+  }
+  #car ul li .zongCartype span{
     font-size: 0.375rem;
     line-height: 0.7rem;
-    float: left;
   }
   /*#car ul li  .carMessageMore{
     display: none;
@@ -969,10 +996,10 @@
   }
   #car ul li .downJian{
      width:0.5rem;
-    margin-top: 0.2rem;
+    margin-top: 0.22rem;
      float: right;
-     padding:0.35rem 0.3rem 0.35rem 0.3rem;
-    background-position: 50% 50%;
+     padding:1.35rem 0.1rem 0.35rem 1.3rem;
+    background-position: 60% 50%;
     background-repeat: no-repeat;
     background-size: 0.5rem ;
     background-image: url("../../images/downJian.png");
@@ -988,7 +1015,7 @@
     background: white;
     margin: 0 auto 0.3rem auto;
     border-radius: 0.2rem;
-    box-shadow: 0 5px 10px #cecbcb;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.06);
     position: relative;
     border: 1px solid white;
   }
@@ -1004,7 +1031,7 @@
     color:#333;
   }
   #car li .top .cartype{
-    font-size: 0.3125rem;
+    font-size: 0.34rem;
     margin-right:0.2rem;
     color:#999999;
   }
@@ -1013,12 +1040,12 @@
     transform:scaleY(-1);
   }
   #car li .top .carlength,#car li .top .carModel,#car li .top .transtype{
-    font-size: 0.3125rem;
+    font-size: 0.34rem;
     margin-right:0.2rem;
     color:#999999;
   }
   #car li .top .weight{
-    font-size: 0.3125rem;
+    font-size: 0.34rem;
     margin-right:0.2rem;
     color:#999999;
   }
@@ -1029,6 +1056,9 @@
     margin-right: 5%;
     color:#333;
     top:0;
+  }
+  #car .boxshowNo{
+    box-shadow: none;
   }
   #car li .bottom{
     position: relative;

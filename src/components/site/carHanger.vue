@@ -3,29 +3,29 @@
     <div id="title" v-title :data-title="title"></div>
     <div id="Allcar">
       <ul>
-        <li>
-          <div class="allcarBoth"><div class="cartype1 zongCartype">普货车挂</div><div class="downJian" id="downJian2" @click="lookMoreCarAll(2)"></div><div class="clearBoth"></div></div>
+        <li class="boxshowNo">
+          <div class="allcarBoth"><div class="cartype1 zongCartype">普货车挂<span>({{jiaobiao.hangGeneralGoodsCount}})</span></div><div class="downJian" id="downJian2" @click="lookMoreCarAll(2)"></div><div class="clearBoth"></div></div>
           <div id="mescroll2" class="mescrollFirst">
             <ul id="dataList2" class="data-list">
             </ul>
           </div>
         </li>
-        <li>
-          <div class="allcarBoth"><div class="cartype3 zongCartype">冷链车挂</div><div class="downJian" id="downJian1" @click="lookMoreCarAll(1)"></div><div class="clearBoth"></div></div>
+        <li class="boxshowNo">
+          <div class="allcarBoth"><div class="cartype3 zongCartype">冷链车挂<span>({{jiaobiao.hangColdChainCount}})</span></div><div class="downJian" id="downJian1" @click="lookMoreCarAll(1)"></div><div class="clearBoth"></div></div>
           <div id="mescroll1" class="mescrollFirst">
             <ul id="dataList1" class="data-list">
             </ul>
           </div>
         </li>
-        <li>
-          <div class="allcarBoth"><div class="cartype2 zongCartype">危险品车挂</div><div class="downJian" id="downJian3" @click="lookMoreCarAll(3)"></div><div class="clearBoth"></div></div>
+        <li class="boxshowNo">
+          <div class="allcarBoth"><div class="cartype2 zongCartype">危险品车挂<span>({{jiaobiao.hangDangerCount}})</span></div><div class="downJian" id="downJian3" @click="lookMoreCarAll(3)"></div><div class="clearBoth"></div></div>
           <div id="mescroll3" class="mescrollFirst">
             <ul id="dataList3" class="data-list">
             </ul>
           </div>
         </li>
-        <li>
-          <div class="allcarBoth"><div class="cartype4 zongCartype">集装箱车挂</div><div class="downJian" id="downJian4" @click="lookMoreCarAll(4)"></div><div class="clearBoth"></div></div>
+        <li class="boxshowNo">
+          <div class="allcarBoth"><div class="cartype4 zongCartype">集装箱车挂<span>({{jiaobiao.hangContainerCount}})</span></div><div class="downJian" id="downJian4" @click="lookMoreCarAll(4)"></div><div class="clearBoth"></div></div>
           <div id="mescroll4" class="mescrollFirst">
             <ul id="dataList4" class="data-list">
             </ul>
@@ -43,20 +43,6 @@
               <div class="clearBoth"></div>
             </ul>
           </div>
-          <!--<div class="table">
-            <p>运输类型</p>
-            <ul>
-              <li v-for="(item,index) in tranType" :class="[item.choose?'filterColor':'',index%3==1?'margin':'']" @click="choosefilter(2,index)">{{item.displayName}}</li>
-              <div class="clearBoth"></div>
-            </ul>
-          </div>-->
-          <!--<div class="table">
-            <p>车辆类型</p>
-            <ul>
-              <li v-for="(item,index) in carType" :class="[item.choose?'filterColor':'',index%3==1?'margin':'']" @click="choosefilter(3,index)">{{item.displayName}}</li>
-              <div class="clearBoth"></div>
-            </ul>
-          </div>-->
         </div>
         <div id="filterSureBox">
           <div class="filterSure" @click="resetFilter()">重置</div>
@@ -100,6 +86,7 @@
         pdType:0,
         title:"",
         maxHeight:"",
+        jiaobiao:"",
       }
     },
     watch:{
@@ -140,6 +127,7 @@
           sessionStorage.setItem("carsureListS",_this.$route.query.memo);
         }
         _this.orderPk = sessionStorage.getItem("dispatchPK") == undefined ? "" :sessionStorage.getItem("dispatchPK");
+        _this.jiaobiaoAjax();
         $("#search").find("h5").text("筛选");//筛选
         $("#search").unbind("click").click(function () {
             _this.show = true;
@@ -165,31 +153,6 @@
                 }
               })
             }
-            if(_this.tranType.length == 0){
-              $.ajax({
-                type: "GET",
-                url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
-                data:{str:"trans_type",userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")},
-                dataType: "json",
-                timeout: 10000,
-                success: function (getSysConfigList) {
-                  for(var i = 0;i<getSysConfigList.length;i++){
-                    getSysConfigList[i].choose = false;
-                    if(getSysConfigList[i].value == _this.search.tranType){
-                      getSysConfigList[i].choose = true;
-                    }
-                  }
-                  _this.tranType = getSysConfigList;
-                },
-                complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-                  if(status=='timeout'){//超时,status还有success,error等值的情况
-                    androidIos.second("网络请求超时");
-                  }else if(status=='error'){
-                    androidIos.errorwife();
-                  }
-                }
-              })
-            }
         });
       },
       lookMoreCarAll:function (Zongtype) {
@@ -199,9 +162,10 @@
           $("#mescroll" + i).html("<ul id='dataList" + i + "' class='data-list'></ul>");
           if( i != Zongtype){
             bomb.removeClass("downJian"+i,"logisticsImg");
+            $("#mescroll" + i).html("");
           }
         }
-        _this.maxHeight = ($(window).height() - $("#dataList4").offset().top)/($("html").css("fontSize").replace("px","")) - 0.5 + "rem";
+        _this.maxHeight = ($(window).height())/($("html").css("fontSize").replace("px","")) - 7.6 + "rem";
         if(!bomb.hasClass("downJian"+Zongtype,"logisticsImg")){
           bomb.addClass("downJian"+Zongtype,"logisticsImg")
           $("#mescroll" + Zongtype).css("maxHeight",_this.maxHeight);
@@ -255,13 +219,11 @@
               var img2 = _this.orderPk != "" ?"<div class='checkImg' style='display: "+display3+"'></div>":"";
               var str = "";
               str += '<div class="top" data-sWeight="'+(pd.zongweight - pd.nowweight)+'" data-userNow="'+pd.userNow+'" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
-                '<h1 style="width:80%;margin-top: 0.2rem;margin-bottom: 0.1rem;"><span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span></h1>'+types+'<div class="clearBoth"></div>'+
-                '<p style="min-height: ' + minheight + ';" class="weight"><span style="font-size: 0.3125rem;display: ' + display2+ '">满载：<span style="font-size: 0.3125rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
+                '<h1 style="width:80%;margin-top: 0.2rem;margin-bottom: 0.1rem;"><span class="carnumber">'+pd.carNumber+'</span><span class="cartype" style="margin-right: 0;">'+pd.sportType+'/</span><span class="carModel">'+pd.carModel+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span></h1>'+types+'<div class="clearBoth"></div>'+
+                '<p style="min-height: ' + minheight + ';" class="weight"><span style="font-size: 0.34rem;display: ' + display2+ '">满载：<span style="font-size: 0.34rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
                 img + img2 +
                 '<div class="clearBoth"></div></div>';
               var liDom=document.createElement("li");
-              liDom.style.border = "1px solid #949494";
-              liDom.style.boxShadow = "none";
               liDom.classList.add("liDom");
               liDom.dataset.nowtype = pd.now;
               liDom.innerHTML=str;
@@ -495,7 +457,50 @@
         if(_this.mescroll != ""){
           _this.mescroll.resetUpScroll();
         }
-      }
+        _this.jiaobiaoAjax();
+      },
+      jiaobiaoAjax:function () {
+        var _this = this;
+        $.ajax({
+          type: "POST",
+          url: androidIos.ajaxHttp()+"/carrier/carTypeStatistics",
+          data:JSON.stringify({
+            status:_this.search.tranState,
+            userCode:sessionStorage.getItem("token"),
+            source:sessionStorage.getItem("source"),
+            type:_this.orderPk == "" ? 0 : 1,//0 所有 1 已审核
+          }),
+          contentType: "application/json;charset=utf-8",
+          dataType: "json",
+          timeout: 30000,
+          success: function (carTypeStatistics) {
+            if(carTypeStatistics.success == "1"){
+              _this.jiaobiao = {
+                carHeadCount: carTypeStatistics.carHeadCount,
+                carHangCount:carTypeStatistics.carHangCount,
+                coldChainCount: carTypeStatistics.coldChainCount,
+                containerCount: carTypeStatistics.containerCount,
+                dangerCount: carTypeStatistics.dangerCount,
+                generalGoodsCount: carTypeStatistics.generalGoodsCount,
+                zhengCount : carTypeStatistics.coldChainCount*1 + carTypeStatistics.containerCount*1 + carTypeStatistics.dangerCount*1 + carTypeStatistics.generalGoodsCount*1,
+                hangColdChainCount:  carTypeStatistics.hangColdChainCount,
+                hangContainerCount: carTypeStatistics.hangContainerCount,
+                hangDangerCount: carTypeStatistics.hangDangerCount,
+                hangGeneralGoodsCount: carTypeStatistics.hangGeneralGoodsCount,
+              };
+            }else{
+              androidIos.second(carTypeStatistics.message);
+            }
+          },
+          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+            if(status=='timeout'){//超时,status还有success,error等值的情况
+              androidIos.second("网络请求超时");
+            }else if(status=='error'){
+              androidIos.errorwife();
+            }
+          }
+        })
+      },
     }
   }
 </script>
@@ -511,6 +516,10 @@
     width: 100%;
     margin-top: 0.5rem;
   }
+  #carHanger ul li .zongCartype span {
+    font-size: 0.375rem;
+    line-height: 0.7rem;
+  }
   #carHanger #Allcar .allcarBoth{
     width: 95%;
     margin-left: 5%;
@@ -521,24 +530,24 @@
     overflow-x: hidden;
     overflow-y: scroll;
   }
+  #carHanger .boxshowNo{
+    box-shadow: none;
+  }
   #carHanger ul li .zongCartype{
     padding-left: 1.2rem;
-    height: 0.7rem;
+    height: 1.7rem;
     margin-top: 0.2rem;
     background-position: 0 50%;
     background-repeat: no-repeat;
-    background-size: 0.8656rem 0.7rem ;
-    font-size: 0.375rem;
-    line-height: 0.7rem;
+    background-size: 0.8rem 0.8rem;
+    font-size: 0.4rem;
+    line-height: 1.7rem;
     float: left;
   }
   #carHanger li .logisticsImg{
     -webkit-transform:scaleY(-1);
     transform:scaleY(-1);
   }
-  /*#carHanger ul li  .carMessageMore{
-    display: none;
-  }*/
   #carHanger ul li .cartype1{
     background-image: url("../../images/cartype1.png");
   }
@@ -552,13 +561,13 @@
     background-image: url("../../images/cartype4.png");
   }
   #carHanger ul li .downJian{
-    width:0.5rem;
-    margin-top: 0.2rem;
+    width: 0.5rem;
+    margin-top: 0.22rem;
     float: right;
-    padding:0.35rem 0.3rem 0.35rem 0.3rem;
-    background-position: 50% 50%;
+    padding: 1.35rem 0.1rem 0.35rem 1.3rem;
+    background-position: 60% 50%;
     background-repeat: no-repeat;
-    background-size: 0.5rem ;
+    background-size: 0.5rem;
     background-image: url("../../images/downJian.png");
   }
   #carHanger .nav{
@@ -628,7 +637,7 @@
     /* margin-bottom: 0.2rem; */
     margin: 0 auto 0.3rem auto;
     border-radius: 0.2rem;
-    box-shadow: 0 5px 10px #cecbcb;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.06);
   }
   #carHanger li .top{
     width:95%;
@@ -642,17 +651,17 @@
     color:#333;
   }
   #carHanger li .top .cartype{
-    font-size: 0.3125rem;
+    font-size: 0.34rem;
     margin-right:0.2rem;
     color:#999999;
   }
   #carHanger li .top .carlength,#carHanger li .top .carModel,#carHanger li .top .transtype{
-    font-size: 0.3125rem;
+    font-size: 0.34rem;
     margin-right:0.2rem;
     color:#999999;
   }
   #carHanger li .top .weight{
-    font-size: 0.3125rem;
+    font-size: 0.34rem;
     margin-right:0.2rem;
     color:#999999;
   }

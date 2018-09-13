@@ -8,10 +8,10 @@
         <p @click="sousuo()">搜索</p>
       </div>
     </div>
-    <div class="nav">
+    <!--<div class="nav">
       <p class="active" i="0">承运商</p>
       <p i="1">司机</p>
-    </div>
+    </div>-->
     <div id="mescroll" class="mescroll">
       <ul id="dataList" class="data-list">
       </ul>
@@ -422,10 +422,8 @@
     line-height: 1.6rem;
   }
   #appoint .firstBox img{
-    width:100%;
-    display: inline-block;
-    vertical-align: middle;
-    height: 100%;
+    width:1.5rem;
+    height:1.5rem;
   }
   #appoint .secondBox{
     width:70%;
@@ -452,7 +450,7 @@
   }
   #appoint .mescroll{
     position: fixed;
-    top:2.3rem;
+    top:1.3rem;
     bottom: 0;
     height: auto;
     background-color: rgb(245, 245, 249)!important;
