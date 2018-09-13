@@ -138,6 +138,18 @@
         sessionStorage.removeItem("changeCarpeople");
         sessionStorage.removeItem("changeCarFupeople");
         var carsure = sessionStorage.getItem("carsureListS");
+        document.getElementById("Allcar").addEventListener("scroll",function () {
+          var remPk = $("html").css("fontSize").replace("px","");
+          var Allcar = document.getElementById("Allcar").scrollTop / remPk ;
+          for(var i = 0 ; i < 4 ; i++){
+            var offsetTop  = document.getElementsByClassName("boxshowNo")[i].offsetTop  / remPk;
+            var childrenDiv = $(".mescrollFirst").eq(i).height();
+            if(offsetTop - Allcar <= 0.3 && childrenDiv/remPk >12.5){
+              $("#Allcar").animate({scrollTop: offsetTop*remPk + "px"}, 0);
+              $("#Allcar").css("overflow","hidden");
+            }
+          }
+        })
         if(carsure != null){
           _this.carSureTuo.push(JSON.parse(carsure));
           sessionStorage.removeItem("carsureListS");
@@ -520,6 +532,7 @@
       },
       lookMoreCarAll:function (Zongtype) {
         var _this = this;
+        $("#Allcar").css("overflow","scroll");
         for(var i = 1 ; i < 5 ; i++){
           $("#mescroll" + i).css("maxHeight","none");
           $("#mescroll" + i).html("<ul id='dataList" + i + "' class='data-list'></ul>");
@@ -528,7 +541,7 @@
             $("#mescroll" + i).html("");
           }
         }
-        _this.maxHeight = ($(window).height())/($("html").css("fontSize").replace("px","")) - 7.6+ "rem";
+        _this.maxHeight = ($(window).height())/($("html").css("fontSize").replace("px","")) - 5.2+ "rem";
         if(!bomb.hasClass("downJian"+Zongtype,"logisticsImg")){
           bomb.addClass("downJian"+Zongtype,"logisticsImg");
           $("#mescroll" + Zongtype).css("maxHeight",_this.maxHeight);

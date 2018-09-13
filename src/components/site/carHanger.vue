@@ -117,6 +117,18 @@
         var _this = this;
         sessionStorage.removeItem("changeCarpeople");
         sessionStorage.removeItem("changeCarFupeople");
+          $("#Allcar").scroll(function() {
+            var remPk = $("html").css("fontSize").replace("px","");
+            var Allcar = document.getElementById("Allcar").scrollTop / remPk ;
+            for(var i = 0 ; i < 4 ; i++){
+              var offsetTop  = document.getElementsByClassName("boxshowNo")[i].offsetTop  / remPk;
+              var childrenDiv = $(".mescrollFirst").eq(i).height();
+              if(offsetTop - Allcar <= 0.3 && childrenDiv/remPk >12.5){
+                $("#Allcar").animate({scrollTop: offsetTop*remPk + "px"}, 0);
+                $("#Allcar").css("overflow","hidden");
+              }
+            }
+          })
         var carsure = sessionStorage.getItem("carsure");
         if(carsure != null){
           _this.carSureTuo = JSON.parse(carsure);
