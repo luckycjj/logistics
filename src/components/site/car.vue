@@ -1021,11 +1021,9 @@
   #car ul li{
     width: 94%;
     background: white;
-    /* margin-bottom: 0.2rem; */
     margin: 0 auto 0.3rem auto;
     border-radius: 0.2rem;
     box-shadow: 0 5px 10px #cecbcb;
-    overflow: hidden;
     position: relative;
   }
   #car li .top{
