@@ -561,7 +561,7 @@
             carNo:_this.message.plateName + _this.message.carNumber,
             carModel:_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383" ?_this.message.carCode : "" ,
             carType:_this.message.carmodelNumber ,
-            loadWeight:_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383" ? _this.message.weight : "",
+            loadWeight:_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383" ? _this.message.weight*1000 : "",
             pkDriver:_this.message.driverPk,
             pkCar:_this.message.carpk,
             drivingLicense:_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "2ba6da2fd9cd4689965afe5abc8f9df4" ? _this.message.Travelpic : "",

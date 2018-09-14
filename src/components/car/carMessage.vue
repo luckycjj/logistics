@@ -333,7 +333,6 @@
     //延时一秒,模拟联网
     setTimeout(function () {
       if(thisThat.$route.query.pkCar != undefined){
-        var weightBoth = 0;
         var data=[{
           orderType:1,
           carType:1,
@@ -395,8 +394,7 @@
                   }
                   data[0].list.push(json);
                 }
-                weightBoth += getCarDetail.weight*1 ;
-                data[0].carState = weightBoth > 0 ? 1 : 2 ;
+                data[0].carState = getCarDetail.invoice.length > 0 ? 1 : 2 ;
                 var tranModel = "";
                 for(var i = 0 ; i < (thisThat.$route.query.pkCar.split(",")).length ; i++){
                    if(thisThat.$route.query.pkCar.split(",")[i] == getCarDetail.pkCar){

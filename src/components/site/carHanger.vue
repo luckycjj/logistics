@@ -315,7 +315,7 @@
                         sportType:tt.carType,
                         length:tt.length,
                         driverLicense:tt.driverLicense,
-                        zongweight:tt.loadWeight*1,
+                        zongweight:tt.loadWeight*1/1000,
                         nowweight:tt.weight*1,
                         type:tt.carStatus,
                         carType:pdType,
