@@ -138,18 +138,6 @@
         sessionStorage.removeItem("changeCarpeople");
         sessionStorage.removeItem("changeCarFupeople");
         var carsure = sessionStorage.getItem("carsureListS");
-        document.getElementById("Allcar").addEventListener("scroll",function () {
-          var remPk = $("html").css("fontSize").replace("px","");
-          var Allcar = document.getElementById("Allcar").scrollTop / remPk ;
-          for(var i = 0 ; i < 4 ; i++){
-            var offsetTop  = document.getElementsByClassName("boxshowNo")[i].offsetTop  / remPk;
-            var childrenDiv = $(".mescrollFirst").eq(i).height();
-            if(offsetTop - Allcar <= 0.3 && childrenDiv/remPk >12.5){
-              $("#Allcar").animate({scrollTop: offsetTop*remPk + "px"}, 0);
-              $("#Allcar").css("overflow","hidden");
-            }
-          }
-        })
         if(carsure != null){
           _this.carSureTuo.push(JSON.parse(carsure));
           sessionStorage.removeItem("carsureListS");
@@ -532,19 +520,22 @@
       },
       lookMoreCarAll:function (Zongtype) {
         var _this = this;
-        $("#Allcar").css("overflow","scroll");
         for(var i = 1 ; i < 5 ; i++){
-          $("#mescroll" + i).css("maxHeight","none");
+          $("#mescroll" + i).css("height","auto");
           $("#mescroll" + i).html("<ul id='dataList" + i + "' class='data-list'></ul>");
           if( i != Zongtype){
             bomb.removeClass("downJian"+i,"logisticsImg");
             $("#mescroll" + i).html("");
           }
         }
+        var numberZ = Zongtype == 2 ? 0 : Zongtype == 1 ? 1 : Zongtype == 3 ? 2 :3;
+        var offsetTop = document.getElementsByClassName("boxshowNo")[numberZ].offsetTop;
         _this.maxHeight = ($(window).height())/($("html").css("fontSize").replace("px","")) - 5.2+ "rem";
         if(!bomb.hasClass("downJian"+Zongtype,"logisticsImg")){
           bomb.addClass("downJian"+Zongtype,"logisticsImg");
-          $("#mescroll" + Zongtype).css("maxHeight",_this.maxHeight);
+          $("#mescroll" + Zongtype).animate({height:_this.maxHeight},100);
+          $("#Allcar").animate({scrollTop: offsetTop + "px"}, 500);
+          $("#Allcar").css("overflow","hidden");
           _this.mescroll1 = "";
           var mescroll = new MeScroll("mescroll" + Zongtype, { //id固定"body"
             //上拉加载的配置项
@@ -563,7 +554,6 @@
               offset: 2.1 * $("html").css("font-size").replace("px", "")
             }
           });
-
           _this.mescroll1 = mescroll;
           function getListData(page){
             //联网加载数据
@@ -740,6 +730,7 @@
           bomb.removeClass("downJian"+Zongtype,"logisticsImg");
           _this.mescroll1 = "";
           $("#mescroll" + Zongtype).html("");
+          $("#Allcar").css("overflow","scroll");
         }
 
       },

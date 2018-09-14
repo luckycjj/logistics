@@ -117,18 +117,6 @@
         var _this = this;
         sessionStorage.removeItem("changeCarpeople");
         sessionStorage.removeItem("changeCarFupeople");
-          $("#Allcar").scroll(function() {
-            var remPk = $("html").css("fontSize").replace("px","");
-            var Allcar = document.getElementById("Allcar").scrollTop / remPk ;
-            for(var i = 0 ; i < 4 ; i++){
-              var offsetTop  = document.getElementsByClassName("boxshowNo")[i].offsetTop  / remPk;
-              var childrenDiv = $(".mescrollFirst").eq(i).height();
-              if(offsetTop - Allcar <= 0.3 && childrenDiv/remPk >12.5){
-                $("#Allcar").animate({scrollTop: offsetTop*remPk + "px"}, 0);
-                $("#Allcar").css("overflow","hidden");
-              }
-            }
-          })
         var carsure = sessionStorage.getItem("carsure");
         if(carsure != null){
           _this.carSureTuo = JSON.parse(carsure);
@@ -170,17 +158,21 @@
       lookMoreCarAll:function (Zongtype) {
         var _this = this;
         for(var i = 1 ; i < 5 ; i++){
-          $("#mescroll" + i).css("maxHeight","none");
+          $("#mescroll" + i).css("height","auto");
           $("#mescroll" + i).html("<ul id='dataList" + i + "' class='data-list'></ul>");
           if( i != Zongtype){
             bomb.removeClass("downJian"+i,"logisticsImg");
             $("#mescroll" + i).html("");
           }
         }
-        _this.maxHeight = ($(window).height())/($("html").css("fontSize").replace("px","")) - 7.6 + "rem";
+        var numberZ = Zongtype == 2 ? 0 : Zongtype == 1 ? 1 : Zongtype == 3 ? 2 :3;
+        var offsetTop = document.getElementsByClassName("boxshowNo")[numberZ].offsetTop;
+        _this.maxHeight = ($(window).height())/($("html").css("fontSize").replace("px","")) - 4.2+ "rem";
         if(!bomb.hasClass("downJian"+Zongtype,"logisticsImg")){
           bomb.addClass("downJian"+Zongtype,"logisticsImg")
-          $("#mescroll" + Zongtype).css("maxHeight",_this.maxHeight);
+          $("#mescroll" + Zongtype).animate({height:_this.maxHeight},100);
+          $("#Allcar").animate({scrollTop: offsetTop + "px"}, 500);
+          $("#Allcar").css("overflow","hidden");
           _this.mescroll = "";
           var mescroll = new MeScroll("mescroll" + Zongtype, { //id固定"body"
             //上拉加载的配置项
@@ -378,6 +370,7 @@
           bomb.removeClass("downJian"+Zongtype,"logisticsImg");
           _this.mescroll = "";
           $("#mescroll" + Zongtype).html("");
+          $("#Allcar").css("overflow","scroll");
         }
 
       },
@@ -528,6 +521,7 @@
     height: auto;
     width: 100%;
     margin-top: 0.5rem;
+    overflow: scroll;
   }
   #carHanger ul li .zongCartype span {
     font-size: 0.375rem;
