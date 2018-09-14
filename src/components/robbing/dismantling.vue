@@ -56,7 +56,7 @@
                  list:[]
                }]
              },
-             suremend: new Debounce(this.matchWeightVolume, 500),
+             suremend: new Debounce(this.matchWeightVolume, 1000),
            }
        },
       watch:{

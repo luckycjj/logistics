@@ -198,8 +198,8 @@
      font-size: 0.3125rem;
      margin-top: 0.1rem;
      background-repeat: no-repeat;
-     background-size: 0.5rem 0.5rem;
-     background-position: 0 0rem;
+     background-size: 0.45rem 0.45rem;
+     background-position: 0 0.01rem;
      color:#666;
    }
    li h3{
@@ -218,8 +218,8 @@
      float: left;
      margin-top: 0.1rem;
      background-repeat: no-repeat;
-     background-size: 0.5rem 0.5rem;
-     background-position: 0 0rem;
+     background-size: 0.45rem 0.45rem;
+     background-position:0 0.02rem;
      color:#666;
    }
    li h4{

@@ -1902,15 +1902,15 @@
     margin-left: -0.3rem;
   }
    .lablebox input{
-     line-height: 0.375rem;
-     height: 0.375rem;
+     line-height: 0.6rem;
+     height: 0.6rem;
      font-size: 0.375rem;
      color: #333;
      float: right;
      text-align: right;
      width: 55%;
      margin-right: 5%;
-     margin-top: 0.5125rem;
+     margin-top:0.4rem;
    }
    .lablebox p{
       float: right;
