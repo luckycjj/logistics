@@ -806,6 +806,7 @@
               $("#mescroll").show();
               for(var i = 1 ; i < 5 ; i++){
                 $("#mescroll" + i).html("<ul id='dataList" + i + "' class='data-list'></ul>");
+                $("#mescroll" + i).css("height","auto");
                 bomb.removeClass("downJian"+i,"logisticsImg");
               }
               _this.mescroll.resetUpScroll();
