@@ -293,18 +293,8 @@
                 var usernow = that.attr("data-usernow");
                 var sWeight = that.attr("data-sweight");
                 if(_this.orderPk != ""){
-                  if(nowType.indexOf("使用") != -1){
-                    if(usernow.indexOf("整") != -1){
-                      bomb.first( "该车头的运输方式为整车运输，无法拼车");
-                      return false;
-                    }else if(usernow.indexOf("零") != -1){
-                      if(sessionStorage.getItem("nowOrderCartype").indexOf("整") != -1){
-                        bomb.first( "该订单选择的运输方式为整车运输，无法拼车");
-                        return false;
-                      }
-                    }
-                  }else if(nowType.indexOf("维") != -1 || nowType.indexOf("保") != -1){
-                    bomb.first( "该车头正在" + nowType + ",请选择其它车辆");
+                  if(nowType.indexOf("使用") != -1 || nowType.indexOf("维") != -1 || nowType.indexOf("保") != -1){
+                    bomb.first( "该车头正在" + nowType + ",请选择其它车头");
                     return false;
                   }
                   sessionStorage.setItem("LABELTOP",JSON.stringify({top:0,number:2,type:1,serach:_this.search.tranState}))
@@ -646,6 +636,11 @@
                      }else if(nowType.indexOf("维") != -1 || nowType.indexOf("保") != -1){
                        bomb.first( "该车辆正在" + nowType + ",请选择其它车辆");
                        return false;
+                     }else{
+                       if(sWeight - sessionStorage.getItem("weh") < 0 ){
+                         bomb.first( "该车辆载重量不足，请选择其它车辆");
+                         return false;
+                       }
                      }
                     if(carModel.indexOf("整") != -1){
                       androidIos.addPageList();

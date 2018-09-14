@@ -249,30 +249,12 @@
                 var that = $(this);
                 if($("#search").find("h5").text() != "取消"){
                   var nowType = that.find(".nowtype").text();
-                  var carNumber = that.find(".carnumber").text();
                   var pkcar = that.attr("data-pkCar");
                   var cartype = that.attr("data-carType");
                   var carModel = that.find(".cartype").text();
-                  var usernow = that.attr("data-usernow");
-                  var sWeight = that.attr("data-sweight");
                   if(_this.orderPk != ""){
-                    if(nowType.indexOf("使用") != -1){
-                      if(usernow.indexOf("整") != -1){
-                        bomb.first( "该车辆的运输方式为整车运输，无法拼车");
-                        return false;
-                      }else if(usernow.indexOf("零") != -1){
-                        if(sessionStorage.getItem("nowOrderCartype").indexOf("整") != -1){
-                          bomb.first( "该订单选择的运输方式为整车运输，无法拼车");
-                          return false;
-                        }else if(sessionStorage.getItem("nowOrderCartype").indexOf("零") != -1){
-                          if(sWeight - sessionStorage.getItem("weh") < 0 ){
-                            bomb.first( "该车辆剩余载重量不足，请选择其它车辆");
-                            return false;
-                          }
-                        }
-                      }
-                    }else if(nowType.indexOf("维") != -1 || nowType.indexOf("保") != -1){
-                      bomb.first( "该车辆正在" + nowType + ",请选择其它车辆");
+                    if(nowType.indexOf("使用") != -1 || nowType.indexOf("维") != -1 || nowType.indexOf("保") != -1){
+                      bomb.first( "该车挂正在" + nowType + ",请选择其它车挂");
                       return false;
                     }
                     _this.carSure.push({
