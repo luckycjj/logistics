@@ -127,6 +127,14 @@
           sessionStorage.setItem("carsureListS",_this.$route.query.memo);
         }
         _this.orderPk = sessionStorage.getItem("dispatchPK") == undefined ? "" :sessionStorage.getItem("dispatchPK");
+        var GUALABELTOP = sessionStorage.getItem("GUALABELTOP");
+        if(GUALABELTOP != undefined){
+          GUALABELTOP = JSON.parse(GUALABELTOP);
+          if(GUALABELTOP.type == 0){
+            _this.lookMoreCarAll(GUALABELTOP.number);
+          }
+          sessionStorage.removeItem("GUALABELTOP");
+        }
         _this.jiaobiaoAjax();
         $("#search").find("h5").text("筛选");//筛选
         $("#search").unbind("click").click(function () {
@@ -262,30 +270,13 @@
                       bomb.first( "该车辆正在" + nowType + ",请选择其它车辆");
                       return false;
                     }
-                    if(carModel == "整车"){
-                      androidIos.addPageList();
-                      _this.$router.push({ path: '/car',query:{title: carModel,pkCar:pkcar,carType:cartype}});
-                    }else{
-                      _this.carSure.push({
-                        pkcar:pkcar,
-                        carModel:carModel ,
-                        cartype:cartype,
-                      });
-                      _this.carSureGo();
-                    }
-                  }else{
-                    if(that.parents("li").attr("data-nowtype") == '0'){
-                      bomb.first( that.find(".carnumber").text() + "正在审核");
-                      return false;
-                    }
-                    if(that.parents("li").attr("data-nowtype") == '2'){
-                      bomb.first( that.find(".carnumber").text() + "已被驳回，请修改信息");
-                      return false;
-                    }
-                    if(that.parents("li").attr("data-nowtype") == '3'){
-                      bomb.first( that.find(".carnumber").text() + "已被禁用，请修改信息");
-                      return false;
-                    }
+                    _this.carSure.push({
+                      pkcar:pkcar,
+                      carModel:carModel ,
+                      cartype:cartype,
+                    });
+                    sessionStorage.setItem("GUALABELTOP",JSON.stringify({number:Zongtype,type:0}))
+                    _this.carSureGo();
                   }
                 }
               })

@@ -148,15 +148,6 @@
           sessionStorage.removeItem("carsure");
         }
         _this.orderPk = sessionStorage.getItem("dispatchPK") == undefined ? "" :sessionStorage.getItem("dispatchPK");
-        if(_this.orderPk == ""){
-          $("#Allcar").hide();
-          $("#mescroll").show();
-          $("#search").find("h5").text("编辑");
-        }else{
-          $("#Allcar").show();
-          $("#mescroll").hide();
-          $("#search").find("h5").text("筛选");//筛选
-        }
         $("#search").unbind("click").click(function () {
           if($(this).find("h5").text() == "筛选"){
             _this.show = true;
@@ -219,7 +210,31 @@
           }
         });
         _this.mescroll = mescroll;
-
+        if(_this.orderPk == ""){
+          $("#Allcar").hide();
+          $("#mescroll").show();
+          $("#search").find("h5").text("编辑");
+          var LABELTOP = sessionStorage.getItem("LABELTOP");
+          if(LABELTOP != undefined){
+            LABELTOP = JSON.parse(LABELTOP);
+            _this.navClick(LABELTOP.type);
+            sessionStorage.removeItem("LABELTOP");
+          }
+        }else{
+          $("#Allcar").show();
+          $("#mescroll").hide();
+          $("#search").find("h5").text("筛选");//筛选
+          var LABELTOP = sessionStorage.getItem("LABELTOP");
+          if(LABELTOP != undefined){
+            LABELTOP = JSON.parse(LABELTOP);
+            if(LABELTOP.type == 0){
+              _this.lookMoreCarAll(LABELTOP.number);
+            }else if(LABELTOP.type == 1){
+              _this.navClick(LABELTOP.type);
+            }
+            sessionStorage.removeItem("LABELTOP");
+          }
+        }
         /*联网加载列表数据  page = {num:1, size:10}; num:当前页 从1开始, size:每页数据条数 */
         function getListData(page){
           //联网加载数据
@@ -287,19 +302,15 @@
                     bomb.first( "该车头正在" + nowType + ",请选择其它车辆");
                     return false;
                   }
-                  if(carModel == "整车"){
+                  sessionStorage.setItem("LABELTOP",JSON.stringify({top:0,number:2,type:1}))
+                   var json = {
+                       pkcar:pkcar,
+                       carModel:carModel ,
+                       cartype:cartype,
+                       carNumber:carNumber
+                    };
                     androidIos.addPageList();
-                    _this.$router.push({ path: '/car',query:{title: carModel,pkCar:pkcar,carType:cartype}});
-                  }else{
-                     var json = {
-                         pkcar:pkcar,
-                         carModel:carModel ,
-                         cartype:cartype,
-                         carNumber:carNumber
-                      };
-                      androidIos.addPageList();
-                      _this.$router.push({ path: '/site/carHanger',query:{memo:JSON.stringify(json)}});
-                  }
+                    _this.$router.push({ path: '/site/carHanger',query:{memo:JSON.stringify(json)}});
                 }else{
                   if(that.parents("li").attr("data-nowtype") == '0'){
                     bomb.first( that.find(".carnumber").text() + "正在审核");
@@ -335,6 +346,12 @@
                 Travelpic:that.find(".top").attr("data-driverLicense")
               }
               sessionStorage.setItem("carchange",JSON.stringify(json));
+              for(var i = 0 ;i < $(".nav .classBoxP").length ; i ++){
+                if($(".nav .classBoxP").eq(i).find("p").hasClass("active")){
+                  sessionStorage.setItem("LABELTOP",JSON.stringify({top:0,number:2,type:i}));
+                  break;
+                }
+              }
               androidIos.addPageList();
               _this.$router.push({ path: '/car/newCar'});
             })
@@ -627,6 +644,7 @@
                      }
                     if(carModel.indexOf("整") != -1){
                       androidIos.addPageList();
+                      sessionStorage.setItem("LABELTOP",JSON.stringify({number:Zongtype,type:0}))
                       _this.$router.push({ path: '/car',query:{title: carModel,pkCar:pkcar,carType:cartype}});
                     }else{
                       var json = {
@@ -817,6 +835,12 @@
       newCar:function(){
         var _this = this;
         androidIos.addPageList();
+        for(var i = 0 ;i < $(".nav .classBoxP").length ; i ++){
+          if($(".nav .classBoxP").eq(i).find("p").hasClass("active")){
+            sessionStorage.setItem("LABELTOP",JSON.stringify({top:0,number:2,type:i}));
+            break;
+          }
+        }
         _this.$router.push({ path: '/car/newCar'});
       },
       filterBoxBlackFalse:function(e){
