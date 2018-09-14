@@ -160,7 +160,11 @@
                 timeout: 10000,
                 success: function (getSysConfigList) {
                   for(var i = 0;i<getSysConfigList.length;i++){
-                    getSysConfigList[i].choose = false;
+                    if(getSysConfigList[i].value.indexOf(_this.search.tranState) != -1 && _this.search.tranState!=""){
+                      getSysConfigList[i].choose = true;
+                    }else{
+                      getSysConfigList[i].choose = false;
+                    }
                   }
                   _this.tranState = getSysConfigList;
                 },
@@ -227,6 +231,7 @@
           var LABELTOP = sessionStorage.getItem("LABELTOP");
           if(LABELTOP != undefined){
             LABELTOP = JSON.parse(LABELTOP);
+            _this.search.tranState = LABELTOP.serach;
             if(LABELTOP.type == 0){
               _this.lookMoreCarAll(LABELTOP.number);
             }else if(LABELTOP.type == 1){
@@ -302,7 +307,7 @@
                     bomb.first( "该车头正在" + nowType + ",请选择其它车辆");
                     return false;
                   }
-                  sessionStorage.setItem("LABELTOP",JSON.stringify({top:0,number:2,type:1}))
+                  sessionStorage.setItem("LABELTOP",JSON.stringify({top:0,number:2,type:1,serach:_this.search.tranState}))
                    var json = {
                        pkcar:pkcar,
                        carModel:carModel ,
@@ -644,7 +649,7 @@
                      }
                     if(carModel.indexOf("整") != -1){
                       androidIos.addPageList();
-                      sessionStorage.setItem("LABELTOP",JSON.stringify({number:Zongtype,type:0}))
+                      sessionStorage.setItem("LABELTOP",JSON.stringify({number:Zongtype,type:0,serach:_this.search.tranState}))
                       _this.$router.push({ path: '/car',query:{title: carModel,pkCar:pkcar,carType:cartype}});
                     }else{
                       var json = {

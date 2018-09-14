@@ -184,6 +184,11 @@
           _this.message = carchange;
           sessionStorage.removeItem("carchange");
         }
+        var LABELTOP = sessionStorage.getItem("LABELTOP");
+        if(LABELTOP != undefined){
+          LABELTOP = JSON.parse(LABELTOP);
+          _this.message.carmodel =  LABELTOP.type == "0" ? "整车" : LABELTOP.type == "1" ? "车头" : LABELTOP.type == "2" ? "车挂" :"";
+        }
         for(var i = 0;i<_this.carTypeList.length;i++){
           if(_this.carTypeList[i].region == _this.message.plateName){
             _this.carTypeList[i].code = 2;

@@ -130,6 +130,7 @@
         var GUALABELTOP = sessionStorage.getItem("GUALABELTOP");
         if(GUALABELTOP != undefined){
           GUALABELTOP = JSON.parse(GUALABELTOP);
+          _this.search.tranState = GUALABELTOP.sarech;
           if(GUALABELTOP.type == 0){
             _this.lookMoreCarAll(GUALABELTOP.number);
           }
@@ -148,7 +149,11 @@
                 timeout: 10000,
                 success: function (getSysConfigList) {
                   for(var i = 0;i<getSysConfigList.length;i++){
-                    getSysConfigList[i].choose = false;
+                    if(getSysConfigList[i].value.indexOf(_this.search.tranState) != -1 && _this.search.tranState!=""){
+                      getSysConfigList[i].choose = true;
+                    }else{
+                      getSysConfigList[i].choose = false;
+                    }
                   }
                   _this.tranState = getSysConfigList;
                 },
@@ -275,7 +280,7 @@
                       carModel:carModel ,
                       cartype:cartype,
                     });
-                    sessionStorage.setItem("GUALABELTOP",JSON.stringify({number:Zongtype,type:0}))
+                    sessionStorage.setItem("GUALABELTOP",JSON.stringify({number:Zongtype,type:0,sarech:_this.search.tranState}))
                     _this.carSureGo();
                   }
                 }
