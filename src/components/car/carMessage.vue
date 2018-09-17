@@ -405,7 +405,7 @@
                   number:getCarDetail.carNo,
                   tranType:getCarDetail.carType,
                   weight:getCarDetail.loadWeight*1/1000,
-                  nowWeight:getCarDetail.weight*1,
+                  nowWeight:getCarDetail.weight*1/1000,
                   tranModel:tranModel,
                 })
                 var listData=data;//模拟分页数据

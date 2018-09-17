@@ -41,7 +41,7 @@
           </div>
           <div class="addImgFirst" v-if="imgList.length < imgListLength">
             <img src="../images/addImgP.png">
-            <input type="file" multiple id="imgFileS" @change="inputChange($event,2)">
+            <input type="file" multiple accept=".jpg,.png" id="imgFileS" @change="inputChange($event,2)">
             <p v-html="imgList.length == 0 ? '添加图片':imgList.length + '/' + imgListLength"></p>
           </div>
           <div class="clearBoth"></div>
@@ -64,7 +64,7 @@
            </div>
           <div class="addImgFirst" v-if="imgList.length < imgListLength">
             <img src="../images/addImgP.png">
-            <input type="file" multiple id="imgFile" @change="inputChange($event,1)">
+            <input type="file" accept=".jpg,.png" multiple id="imgFile" @change="inputChange($event,1)">
             <p v-html="imgList.length == 0 ? '添加图片':imgList.length + '/' + imgListLength"></p>
           </div>
           <div class="clearBoth"></div>
