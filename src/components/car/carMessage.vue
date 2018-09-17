@@ -404,7 +404,7 @@
                 data[0].carMessage.list.push({
                   number:getCarDetail.carNo,
                   tranType:getCarDetail.carType,
-                  weight:getCarDetail.loadWeight*1,
+                  weight:getCarDetail.loadWeight*1/1000,
                   nowWeight:getCarDetail.weight*1,
                   tranModel:tranModel,
                 })

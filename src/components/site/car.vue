@@ -622,7 +622,7 @@
                        if(usernow.indexOf("整") != -1){
                          bomb.first( "该车辆的运输方式为整车运输，无法拼车");
                          return false;
-                       }else if(usernow.indexOf("零") != -1){
+                       }else{
                          if(sessionStorage.getItem("nowOrderCartype").indexOf("整") != -1){
                            bomb.first( "该订单选择的运输方式为整车运输，无法拼车");
                            return false;
