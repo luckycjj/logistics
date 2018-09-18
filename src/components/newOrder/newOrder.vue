@@ -946,9 +946,9 @@
                     }
                   }
                 }
-                if(_this.pk == "" && _this.$route.query.type == undefined){
+      /*          if(_this.pk == "" && _this.$route.query.type == undefined){
                   bridge.invoke("guide","1");
-                }
+                }*/
               })
             });
           },

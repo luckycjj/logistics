@@ -27,6 +27,22 @@
                 <div class="clearBoth"></div>
               </li>
             </ul>
+            <ul id="logisticsBox" class="logisticsBox" :class="logisticsOk?'logisticsBoxDown':''"  v-if="item.logistics.length > 0">
+              <li v-for="(cjj,index) in item.logistics">
+                <div class="logisticsL">
+                  <div class="logisticsCircle" :class="index==0?'logisticsCircleFull':''"></div>
+                  <div class="logisticsShuxian"></div>
+                </div>
+                <div class="logisticsR">
+                  {{cjj.type}}&nbsp;&nbsp;{{cjj.time}}
+                </div>
+                <img src="../../images/downJian.png"  :class="logisticsOk?'logisticsImg':''" v-if="index==0 && item.logistics.length > 1" @click="logisticsBoxDown()">
+                <div class="clearBoth"></div>
+              </li>
+            </ul>
+          </div>
+          <div class="waitForTime" v-if="(type == 3 || type == 6)&& timeShowF != ''">
+            {{timeShowF}}
           </div>
           <div id="full_feature" class="swipslider" v-if="type >0 && type < 8 && carList.length > 0" :style="{minHeight:type ==1?'2.5rem':'6rem'}">
             <ul class="sw-slides">
@@ -236,7 +252,9 @@
         httpurl:"",
         carpeoList:[],
         actFlag:"Y",
-        errorlogo: 'this.src="' + require('../../images/carpeople.png') + '"'
+        errorlogo: 'this.src="' + require('../../images/carpeople.png') + '"',
+        setTimeGoF:null,
+        timeShowF:"",
       }
     },
     watch:{
@@ -314,6 +332,13 @@
           sessionStorage.setItem("orderPk",self.$route.query.pk);
           sessionStorage.setItem("dispatchPK",self.$route.query.pk);
           self.$nextTick(function () {
+            if(self.type == 3 || self.type == 6){
+              self.setTimeStart();
+            }else{
+              if(self.setTimeGoF){
+                clearInterval(self.setTimeGoF);
+              }
+            }
             if(self.pdlist[0].errorBiglist.length > 0){
               var htmlFont = document.getElementsByTagName("html");
               var errorBiglist = document.getElementById("errorBiglist");
@@ -598,7 +623,10 @@
                 _this.errorAbnormalBox = false;
                 _this.errorabnormal = "";
                 $("#errorAbnormalBox .errorUl li").removeClass("errorPriceBoxLi");
-                _this.mescroll.resetUpScroll();
+                _this.$cjj("反馈成功");
+                setTimeout(function () {
+                  _this.mescroll.resetUpScroll();
+                },500)
               }else{
                 androidIos.second(abnormalFeedback.message);
               }
@@ -615,9 +643,6 @@
         }else{
            bomb.first("请不要频繁点击");
         }
-       /* if(!bomb.hasClass("errorAbnormalChangeImg","gray")){
-          bridge.invoke("replacement",_this.$route.query.pk)
-        }*/
       },
       errorAbnormalClosed:function () {
         var _this = this;
@@ -664,7 +689,10 @@
                 _this.errorPricetype = "";
                 _this.errorPrice = "";
                 $("#errorPriceBox .errorUl li").removeClass("errorPriceBoxLi");
-                _this.mescroll.resetUpScroll();
+                _this.$cjj("反馈成功");
+                setTimeout(function () {
+                  _this.mescroll.resetUpScroll();
+                },500)
               }else{
                 androidIos.second(abnormalFeedback.message);
               }
@@ -721,6 +749,74 @@
         androidIos.addPageList();
         _this.$router.push({ path: '/site/car'});
       },
+      dayVsDay:function () {
+        var _this = this;
+        var nowTime = (new Date()).getTime();
+        var startTime = (new Date(_this.pdlist[0].goodsmessage.startTime)).getTime();
+        var startTime2 = (new Date(_this.pdlist[0].trackingTime)).getTime();
+        var startTimeyes = startTime - startTime2 > 0 ? startTime : startTime2;
+        var time = nowTime - startTimeyes;
+        if(time <0){
+          time = 0 ;
+        }
+        return time
+      },
+      setTimeStart:function () {
+        var _this = this;
+        var time = _this.dayVsDay();
+        var day = Math.floor(time / (24*60*60*1000));
+        var hour =  Math.floor((time - day * 24 * 60 * 60 * 1000) / (60 * 60 * 1000));
+        var min =  Math.floor((time - day * 24 * 60 * 60 * 1000 - hour * 60 * 60 * 1000) / (60*1000));
+        var sec =  Math.floor((time - day * 24 * 60 * 60 * 1000 - hour * 60 * 60 * 1000 - min *60 *1000) / (1000));
+        if(_this.setTimeGoF){
+          clearInterval(_this.setTimeGoF);
+        }
+        _this.dayShow(day,hour,min,sec);
+        _this.setTimeGoF = setInterval(function () {
+          if(_this.dayVsDay() > 0){
+            sec++;
+          }
+          if(sec == 60){
+            sec = 0;
+            min++;
+          }
+          if(min == 60){
+            min = 0;
+            hour++;
+          }
+          if(hour == 24){
+            hour = 0;
+            day ++;
+          }
+          _this.dayShow(day,hour,min,sec);
+        },1000)
+      },
+      dayShow:function (day,hour,min,sec) {
+        var _this = this;
+        if( day > 0 ){
+          _this.timeShowF = "等待中：" + day + "天" + _this.ten(hour)  + "时" + _this.ten(min) + "分" + _this.ten(sec)+ "秒";
+        }else{
+          if(hour > 0){
+            _this.timeShowF = "等待中：" + _this.ten( hour)  + "时" + _this.ten(min) + "分" + _this.ten(sec)+ "秒";
+          }else{
+            if(min > 0){
+              _this.timeShowF = "等待中：" + _this.ten(min) + "分" + _this.ten(sec)+ "秒";
+            }else{
+              if(sec > 0){
+                _this.timeShowF = "等待中：" + _this.ten(sec)+ "秒";
+              }else{
+                _this.timeShowF = "";
+              }
+            }
+          }
+        }
+      },
+      ten:function (number) {
+        if(number < 10){
+          number = "0" + number;
+        }
+        return number
+      },
       chufa:function(){
         var _this = this;
         if(bomb.hasClass("gogogo","gogogo")){
@@ -739,7 +835,6 @@
               if(driverOut.success=="1" ||driverOut.success == ""){
                 _this.$cjj("出发成功");
                 setTimeout(function () {
-                  /*bridge.invoke('gobackfrom');*/
                   _this.mescroll.resetUpScroll();
                 },500)
               }else{
@@ -776,15 +871,6 @@
                 });
                 return false;
               }
-             /* var nowTime = (new Date()).getTime();
-              var okTime = type == 32 ? (new Date(_this.pdlist[0].goodsmessage.startTime)).getTime() : (new Date(_this.pdlist[0].goodsmessage.endTime)).getTime() ;
-              if((nowTime-okTime)/1000/60/60 > 1){
-                androidIos.second(_this.carList[i].name +"("+_this.carList[i].tel+")已超过规定时间");
-                return false;
-              }else if((nowTime-okTime)/1000/60/60 < -1){
-                androidIos.second(_this.carList[i].name +"("+_this.carList[i].tel+")还未到达规定时间,请稍后再试");
-                return false;
-              }*/
               if(_this.carList[i].length - 3 > 0 ){
                 androidIos.second(_this.carList[i].name +"("+_this.carList[i].tel+")还未到达目的地附近,请稍后再试");
                 return false;
@@ -857,7 +943,9 @@
   function getListDataFromNet(pageNum,pageSize,successCallback,errorCallback) {
     //延时一秒,模拟联网
     setTimeout(function () {
-      thisThat.pdlist = [];
+      if(thisThat.setTimeGoF){
+        clearInterval(thisThat.setTimeGoF);
+      }
       $.ajax({
         type: "POST",
         url: androidIos.ajaxHttp()+"/order/loadEntrustDetail",
@@ -867,7 +955,7 @@
         timeout: 20000,
         success: function (loadSegmentDetail) {
           thisThat.carloading = false;
-          if (loadSegmentDetail.success == "" || loadSegmentDetail.success == "1") {
+          if (loadSegmentDetail.success == "1") {
             thisThat.type = thisThat.$route.query.type;
             var list=[];
             var weh = 0;
@@ -887,11 +975,13 @@
             var tracking=[];
             for(var i =0 ;i<loadSegmentDetail.tracking.length;i++){
               var trackingJson = {
-                type:loadSegmentDetail.tracking[i].tackingMemo,
-                time:loadSegmentDetail.tracking[i].tackingTime,
+                memo:loadSegmentDetail.tracking[i].tackingMemo,
+                createTime:loadSegmentDetail.tracking[i].tackingTime,
               }
-              tracking.push(trackingJson);
+              loadSegmentDetail.abnormalaEventVo.push(trackingJson);
             }
+            loadSegmentDetail.abnormalaEventVo.sort(function(a,b){
+              return  (new Date(b.createTime)).getTime()- (new Date(a.createTime)).getTime()});
             thisThat.endtype = loadSegmentDetail.type;
             sessionStorage.setItem("dataStart",loadSegmentDetail.delivery.addressLatAndLon);
             sessionStorage.setItem("dataEnd",loadSegmentDetail.arrival.addressLatAndLon);
@@ -942,6 +1032,7 @@
               number:loadSegmentDetail.entrustNo,
               time:loadSegmentDetail.createTime,
               pkCar:loadSegmentDetail.pkCar,
+              trackingTime:loadSegmentDetail.trackingTime,
             }]
             thisThat.carList = [];
             thisThat.actFlag = loadSegmentDetail.actFlag;
@@ -1231,12 +1322,26 @@
     line-height: 1.21rem;
     float: left;
   }
+  #sure button span{
+    color:white;
+    font-size: 0.4rem;
+  }
   .noYes{
     width:50%!important;
     float: left;
   }
   .colorBottom{
     background: #88c4ff!important;
+  }
+  .waitForTime{
+    width:90%;
+    margin:0.2rem auto 0 auto;
+    background: white;
+    border-radius: 0.2rem;
+    box-shadow: 0 0.1rem 10px #d8d8d8;
+    padding: 0rem 2%;
+    line-height: 1rem;
+    font-size: 0.4rem;
   }
   .logisticsBox{
     min-height:0.7rem;
@@ -1516,7 +1621,7 @@
   #full_feature {
     padding-top: 0!important;
     width: 94%;
-    margin: 0.4rem auto 0 auto!important;
+    margin: 0.1rem auto 0 auto!important;
   }
   .containerImport{
     position: absolute;
