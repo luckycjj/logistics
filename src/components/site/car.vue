@@ -145,7 +145,9 @@
         var carsures = sessionStorage.getItem("carsure");
         if(carsures != null){
           _this.carSureTuo = JSON.parse(carsures);
-          sessionStorage.removeItem("carsure");
+          if(carsure == null){
+            sessionStorage.removeItem("carsure");
+          }
         }
         _this.orderPk = sessionStorage.getItem("dispatchPK") == undefined ? "" :sessionStorage.getItem("dispatchPK");
         $("#search").unbind("click").click(function () {
@@ -233,7 +235,9 @@
             LABELTOP = JSON.parse(LABELTOP);
             _this.search.tranState = LABELTOP.serach;
             if(LABELTOP.type == 0){
-              _this.lookMoreCarAll(LABELTOP.number);
+              if(LABELTOP.number != ""){
+                _this.lookMoreCarAll(LABELTOP.number);
+              }
             }else if(LABELTOP.type == 1){
               _this.navClick(LABELTOP.type);
             }
@@ -292,10 +296,13 @@
                 var carModel = that.find(".cartype").text();
                 var usernow = that.attr("data-usernow");
                 var sWeight = that.attr("data-sweight");
+                var carPKlistGo = sessionStorage.getItem("carPKlistGo") == undefined ? "" : sessionStorage.getItem("carPKlistGo");
                 if(_this.orderPk != ""){
-                  if(nowType.indexOf("使用") != -1 || nowType.indexOf("维") != -1 || nowType.indexOf("保") != -1){
-                    bomb.first( "该车头正在" + nowType + ",请选择其它车头");
-                    return false;
+                  if(carPKlistGo.indexOf(pkcar) == -1){
+                    if(nowType.indexOf("使用") != -1 || nowType.indexOf("维") != -1 || nowType.indexOf("保") != -1){
+                      bomb.first( "该车头正在" + nowType + ",请选择其它车头");
+                      return false;
+                    }
                   }
                   sessionStorage.setItem("LABELTOP",JSON.stringify({top:0,number:2,type:1,serach:_this.search.tranState}))
                    var json = {
@@ -390,6 +397,7 @@
                   type: "POST",
                   url: androidIos.ajaxHttp() + "/carrier/getCarList",
                   data:JSON.stringify({
+                    pk:"",
                     type:0,
                     page:_this.pageNum*_this.pageSize,
                     size:1,
@@ -466,6 +474,7 @@
                 type: "POST",
                 url: androidIos.ajaxHttp()+"/carrier/getCarList",
                 data:JSON.stringify({
+                  pk:_this.carSureTuo.length == 0 ? "" :_this.carSureTuo[0].pkcar,
                   type:0,
                   page:pageNum,
                   size:pageSize,
@@ -617,19 +626,22 @@
                   var usernow = that.attr("data-usernow");
                   var carModel = that.find(".cartype").text();
                   var sWeight = that.attr("data-sweight");
+                  var carPKlistGo = sessionStorage.getItem("carPKlistGo") == undefined ? "" : sessionStorage.getItem("carPKlistGo");
                   if(_this.orderPk != ""){
                      if(nowType.indexOf("使用") != -1){
-                       if(usernow.indexOf("整") != -1){
-                         bomb.first( "该车辆的运输方式为整车运输，无法拼车");
-                         return false;
-                       }else{
-                         if(sessionStorage.getItem("nowOrderCartype").indexOf("整") != -1){
-                           bomb.first( "该订单选择的运输方式为整车运输，无法拼车");
+                       if(carPKlistGo.indexOf(pkcar) == -1){
+                         if(usernow.indexOf("整") != -1){
+                           bomb.first( "该车辆的运输方式为整车运输，无法拼车");
                            return false;
-                         }else if(sessionStorage.getItem("nowOrderCartype").indexOf("零") != -1){
-                           if(sWeight - sessionStorage.getItem("weh") < 0 ){
-                             bomb.first( "该车辆剩余载重量不足，请选择其它车辆");
+                         }else{
+                           if(sessionStorage.getItem("nowOrderCartype").indexOf("整") != -1){
+                             bomb.first( "该订单选择的运输方式为整车运输，无法拼车");
                              return false;
+                           }else if(sessionStorage.getItem("nowOrderCartype").indexOf("零") != -1){
+                             if(sWeight - sessionStorage.getItem("weh") < 0 ){
+                               bomb.first( "该车辆剩余载重量不足，请选择其它车辆");
+                               return false;
+                             }
                            }
                          }
                        }
@@ -682,6 +694,7 @@
                 type: "POST",
                 url: androidIos.ajaxHttp()+"/carrier/getCarList",
                 data:JSON.stringify({
+                  pk:_this.carSureTuo.length == 0 ? "" :_this.carSureTuo[0].pkcar,
                   type:0,
                   page:pageNum,
                   size:pageSize,

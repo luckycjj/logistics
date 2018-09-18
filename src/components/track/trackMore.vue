@@ -303,6 +303,7 @@
         });
         sessionStorage.removeItem("changeCarpeople");
         sessionStorage.removeItem("changeCarFupeople");
+        sessionStorage.removeItem("nowOrderCartype");
         self.peopleType = self.$route.query.pt == undefined ? 0 :self.$route.query.pt;
         self.mescroll = new MeScroll("mescroll", { //请至少在vue的mounted生命周期初始化mescroll,以确保您配置的id能够被找到
           up: {
@@ -746,6 +747,45 @@
       },
       genghuan:function () {
         var _this = this;
+        if(_this.pdlist[0].pkCarHang == ""){
+          sessionStorage.setItem("LABELTOP",JSON.stringify({
+             number:_this.pdlist[0].pkTransType,
+             type:0,
+             serach:""
+          }))
+          sessionStorage.setItem("carsure",JSON.stringify([{
+            pkcar:_this.pdlist[0].pkCar,
+            carModel:"整车",
+            cartype:0
+          }]))
+        }else{
+          sessionStorage.setItem("LABELTOP",JSON.stringify({
+            number:0,
+            type:1,
+            serach:"",
+            top:0,
+          }))
+          sessionStorage.setItem("carsureListS",JSON.stringify({
+            pkcar:_this.pdlist[0].pkCar,
+            carModel:"车头",
+            cartype:1
+          }))
+          sessionStorage.setItem("GUALABELTOP",JSON.stringify({
+            number:_this.pdlist[0].pkTransType,
+            type:0,
+            serach:"",
+          }))
+          sessionStorage.setItem("carsure",JSON.stringify([{
+            pkcar:_this.pdlist[0].pkCar,
+            carModel:"车头",
+            cartype:0
+          },{
+            pkcar:_this.pdlist[0].pkCarHang,
+            carModel:"车挂",
+            cartype:0
+          }]))
+        }
+        sessionStorage.setItem("carPKlistGo",_this.pdlist[0].pkCar + "," + _this.pdlist[0].pkCarHang);
         androidIos.addPageList();
         _this.$router.push({ path: '/site/car'});
       },
@@ -976,6 +1016,7 @@
               list.push(listJson);
             }
             sessionStorage.setItem("weh",weh);
+            sessionStorage.setItem("nowOrderCartype",loadSegmentDetail.transType);
             var tracking=[];
             for(var i =0 ;i<loadSegmentDetail.tracking.length;i++){
               var trackingJson = {
@@ -1037,6 +1078,9 @@
               time:loadSegmentDetail.createTime,
               pkCar:loadSegmentDetail.pkCar,
               trackingTime:loadSegmentDetail.trackingTime,
+              pkCar: loadSegmentDetail.pkCar,
+              pkCarHang:loadSegmentDetail.pkCarHang,
+              pkTransType:loadSegmentDetail.pkTransType,
             }]
             thisThat.carList = [];
             thisThat.actFlag = loadSegmentDetail.actFlag;

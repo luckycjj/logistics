@@ -132,7 +132,9 @@
           GUALABELTOP = JSON.parse(GUALABELTOP);
           _this.search.tranState = GUALABELTOP.sarech;
           if(GUALABELTOP.type == 0){
-            _this.lookMoreCarAll(GUALABELTOP.number);
+            if(GUALABELTOP.number != ""){
+              _this.lookMoreCarAll(GUALABELTOP.number);
+            }
           }
           sessionStorage.removeItem("GUALABELTOP");
         }
@@ -252,10 +254,13 @@
                   var pkcar = that.attr("data-pkCar");
                   var cartype = that.attr("data-carType");
                   var carModel = that.find(".cartype").text();
+                  var carPKlistGo = sessionStorage.getItem("carPKlistGo") == undefined ? "" : sessionStorage.getItem("carPKlistGo");
                   if(_this.orderPk != ""){
-                    if(nowType.indexOf("使用") != -1 || nowType.indexOf("维") != -1 || nowType.indexOf("保") != -1){
-                      bomb.first( "该车挂正在" + nowType + ",请选择其它车挂");
-                      return false;
+                    if(carPKlistGo.indexOf(pkcar) == -1){
+                      if(nowType.indexOf("使用") != -1 || nowType.indexOf("维") != -1 || nowType.indexOf("保") != -1){
+                        bomb.first( "该车挂正在" + nowType + ",请选择其它车挂");
+                        return false;
+                      }
                     }
                     _this.carSure.push({
                       pkcar:pkcar,
@@ -277,6 +282,7 @@
                 type: "POST",
                 url: androidIos.ajaxHttp()+"/carrier/getCarList",
                 data:JSON.stringify({
+                  pk:_this.carSureTuo.length == 0 ? "" :_this.carSureTuo[1].pkcar,
                   type:0,
                   page:pageNum,
                   size:pageSize,

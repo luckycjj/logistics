@@ -631,7 +631,7 @@
                 sessionStorage.removeItem("histroyAddress");
                 sessionStorage.removeItem("newOrder");
               }
-              if(newOrder!=undefined && sessionStorage.getItem("newOrder")!= undefined){
+              if(newOrder!=undefined && histroyAddress == undefined){
                 newOrder = JSON.parse(newOrder);
                 _this.both = newOrder;
                 _this.price = _this.both.price;
@@ -639,7 +639,8 @@
                   $("#newOrderBox").animate({scrollTop: _this.both.scrollTop}, 0);
                 })
                 sessionStorage.removeItem("newOrder");
-              }else{
+              }
+              if(newOrder==null && histroyAddress == null){
                 $.ajax({
                   type: "POST",
                   url: androidIos.ajaxHttp()+"/address/getAddres",
