@@ -74,7 +74,7 @@
           </div>
           <div class="message">
             <div class="goodsmessage">
-              <p :data-start="item.pickMessage.address" :data-end="item.endMessage.address" class="startEnd"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.startAddress}}</span><img style="float: left;margin:0.3rem 0.3rem;width:0.41rem;" src="../../images/addressImg.png"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.endAddress}}</span><span  v-if="type == '20' || type == '40' || type == '60' " class="distance">{{item.goodsmessage.distance}}km</span><div class="clearBoth"></div></p>
+              <p :data-start="item.pickMessage.address" :data-end="item.endMessage.address" class="startEnd"><span style="float: left;font-size: 0.4rem;color:#333;font-weight: bold;">{{item.goodsmessage.startAddress}}<img style="display: inline-block;margin:0rem 0.3rem 0.13rem 0.3rem;width:0.41rem;" src="../../images/addressImg.png">{{item.goodsmessage.endAddress}}</span><span  v-if="type == '20' || type == '40' || type == '60' " class="distance">{{item.goodsmessage.distance}}km</span><div class="clearBoth"></div></p>
               <h1>{{item.goodsmessage.tranType}}</h1>
               <h4>{{item.goodsmessage.money}}元</h4>
               <div class="clearBoth"></div>
@@ -860,7 +860,7 @@
       daoda:function(type){
         var _this = this;
         if(bomb.hasClass("gogogo","gogogo")){
-          if(type == 32){
+          if(type == 31 || type == 32 || type == 42 || type == 41){
             for(var i = 0 ; i < _this.carList.length; i++){
               if(_this.carList[i].length == ""){
                 androidIos.first("请提醒" + _this.carList[i].name +"("+_this.carList[i].tel+")打开定位系统");
@@ -871,8 +871,12 @@
                 });
                 return false;
               }
-              if(_this.carList[i].length - 3 > 0 ){
-                androidIos.second(_this.carList[i].name +"("+_this.carList[i].tel+")还未到达目的地附近,请稍后再试");
+              if(_this.carList[i].length - 0.5 >= 0 ){
+                if(type == 31 || type == 32){
+                  androidIos.second(_this.carList[i].name +"("+_this.carList[i].tel+")还未到达" + _this.pdlist[0].pickMessage.address+ "附近,请稍后再试");
+                }else if(type == 42 || type == 41){
+                  androidIos.second(_this.carList[i].name +"("+_this.carList[i].tel+")还未到达" + _this.pdlist[0].endMessage.address+ "附近,请稍后再试");
+                }
                 return false;
               }
             }
