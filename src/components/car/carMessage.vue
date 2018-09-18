@@ -16,7 +16,7 @@
           </div>
           <div id="carMessageBox" v-for="(items,indexs) in item.carMessage.list">
             <p>{{items.number}}<span v-if="items.tranType != ''">{{items.tranType}}</span><span v-if="items.tranModel != ''">{{items.tranModel}}</span><span style="float: right" v-if="indexs == 0" class="km"></span></p>
-            <h1>满载：{{items.weight}}吨&nbsp;&nbsp;已承载：{{items.nowWeight}}吨</h1>
+            <h1 v-if="items.weight != 0">满载：{{items.weight}}吨&nbsp;&nbsp;已承载：{{items.nowWeight}}吨</h1>
           </div>
           <div id="peopleMessage" v-if="type==1">
             <div class="imgBoxOverFllow">
