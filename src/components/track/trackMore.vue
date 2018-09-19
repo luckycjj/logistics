@@ -990,148 +990,151 @@
       if(thisThat.setTimeGoF){
         clearInterval(thisThat.setTimeGoF);
       }
-      $.ajax({
-        type: "POST",
-        url: androidIos.ajaxHttp()+"/order/loadEntrustDetail",
-        data:JSON.stringify({pk:thisThat.$route.query.pk,userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")}),
-        contentType: "application/json;charset=utf-8",
-        dataType: "json",
-        timeout: 20000,
-        success: function (loadSegmentDetail) {
-          thisThat.carloading = false;
-          if (loadSegmentDetail.success == "1") {
-            thisThat.type = thisThat.$route.query.type;
-            var list=[];
-            var weh = 0;
-            for(var i =0;i<loadSegmentDetail.invPackDao.length;i++){
-              var weight = loadSegmentDetail.invPackDao[i].weigthUnit==3?loadSegmentDetail.invPackDao[i].weight*1000:loadSegmentDetail.invPackDao[i].weight*1;
-              var listJson = {
-                goodsCode:loadSegmentDetail.invPackDao[i].goodsCode+"-"+loadSegmentDetail.invPackDao[i].goodsType,
-                goods:loadSegmentDetail.invPackDao[i].goodsName+"-"+loadSegmentDetail.invPackDao[i].goodsTypeName,
-                number:loadSegmentDetail.invPackDao[i].num,
-                weight: weight/1000 - 1 <0 ? weight + "千克" : weight/1000 + "吨",
-                volume:loadSegmentDetail.invPackDao[i].volume*1 - 1 < 0 ? loadSegmentDetail.invPackDao[i].volume*1000 + "升" : loadSegmentDetail.invPackDao[i].volume*1 + "立方米",
+      thisThat.carList = [];
+      thisThat.$nextTick(function () {
+        $.ajax({
+          type: "POST",
+          url: androidIos.ajaxHttp()+"/order/loadEntrustDetail",
+          data:JSON.stringify({pk:thisThat.$route.query.pk,userCode:sessionStorage.getItem("token"),source:sessionStorage.getItem("source")}),
+          contentType: "application/json;charset=utf-8",
+          dataType: "json",
+          timeout: 20000,
+          success: function (loadSegmentDetail) {
+            thisThat.carloading = false;
+            if (loadSegmentDetail.success == "1") {
+              thisThat.type = thisThat.$route.query.type;
+              var list=[];
+              var weh = 0;
+              for(var i =0;i<loadSegmentDetail.invPackDao.length;i++){
+                var weight = loadSegmentDetail.invPackDao[i].weigthUnit==3?loadSegmentDetail.invPackDao[i].weight*1000:loadSegmentDetail.invPackDao[i].weight*1;
+                var listJson = {
+                  goodsCode:loadSegmentDetail.invPackDao[i].goodsCode+"-"+loadSegmentDetail.invPackDao[i].goodsType,
+                  goods:loadSegmentDetail.invPackDao[i].goodsName+"-"+loadSegmentDetail.invPackDao[i].goodsTypeName,
+                  number:loadSegmentDetail.invPackDao[i].num,
+                  weight: weight/1000 - 1 <0 ? weight + "千克" : weight/1000 + "吨",
+                  volume:loadSegmentDetail.invPackDao[i].volume*1 - 1 < 0 ? loadSegmentDetail.invPackDao[i].volume*1000 + "升" : loadSegmentDetail.invPackDao[i].volume*1 + "立方米",
+                }
+                weh += weight/1000 + weh ;
+                list.push(listJson);
               }
-              weh += weight/1000 + weh ;
-              list.push(listJson);
-            }
-            sessionStorage.setItem("weh",weh);
-            sessionStorage.setItem("nowOrderCartype",loadSegmentDetail.transType);
-            var tracking=[];
-            for(var i =0 ;i<loadSegmentDetail.tracking.length;i++){
-              var trackingJson = {
-                memo:loadSegmentDetail.tracking[i].tackingMemo,
-                createTime:loadSegmentDetail.tracking[i].tackingTime,
+              sessionStorage.setItem("weh",weh);
+              sessionStorage.setItem("nowOrderCartype",loadSegmentDetail.transType);
+              var tracking=[];
+              for(var i =0 ;i<loadSegmentDetail.tracking.length;i++){
+                var trackingJson = {
+                  memo:loadSegmentDetail.tracking[i].tackingMemo,
+                  createTime:loadSegmentDetail.tracking[i].tackingTime,
+                }
+                loadSegmentDetail.abnormalaEventVo.push(trackingJson);
               }
-              loadSegmentDetail.abnormalaEventVo.push(trackingJson);
-            }
-            loadSegmentDetail.abnormalaEventVo.sort(function(a,b){
-              return  (new Date(b.createTime)).getTime()- (new Date(a.createTime)).getTime()});
-            thisThat.endtype = loadSegmentDetail.type;
-            sessionStorage.setItem("dataStart",loadSegmentDetail.delivery.addressLatAndLon);
-            sessionStorage.setItem("dataEnd",loadSegmentDetail.arrival.addressLatAndLon);
-            var pdlist = [{
-              orderType:loadSegmentDetail.trackingStatusValue,
-              orderValue:loadSegmentDetail.trackingStatus == null ? "已确认" : loadSegmentDetail.trackingStatus,
-              logistics:tracking,
-              errorBiglist:loadSegmentDetail.abnormalaEventVo == undefined ? [] : loadSegmentDetail.abnormalaEventVo,
-              goodsmessage:{
-                startAddress:loadSegmentDetail.delivery != null ? ( loadSegmentDetail.delivery.province /*+ loadSegmentDetail.delivery.city */+ loadSegmentDetail.delivery.area ) : "" ,
-                endAddress:loadSegmentDetail.arrival!=null?(loadSegmentDetail.arrival.province/*+loadSegmentDetail.arrival.city*/+loadSegmentDetail.arrival.area):"",
-                distance:"0",
-                tranType:loadSegmentDetail.transType,
-                productList:list,
-                money:loadSegmentDetail.price*1,
-                startTime:loadSegmentDetail.deliDate,
-                endTime:loadSegmentDetail.arriDate
-              },
-              pickMessage:{
-                name:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.contact:"",
-                tel:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.mobile:"",
-                company:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.addrName:"",
-                address:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.province/*+loadSegmentDetail.delivery.city*/+loadSegmentDetail.delivery.area+loadSegmentDetail.delivery.detailAddr:"",
-                addresspk:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.pkAddress:"",
-              },
-              endMessage:{
-                name:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.contact:"",
-                tel:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.mobile:"",
-                company:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.addrName:"",
-                address:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.province/*+loadSegmentDetail.arrival.city*/+loadSegmentDetail.arrival.area+loadSegmentDetail.arrival.detailAddr:"",
-                addresspk:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.pkAddress:"",
-              },
-              insurance:{
-                name:"",
-                price:"200"
-              },
-              pickPay:{
-                people:"发货方",
-                remark:loadSegmentDetail.remark
-              },
-              owner:{
-                logo:loadSegmentDetail.customerDto!=null?loadSegmentDetail.customerDto.customerImg:"",
-                company:loadSegmentDetail.customerDto!=null?loadSegmentDetail.customerDto.customerName:"",
-                year:loadSegmentDetail.customerDto!=null?((((new Date()).getTime()-(new Date(loadSegmentDetail.customerDto.createDate.replace('-','/').replace('-','/'))).getTime())/1000/60/60/24/365 -0.5)<0?"不到半年":androidIos.fixed(((new Date()).getTime()-(new Date(invoiceDetail.customerDto.createDate.replace('-','/').replace('-','/'))).getTime())/1000/60/60/24/365 ,1)+"年"):"",
-                phone:loadSegmentDetail.customerDto!=null?loadSegmentDetail.customerDto.mobile:"",
-              },
-              tranNumber:"123321334343",
-              number:loadSegmentDetail.entrustNo,
-              time:loadSegmentDetail.createTime,
-              pkCar:loadSegmentDetail.pkCar,
-              trackingTime:loadSegmentDetail.trackingTime,
-              pkCar: loadSegmentDetail.pkCar,
-              pkCarHang:loadSegmentDetail.pkCarHang,
-              pkTransType:loadSegmentDetail.pkTransType,
-            }]
-            thisThat.carList = [];
-            thisThat.actFlag = loadSegmentDetail.actFlag;
-            for(var i = 0; i < loadSegmentDetail.driverDto.length ; i++ ){
-              var json = {
-                logo:loadSegmentDetail.driverDto[i].driverImg,
-                name:loadSegmentDetail.driverDto[i].driverName,
-                year:loadSegmentDetail.driverDto[i].driverAge*1 < 1 ? "小于1" : loadSegmentDetail.driverDto[i].driverAge,
-                tel:loadSegmentDetail.driverDto[i].mobile,
-                startJ :loadSegmentDetail.delivery.addressLatAndLon == ""||loadSegmentDetail.delivery.addressLatAndLon == null ? "" :loadSegmentDetail.delivery.addressLatAndLon.split(",")[0],
-                startW : loadSegmentDetail.delivery.addressLatAndLon == ""||loadSegmentDetail.delivery.addressLatAndLon == null ? "" :loadSegmentDetail.delivery.addressLatAndLon.split(",")[1],
-                endJ:loadSegmentDetail.arrival.addressLatAndLon == "" ||loadSegmentDetail.arrival.addressLatAndLon == null ? "" :loadSegmentDetail.arrival.addressLatAndLon.split(",")[0],
-                endW:loadSegmentDetail.arrival.addressLatAndLon == "" ||loadSegmentDetail.arrival.addressLatAndLon == null ? "" :loadSegmentDetail.arrival.addressLatAndLon.split(",")[1],
-                pkDriver:loadSegmentDetail.driverDto[i].pkDriver,
-                peopleJ:loadSegmentDetail.driverDto[i].driverPosition.split(",")[0],
-                peopleW:loadSegmentDetail.driverDto[i].driverPosition.split(",")[1],
-                ordertype:loadSegmentDetail.trackingStatusValue*1,
-                price:loadSegmentDetail.driverDto[i].score*1,
-                length:"",
-              }
+              loadSegmentDetail.abnormalaEventVo.sort(function(a,b){
+                return  (new Date(b.createTime)).getTime()- (new Date(a.createTime)).getTime()});
+              thisThat.endtype = loadSegmentDetail.type;
+              sessionStorage.setItem("dataStart",loadSegmentDetail.delivery.addressLatAndLon);
+              sessionStorage.setItem("dataEnd",loadSegmentDetail.arrival.addressLatAndLon);
+              var pdlist = [{
+                orderType:loadSegmentDetail.trackingStatusValue,
+                orderValue:loadSegmentDetail.trackingStatus == null ? "已确认" : loadSegmentDetail.trackingStatus,
+                logistics:tracking,
+                errorBiglist:loadSegmentDetail.abnormalaEventVo == undefined ? [] : loadSegmentDetail.abnormalaEventVo,
+                goodsmessage:{
+                  startAddress:loadSegmentDetail.delivery != null ? ( loadSegmentDetail.delivery.province /*+ loadSegmentDetail.delivery.city */+ loadSegmentDetail.delivery.area ) : "" ,
+                  endAddress:loadSegmentDetail.arrival!=null?(loadSegmentDetail.arrival.province/*+loadSegmentDetail.arrival.city*/+loadSegmentDetail.arrival.area):"",
+                  distance:"0",
+                  tranType:loadSegmentDetail.transType,
+                  productList:list,
+                  money:loadSegmentDetail.price*1,
+                  startTime:loadSegmentDetail.deliDate,
+                  endTime:loadSegmentDetail.arriDate
+                },
+                pickMessage:{
+                  name:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.contact:"",
+                  tel:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.mobile:"",
+                  company:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.addrName:"",
+                  address:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.province/*+loadSegmentDetail.delivery.city*/+loadSegmentDetail.delivery.area+loadSegmentDetail.delivery.detailAddr:"",
+                  addresspk:loadSegmentDetail.delivery!=null?loadSegmentDetail.delivery.pkAddress:"",
+                },
+                endMessage:{
+                  name:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.contact:"",
+                  tel:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.mobile:"",
+                  company:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.addrName:"",
+                  address:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.province/*+loadSegmentDetail.arrival.city*/+loadSegmentDetail.arrival.area+loadSegmentDetail.arrival.detailAddr:"",
+                  addresspk:loadSegmentDetail.arrival!=null?loadSegmentDetail.arrival.pkAddress:"",
+                },
+                insurance:{
+                  name:"",
+                  price:"200"
+                },
+                pickPay:{
+                  people:"发货方",
+                  remark:loadSegmentDetail.remark
+                },
+                owner:{
+                  logo:loadSegmentDetail.customerDto!=null?loadSegmentDetail.customerDto.customerImg:"",
+                  company:loadSegmentDetail.customerDto!=null?loadSegmentDetail.customerDto.customerName:"",
+                  year:loadSegmentDetail.customerDto!=null?((((new Date()).getTime()-(new Date(loadSegmentDetail.customerDto.createDate.replace('-','/').replace('-','/'))).getTime())/1000/60/60/24/365 -0.5)<0?"不到半年":androidIos.fixed(((new Date()).getTime()-(new Date(invoiceDetail.customerDto.createDate.replace('-','/').replace('-','/'))).getTime())/1000/60/60/24/365 ,1)+"年"):"",
+                  phone:loadSegmentDetail.customerDto!=null?loadSegmentDetail.customerDto.mobile:"",
+                },
+                tranNumber:"123321334343",
+                number:loadSegmentDetail.entrustNo,
+                time:loadSegmentDetail.createTime,
+                pkCar:loadSegmentDetail.pkCar,
+                trackingTime:loadSegmentDetail.trackingTime,
+                pkCar: loadSegmentDetail.pkCar,
+                pkCarHang:loadSegmentDetail.pkCarHang,
+                pkTransType:loadSegmentDetail.pkTransType,
+              }]
+              thisThat.carList = [];
+              thisThat.actFlag = loadSegmentDetail.actFlag;
+              for(var i = 0; i < loadSegmentDetail.driverDto.length ; i++ ){
+                var json = {
+                  logo:loadSegmentDetail.driverDto[i].driverImg,
+                  name:loadSegmentDetail.driverDto[i].driverName,
+                  year:loadSegmentDetail.driverDto[i].driverAge*1 < 1 ? "小于1" : loadSegmentDetail.driverDto[i].driverAge,
+                  tel:loadSegmentDetail.driverDto[i].mobile,
+                  startJ :loadSegmentDetail.delivery.addressLatAndLon == ""||loadSegmentDetail.delivery.addressLatAndLon == null ? "" :loadSegmentDetail.delivery.addressLatAndLon.split(",")[0],
+                  startW : loadSegmentDetail.delivery.addressLatAndLon == ""||loadSegmentDetail.delivery.addressLatAndLon == null ? "" :loadSegmentDetail.delivery.addressLatAndLon.split(",")[1],
+                  endJ:loadSegmentDetail.arrival.addressLatAndLon == "" ||loadSegmentDetail.arrival.addressLatAndLon == null ? "" :loadSegmentDetail.arrival.addressLatAndLon.split(",")[0],
+                  endW:loadSegmentDetail.arrival.addressLatAndLon == "" ||loadSegmentDetail.arrival.addressLatAndLon == null ? "" :loadSegmentDetail.arrival.addressLatAndLon.split(",")[1],
+                  pkDriver:loadSegmentDetail.driverDto[i].pkDriver,
+                  peopleJ:loadSegmentDetail.driverDto[i].driverPosition.split(",")[0],
+                  peopleW:loadSegmentDetail.driverDto[i].driverPosition.split(",")[1],
+                  ordertype:loadSegmentDetail.trackingStatusValue*1,
+                  price:loadSegmentDetail.driverDto[i].score*1,
+                  length:"",
+                }
                 thisThat.carList.push(json);
-            }
-            var data=pdlist;
-            var listData=data;//模拟分页数据
-            successCallback&&successCallback(listData);//成功回调
-          }else{
-            if(thisThat.pdlist.length ==0){
-              androidIos.second(loadSegmentDetail.message);
+              }
+              var data=pdlist;
+              var listData=data;//模拟分页数据
+              successCallback&&successCallback(listData);//成功回调
             }else{
-              successCallback&&successCallback(thisThat.pdlist);
+              if(thisThat.pdlist.length ==0){
+                androidIos.second(loadSegmentDetail.message);
+              }else{
+                successCallback&&successCallback(thisThat.pdlist);
+              }
+
             }
 
-          }
-
-        },
-        complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
-          thisThat.carloading = false;
-          if(status=='timeout'){//超时,status还有success,error等值的情况
-            if(thisThat.pdlist.length ==0){
-              androidIos.second("网络请求超时");
-            }else{
-              successCallback&&successCallback(thisThat.pdlist);
+          },
+          complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+            thisThat.carloading = false;
+            if(status=='timeout'){//超时,status还有success,error等值的情况
+              if(thisThat.pdlist.length ==0){
+                androidIos.second("网络请求超时");
+              }else{
+                successCallback&&successCallback(thisThat.pdlist);
+              }
+            }else if(status=='error'){
+              if(thisThat.pdlist.length ==0){
+                androidIos.errorwife();
+              }else{
+                successCallback&&successCallback(thisThat.pdlist);
+              }
             }
-          }else if(status=='error'){
-            if(thisThat.pdlist.length ==0){
-              androidIos.errorwife();
-            }else{
-              successCallback&&successCallback(thisThat.pdlist);
-            }
           }
-        }
+        })
       })
     },500)
   }

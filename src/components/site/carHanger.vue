@@ -221,7 +221,7 @@
             var nnnn = 0;
             for (var i = 0; i < curPageData.length; i++) {
               var pd=curPageData[i];
-              var type =_this.orderPk =="" ? ( pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用': '已审核'):( pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用' : (pd.type == 1 ? '使用中': pd.type == 2 ?  '在途中' : pd.type == 3 ? '维修中' : pd.type == 4 ? '保养中' : '空闲中'));
+              var type = pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用' : (pd.type == 1 ? '使用中': pd.type == 2 ?  '在途中' : pd.type == 3 ? '维修中' : pd.type == 4 ? '保养中' : '空闲中');
               var types = '<span class="nowtype">'+type+'</span>';
               var display = $("#search").find("h5").text() == "取消" ? "block":"none";
               var length = pd.length == "" ? "" : pd.length+ "米" ;
@@ -254,11 +254,16 @@
                   var pkcar = that.attr("data-pkCar");
                   var cartype = that.attr("data-carType");
                   var carModel = that.find(".cartype").text();
+                  var sWeight = that.attr("data-sweight");
                   var carPKlistGo = sessionStorage.getItem("carPKlistGo") == undefined ? "" : sessionStorage.getItem("carPKlistGo");
                   if(_this.orderPk != ""){
                     if(carPKlistGo.indexOf(pkcar) == -1){
                       if(nowType.indexOf("使用") != -1 || nowType.indexOf("维") != -1 || nowType.indexOf("保") != -1){
                         bomb.first( "该车挂正在" + nowType + ",请选择其它车挂");
+                        return false;
+                      }
+                      if(sWeight - sessionStorage.getItem("weh") < 0 ){
+                        bomb.first( "该车辆剩余载重量不足，请选择其它车辆");
                         return false;
                       }
                     }

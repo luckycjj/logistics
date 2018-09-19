@@ -261,7 +261,7 @@
           var nnnn = 0;
           for (var i = 0; i < curPageData.length; i++) {
             var pd=curPageData[i];
-            var type =_this.orderPk =="" ? ( pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用': '已审核'):( pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用' : (pd.type == 1 ? '使用中': pd.type == 2 ?  '在途中' : pd.type == 3 ? '维修中' : pd.type == 4 ? '保养中' : '空闲中'));
+            var type =pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用' : (pd.type == 1 ? '使用中': pd.type == 2 ?  '在途中' : pd.type == 3 ? '维修中' : pd.type == 4 ? '保养中' : '空闲中');
             var types = '<span class="nowtype">'+type+'</span>';
             var display = $("#search").find("h5").text() == "取消" ? "block":"none";
             var length = pd.length == "" ? "" : pd.length+ "米" ;
@@ -276,7 +276,7 @@
               }
             }
             var img2 = _this.orderPk != "" ?"<div class='checkImg' style='display: "+display3+"'></div>":"";
-            var str = '<div class="top" data-sWeight="'+androidIos.numSub(pd.zongweight ,pd.nowweight)+'" data-userNow="'+pd.userNow+'" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
+            var str = '<div class="top" data-pdType="' + pd.type+ '" data-sWeight="'+androidIos.numSub(pd.zongweight ,pd.nowweight)+'" data-userNow="'+pd.userNow+'" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
                 '<h1 style="width:80%;margin-top: 0.2rem;margin-bottom: 0.1rem;"><span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span></h1>'+types+'<div class="clearBoth"></div>'+
                 '<p style="min-height: ' + minheight + ';" class="weight"><span style="font-size: 0.34rem;display: ' + display2+ '">满载：<span style="font-size: 0.34rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
                 img + img2 +
@@ -332,6 +332,11 @@
             $(".reaseImg").unbind("click").click(function (event) {
               event.stopPropagation();
               var that = $(this).parents("li");
+              var pdType = that.find(".top").attr("data-pdType");
+              if(pdType == 1 || pdType == 2){
+                bomb.first("该车辆正在使用中，无法修改");
+                return false;
+              }
               var json = {
                 cartrantype:that.find(".transtype").text(),
                 carmodelNumber:that.find(".transtype").text(),
@@ -359,6 +364,11 @@
             })
             $(".clearImg").unbind("click").click(function () {
               var carPk = $(this).parents("li").find(".top").attr("data-pkCar");
+              var pdType = $(this).parents("li").find(".top").attr("data-pdType");
+              if(pdType == 1 || pdType == 2){
+                bomb.first("该车辆正在使用中，无法删除");
+                return false;
+              }
               androidIos.first("确定删除吗？");
               var that = $(this);
               $("#tanBox-yes").unbind("click").click(function () {
@@ -393,6 +403,7 @@
                     }
                   }
                 });
+                _this.jiaobiaoAjax();
                 $.ajax({
                   type: "POST",
                   url: androidIos.ajaxHttp() + "/carrier/getCarList",
@@ -459,7 +470,7 @@
                       setListData([],_this.pageNum*_this.pageSize,1,'');
                     }
                   }
-                })
+                });
               })
 
             })
@@ -590,7 +601,7 @@
             var nnnn = 0;
             for (var i = 0; i < curPageData.length; i++) {
               var pd=curPageData[i];
-              var type =_this.orderPk =="" ? ( pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用': '已审核'):( pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用' : (pd.type == 1 ? '使用中': pd.type == 2 ?  '在途中' : pd.type == 3 ? '维修中' : pd.type == 4 ? '保养中' : '空闲中'));
+              var type =pd.now == 0 ? '审核中' :pd.now == 2 ? '已驳回' : pd.now == 3 ? '已禁用' : (pd.type == 1 ? '使用中': pd.type == 2 ?  '在途中' : pd.type == 3 ? '维修中' : pd.type == 4 ? '保养中' : '空闲中');
               var types = '<span class="nowtype">'+type+'</span>';
               var display = $("#search").find("h5").text() == "取消" ? "block":"none";
               var length = pd.length == "" ? "" : pd.length+ "米" ;
