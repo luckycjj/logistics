@@ -21,8 +21,8 @@
               <div class="clearBoth"></div>
             <div class="secondBox">
               <img src="../../images/edit.png" @click="editLine(item)" v-if="manage">
-              <img src="../../images/clean.png" @click="cleanLine(index)" v-if="manage">
-              <img src="../../images/checked.png"  v-if="!manage&&item.checked == '1'">
+              <img src="../../images/clean.png" @click="cleanLine(index)" v-if="manage && item.checked == '0'">
+              <img src="../../images/checked.png"  v-if="!manage && item.checked == '1'">
               <div class="clearBoth"></div>
             </div>
             </div>
@@ -404,6 +404,35 @@
           success: function (getAddres) {
             if(getAddres.success=="1"){
               listData = getAddres.list;
+              for(var i = 0 ; i < getAddres.list.length;i++){
+                 if(getAddres.list[i].checked == 1){
+                   var newOrder = sessionStorage.getItem("newOrder");
+                   if(newOrder != undefined){
+                     newOrder = JSON.parse(newOrder);
+                     if(thisthatsecond.$route.query.type == 1){
+                       newOrder.startAddress = {
+                         address: getAddres.list[i].detailAddr,
+                         city: getAddres.list[i].province + "-" + getAddres.list[i].city + "-" + getAddres.list[i].area,
+                         company:  getAddres.list[i].addrName,
+                         people:  getAddres.list[i].contact,
+                         pk:  getAddres.list[i].pkAddress,
+                         tel:  getAddres.list[i].mobile,
+                       }
+                     }else if(thisthatsecond.$route.query.type == 3){
+                       newOrder.endAddress = {
+                         address: getAddres.list[i].detailAddr,
+                         city: getAddres.list[i].province + "-" + getAddres.list[i].city + "-" + getAddres.list[i].area,
+                         company:  getAddres.list[i].addrName,
+                         people:  getAddres.list[i].contact,
+                         pk:  getAddres.list[i].pkAddress,
+                         tel:  getAddres.list[i].mobile,
+                       }
+                     }
+                     sessionStorage.setItem("newOrder",JSON.stringify(newOrder));
+                   }
+                   break;
+                 }
+              }
               successCallback&&successCallback(listData);//成功回调
             }else{
               androidIos.second(getAddres.message);

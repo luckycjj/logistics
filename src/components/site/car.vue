@@ -179,18 +179,21 @@
               })
             }
           }else{
-            var display = $("#car .clearImg").css("display");
-            if(display == "block"){
-              if($("#dataList0 li").length > 0){
-                $("#car .clearImg").css("display","none");
-                $("#car .reaseImg").css("display","none");
-                $(this).find("h5").text("编辑");
-              }
-            }else{
-              if($("#dataList0 li").length > 0){
-                $("#car .clearImg").css("display","block");
-                $("#car .reaseImg").css("display","block");
-                $(this).find("h5").text("取消");
+            var lengthCLear = $("#car .clearImg").length;
+            if(lengthCLear > 0){
+              var display = $("#car .clearImg").css("display");
+              if(display == "block"){
+                if($("#dataList0 li").length > 0){
+                  $("#car .clearImg").css("display","none");
+                  $("#car .reaseImg").css("display","none");
+                  $(this).find("h5").text("编辑");
+                }
+              }else{
+                if($("#dataList0 li").length > 0){
+                  $("#car .clearImg").css("display","block");
+                  $("#car .reaseImg").css("display","block");
+                  $(this).find("h5").text("取消");
+                }
               }
             }
           }
@@ -267,7 +270,10 @@
             var minheight = pd.zongweight == "0" ? "0.5rem" : "auto";
             var display2 = pd.zongweight == "0" ? "none" : "inline";
             var paddingBottom =  pd.zongweight == "0" ? "0rem" : "0.12rem";
-            var img = _this.orderPk ==""  && (pd.now == '0' || pd.now == '1' || pd.now == '2')?"<div class='clearImg' style='display: "+display+"'></div><div class='reaseImg' style='display: "+display+"'></div>":_this.orderPk =="" && pd.carType == '0' && pd.now == '3'  ? "<div class='clearImg' style='right:0.6rem;display: " + display + "'></div>" : "";
+            var img = "";
+            if(type.indexOf("使用中") == -1  && type.indexOf("在途中") == -1){
+              img = _this.orderPk ==""  && (pd.now == '0' || pd.now == '1' || pd.now == '2')?"<div class='clearImg' style='display: "+display+"'></div><div class='reaseImg' style='display: "+display+"'></div>":_this.orderPk =="" && pd.carType == '0' && pd.now == '3'  ? "<div class='clearImg' style='right:0.6rem;display: " + display + "'></div>" : "";
+            }
             var display3 = "none";
             for(var a = 0 ; a < _this.carSureTuo.length ; a ++){
               if(_this.carSureTuo[a].pkcar == pd.pkCar){
