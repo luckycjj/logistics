@@ -172,6 +172,7 @@
       },
       lookMoreCarAll:function (Zongtype) {
         var _this = this;
+        Zongtype = Zongtype == undefined ? 0 : Zongtype;
         for(var i = 1 ; i < 5 ; i++){
           $("#mescroll" + i).css("height","auto");
           $("#mescroll" + i).html("<ul id='dataList" + i + "' class='data-list'></ul>");
@@ -332,7 +333,7 @@
                         carType:pdType,
                         transType:tt.transType,
                         now:tt.checkStatus == '1' ? 0 : tt.checkStatus == '3' ? 2 :  tt.checkStatus == '4' ? 3 : 1 ,
-                        userNow:tt.pkTransType == null ? "" : tt.pkTransType
+                        userNow:tt.pkTransType == null ? "整车运输" : tt.pkTransType
                       }
                       listData.push(json);
                     }
@@ -376,7 +377,7 @@
         carModel = carModel.join(",");
         pkcar = pkcar.join(",");
         androidIos.addPageList();
-        _this.$router.push({ path: '/car',query:{title: carModel,pkCar:pkcar,carType:cartype}});
+        _this.$router.push({ path: '/car',query:{title: carModel,pkCar:pkcar,carType:cartype,nowCartype:0}});
       },
       navClick:function (number) {
         var _this = this;

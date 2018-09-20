@@ -26,7 +26,7 @@
                <p>{{item.carMessage.carPeople.name}}</p>
                <h1>驾龄：{{item.carMessage.carPeople.year}}年</h1>
              </div>
-            <div class="tel replace" v-if="item.carType == 1 && carType == 0" @click="changeCarpeople(item.carMessage.carPeople.carPeoplePk,0)">
+            <div class="tel replace" v-if="item.carType == 1 && carType == 0 && nowCartype == 0" @click="changeCarpeople(item.carMessage.carPeople.carPeoplePk,0)">
               <img src="../../images/replace.png">
             </div>
             <div class="tel" @click="tel(item.carMessage.carPeople.tel)">
@@ -50,7 +50,7 @@
             </div>
             <div class="clearBoth"></div>
           </div>
-          <div id="peopleSecond" v-if="type==1 && item.carMessage.carPeopleFu.carPeoplePk =='' && orderPk != ''"  @click="changeCarpeople('',1)"><p>添加后备司机</p></div>
+          <div id="peopleSecond" v-if="type==1 && nowCartype == 0 && item.carMessage.carPeopleFu.carPeoplePk =='' && orderPk != ''"  @click="changeCarpeople('',1)"><p>添加后备司机</p></div>
           <div id="productList" v-if="item.list.length>0 && orderPk!=''">
             <h6>已派订单</h6>
             <ul>
@@ -68,13 +68,13 @@
       </ul>
     </div>
     <div id="sure">
-      <div class="go gogogo" id="gogogo" v-if="type==1 && orderPk!=''" @click="sendCar()">
+      <div class="go gogogo" id="gogogo" v-if="(type==1 || nowCartype != 0) && orderPk!=''" @click="sendCar()">
         <button>派车</button>
       </div>
-      <div class="go" v-else-if="type==2" @click="changeCarpeople('',0)">
+      <div class="go" v-else-if="type==2 && nowCartype == 0" @click="changeCarpeople('',0)">
         <button>添加主司机</button>
       </div>
-      <div class="go gogogo" id="gogogo1" v-else-if="type==1 && orderPk==''" @click="sureCarpeople()">
+      <div class="go gogogo" id="gogogo1" v-else-if="type==1 && nowCartype == 0 && orderPk==''" @click="sureCarpeople()">
         <button>确定绑定车辆司机</button>
       </div>
     </div>
@@ -105,6 +105,7 @@
         carType:0,
         pkCar:"",
         orderPk:"",
+        nowCartype: 0,
         errorlogo: 'this.src="' + require('../../images/carpeople.png') + '"',
       }
     },
@@ -127,6 +128,7 @@
         thisThat = self;
         self.carType = self.$route.query.carType;
         self.pkCar = self.$route.query.pkCar;
+        self.nowCartype = self.$route.query.nowCartype;
         self.orderPk = sessionStorage.getItem("dispatchPK") == undefined?"":sessionStorage.getItem("dispatchPK");
         self.mescroll = new MeScroll("mescroll", { //请至少在vue的mounted生命周期初始化mescroll,以确保您配置的id能够被找到
           up: {
@@ -161,28 +163,42 @@
             changeCarFupeople = JSON.parse(changeCarFupeople);
             self.pdlist[0].carMessage.carPeopleFu = changeCarFupeople;
           }
-          self.type = curPageData[0].carMessage.carPeople.carPeoplePk!=""?1:2;
-          self.$nextTick(function () {
-            for(var x = 0 ; x < document.getElementsByClassName("peopleImg").length;x++){
-              var className = document.getElementsByClassName("peopleImg")[x];
-              className.onload = function () {
-                for (var i = 0; i < document.getElementsByClassName("peopleImg").length; i++) {
-                  var heightImg = $(".peopleImg").eq(i).height();
-                  var heightBox = $(".imgBoxOverFllow").eq(i).height();
-                  var widthBox = $(".imgBoxOverFllow").eq(i).width();
-                  var htmlSize = $("html").css("fontSize").replace("px", "");
-                  if (heightImg > heightBox) {
-                    $(".peopleImg").eq(i).css("marginTop", (heightBox - heightImg) / 2 / htmlSize + "rem");
-                  } else {
-                    $(".peopleImg").eq(i).height(heightBox / htmlSize + "rem");
-                    $(".peopleImg").eq(i).width("auto");
-                    var widthImg = $(".peopleImg").eq(i).width();
-                    $(".peopleImg").eq(i).css("marginLeft", (widthBox - widthImg) / 2 / htmlSize + "rem");
+          if(self.nowCartype == 1){
+            $.ajax({
+              type: "POST",
+              url: androidIos.ajaxHttp()+"/carrier/findDriverInfoByCarno",
+              data:JSON.stringify({
+                userCode:sessionStorage.getItem("token") ,
+                source:sessionStorage.getItem("source"),
+                carno:self.pdlist[0].carMessage.list[0].number
+              }),
+              contentType: "application/json;charset=utf-8",
+              dataType: "json",
+              timeout: 30000,
+              success: function (findDriverInfoByCarno) {
+                if(findDriverInfoByCarno.success == "1"){
+                  self.pdlist[0].carMessage.carPeople = {
+                    tel:findDriverInfoByCarno.mobile,
+                    name:findDriverInfoByCarno.driverName,
+                    year:findDriverInfoByCarno.driverAge,
+                    pic:findDriverInfoByCarno.driverPicture,
+                    carPeoplePk:findDriverInfoByCarno.pkDriver
                   }
+                  self.type = 1 ;
+                }else{
+                  androidIos.second(findDriverInfoByCarno.message)
+                }
+              },
+              complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                if(status=='timeout'){//超时,status还有success,error等值的情况
+                  androidIos.second("网络请求超时");
+                }else if(status=='error'){
+                  androidIos.errorwife();
                 }
               }
-            }
-          })
+            })
+          }
+          self.type = self.pdlist[0].carMessage.carPeople.carPeoplePk != "" ? 1 : 2 ;
         }, function() {
           //联网失败的回调,隐藏下拉刷新和上拉加载的状态;
           self.mescroll.endErr();
@@ -516,7 +532,8 @@
     margin-top: 0.2rem;
   }
   #peopleMessage .peopleImg,#peopleMessageS .peopleImg{
-     width:100%;
+     width:1.2rem;
+    height: 1.2rem;
   }
   #peopleMessage .peoplemessage,#peopleMessageS .peoplemessage{
     float: left;
