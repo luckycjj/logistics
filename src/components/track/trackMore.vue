@@ -171,7 +171,7 @@
         <button v-else-if="type==7" @click="daoda(43)">卸货完毕</button>
         <button v-else-if="type==8 && endtype == '0' && actFlag == 'Y'" @click="qianshou(endtype)">交接</button>
         <button v-else-if="type==8 && endtype == '1'" @click="qianshou(endtype)">签收</button>
-        <button v-else-if="type==9">确认签收</button>
+        <button v-else-if="type==9" @click="uploadbill()">上传单据</button>
       </div>
       <div class="go"  v-else>
         <button v-if="type==1" @click="genghuan()">更换车辆</button>
@@ -744,6 +744,11 @@
         var _this = this;
         androidIos.addPageList();
         _this.$router.push({ path: '/track/qrcode',query:{ty:type}});
+      },
+      uploadbill:function () {
+        var _this = this;
+        androidIos.addPageList();
+        _this.$router.push({ path: '/track/uploadBill',query:{pk:_this.$route.query.pk}});
       },
       genghuan:function () {
         var _this = this;

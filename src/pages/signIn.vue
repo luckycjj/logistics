@@ -36,7 +36,7 @@
         <div class="addImg">
           <h1>货物</h1>
           <div class="imgBox"  v-for="(item,index) in imgList">
-            <img :src="item.file" :onerror="errorlogo" >
+            <img :src="item.file" :onerror="errorlogo"  @click="lookImg($event,item.file)">
             <div class='closed' @click="removeImg(index)"></div>
           </div>
           <div class="addImgFirst" v-if="imgList.length < imgListLength">
@@ -59,7 +59,7 @@
         <div class="addImg">
            <h1>货物缺损图片</h1>
            <div class="imgBox"  v-for="(item,index) in imgList">
-             <img :src="item.file" :onerror="errorlogo" >
+             <img :src="item.file"  @click="lookImg($event,item.file)"  :onerror="errorlogo" >
              <div class='closed' @click="removeImg(index)"></div>
            </div>
           <div class="addImgFirst" v-if="imgList.length < imgListLength">
@@ -131,7 +131,7 @@
         var _this = this;
         for (var i = 0; i < e.target.files.length; i++) {
           if( i < _this.imgListLength - _this.imgList.length){
-            _this.compress(_this.getObjectURL(e.target.files[i]),"100","50",type);
+            _this.compress(_this.getObjectURL(e.target.files[i]),"1000","1000",type);
           }
         }
         e.target.value = "";
@@ -167,8 +167,8 @@
         image.onload = function () {
           var canvas = document.createElement('canvas');
           if (image.width < MaximgW && image.height < MaximgH) {
-            imageWidth = image.MaximgW;
-            imageHeight = image.MaximgH;
+            imageWidth = image.width;
+            imageHeight = image.height;
           } else {
             if (image.width > image.height) {
               imageWidth = MaximgW;
@@ -209,62 +209,7 @@
                   });
                   _this.$nextTick(function () {
                     _this.height();
-                    $(".imgBox img").unbind("click").click(function (even) {
-                      if (even.target.className != "closed") {
-                        var img = $(this).attr("src");
-                        $("#imgBigbox").remove();
-                        $("body").append(
-                          "<div id='imgBigbox'><div class='pinch-zoom'><img id='zoomimg'  src=" +
-                          img +
-                          " '></div><div id='zhezhaoImg'></div></div>"
-                        );
-                        $("#imgBigbox").css({
-                          width: "100%",
-                          height: "100%",
-                          position: "fixed",
-                          top: "0",
-                          left: "0",
-                          background: "rgb(0,0,0)",
-                          "z-index": "999",
-                          display: "block"
-                        });
-                        $("#zhezhaoImg").css({
-                          width: "100%",
-                          height: "100%",
-                          position: "absolute",
-                          background: "rgba(0,0,0,0)",
-                          "z-index": "999",
-                          top: "0",
-                          left: "0"
-                        });
-                        $("#imgBigbox img").css({ width: "100%", position: "absolute" });
-                        var image = document.getElementById("zoomimg");
-                        image.onload = function() {
-                          var height = $("#imgBigbox img").height();
-                          $("div.pinch-zoom").each(function() {
-                            new PinchZoom($(this), {});
-                          });
-                          $(".pinch-zoom-container").css({
-                            width: "100%",
-                            height: "100%"
-                          });
-                          $("#imgBigbox img").css("top", "50%");
-                          $(".pinch-zoom").css({ width: "100%", height: "100%" });
-                          $("#imgBigbox img").css("margin-top", -height / 2 + "px");
-                          var setImgBox;
-                          var setImgBoxNumber = 10;
-                          setImgBox = setInterval(function() {
-                            setImgBoxNumber--;
-                            if (setImgBoxNumber < 9) {
-                              clearInterval(setImgBox);
-                              setImgBoxNumber = 10;
-                              $("#zhezhaoImg").remove();
-                            }
-                          }, 100);
-                        };
-                      }
-                    });
-                  })
+                  });
               } else{
                 androidIos.second(json.message);
               }
@@ -278,6 +223,60 @@
               }
             }
           });
+        }
+      },
+      lookImg:function (even,imgurl) {
+        var _this = this;
+        if (even.target.className != "closed") {
+          var img = imgurl;
+          $("#imgBigbox").remove();
+          $("body").append(
+            "<div id='imgBigbox'><div class='pinch-zoom'><img onerror='"+ _this.errorlogo+"' id='zoomimg'  src='"+img+"' '></div><div id='zhezhaoImg'></div></div>"
+          );
+          $("#imgBigbox").css({
+            width: "100%",
+            height: "100%",
+            position: "fixed",
+            top: "0",
+            left: "0",
+            background: "rgb(0,0,0)",
+            "z-index": "999",
+            display: "block"
+          });
+          $("#zhezhaoImg").css({
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            background: "rgba(0,0,0,0)",
+            "z-index": "999",
+            top: "0",
+            left: "0"
+          });
+          $("#imgBigbox img").css({ width: "100%", position: "absolute" });
+          var image = document.getElementById("zoomimg");
+          image.onload = function() {
+            var height = $("#imgBigbox img").height();
+            $("div.pinch-zoom").each(function() {
+              new PinchZoom($(this), {});
+            });
+            $(".pinch-zoom-container").css({
+              width: "100%",
+              height: "100%"
+            });
+            $("#imgBigbox img").css("top", "50%");
+            $(".pinch-zoom").css({ width: "100%", height: "100%" });
+            $("#imgBigbox img").css("margin-top", -height / 2 + "px");
+            var setImgBox;
+            var setImgBoxNumber = 10;
+            setImgBox = setInterval(function() {
+              setImgBoxNumber--;
+              if (setImgBoxNumber < 9) {
+                clearInterval(setImgBox);
+                setImgBoxNumber = 10;
+                $("#zhezhaoImg").remove();
+              }
+            }, 100);
+          };
         }
       },
       init: function () {
