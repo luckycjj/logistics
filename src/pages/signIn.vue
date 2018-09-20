@@ -79,7 +79,8 @@
       <div id="signYes5" v-if="normalSignEnd">
         <div class="title"><span @click="goback(4)" style="float: left;padding-left: 5%;color:#6E6E6E;">取消</span></div>
         <img src="../images/okgoyes.png">
-        <p>感谢您的评价!</p>
+        <p v-if="status == 0">感谢您的评价!</p>
+        <p v-else>签收成功!</p>
       </div>
     </div>
   </div>
@@ -104,13 +105,14 @@
         normalSignRemark:"",
         errorSignRemark:"",
         proList:[],
-        signYes:true,
+        signYes:false,
         normalSign:false,
         errorSign:false,
         errorSignEnd:false,
         normalSignEnd:false,
         normalSignList:[],
         errorSignList:[],
+        status:0,
         imgList:[],
         imgListLength:4,
         errorlogo: 'this.src="' + require('../images/timg.jpg') + '"'
@@ -371,6 +373,12 @@
                 }
               }
               _this.proList = getGoodsDetail.list;
+              _this.status = getGoodsDetail.status;
+              if(getGoodsDetail.status == 1){
+                _this.normalSignEnd = true;
+              }else if(getGoodsDetail.status == 0){
+                _this.signYes = true;
+              }
               _this.$nextTick(function () {
                 _this.height();
                 if(_this.signYes){
