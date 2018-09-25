@@ -892,8 +892,8 @@
     font-size: 0.35rem;
     margin-right: 0.5rem;
     font-weight: bold;
-    padding: 0 0.2rem 0.1rem 0.2rem;
-    margin-left: 0.2rem;
+   /* padding: 0 0.2rem 0.1rem 0.2rem;
+    margin-left: 0.2rem;*/
   }
   .colorFull{
     color:#2c9cff!important;

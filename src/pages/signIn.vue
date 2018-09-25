@@ -526,11 +526,16 @@
             bomb.first("请选择或填写内容");
             return false;
           }
+          var listImg = [];
+          for(i = 0 ; i< _this.imgList.length ;i++){
+            listImg.push(_this.imgList[i].httpfile)
+          }
           var json = {
             scoreList:JSON.stringify([{
                name:"货物",
                score:number.replace("分",""),
             }]),
+            evaluationPicture:listImg.join(","),
             average:number.replace("分",""),
             scorereason:list.join(",") + "," + _this.normalSignRemark,
             pk:_this.$route.query.pk,

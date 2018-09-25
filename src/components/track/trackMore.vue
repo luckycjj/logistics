@@ -171,7 +171,7 @@
         <button v-else-if="type==7" @click="daoda(43)">卸货完毕</button>
         <button v-else-if="type==8 && endtype == '0' && actFlag == 'Y'" @click="qianshou(endtype)">交接</button>
         <button v-else-if="type==8 && endtype == '1'" @click="qianshou(endtype)">签收</button>
-        <button v-else-if="type==9" @click="uploadbill()">上传单据</button>
+        <button v-else-if="type==9" @click="uploadbill()">确认签收</button>
       </div>
       <div class="go"  v-else>
         <button v-if="type==1" @click="genghuan()">更换车辆</button>
@@ -748,7 +748,8 @@
       uploadbill:function () {
         var _this = this;
         androidIos.addPageList();
-        _this.$router.push({ path: '/track/uploadBill',query:{pk:_this.$route.query.pk}});
+        //_this.$router.push({ path: '/track/uploadBill',query:{pk:_this.$route.query.pk,expSign:_this.pdlist[0].exp_sign}});
+        _this.$router.push({ path: '/track/uploadImg',query:{pk:_this.$route.query.pk,expSign:_this.pdlist[0].exp_sign}});
       },
       genghuan:function () {
         var _this = this;
@@ -1088,6 +1089,7 @@
                 pkCar: loadSegmentDetail.pkCar,
                 pkCarHang:loadSegmentDetail.pkCarHang,
                 pkTransType:loadSegmentDetail.pkTransType,
+                exp_sign:loadSegmentDetail.exp_sign == undefined || loadSegmentDetail.exp_sign == "N" ? "0" : "1",
               }]
               thisThat.carList = [];
               thisThat.actFlag = loadSegmentDetail.actFlag;
@@ -1255,8 +1257,8 @@
     font-size: 0.35rem;
     margin-right: 0.5rem;
     font-weight: bold;
-    padding: 0 0.2rem 0.1rem 0.2rem;
-    margin-left: 0.2rem;
+    /*padding: 0 0.2rem 0.1rem 0.2rem;
+    margin-left: 0.2rem;*/
   }
   .colorFull{
     color:#2c9cff!important;

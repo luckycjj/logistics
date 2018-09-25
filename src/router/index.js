@@ -38,6 +38,7 @@ import  trackF from '@/components/track/trackMore'
 import  trackS from '@/components/track/map'
 import  trackT from '@/components/track/qrcode'
 import  trackFo from  '@/components/track/uploadBill'
+import  trackSi from '@/components/track/uploadImg'
 import  carF from '@/components/car/carMessage'
 import  carS from '@/components/car/map'
 import  carT from '@/components/car/changeCarpeople'
@@ -195,7 +196,8 @@ export default new Router({
         {path: 'trackMore', component: trackF},
         {path: 'map', component: trackS},
         {path: 'qrcode', component: trackT},
-        {path:'uploadBill',component:trackFo}
+        {path:'uploadBill',component:trackFo},
+        {path:'uploadImg',component:trackSi}
       ]
     },
     {

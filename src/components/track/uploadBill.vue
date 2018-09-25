@@ -19,7 +19,7 @@
         <p>上传单据</p>
         <div class="addDanjv" @click="addDanjv()" id="addDanjv">添加单据</div>
         <div id='paojvList' style="display: none;">
-          <ul id="typeclick"><li v-if="imgList1.length < imgListLength"><input class="fileInput" type="file" multiple accept=".jpg,.png" @change="inputChange($event,0)">签收单({{imgList1.length}}/{{imgListLength}})</li><li v-if="imgList2.length < imgListLength"><input class="fileInput" type="file" multiple accept=".jpg,.png" @change="inputChange($event,1)">仓库票据({{imgList2.length}}/{{imgListLength}})</li><li class='otherpiao'  v-if="imgList3.length < imgListLength"> <input class="fileInput" type="file" multiple accept=".jpg,.png" @change="inputChange($event,2)">其他票据({{imgList3.length}}/{{imgListLength}})</li></ul>
+          <ul id="typeclick"><li v-if="imgList1.length < imgListLength"><input class="fileInput" type="file" multiple accept=".jpg,.png" @change="inputChange($event,0)">签收单({{imgList1.length}}/{{imgListLength}})</li><li  v-if="imgList2.length < imgListLength"><input class="fileInput" type="file" multiple accept=".jpg,.png" @change="inputChange($event,1)">仓库票据({{imgList2.length}}/{{imgListLength}})</li><li :class="type == 0 ? 'otherpiao' : ''" v-if="imgList3.length < imgListLength"> <input class="fileInput" type="file" multiple accept=".jpg,.png" @change="inputChange($event,2)">其他票据({{imgList3.length}}/{{imgListLength}})</li><li class='otherpiao'  v-if="imgList4.length < imgListLength && type == 1"><input class="fileInput" type="file" multiple accept=".jpg,.png" @change="inputChange($event,3)">货物图片({{imgList4.length}}/{{imgListLength}})</li></ul>
         </div>
         <div class="clearBoth"></div>
       </div>
@@ -28,17 +28,22 @@
         <li v-for="(item,index) in imgList1" class="imgBox">
           <div class='closed' @click="removeImg(index,0)"></div>
           <img  :onerror="errorlogo" :src="item.httpfile" @click="lookImg($event,item.httpfile)">
-          <div class="imgtype">{{item.type=="1"?"仓库票据":item.type=="0"?"签收单":"其他票据"}}</div>
+          <div class="imgtype">{{item.type == '3' ? '货物图片':item.type=="1"?"仓库票据":item.type=="0"?"签收单":"其他票据"}}</div>
         </li>
         <li v-for="(item,index) in imgList2">
           <div class='closed' @click="removeImg(index,1)"></div>
           <img  :onerror="errorlogo" :src="item.httpfile" @click="lookImg($event,item.httpfile)">
-          <div class="imgtype">{{item.type=="1"?"仓库票据":item.type=="0"?"签收单":"其他票据"}}</div>
+          <div class="imgtype">{{item.type == '3' ? '货物图片':item.type=="1"?"仓库票据":item.type=="0"?"签收单":"其他票据"}}</div>
         </li>
         <li v-for="(item,index) in imgList3">
           <div class='closed' @click="removeImg(index,2)"></div>
           <img  :onerror="errorlogo"  :src="item.httpfile" @click="lookImg($event,item.httpfile)">
-          <div class="imgtype">{{item.type=="1"?"仓库票据":item.type=="0"?"签收单":"其他票据"}}</div>
+          <div class="imgtype">{{item.type == '3' ? '货物图片':item.type=="1"?"仓库票据":item.type=="0"?"签收单":"其他票据"}}</div>
+        </li>
+        <li v-for="(item,index) in imgList4">
+          <div class='closed' @click="removeImg(index,3)"></div>
+          <img  :onerror="errorlogo"  :src="item.httpfile" @click="lookImg($event,item.httpfile)">
+          <div class="imgtype">{{item.type == '3' ? '货物图片':item.type=="1"?"仓库票据":item.type=="0"?"签收单":"其他票据"}}</div>
         </li>
         <div class="clearBoth"></div>
       </ul>
@@ -61,8 +66,10 @@ export default {
       imgList1:[],
       imgList2:[],
       imgList3:[],
+      imgList4:[],
       httpurl:"",
       imgListLength:4,
+      type:0,
       errorlogo: 'this.src="' + require('../../images/timg.jpg') + '"'
     }
   },
@@ -134,6 +141,7 @@ export default {
       },
       go:function () {
          var _this = this;
+         _this.type = _this.$route.query.expSign;
          _this.heightout();
         $.ajax({
           type: "POST",
@@ -229,7 +237,7 @@ export default {
             type: "POST",
             url: androidIos.ajaxHttp() + "/uploadFile",
             data:JSON.stringify({
-              type: type == 0 ? "QSD" : type == 1 ?  "CKPJ" : "OTHETPJ",
+              type: type == 0 ? "QSD" : type == 1 ?  "CKPJ" : type == 2 ? "OTHETPJ" : "PROJECT",
               name:"",
               file: base64.substr(23),
               userCode:sessionStorage.getItem("token"),
@@ -251,6 +259,8 @@ export default {
                   _this.imgList2.push(jsonData);
                 }else if(type == 2){
                   _this.imgList3.push(jsonData);
+                }else if(type == 3){
+                  _this.imgList4.push(jsonData);
                 }
               } else{
                 androidIos.second(json.message);
