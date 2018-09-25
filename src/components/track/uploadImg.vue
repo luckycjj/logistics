@@ -3,9 +3,9 @@
       <div id="title" v-if="type == 1" v-title data-title="异常签收"></div>
       <div id="title" v-if="type == 0" v-title data-title="正常签收"></div>
       <div v-if="type == 1">
-        <textarea placeholder="其他异常情况，请如实填写，稍后将有客服人员与 您电话联系" @keyup="remarkKeyup()"  maxlength="100" v-model="errorSignRemark"></textarea>
+        <textarea placeholder="其他异常情况，请如实填写，稍后将有客服人员与 您电话联系" @keyup="remarkKeyup(2)"  maxlength="100" v-model="errorSignRemark"></textarea>
         <div class="addImg">
-          <h1>货物图片</h1>
+          <h1>货物异常图片</h1>
           <div class="imgBox"  v-for="(item,index) in imgList">
             <img :src="item.file"  @click="lookImg($event,item.file)"  :onerror="errorlogo" >
             <div class='closed' @click="removeImg(index)"></div>

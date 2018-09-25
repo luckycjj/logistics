@@ -5,7 +5,7 @@
       <img src="../../images/carloading.gif" style="width:4rem;position: absolute;top:50%;left:50%;margin-left: -2rem;margin-top: -4rem">
       <p style="font-size: 0.4rem;top:50%;text-align: center;line-height: 1rem;color:#3399FF;width:100%;position: absolute">正在加载中...</p>
     </div>
-    <div id="mescroll" class="mescroll" :class="type==0 || (peopleType == 2 && type !=1 ) || (type==8 && endtype == '0' && actFlag != 'Y') ?'meBottom':''">
+    <div id="mescroll" class="mescroll" :class="type==0 || (peopleType == 2 && type !=1 ) || (type==8 && endtype == '0' && actFlag != 'Y')?'meBottom':''">
       <ul id="dataList" class="data-list">
         <li v-for="item in pdlist">
           <div class="top">
@@ -171,7 +171,8 @@
         <button v-else-if="type==7" @click="daoda(43)">卸货完毕</button>
         <button v-else-if="type==8 && endtype == '0' && actFlag == 'Y'" @click="qianshou(endtype)">交接</button>
         <button v-else-if="type==8 && endtype == '1'" @click="qianshou(endtype)">签收</button>
-        <button v-else-if="type==9" @click="uploadbill()">确认签收</button>
+        <button v-else-if="type==9 && pdlist[0].exp_sign == 1" @click="uploadbill(1)">确认异常签收</button>
+        <button v-else-if="type==9 && pdlist[0].exp_sign == 0" @click="uploadbill(0)">上传单据</button>
       </div>
       <div class="go"  v-else>
         <button v-if="type==1" @click="genghuan()">更换车辆</button>
@@ -745,11 +746,14 @@
         androidIos.addPageList();
         _this.$router.push({ path: '/track/qrcode',query:{ty:type}});
       },
-      uploadbill:function () {
+      uploadbill:function (type) {
         var _this = this;
         androidIos.addPageList();
-        //_this.$router.push({ path: '/track/uploadBill',query:{pk:_this.$route.query.pk,expSign:_this.pdlist[0].exp_sign}});
-        _this.$router.push({ path: '/track/uploadImg',query:{pk:_this.$route.query.pk,expSign:_this.pdlist[0].exp_sign}});
+        if(type == 1){
+          _this.$router.push({ path: '/track/uploadImg',query:{pk:_this.$route.query.pk,expSign:_this.pdlist[0].exp_sign}});
+        }else if(type == 0){
+          _this.$router.push({ path: '/track/uploadBill',query:{pk:_this.$route.query.pk,expSign:_this.pdlist[0].exp_sign}});
+        }
       },
       genghuan:function () {
         var _this = this;
