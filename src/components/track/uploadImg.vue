@@ -3,14 +3,15 @@
       <div id="title" v-if="type == 1" v-title data-title="异常签收"></div>
       <div id="title" v-if="type == 0" v-title data-title="正常签收"></div>
       <div v-if="type == 1">
-        <textarea placeholder="其他异常情况，请如实填写，稍后将有客服人员与 您电话联系" @keyup="remarkKeyup(2)"  maxlength="100" v-model="errorSignRemark"></textarea>
+        <textarea v-if="modify" placeholder="其他异常情况，请如实填写，稍后将有客服人员与 您电话联系" @keyup="remarkKeyup(2)"  maxlength="100" v-model="errorSignRemark"></textarea>
+        <div id="textarea" v-else>{{errorSignRemark}}</div>
         <div class="addImg">
           <h1>货物异常图片</h1>
           <div class="imgBox"  v-for="(item,index) in imgList">
             <img :src="item.file"  @click="lookImg($event,item.file)"  :onerror="errorlogo" >
-            <div class='closed' @click="removeImg(index)"></div>
+            <div class='closed' @click="removeImg(index)" v-if="modify"></div>
           </div>
-          <div class="addImgFirst" v-if="imgList.length < imgListLength">
+          <div class="addImgFirst" v-if="imgList.length < imgListLength && modify">
             <img src="../../images/addImgP.png">
             <input type="file" accept=".jpg,.png" multiple id="imgFile" @change="inputChange($event,1)">
             <p v-html="imgList.length == 0 ? '添加图片':imgList.length + '/' + imgListLength"></p>
@@ -41,7 +42,7 @@
           <div class="clearBoth"></div>
         </div>
       </div>
-      <button id="letGo" @click="fileup()">提交</button>
+      <button id="letGo" @click="fileup()" v-if="modify">提交</button>
     </div>
 </template>
 
@@ -61,7 +62,9 @@
             normalSignList:[],
             imgList:[],
             imgListLength:4,
-            errorlogo: 'this.src="' + require('../../images/timg.jpg') + '"'
+            errorlogo: 'this.src="' + require('../../images/timg.jpg') + '"',
+            httpurl:"",
+            modify:false,
           }
       },
       beforeMount:function () {
@@ -75,6 +78,33 @@
       methods:{
         go:function () {
             var _this = this;
+            $.ajax({
+            type: "POST",
+            url: androidIos.ajaxHttp() + "/settings/findParamValueByName ",
+            data: JSON.stringify({
+              userCode:sessionStorage.getItem("token"),
+              source:sessionStorage.getItem("source"),
+              paramName:"resourcePath"
+            }),
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            async:false,
+            timeout:30000,
+            success: function(findParamValueByName){
+              if(findParamValueByName.success == "1"){
+                _this.httpurl = findParamValueByName.paramValue;
+              }else{
+                androidIos.second(findParamValueByName.message);
+              }
+            },
+            complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+              if(status=='timeout'){//超时,status还有success,error等值的情况
+                androidIos.second("当前状况下网络状态差，请检查网络！")
+              }else if(status=="error"){
+                androidIos.errorwife();
+              }
+            }
+          });
             if(_this.type == 0){
               _this.startXing();
               $.ajax({
@@ -97,6 +127,45 @@
                   }
                 }
               });
+            }else{
+              $.ajax({
+                type: "POST",
+                url: androidIos.ajaxHttp() + "/order/findDriverConfirmedReceiptInfo",
+                data:JSON.stringify({
+                  userCode:sessionStorage.getItem("token"),
+                  source:sessionStorage.getItem("source"),
+                  pk:_this.$route.query.pk,
+                }),
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                timeout: 10000,
+                success: function (findDriverConfirmedReceiptInfo) {
+                  if(findDriverConfirmedReceiptInfo.success == "1"){
+                      _this.errorSignRemark = findDriverConfirmedReceiptInfo.driverRemark;
+                      var imgL = findDriverConfirmedReceiptInfo.abnormalPicture.split(",");
+                      if( imgL.length > 0 && findDriverConfirmedReceiptInfo.driverRemark != ""){
+                        _this.modify = false;
+                      }else{
+                        _this.modify = true;
+                      }
+                      for(var i = 0;i < imgL.length;i++){
+                        _this.imgList.push({
+                          file:_this.httpurl + imgL[i],
+                          httpfile:imgL[i],
+                        });
+                      }
+                  }else{
+                    androidIos.second(findDriverConfirmedReceiptInfo.message);
+                  }
+                },
+                complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+                  if(status=='timeout'){//超时,status还有success,error等值的情况
+                    androidIos.second("网络请求超时");
+                  }else if(status=='error'){
+                    androidIos.errorwife();
+                  }
+                }
+              })
             }
             $(document).unbind("click").on("click","#star_grade .set_image_item",function () {
               var x = $(this).index("#star_grade .set_image_item");
@@ -319,12 +388,12 @@
               listImg.push(_this.imgList[i].httpfile)
             }
             json = {
-              listImg:listImg.join(","),
-              average:number.replace("分",""),
-              scorereason:list.join(",") + "," + _this.normalSignRemark,
-              pk:_this.$route.query.pk,
+              pk: _this.$route.query.pk,
               userCode:sessionStorage.getItem("token"),
-              source:sessionStorage.getItem("source")
+              source:sessionStorage.getItem("source"),
+              remark: _this.errorSignRemark,
+              abnormalPicture: listImg.join(","),
+              productNumber:number
             }
           }else{
             if( _this.errorSignRemark == ""){
@@ -340,15 +409,40 @@
               return false;
             }
             json = {
-              listImg:listImg.join(","),
-              scorereason: _this.errorSignRemark,
-              pk:_this.$route.query.pk,
+              pk: _this.$route.query.pk,
               userCode:sessionStorage.getItem("token"),
-              source:sessionStorage.getItem("source")
+              source:sessionStorage.getItem("source"),
+              remark: _this.errorSignRemark,
+              abnormalPicture: listImg.join(","),
             }
           }
-          console.log(json)
-          androidIos.second("功能正在开发,请耐心等待");
+          androidIos.loading("提交中");
+          $.ajax({
+            type: "POST",
+            url: androidIos.ajaxHttp() + "/order/driverConfirmedReceipt",
+            data:JSON.stringify(json),
+            contentType: "application/json;charset=utf-8",
+            dataType: "json",
+            timeout: 10000,
+            success: function (driverConfirmedReceipt) {
+              if(driverConfirmedReceipt.success == "1"){
+                 _this.$cjj("提交成功");
+                 setTimeout(function () {
+                    androidIos.gobackFrom(_this);
+                 },500)
+              }else{
+                androidIos.second(driverConfirmedReceipt.message);
+              }
+            },
+            complete : function(XMLHttpRequest,status){ //请求完成后最终执行参数
+              $("#common-blackBox").remove();
+              if(status=='timeout'){//超时,status还有success,error等值的情况
+                androidIos.second("网络请求超时");
+              }else if(status=='error'){
+                androidIos.errorwife();
+              }
+            }
+          })
         }
       }
     }
@@ -428,6 +522,17 @@
     color:#666;
     resize:none;
   }
+ #textarea{
+   width:84%;
+   padding: 3%;
+   margin: 0.5rem auto 0.3rem auto;
+   display: block;
+   min-height: 3rem;
+   border: 1px solid #dadada;
+   font-size: 0.375rem;
+   color:#666;
+   background: white;
+ }
   .addImgFirst{
     width:2.04rem;
     height:2.04rem;
