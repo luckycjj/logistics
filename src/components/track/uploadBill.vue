@@ -455,7 +455,7 @@ export default {
   line-height: 1rem;
   font-size: 0.4rem;
   letter-spacing: 0.0625rem;
-  border-radius: 0.5rem;
+  border-radius: 0.2rem;
 }
   .orderMoreFibutton{
     background: -webkit-linear-gradient(90deg, #ff8340, #ff6d27)!important; /* Safari 5.1 - 6.0 */

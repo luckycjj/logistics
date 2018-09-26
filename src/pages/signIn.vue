@@ -377,6 +377,8 @@
                 _this.normalSignEnd = true;
               }else if(getGoodsDetail.status == 0){
                 _this.signYes = true;
+              }else if(getGoodsDetail.status == 2){
+                _this.errorSignEnd = true;
               }
               _this.$nextTick(function () {
                 _this.height();
