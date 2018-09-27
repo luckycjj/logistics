@@ -155,6 +155,7 @@
                         });
                       }
                   }else{
+                    _this.modify = true;
                     androidIos.second(findDriverConfirmedReceiptInfo.message);
                   }
                 },
