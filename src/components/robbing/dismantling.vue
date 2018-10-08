@@ -211,7 +211,7 @@
                 _this.productBox.productsList[item].list[items].volume = _this.productBox.productsList[0].list[items].volumeBoth - _this.productBox.productsList[item].list[items].volume > 0 ?  _this.productBox.productsList[item].list[items].volume*1 : _this.productBox.productsList[0].list[items].volumeBoth*1;
                 _this.productBox.productsList[1-item].list[items].volume = _this.productBox.productsList[0].list[items].volumeBoth - _this.productBox.productsList[item].list[items].volume;
                 if(_this.productBox.productsList[0].list[items].density != null){
-                  _this.productBox.productsList[item].list[items].weight =   (_this.productBox.productsList[1-item].list[items].volume * _this.productBox.productsList[0].list[items].density).toFixed(2)*1;
+                  _this.productBox.productsList[item].list[items].weight =   (_this.productBox.productsList[item].list[items].volume * _this.productBox.productsList[0].list[items].density).toFixed(2)*1;
                   _this.productBox.productsList[1-item].list[items].weight = _this.productBox.productsList[0].list[items].weightBoth - _this.productBox.productsList[item].list[items].weight;
                 }
               }
