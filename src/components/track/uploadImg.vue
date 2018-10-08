@@ -142,8 +142,8 @@
                 success: function (findDriverConfirmedReceiptInfo) {
                   if(findDriverConfirmedReceiptInfo.success == "1"){
                       _this.errorSignRemark = findDriverConfirmedReceiptInfo.driverRemark;
-                      var imgL = findDriverConfirmedReceiptInfo.abnormalPicture.split(",");
-                      if( imgL.length > 0 && findDriverConfirmedReceiptInfo.driverRemark != ""){
+                      var imgL = findDriverConfirmedReceiptInfo.abnormalPicture == null ? [] : findDriverConfirmedReceiptInfo.abnormalPicture.split(",");
+                      if( imgL.length > 0 && findDriverConfirmedReceiptInfo.driverRemark != "" &&  findDriverConfirmedReceiptInfo.driverRemark != null){
                         _this.modify = false;
                       }else{
                         _this.modify = true;
