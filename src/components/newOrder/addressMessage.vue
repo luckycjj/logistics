@@ -387,7 +387,7 @@
       var json = {
         page:pageNum,
         size:pageSize,
-        keyword:$("#addressMessage #carTitleBox input").val(),
+        keyword:androidIos.checkText($("#addressMessage #carTitleBox input").val()),
         pk:thisthatsecond.pk,
         userCode:sessionStorage.getItem("token"),
         source:sessionStorage.getItem("source"),

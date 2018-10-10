@@ -898,15 +898,15 @@ export default {
           return false;
         }
         var json = {
-          companyName : _this.type == 1 && _this.letterType == 2 ? water.company  : "",
-          bank :  _this.type == 1 && _this.letterType == 2 && _this.creator == 0  &&  _this.companyType != 2  ? water.bank : "",
-          bankAccount :  _this.type == 1 && _this.letterType == 2 && _this.creator == 0  &&  _this.companyType != 2 ? water.bankNumber  : "",
-          userName : water.name,
+          companyName : _this.type == 1 && _this.letterType == 2 ? androidIos.checkText(water.company)  : "",
+          bank :  _this.type == 1 && _this.letterType == 2 && _this.creator == 0  &&  _this.companyType != 2  ? androidIos.checkText(water.bank) : "",
+          bankAccount :  _this.type == 1 && _this.letterType == 2 && _this.creator == 0  &&  _this.companyType != 2 ? androidIos.checkText(water.bankNumber)  : "",
+          userName : androidIos.checkText(water.name),
           idCardPos :water.IDpic,
           idCardNeg:water.IDpicfan,
-          certification:_this.type == 1 && _this.letterType == 2 ? water.authorization : "",
-          socialCreditCode:_this.type == 1 && _this.letterType == 2 && _this.creator == 0  &&  _this.companyType != 2 ? (water.creditCode).toUpperCase() : "",
-          transType:_this.type == 1 && _this.letterType == 2 && _this.creator == 0  &&  _this.companyType != 2 ? water.tranTypeNumber : "",
+          certification:_this.type == 1 && _this.letterType == 2 ? androidIos.checkText(water.authorization) : "",
+          socialCreditCode:_this.type == 1 && _this.letterType == 2 && _this.creator == 0  &&  _this.companyType != 2 ? androidIos.checkText((water.creditCode).toUpperCase()) : "",
+          transType:_this.type == 1 && _this.letterType == 2 && _this.creator == 0  &&  _this.companyType != 2 ? androidIos.checkText(water.tranTypeNumber) : "",
           businessLicense :_this.type == 1 && _this.letterType == 2  && _this.creator == 0  &&  _this.companyType != 2 ?  water.Licensepic : "",
           roadTransLicense :  (_this.type == 1 && _this.letterType == 2  && _this.creator == 0  &&  _this.companyType != 2) || (_this.type == 1 && _this.letterType == 1) ? water.Roadpic : "",
           driverLicense : _this.type == 1 && _this.letterType == 1 ? water.Travelpic : "" ,
@@ -914,13 +914,13 @@ export default {
           type : _this.type == 1 && _this.letterType == 1? 3 : _this.type == 1 && _this.letterType == 2 ? 2:1,
           companyStatus: _this.type == 1 && _this.letterType == 1 ? "" : _this.companyType,
           isYourSelf:_this.creator == 0 ? 1 : 0 ,
-          idCardNum:water.peopleNumber,
+          idCardNum:androidIos.checkText(water.peopleNumber),
           source :sessionStorage.getItem("source"),
           userCode:sessionStorage.getItem("token")
         };
         var data = {
-          inviteCode:(water.nvitationodeIC).toUpperCase(),
-          driverName:water.name,
+          inviteCode:androidIos.checkText((water.nvitationodeIC).toUpperCase()),
+          driverName:androidIos.checkText(water.name),
           idCardNum:water.peopleNumber,
           driverLic:$("#box3 .h5u_options_hiddenP").text(),
           idCardPos:water.IDpic,

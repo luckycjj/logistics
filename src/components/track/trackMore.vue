@@ -608,9 +608,9 @@
           var json = {
             userCode : sessionStorage.getItem("token"),
             source : sessionStorage.getItem("source"),
-            expType : list[0] == undefined || (list[0] != undefined && list[0].displayName == "其他") ? "" : list[0].displayName,
-            trackingMemo : _this.errorabnormal,
-            entrustVbillno : _this.pdlist[0].number == undefined ? "" : _this.pdlist[0].number
+            expType : list[0] == undefined || (list[0] != undefined && list[0].displayName == "其他") ? "" : androidIos.checkText(list[0].displayName),
+            trackingMemo :androidIos.checkText( _this.errorabnormal),
+            entrustVbillno : _this.pdlist[0].number == undefined ? "" : androidIos.checkText(_this.pdlist[0].number)
           }
           bomb.removeClass("gogogo2","gogogo");
           $.ajax({
@@ -672,10 +672,10 @@
           var json = {
             userCode:sessionStorage.getItem("token"),
             source:sessionStorage.getItem("source"),
-            costType:list[0]==undefined?'':list[0],
-            memo:_this.errorPricetype,
-            amount:_this.errorPrice,
-            entrustVbillno:_this.pdlist[0].number
+            costType:list[0]==undefined?'':androidIos.checkText(list[0]),
+            memo:androidIos.checkText(_this.errorPricetype),
+            amount:androidIos.checkText(_this.errorPrice),
+            entrustVbillno:androidIos.checkText(_this.pdlist[0].number)
           }
           bomb.removeClass("gogogo4","gogogo");
           $.ajax({

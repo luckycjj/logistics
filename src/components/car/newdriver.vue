@@ -202,10 +202,10 @@
         if(bomb.hasClass("save","colorful")){
             var json = {
               pk: _this.start.driverPk == ""? undefined: _this.start.driverPk,
-              driverName  : _this.start.name,
-              mobile : _this.start.phone,
-              password : _this.start.password,
-              driverAge: _this.start.timeValue,
+              driverName  : androidIos.checkText(_this.start.name),
+              mobile : androidIos.checkText(_this.start.phone),
+              password : androidIos.checkText(_this.start.password),
+              driverAge: androidIos.checkText(_this.start.timeValue),
               userCode:sessionStorage.getItem("token"),
               source:sessionStorage.getItem("source")
             }

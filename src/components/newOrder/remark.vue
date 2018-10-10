@@ -28,7 +28,7 @@
         remark:{
           handler:function(val,oldval){
             var _this = this;
-            _this.remark = _this.remark.replace(/，/g,',');
+            _this.remark = androidIos.checkText(_this.remark);
           },
           deep:true
         }

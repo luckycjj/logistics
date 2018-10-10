@@ -558,15 +558,15 @@
           var carJson={
             userCode:sessionStorage.getItem("token"),
             source:sessionStorage.getItem("source"),
-            carNo:_this.message.plateName + _this.message.carNumber,
-            carModel:_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383" ?_this.message.carCode : "" ,
-            carType:_this.message.carmodelNumber ,
+            carNo:androidIos.checkText(_this.message.plateName + _this.message.carNumber),
+            carModel:_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383" ?androidIos.checkText(_this.message.carCode) : "" ,
+            carType:androidIos.checkText(_this.message.carmodelNumber) ,
             loadWeight:_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383" ? _this.message.weight*1000 : "",
             pkDriver:_this.message.driverPk,
             pkCar:_this.message.carpk,
-            drivingLicense:_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "2ba6da2fd9cd4689965afe5abc8f9df4" ? _this.message.Travelpic : "",
-            length :_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383" ? _this.message.carlengthCode : "",
-            transType :_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383" ? _this.message.cartrantypeCode : "",
+            drivingLicense:_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "2ba6da2fd9cd4689965afe5abc8f9df4" ? androidIos.checkText(_this.message.Travelpic) : "",
+            length :_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383" ? androidIos.checkText(_this.message.carlengthCode) : "",
+            transType :_this.message.carmodelNumber == "5de1912471af4c2d839a27f268cd8ca7" || _this.message.carmodelNumber == "41efd612fc2e4067a1debc30a1c36383" ? androidIos.checkText(_this.message.cartrantypeCode) : "",
           }
           bomb.removeClass("ok","okgo");
           var messageNow = _this.message.carpk == "" ? "正在新增" : "正在修改";

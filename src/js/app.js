@@ -456,6 +456,9 @@ var androidIos = {
     }
     return Number(num1.toString().replace(".", "")) * Number(num2.toString().replace(".", "")) / Math.pow(10, baseNum);
   },
+  checkText:function (text) {
+      return text.replace(/[^\a-\z\A-\Z0-9\u4E00-\u9FA5\,\，\.\。\;\!\[\]\【\】\-]/g,'')
+  },
 };
 export {
   androidIos
