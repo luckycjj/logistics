@@ -904,7 +904,7 @@ export default {
           userName : androidIos.checkText(water.name),
           idCardPos :water.IDpic,
           idCardNeg:water.IDpicfan,
-          certification:_this.type == 1 && _this.letterType == 2 ? androidIos.checkText(water.authorization) : "",
+          certification:_this.type == 1 && _this.letterType == 2 ? water.authorization : "",
           socialCreditCode:_this.type == 1 && _this.letterType == 2 && _this.creator == 0  &&  _this.companyType != 2 ? androidIos.checkText((water.creditCode).toUpperCase()) : "",
           transType:_this.type == 1 && _this.letterType == 2 && _this.creator == 0  &&  _this.companyType != 2 ? androidIos.checkText(water.tranTypeNumber) : "",
           businessLicense :_this.type == 1 && _this.letterType == 2  && _this.creator == 0  &&  _this.companyType != 2 ?  water.Licensepic : "",
@@ -925,7 +925,7 @@ export default {
           driverLic:$("#box3 .h5u_options_hiddenP").text(),
           idCardPos:water.IDpic,
           idCardNeg:water.IDpicfan,
-          licType:water.licTypeCode,
+          licType:androidIos.checkText(water.licTypeCode),
           source :sessionStorage.getItem("source"),
           userCode:sessionStorage.getItem("token")
         }
