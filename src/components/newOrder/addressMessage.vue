@@ -21,7 +21,7 @@
               <div class="clearBoth"></div>
             <div class="secondBox">
               <img src="../../images/edit.png" @click="editLine(item)" v-if="manage">
-              <img src="../../images/clean.png" @click="cleanLine(index)" v-if="manage && item.checked == '0'">
+              <img src="../../images/clean.png" @click="cleanLine(index)" v-if="(pk != '' && manage && item.checked == '0') || (pk == '' && manage)">
               <img src="../../images/checked.png"  v-if="!manage && item.checked == '1'">
               <div class="clearBoth"></div>
             </div>
