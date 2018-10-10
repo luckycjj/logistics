@@ -74,8 +74,8 @@
           <div class="clearBoth"></div>
         </div>
         <div class="lablebox borderno">
-          <span>承运商／司机</span>
-          <p v-html="both.appoint==''?'请选择指定承运商或司机':both.appoint" :class="both.appoint==''?'':'blackColor'" @click="appoint()"></p>
+          <span>承运商</span>
+          <p v-html="both.appoint==''?'请选择指定承运商':both.appoint" :class="both.appoint==''?'':'blackColor'" @click="appoint()"></p>
           <div class="clearBoth"></div>
         </div>
         <!--<div class="lablebox borderno">
