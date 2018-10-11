@@ -291,6 +291,7 @@
               }else{
                 self.carTypeLook = true;
               }
+              _this.both.price=(_this.both.price.toString().match(/\d+(\.\d{0,2})?/)||[''])[0];
               _this.price=(_this.price.toString().match(/\d+(\.\d{0,2})?/)||[''])[0];
               _this.both.cartypeOther = (_this.both.cartypeOther.toString().match(/\d+(\.\d{0,1})?/)||[''])[0];
               if(_this.pk == ""){
