@@ -890,10 +890,10 @@
                 sessionStorage.setItem("dataEnd",invoiceDetail.arrival.addressLatAndLon);
                 thisThat.payStatus = invoiceDetail.payStatus;
                 var tranTypeBoth = invoiceDetail.transType;
-                if(invoiceDetail.carLength !=  ""){
+                if(invoiceDetail.carLength !=  "" && invoiceDetail.carLength != null){
                   tranTypeBoth = tranTypeBoth + "(" + invoiceDetail.carLength + "米)";
                 }
-                if(invoiceDetail.carModel != ""){
+                if(invoiceDetail.carModel != "" && invoiceDetail.carModel != null){
                   tranTypeBoth = tranTypeBoth + "(" + invoiceDetail.carModel + ")";
                 }
                 var pdlist = [{
