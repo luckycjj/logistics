@@ -192,7 +192,7 @@
           return false;
         }
         if(_this.start.password.length < 6  && _this.start.driverPk == ''){
-          bomb.first("请输入司机密码");
+          bomb.first("司机密码不得小于6位");
           return false;
         }
         if(_this.start.timeValue == ""){
