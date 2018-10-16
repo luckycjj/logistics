@@ -9,7 +9,7 @@
         <input type="tel" maxlength="11" placeholder="请输入手机号码" v-model="start.phone"/>
       </div>
       <div class="company inputUp" v-if="start.driverPk == ''">
-        <input :type="lookPassWord ? 'text' : 'password' " maxlength="40"  placeholder="请输入司机密码" v-model="start.password"/>
+        <input :type="lookPassWord ? 'text' : 'password' " maxlength="25"  placeholder="请输入司机密码" v-model="start.password"/>
         <div id="lookPassWord" :class="lookPassWord ? 'lookPassWord' : '' " @click="lookpass()"></div>
       </div>
       <div class="company inputUp">
@@ -191,7 +191,7 @@
           bomb.first("手机号码格式不对");
           return false;
         }
-        if(_this.start.password == "" && _this.start.driverPk == ''){
+        if(_this.start.password.length < 6  && _this.start.driverPk == ''){
           bomb.first("请输入司机密码");
           return false;
         }
