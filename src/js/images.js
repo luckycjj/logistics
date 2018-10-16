@@ -47,7 +47,7 @@ import  {androidIos} from './app';
         '<img  id="h5u_preview_' + rand_id + '" style="display: none;" onerror=src="' + require("../images/timg.jpg") + '" />' +
         '<div class="js-upbtn" id="h5u_upbtn_' + rand_id + '">' +
         '<a href="javascript:;" class="h5u_file">' +
-        '<input type="file" class="up_file3 cjjfile" id="h5u_file_' + rand_id + '" accept="image/*">' +
+        '<input type="file" class="up_file3 cjjfile" id="h5u_file_' + rand_id + '" accept="image/*"  capture = "camera">' +
         '</a>' +
         '</div>' +
         '<input type="hidden" name="' + form_id_name + '" id="h5u_form_hidden_' + rand_id + '" >' +
