@@ -6,10 +6,10 @@
         <p class="active" i="0" @click="navClick(0)">整车<span>{{jiaobiao.zhengCount}}</span></p>
       </div>
       <div class="classBoxP">
-      <p i="1" @click="navClick(1)">车头<span>{{jiaobiao.carHeadCount}}</span></p>
+        <p i="1" @click="navClick(1)">车头<span>{{jiaobiao.carHeadCount}}</span></p>
       </div>
       <div class="classBoxP">
-      <p i="2" @click="navClick(2)">车挂<span>{{jiaobiao.carHangCount}}</span></p>
+        <p i="2" @click="navClick(2)">车挂<span>{{jiaobiao.carHangCount}}</span></p>
       </div>
       <div class="clearBoth"></div>
     </div>
@@ -27,36 +27,36 @@
       </ul>
     </div>
     <div id="Allcar" style="display: none;">
-        <ul>
-          <li class="boxshowNo">
-            <div class="allcarBoth"><div class="cartype1 zongCartype">普货车辆<span>({{jiaobiao.generalGoodsCount}})</span></div><div class="downJian" id="downJian2" @click="lookMoreCarAll(2)"></div><div class="clearBoth"></div></div>
-            <div id="mescroll2" class="mescrollFirst">
-              <ul id="dataList2" class="data-list data-listFirst">
-              </ul>
-            </div>
-          </li>
-          <li class="boxshowNo">
-            <div class="allcarBoth"><div class="cartype3 zongCartype">冷链车辆<span>({{jiaobiao.coldChainCount}})</span></div><div class="downJian" id="downJian1" @click="lookMoreCarAll(1)"></div><div class="clearBoth"></div></div>
-            <div id="mescroll1" class="mescrollFirst">
-              <ul id="dataList1" class="data-list data-listFirst">
-              </ul>
-            </div>
-          </li>
-          <li class="boxshowNo">
-            <div class="allcarBoth"><div class="cartype2 zongCartype">危险品车辆<span>({{jiaobiao.dangerCount}})</span></div><div class="downJian" id="downJian3" @click="lookMoreCarAll(3)"></div><div class="clearBoth"></div></div>
-            <div id="mescroll3" class="mescrollFirst">
-              <ul id="dataList3" class="data-list data-listFirst">
-              </ul>
-            </div>
-          </li>
-          <li class="boxshowNo">
-            <div class="allcarBoth"><div class="cartype4 zongCartype">集装箱车辆<span>({{jiaobiao.containerCount}})</span></div><div class="downJian" id="downJian4" @click="lookMoreCarAll(4)"></div><div class="clearBoth"></div></div>
-            <div id="mescroll4" class="mescrollFirst">
-              <ul id="dataList4" class="data-list data-listFirst">
-              </ul>
-            </div>
-          </li>
-        </ul>
+      <ul>
+        <li class="boxshowNo">
+          <div class="allcarBoth"><div class="cartype1 zongCartype">普货车辆<span>({{jiaobiao.generalGoodsCount}})</span></div><div class="downJian" id="downJian2" @click="lookMoreCarAll(2)"></div><div class="clearBoth"></div></div>
+          <div id="mescroll2" class="mescrollFirst">
+            <ul id="dataList2" class="data-list data-listFirst">
+            </ul>
+          </div>
+        </li>
+        <li class="boxshowNo">
+          <div class="allcarBoth"><div class="cartype3 zongCartype">冷链车辆<span>({{jiaobiao.coldChainCount}})</span></div><div class="downJian" id="downJian1" @click="lookMoreCarAll(1)"></div><div class="clearBoth"></div></div>
+          <div id="mescroll1" class="mescrollFirst">
+            <ul id="dataList1" class="data-list data-listFirst">
+            </ul>
+          </div>
+        </li>
+        <li class="boxshowNo">
+          <div class="allcarBoth"><div class="cartype2 zongCartype">危险品车辆<span>({{jiaobiao.dangerCount}})</span></div><div class="downJian" id="downJian3" @click="lookMoreCarAll(3)"></div><div class="clearBoth"></div></div>
+          <div id="mescroll3" class="mescrollFirst">
+            <ul id="dataList3" class="data-list data-listFirst">
+            </ul>
+          </div>
+        </li>
+        <li class="boxshowNo">
+          <div class="allcarBoth"><div class="cartype4 zongCartype">集装箱车辆<span>({{jiaobiao.containerCount}})</span></div><div class="downJian" id="downJian4" @click="lookMoreCarAll(4)"></div><div class="clearBoth"></div></div>
+          <div id="mescroll4" class="mescrollFirst">
+            <ul id="dataList4" class="data-list data-listFirst">
+            </ul>
+          </div>
+        </li>
+      </ul>
     </div>
     <button id="newCar" @click="newCar()" v-if="orderPk == ''">新增车辆</button>
     <div id="filterBox" v-if="show" @click="filterBoxBlackFalse($event)">
@@ -134,8 +134,7 @@
     methods:{
       go:function(){
         var _this = this;
-        sessionStorage.removeItem("changeCarpeople");
-        sessionStorage.removeItem("changeCarFupeople");
+        _this.orderPk = sessionStorage.getItem("dispatchPK") == undefined ? "" :sessionStorage.getItem("dispatchPK");
         $.ajax({
           type: "GET",
           url: androidIos.ajaxHttp()+"/settings/getSysConfigList",
@@ -144,8 +143,10 @@
           timeout: 10000,
           async:false,
           success: function (getSysConfigList) {
-            if(sessionStorage.getItem("nowOrderCartype").indexOf("整") != -1){
-              _this.search.tranState = "0";
+            if( _this.orderPk != ""){
+              if(sessionStorage.getItem("nowOrderCartype").indexOf("整") != -1){
+                _this.search.tranState = "0";
+              }
             }
             for(var i = 0;i<getSysConfigList.length;i++){
               if(getSysConfigList[i].value.indexOf(_this.search.tranState) != -1 && _this.search.tranState!=""){
@@ -164,6 +165,8 @@
             }
           }
         })
+        sessionStorage.removeItem("changeCarpeople");
+        sessionStorage.removeItem("changeCarFupeople");
         var carsure = sessionStorage.getItem("carsureListS");
         if(carsure != null){
           _this.carSureTuo.push(JSON.parse(carsure));
@@ -176,7 +179,6 @@
             sessionStorage.removeItem("carsure");
           }
         }
-        _this.orderPk = sessionStorage.getItem("dispatchPK") == undefined ? "" :sessionStorage.getItem("dispatchPK");
         $("#search").unbind("click").click(function () {
           if($(this).find("h5").text() == "筛选"){
             _this.show = true;
@@ -308,12 +310,13 @@
                 display3 = "block";
               }
             }
+            pd.remark = pd.remark == undefined ? "123" :  pd.remark;
             var img2 = _this.orderPk != "" ?"<div class='checkImg' style='display: "+display3+"'></div>":"";
-            var str = '<div class="top" data-pdType="' + pd.type+ '" data-sWeight="'+androidIos.numSub(pd.zongweight ,pd.nowweight)+'" data-userNow="'+pd.userNow+'" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
-                '<h1 style="width:80%;margin-top: 0.2rem;margin-bottom: 0.1rem;"><span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span></h1>'+types+'<div class="clearBoth"></div>'+
-                '<p style="min-height: ' + minheight + ';" class="weight"><span style="font-size: 0.34rem;display: ' + display2+ '">满载：<span style="font-size: 0.34rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
-                img + img2 +
-                '<div class="clearBoth"></div></div>';
+            var str = '<div class="top" data-pdType="' + pd.type+ '" data-sWeight="'+androidIos.numSub(pd.zongweight ,pd.nowweight)+'" data-remark="'+pd.remark+'" data-userNow="'+pd.userNow+'" data-driverLicense="'+pd.driverLicense+'" data-pkCar="'+pd.pkCar+'" data-carType="'+pd.carType+'">'+
+              '<h1 style="width:80%;margin-top: 0.2rem;margin-bottom: 0.1rem;"><span class="carnumber">'+pd.carNumber+'</span><span class="cartype">'+pd.sportType+'</span><span  class="transtype">'+pd.transType+'</span><span class="carlength">' + length + '</span><span class="carModel">'+pd.carModel+'</span></h1>'+types+'<div class="clearBoth"></div>'+
+              '<p style="min-height: ' + minheight + ';" class="weight"><span style="font-size: 0.34rem;display: ' + display2+ '">满载：<span style="font-size: 0.34rem;">'+pd.zongweight+'</span>吨&nbsp;&nbsp;已承载：'+pd.nowweight+'吨</span></p>'+
+              img + img2 +
+              '<div class="clearBoth"></div></div>';
             var liDom=document.createElement("li");
             liDom.classList.add("liDom");
             liDom.dataset.nowtype = pd.now;
@@ -338,14 +341,14 @@
                     }
                   }
                   sessionStorage.setItem("LABELTOP",JSON.stringify({top:0,number:2,type:1,serach:_this.search.tranState}))
-                   var json = {
-                       pkcar:pkcar,
-                       carModel:carModel ,
-                       cartype:cartype,
-                       carNumber:carNumber
-                    };
-                    androidIos.addPageList();
-                    _this.$router.push({ path: '/site/carHanger',query:{memo:JSON.stringify(json)}});
+                  var json = {
+                    pkcar:pkcar,
+                    carModel:carModel ,
+                    cartype:cartype,
+                    carNumber:carNumber
+                  };
+                  androidIos.addPageList();
+                  _this.$router.push({ path: '/site/carHanger',query:{memo:JSON.stringify(json)}});
                 }else{
                   if(that.parents("li").attr("data-nowtype") == '0'){
                     bomb.first( that.find(".carnumber").text() + "正在审核");
@@ -383,6 +386,7 @@
                 plateName:that.find(".carnumber").text().substring(0,1),
                 weight:that.find(".weight span").text(),
                 carpk:that.find(".top").attr("data-pkCar"),
+                remark:that.find(".top").attr("data-remark"),
                 Travelpic:that.find(".top").attr("data-driverLicense")
               }
               sessionStorage.setItem("carchange",JSON.stringify(json));
@@ -673,32 +677,32 @@
                   var sWeight = that.attr("data-sweight");
                   var carPKlistGo = sessionStorage.getItem("carPKlistGo") == undefined ? "" : sessionStorage.getItem("carPKlistGo");
                   if(_this.orderPk != ""){
-                     if(nowType.indexOf("使用") != -1){
-                       if(carPKlistGo.indexOf(pkcar) == -1){
-                         if(usernow.indexOf("整") != -1){
-                           bomb.first( "该车辆的运输方式为整车运输，无法拼车");
-                           return false;
-                         }else{
-                           if(sessionStorage.getItem("nowOrderCartype").indexOf("整") != -1){
-                             bomb.first( "该订单选择的运输方式为整车运输，无法拼车");
-                             return false;
-                           }else if(sessionStorage.getItem("nowOrderCartype").indexOf("零") != -1){
-                             if(sWeight - sessionStorage.getItem("weh") < 0 ){
-                               bomb.first( "该车辆剩余载重量不足，请选择其它车辆");
-                               return false;
-                             }
-                           }
-                         }
-                       }
-                     }else if(nowType.indexOf("维") != -1 || nowType.indexOf("保") != -1){
-                       bomb.first( "该车辆正在" + nowType + ",请选择其它车辆");
-                       return false;
-                     }else{
-                       if(sWeight - sessionStorage.getItem("weh") < 0 ){
-                         bomb.first( "该车辆载重量不足，请选择其它车辆");
-                         return false;
-                       }
-                     }
+                    if(nowType.indexOf("使用") != -1){
+                      if(carPKlistGo.indexOf(pkcar) == -1){
+                        if(usernow.indexOf("整") != -1){
+                          bomb.first( "该车辆的运输方式为整车运输，无法拼车");
+                          return false;
+                        }else{
+                          if(sessionStorage.getItem("nowOrderCartype").indexOf("整") != -1){
+                            bomb.first( "该订单选择的运输方式为整车运输，无法拼车");
+                            return false;
+                          }else if(sessionStorage.getItem("nowOrderCartype").indexOf("零") != -1){
+                            if(sWeight - sessionStorage.getItem("weh") < 0 ){
+                              bomb.first( "该车辆剩余载重量不足，请选择其它车辆");
+                              return false;
+                            }
+                          }
+                        }
+                      }
+                    }else if(nowType.indexOf("维") != -1 || nowType.indexOf("保") != -1){
+                      bomb.first( "该车辆正在" + nowType + ",请选择其它车辆");
+                      return false;
+                    }else{
+                      if(sWeight - sessionStorage.getItem("weh") < 0 ){
+                        bomb.first( "该车辆载重量不足，请选择其它车辆");
+                        return false;
+                      }
+                    }
                     if(carModel.indexOf("整") != -1){
                       androidIos.addPageList();
                       sessionStorage.setItem("LABELTOP",JSON.stringify({number:Zongtype,type:0,serach:_this.search.tranState}))
@@ -707,7 +711,7 @@
                       var nowweight = that.attr("data-nowweight");
                       if(carPKlistGo.indexOf(pkcar) == -1){
                         if(nowCartypeData == 1 || nowCartypeData == 2){
-                           nowCartype = 1;
+                          nowCartype = 1;
                         }
                       }else{
                         if(nowCartypeData == 1 || nowCartypeData == 2){
@@ -831,19 +835,19 @@
           timeout: 30000,
           success: function (carTypeStatistics) {
             if(carTypeStatistics.success == "1"){
-               _this.jiaobiao = {
-                 carHeadCount: carTypeStatistics.carHeadCount,
-                 carHangCount:carTypeStatistics.carHangCount,
-                 coldChainCount: carTypeStatistics.coldChainCount,
-                 containerCount: carTypeStatistics.containerCount,
-                 dangerCount: carTypeStatistics.dangerCount,
-                 generalGoodsCount: carTypeStatistics.generalGoodsCount,
-                 zhengCount : carTypeStatistics.coldChainCount*1 + carTypeStatistics.containerCount*1 + carTypeStatistics.dangerCount*1 + carTypeStatistics.generalGoodsCount*1,
-                 hangColdChainCount:  carTypeStatistics.hangColdChainCount,
-                 hangContainerCount: carTypeStatistics.hangContainerCount,
-                 hangDangerCount: carTypeStatistics.hangDangerCount,
-                 hangGeneralGoodsCount: carTypeStatistics.hangGeneralGoodsCount,
-               };
+              _this.jiaobiao = {
+                carHeadCount: carTypeStatistics.carHeadCount,
+                carHangCount:carTypeStatistics.carHangCount,
+                coldChainCount: carTypeStatistics.coldChainCount,
+                containerCount: carTypeStatistics.containerCount,
+                dangerCount: carTypeStatistics.dangerCount,
+                generalGoodsCount: carTypeStatistics.generalGoodsCount,
+                zhengCount : carTypeStatistics.coldChainCount*1 + carTypeStatistics.containerCount*1 + carTypeStatistics.dangerCount*1 + carTypeStatistics.generalGoodsCount*1,
+                hangColdChainCount:  carTypeStatistics.hangColdChainCount,
+                hangContainerCount: carTypeStatistics.hangContainerCount,
+                hangDangerCount: carTypeStatistics.hangDangerCount,
+                hangGeneralGoodsCount: carTypeStatistics.hangGeneralGoodsCount,
+              };
             }else{
               androidIos.second(carTypeStatistics.message);
             }
@@ -864,8 +868,8 @@
         var cartype = "";
         for(var i = 0 ; i < _this.carSure.length ; i++){
           carModel.push(_this.carSure[i].carModel);
-           pkcar.push(_this.carSure[i].pkcar);
-           cartype = _this.carSure[i].cartype;
+          pkcar.push(_this.carSure[i].pkcar);
+          cartype = _this.carSure[i].cartype;
         }
         carModel = carModel.join(",");
         pkcar = pkcar.join(",");
@@ -873,26 +877,26 @@
         _this.$router.push({ path: '/car',query:{title: carModel,pkCar:pkcar,carType:cartype}});
       },
       navClick:function (number) {
-          var _this = this;
-          var i = number;
-          if(_this.pdType != i) {
-            _this.pdType = i;
-            $(".nav .active").removeClass("active");
-            $(".nav p").eq(i).addClass("active");
-            if(_this.orderPk != '' && number == 0){
-              $("#Allcar").show();
-              $("#mescroll").hide();
-            }else{
-              $("#Allcar").hide();
-              $("#mescroll").show();
-              for(var i = 1 ; i < 5 ; i++){
-                $("#mescroll" + i).html("<ul id='dataList" + i + "' class='data-list'></ul>");
-                $("#mescroll" + i).css("height","auto");
-                bomb.removeClass("downJian"+i,"logisticsImg");
-              }
-              _this.mescroll.resetUpScroll();
+        var _this = this;
+        var i = number;
+        if(_this.pdType != i) {
+          _this.pdType = i;
+          $(".nav .active").removeClass("active");
+          $(".nav p").eq(i).addClass("active");
+          if(_this.orderPk != '' && number == 0){
+            $("#Allcar").show();
+            $("#mescroll").hide();
+          }else{
+            $("#Allcar").hide();
+            $("#mescroll").show();
+            for(var i = 1 ; i < 5 ; i++){
+              $("#mescroll" + i).html("<ul id='dataList" + i + "' class='data-list'></ul>");
+              $("#mescroll" + i).css("height","auto");
+              bomb.removeClass("downJian"+i,"logisticsImg");
             }
+            _this.mescroll.resetUpScroll();
           }
+        }
 
       },
       newCar:function(){
@@ -950,7 +954,7 @@
         }
         for(var i = 0 ;i < _this.carType.length;i ++){
           if(_this.carType[i].choose){
-              carType.push( _this.carType[i].value)
+            carType.push( _this.carType[i].value)
           }
         }
         for(var i = 0 ;i < _this.tranType.length;i ++){
@@ -978,6 +982,7 @@
 <style>
   @import "../../css/mescroll.css";
   @import "../../css/scroll.css";
+
   #car #Allcar{
     position: fixed;
     top: 2.21875rem;
@@ -1088,10 +1093,10 @@
     background-image: url("../../images/cartype4.png");
   }
   #car ul li .downJian{
-     width:0.5rem;
+    width:0.5rem;
     margin-top: 0.22rem;
-     float: right;
-     padding:1.35rem 0.1rem 0.35rem 1.3rem;
+    float: right;
+    padding:1.35rem 0.1rem 0.35rem 1.3rem;
     background-position: 60% 50%;
     background-repeat: no-repeat;
     background-size: 0.5rem ;
@@ -1219,6 +1224,14 @@
   }
 </style>
 <style scoped>
+  #car{
+    position:absolute;
+    top:0rem;
+    bottom:0;
+    height: auto;
+    width:100%;
+    background: #f6f6f6;
+  }
   #filterBox{
     position: fixed;
     top:0;
@@ -1300,7 +1313,9 @@
     text-align: center;
     line-height: 1.2rem;
     font-size: 0.4rem;
-    background: #3399FF;
+    background-image: url("../../images/backgroundJB.png");
+    background-repeat:repeat-y;
+    background-size:10rem;
   }
   .mesrollTop{
     top: 1.3rem!important;
