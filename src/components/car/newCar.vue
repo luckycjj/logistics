@@ -695,9 +695,7 @@
     width:90%;
     display: block;
     margin:0.5rem auto;
-    background-image: url("../../images/backgroundJB.png");
-    background-repeat:repeat-y;
-    background-size:9rem;
+    background: #3399FF;
     color:white;
     line-height: 1.2rem;
     border-radius: 0.2rem;

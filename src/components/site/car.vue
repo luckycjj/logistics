@@ -1313,9 +1313,7 @@
     text-align: center;
     line-height: 1.2rem;
     font-size: 0.4rem;
-    background-image: url("../../images/backgroundJB.png");
-    background-repeat:repeat-y;
-    background-size:10rem;
+    background: #3399FF;
   }
   .mesrollTop{
     top: 1.3rem!important;
